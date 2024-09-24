@@ -1,4 +1,4 @@
-This is SYOTools 1.0.6, available from TestPyPI: 
+This is SYOTools, available from TestPyPI: 
 
 python3 -m pip install --index-url https://test.pypi.org/simple/ --no-deps syotools==1.0.6
 
