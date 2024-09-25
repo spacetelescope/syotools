@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name="syotools",
-      version="1.0.13",
+      version="1.1.1",
       description="Science Yield Optimization Tools (SYOTools)", 
       author="Jason Tumlinson, STScI", 
       author_email="tumlinson@stsci.edu",
