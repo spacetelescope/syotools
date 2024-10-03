@@ -136,20 +136,14 @@ specs = {'ctts': {'desc': 'Classical T-Tauri Star',
                  'file': [pysyn_base, 'grid', 'pickles', 'dat_uvk', 
                           'pickles_uk_40.fits']},
          'elliptical': {'desc': 'Elliptical Galaxy', 
-                        #'file': [pysyn_base, 'grid', 'etc_models', 
-                        #         'el_cww_fuv_001.fits']},
                         'file': [pysyn_base, 'grid', 'kc96', 
                                 'elliptical_template.fits'],
                         'band': 'galex,fuv'},
          'sbc': {'desc': 'Sbc Galaxy', 
-                 #'file': [pysyn_base, 'grid', 'etc_models', 
-                 #         'sbc_cb2004a_001.fits']},
                  'file': [pysyn_base, 'grid', 'kc96', 
                           'sc_template.fits'],
                  'band': 'galex,fuv'},
          'starburst': {'desc': 'Starburst Galaxy',
-                       #'file': [pysyn_base, 'grid', 'etc_models', 
-                       #         'sb1_kinney_fuv_001.fits']},
                        'file': [pysyn_base, 'grid', 'kc96', 
                                 'starb1_template.fits'],
                        'band': 'galex,fuv'},
@@ -194,5 +188,15 @@ default_spectra['descs']['flam'] = 'Flat in F_lambda'
 bb = pys.BlackBody(5000)
 bb.convert('abmag') 
 bb.convert('nm') 
-default_spectra['specs']['bb'] = pre_encode(bb)
-default_spectra['descs']['bb'] = 'Blackbody (5000K)'
+default_spectra['specs']['Blackbody5000'] = pre_encode(bb)
+default_spectra['descs']['Blackbody5000'] = 'Blackbody (5000K)'
+
+bb = pys.BlackBody(100000)
+bb.convert('abmag') 
+bb.convert('nm') 
+default_spectra['specs']['Blackbody100000'] = pre_encode(bb)
+default_spectra['descs']['Blackbody100000'] = 'Blackbody (100,000K)'
+
+
+
+
