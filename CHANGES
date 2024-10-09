@@ -2,3 +2,5 @@
 
 1.1.3 
 	- added extinction reference files from pysynphot 
+1.1.4
+	- added tracking of interpolated flux 

@@ -5,9 +5,6 @@ Created on Tue Nov  7 15:04:24 2017
 
 @author: gkanarek
 """
-from __future__ import (print_function, division, absolute_import, with_statement,
-                        nested_scopes, generators)
-
 import astropy.units as u
 #from astropy.modeling.functional_models import Box1D
 #import numpy as np
@@ -16,7 +13,7 @@ import pysynphot as pys
 #Define a new unit for spectral flux density
 flambda = u.def_unit(["flambda","flam"], (u.photon / u.s / u.cm**2 / u.nm))
 
-def renorm_sed(sed, new_magnitude, bandpass='johnson,v'):
+def renorm_sed(sed, new_magnitude, bandpass='johnson,v', waveunits='nm', fluxunits='abmag'):
     """
     Utility to renormalize an SED to a new manitude.
     """
@@ -24,8 +21,9 @@ def renorm_sed(sed, new_magnitude, bandpass='johnson,v'):
     band.convert(sed.waveunits)
         
     new_sed = sed.renorm((new_magnitude + 2.5*u.mag('AB')).value, 'abmag', band)
-    new_sed.convert('nm')
-    new_sed.convert('abmag')
+    new_sed.convert(waveunits) 
+    new_sed.convert(fluxunits) 
+    print("Converted SED to mag = ", new_magnitude, " with units ", waveunits, " and ", fluxunits) 
     
     return new_sed
 

@@ -53,7 +53,7 @@ class Spectrograph(PersistentModel):
     name = ''
     modes = []
     descriptions = {}
-    # JT fixed BEF units 05292024 
+    # JT fixed BEF units 052924 
     #bef = pre_encode(np.zeros(0, dtype=float) * (u.erg / u.cm**2 / u.s / u.AA))
     bef = pre_encode(np.zeros(0, dtype=float) * (u.erg / u.cm**2 / u.s / u.pix))
     R = pre_encode(0. * u.dimensionless_unscaled) 

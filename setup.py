@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name="syotools",
-      version="1.1.1",
+      version="1.1.4",
       description="Science Yield Optimization Tools (SYOTools)", 
       author="Jason Tumlinson, STScI", 
       author_email="tumlinson@stsci.edu",
@@ -17,8 +17,8 @@ setup(name="syotools",
                     'pysynphot_data/grid/*','pysynphot_data/mtab/*', 
                     'pysynphot_data/comp/nonhst/*', 'pysynphot_data/grid/agn/*',
                     'pysynphot_data/grid/galactic/*', 'pysynphot_data/grid/kc96/*',
-                    'pysynsphot_data/grid/pickles/*', 'pysynphot_data/grid/pickles/dat_uvk/*', 
-                    'sci_eng_interface/*json']}, 
+                    'pysynphot_data/grid/pickles/*', 'pysynphot_data/grid/pickles/dat_uvk/*', 
+                    'pysynphot_data/extinction/*', 'sci_eng_interface/*json']}, 
       include_package_data=True,
       classifiers=[
           "Programming Language :: Python :: 3.6",
