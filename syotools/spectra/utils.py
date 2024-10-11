@@ -6,9 +6,7 @@ Created on Tue Nov  7 15:04:24 2017
 @author: gkanarek
 """
 import astropy.units as u
-#from astropy.modeling.functional_models import Box1D
-#import numpy as np
-import pysynphot as pys
+import pysynphot as S
 
 #Define a new unit for spectral flux density
 flambda = u.def_unit(["flambda","flam"], (u.photon / u.s / u.cm**2 / u.nm))
@@ -17,10 +15,10 @@ def renorm_sed(sed, new_magnitude, bandpass='johnson,v', waveunits='nm', fluxuni
     """
     Utility to renormalize an SED to a new manitude.
     """
-    band = pys.ObsBandpass(bandpass)
+    band = S.ObsBandpass(bandpass)
     band.convert(sed.waveunits)
         
-    new_sed = sed.renorm((new_magnitude + 2.5*u.mag('AB')).value, 'abmag', band)
+    new_sed = sed.renorm(new_magnitude.value, 'abmag', band)
     new_sed.convert(waveunits) 
     new_sed.convert(fluxunits) 
     print("Converted SED to mag = ", new_magnitude, " with units ", waveunits, " and ", fluxunits) 

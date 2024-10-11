@@ -61,6 +61,13 @@ class Spectrograph(PersistentModel):
     aeff = pre_encode(np.zeros(0, dtype=float) * u.cm**2)
     wrange = pre_encode(np.zeros(2, dtype=float) * u.AA)
     _mode = ''
+
+    list_of_gratings = {} 
+    list_of_gratings["G120M (R = 30,000)"] = "G120M"  
+    list_of_gratings["G150M (R = 30,000)"] = "G150M"  
+    list_of_gratings["G180M (R = 30,000)"] = "G180M"  
+    list_of_gratings["G155L (R = 5,000)"]  = "G155L" 
+    list_of_gratings["G145LL (R = 500)"]   = "G145LL"
     
     #Property wrapper for mode, so that we can use a custom setter to propagate
     #mode updates to all the rest of the parameters

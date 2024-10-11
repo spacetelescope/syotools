@@ -4,15 +4,9 @@ Created on Tue Oct 18 11:19:05 2016
 
 @author: gkanarek
 """
-from __future__ import (print_function, division, absolute_import, with_statement,
-                        nested_scopes, generators)
-
 import os
 
-import syotools.cdbs
-
-#pathlib not supported in python 2
-try:
+try:    #pathlib not supported in python 2
     from pathlib import Path
     use_pathlib = True
 except ImportError:

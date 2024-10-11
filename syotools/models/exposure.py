@@ -13,6 +13,7 @@ from syotools.defaults import default_exposure
 from syotools.utils import pre_encode, pre_decode
 from syotools.spectra import SpectralLibrary
 from syotools.spectra.utils import renorm_sed
+import pysynphot as S 
 
 def nice_print(arr):
     """
@@ -47,12 +48,12 @@ class Exposure(PersistentModel):
     
         exp_id       - a unique exposure ID, used for save/load purposes (string)
                         NOTE: THIS HAS NO DEFAULT, A NEW EXP_ID IS CREATED
-                        WHENEVER A NEW CALCULATION IS SAVED.
-        _sed          - pysynphot or user-defined object for the SED 
-        sed_id       - for default (pysynphot) spectra, the id (i.e. the key 
+                        WHENEVER A NEW CALCULATION IS SAVED. Currently not used 
+        sed          - pysynphot or user-defined object for the SED 
+        _sed_id       - for default (pysynphot) spectra, the id (i.e. the key 
                        into the default spectra dictionary), otherwise "user" (string)
         n_exp        - the desired number of exposures (integer)
-        exptime      - the desired exposure time (float array)
+        exptime      - the desired exposure time (float array), MUST BE GIVEN IN HOURS 
         exp_wave     | 
         exp_flux     | these three are the "final results" of an exposure 
         exp_snr      | 
@@ -75,25 +76,26 @@ class Exposure(PersistentModel):
     spectrograph = None
     spectropolarimeter = None
     
-    exp_id = ''
-    _sed = pre_encode(np.zeros(1, dtype=float) * u.ABmag) #default is set via sed_id
-    _sed_id = 'qso'
+    exp_id = '' 			# initialized to empty, not used yet 
+    sed = pre_encode(np.zeros(1, dtype=float) * u.ABmag) #default is set via sed_id
+    _sed_id = 'QSO'
     n_exp = 0
-    _exptime = pre_encode(np.zeros(1, dtype=float) * u.s)
+    _sed = SpectralLibrary.get(_sed_id, SpectralLibrary.fab) 
+    _exptime = pre_encode(np.zeros(1, dtype=float) * u.s) 
     _snr = pre_encode(np.zeros(1, dtype=float) * u.dimensionless_unscaled)
     _snr_goal = pre_encode(np.zeros(1, dtype=float) * u.dimensionless_unscaled)
     _magnitude = pre_encode(np.zeros(1, dtype=float) * u.ABmag)
     _redshift = 0.
     _unknown = 'snr' #one of 'snr', 'magnitude', 'exptime'
-    _interp_flux = pre_encode(np.zeros(1, dtype=float) * u.dimensionless_unscaled)
-    
+
     verbose = False # set this for debugging purposes only
     _disable = False # set this to disable recalculating (when updating several attributes at the same time)
 
-    def __init__(self): 
-        self._sed_id = 'qso' 
-        self._sed = SpectralLibrary.get(self._sed_id, SpectralLibrary.fab) 
-        print('Exposure SED has been initialized to : ', self._sed_id) 
+#    def __init__(self): 
+#        self.sed_id = 'flat' 
+#        self.sed = SpectralLibrary.get(self._sed_id, SpectralLibrary.fab) 
+#        print('Exposure SED has been initialized to : ', self._sed_id) 
+#        print('Exposure time has been initialized to : ', self._exptime) 
 
     def disable(self):
         self._disable = True
@@ -179,13 +181,12 @@ class Exposure(PersistentModel):
         if new_sed_id == self._sed_id:
             return
         self._sed_id = new_sed_id
-        print('hello from sed_id setter', new_sed_id) 
         self._sed = pre_encode(SpectralLibrary.get(new_sed_id, SpectralLibrary.fab))
         self.calculate()
         
     def renorm_sed(self, new_mag, bandpass='johnson,v', waveunits='abmag', fluxunits='nm'):
+        print('Hello from SpecExposure.renorm_sed, mag = ', new_mag, bandpass, waveunits, fluxunits) 
         sed = self.recover('_sed')
-        print("I'm here in exp.renorm_sed") 
         self._sed = renorm_sed(sed, pre_decode(new_mag), bandpass=bandpass, waveunits=waveunits,fluxunits=fluxunits)
         self.calculate()
     
@@ -426,13 +427,17 @@ class SpectrographicExposure(Exposure):
         based on the other two. The "unknown" attribute controls which of these
         parameters is calculated.
         """
+        print(" ") 
+        print(" ") 
+        print(" ") 
         if self._disable:
             return False
         if self.spectrograph is None or self.telescope is None:
             return False
+
         
         if self.unknown == "snr":
-            print('unknown is ', self.unknown) 
+            print('Spec Exp, unknown is ', self.unknown) 
             self._update_snr()
         if self.unknown == "exptime":
             self._update_exptime() 
@@ -455,6 +460,7 @@ class SpectrographicExposure(Exposure):
                                                          'telescope.aperture',
                                                          'spectrograph.R',
                                                          'spectrograph.wrange')
+
         exptime = _exptime.to(u.s)[0] #assume that all are the same
         if sed.fluxunits.name == "abmag":
             funit = u.ABmag
@@ -469,14 +475,18 @@ class SpectrographicExposure(Exposure):
 
         sflux = (sed.flux * funit).to(u.erg / u.s / u.cm**2 / u.AA, equivalencies=u.spectral_density(swave))
         wave = wave.to(swave.unit)
+        print('_update_snr sflux: ', sflux)
         
         delta_lambda = self.recover('spectrograph.delta_lambda').to(u.AA / u.pix)
 
         iflux = np.interp(wave, swave, sflux, left=0., right=0.) # JT * (u.erg / u.s / u.cm**2 / u.AA)
+        print('_update_snr iflux: ', iflux)
         phot_energy = const.h.to(u.erg * u.s) * const.c.to(u.cm / u.s) / wave.to(u.cm) / u.ct
         print('_update_snr phot_energy: ', phot_energy)
 
-        scaled_aeff = aeff * (aper / (15 * u.m))**2
+        print('_update_snr aper', aper) 
+        print('_update_snr exptime', exptime) 
+        scaled_aeff = aeff * ((aper * u.m) / (15 * u.m))**2
         source_counts = iflux / phot_energy * scaled_aeff * exptime * delta_lambda
         print('_update_snr source_counts: ', source_counts)
 
@@ -492,6 +502,11 @@ class SpectrographicExposure(Exposure):
 
         if self.verbose:
             print("SNR: {}".format(snr))
+            print(" ") 
+            print(" ") 
+            print(" ") 
+            print(" ") 
+            print(" ") 
         
         self._snr = pre_encode(snr)
         self.exp_snr = snr  
@@ -562,7 +577,6 @@ class SpectrographicExposure(Exposure):
             print("Exptime: {}".format(t_exp))
         
         #serialize with JsonUnit for transportation
-        self._interp_flux = pre_encode(iflux) 
         self._exptime = pre_encode(t_exp)
         
         return True #completed successfully

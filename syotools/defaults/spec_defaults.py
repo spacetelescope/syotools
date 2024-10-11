@@ -5,13 +5,7 @@ Created on Tue Oct 18 14:10:45 2016
 @author: gkanarek
 """
 
-from __future__ import (print_function, division, absolute_import, with_statement,
-                        nested_scopes, generators)
-
 import os
-
-import syotools.cdbs
-
 import pysynphot as pys
 import astropy.io.ascii as asc
 from syotools.utils import pre_encode
@@ -177,6 +171,11 @@ flatsp.convert('abmag')
 flatsp.convert('nm') 
 default_spectra['specs']['fab'] = pre_encode(flatsp)
 default_spectra['descs']['fab'] = 'Flat (AB)'
+
+flat   = pys.FlatSpectrum(1e-15, fluxunits='flam')
+flat.convert('angstrom') 
+default_spectra['specs']['flat'] = pre_encode(flat)
+default_spectra['descs']['flat'] = 'Flat in F_lambda'
 
 flamsp = pys.FlatSpectrum(30.0, fluxunits='flam')
 flamsp = flamsp.renorm(30.0, 'abmag', pys.ObsBandpass('galex,fuv'))
