@@ -68,9 +68,9 @@ def uvspec_snr(telescope, mode, template, fuvmag, exptime, silent=True):
     uvi_exp.enable()
     uvi_sed, uvi_snr = uvi_exp.recover('sed', 'snr')
 
-    wave, flux, snr =  uvi.wave[1]['value'], uvi_exp._interp_flux[1]['value'], uvi_exp.snr[1]['value']
+    wave, snr =  uvi.wave[1]['value'], uvi_exp.snr[1]['value']
 
-    return wave, flux, snr, uvi 
+    return wave, snr, uvi 
 
 def uvspec_exptime(telescope, mode, template, fuvmag, snr_goal, silent=True): 
     ''' Run a basic SNR calculation that takes in a telescope, 
@@ -135,12 +135,9 @@ def uvspec_exptime(telescope, mode, template, fuvmag, snr_goal, silent=True):
     snr = uvi_exp.recover('exptime')
     uvi_exp.unknown = 'exptime' #< --- this triggers the _update_exptime function in the SpectrographicExposure exposure object 
 
+    #uvi_exp.enable()
     uvi_sed, uvi_exptime = uvi_exp.recover('sed', 'exptime')
 
-    wave, flux, exptime =  uvi.wave[1]['value'], uvi_exp._interp_flux[1]['value'], uvi_exp.exptime[1]['value']
+    wave, exptime =  uvi.wave[1]['value'], uvi_exp.exptime[1]['value']
 
-    return wave, flux, exptime, uvi 
-
-
-
-
+    return wave, exptime, uvi 
