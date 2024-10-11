@@ -99,7 +99,7 @@ class Exposure(PersistentModel):
         self._disable = False
         self.calculate()
     
-    #Property wrappers for the three possible uknowns, so that we can auto-
+    #Property wrappers for the three possible unknowns, so that we can auto-
     #calculate whenever they're set, and to prevent overwriting previous
     #calculations by accident.
     
@@ -262,8 +262,6 @@ class PhotometricExposure(Exposure):
                   'snr': self._update_snr}[self.unknown]()
         return status
     
-    #Calculation methods
-    
     @property
     def _fstar(self):
         """
@@ -293,7 +291,7 @@ class PhotometricExposure(Exposure):
         
         #We no longer need to check the inputs, since they are now tracked
         #attributes instead.
-               
+
         #Convert JsonUnits to Quantities for calculations
         (_snr, _nexp) = self.recover('snr', 'n_exp')
         (_total_qe, _detector_rn, _dark_current) = self.recover('camera.total_qe', 
@@ -414,7 +412,7 @@ class PhotometricExposure(Exposure):
         #serialize with JsonUnit for transportation
         self._snr = pre_encode(snr)
         
-        return True #completed successfully
+        return True           # completed successfully
 
 class SpectrographicExposure(Exposure):
     """
