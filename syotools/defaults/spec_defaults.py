@@ -10,8 +10,6 @@ from __future__ import (print_function, division, absolute_import, with_statemen
 
 import os
 
-import syotools.cdbs
-
 import pysynphot as pys
 import astropy.io.ascii as asc
 from syotools.utils import pre_encode
