@@ -60,7 +60,8 @@ def camera_snr(telescope, template, mag, exptime, silent=True):
     hri_sed, hri_snr = hri_exp.recover('sed', 'snr')  
     hri_snr = hri_exp.snr[1]['value']
 
-    for bb, ss in zip(hri.bandnames, hri_snr): print("{}, SNR = {}".format(bb, ss)) 
+    if not silent: 
+        for bb, ss in zip(hri.bandnames, hri_snr): print("{}, SNR = {}".format(bb, ss)) 
 
     return snr, hri_snr
 
@@ -125,9 +126,8 @@ def camera_exptime(telescope, template, mag, snr_goal, silent=True):
     hri_exp.unknown = 'exptime'
     hri_exptime = hri_exp.recover('exptime')
 
-    for bb, ee in zip(hri.bandnames, hri_exptime): print("{}, exptime = {}".format(bb, ee))
+    if not silent: 
+        for bb, ee in zip(hri.bandnames, hri_exptime): print("{}, exptime = {}".format(bb, ee))
     
     return hri_exptime, hri 
-
-
 
