@@ -23,7 +23,7 @@ def renorm_sed(sed, new_magnitude, bandpass='johnson,v', waveunits='nm', fluxuni
     new_sed = sed.renorm((new_magnitude + 2.5*u.mag('AB')).value, 'abmag', band)
     new_sed.convert(waveunits) 
     new_sed.convert(fluxunits) 
-    print("Converted SED to mag = ", new_magnitude, " with units ", waveunits, " and ", fluxunits) 
+    #print("Converted SED to mag = ", new_magnitude, " with units ", waveunits, " and ", fluxunits) 
     
     return new_sed
 

@@ -1,4 +1,4 @@
-def camera_snr(telescope, template, mag, exptime): 
+def camera_snr(telescope, template, mag, exptime, silent=True): 
 
     ''' Run a basic SNR calculation that takes in a telescope, 
       spectral template, normalization magnitude, and exptime   
@@ -51,8 +51,9 @@ def camera_snr(telescope, template, mag, exptime):
     hri_exp.exptime[1]['value'] = exptime_list 
 
     #Print the current template & mode
-    print("Current SED template: {}".format(hri_exp.sed_id)) 
-    print("Current exposure time: {} hours\n".format(hri_exp.exptime[1]['value'][0])) 
+    if not silent: 
+        print("Current SED template: {}".format(hri_exp.sed_id)) 
+        print("Current exposure time: {} hours\n".format(hri_exp.exptime[1]['value'][0])) 
     
     snr = hri_exp.recover('snr')
     hri_exp.enable()
@@ -117,8 +118,9 @@ def camera_exptime(telescope, template, mag, snr_goal, silent=True):
     hri_exp._snr[1]['value'] = [5,5,5,5,5,5,5,5,5,5]
 
     #Print the current template & mode
-    print("Current SED template: {}".format(hri_exp.sed_id))
-    print("Current exposure time: {} hours\n".format(hri_exp.exptime[1]['value'][0]))
+    if not silent: 
+        print("Current SED template: {}".format(hri_exp.sed_id))
+        print("Current exposure time: {} hours\n".format(hri_exp.exptime[1]['value'][0]))
 
     hri_exp.unknown = 'exptime'
     hri_exptime = hri_exp.recover('exptime')
