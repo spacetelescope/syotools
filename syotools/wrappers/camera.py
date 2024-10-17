@@ -1,4 +1,4 @@
-def camera_snr(telescope, template, mag, exptime, silent=True): 
+def camera_snr(telescope, template, mag, exptime, silent=False): 
 
     ''' Run a basic SNR calculation that takes in a telescope, 
       spectral template, normalization magnitude, and exptime   
@@ -55,8 +55,8 @@ def camera_snr(telescope, template, mag, exptime, silent=True):
         print("Current SED template: {}".format(hri_exp.sed_id)) 
         print("Current exposure time: {} hours\n".format(hri_exp.exptime[1]['value'][0])) 
     
-    snr = hri_exp.recover('snr')
     hri_exp.enable()
+    snr = hri_exp.recover('snr')
     hri_sed, hri_snr = hri_exp.recover('sed', 'snr')  
     hri_snr = hri_exp.snr[1]['value']
 
@@ -67,7 +67,7 @@ def camera_snr(telescope, template, mag, exptime, silent=True):
 
 
 
-def camera_exptime(telescope, template, mag, snr_goal, silent=True): 
+def camera_exptime(telescope, template, mag, snr_goal, silent=False): 
 
     ''' Run a basic SNR calculation that takes in a telescope, 
       spectral template, normalization magnitude, and SNR goal  
@@ -99,7 +99,6 @@ def camera_exptime(telescope, template, mag, snr_goal, silent=True):
            outputs are arrays with the SNR in each band for FUV, NUV, U, B, V, R, I, J, H, K 
        '''
 
-
     from syotools.models import Telescope, Camera
     from syotools.utils.jsonunit import str_jsunit
     from syotools.spectra import SpectralLibrary
@@ -116,18 +115,17 @@ def camera_exptime(telescope, template, mag, snr_goal, silent=True):
     hri_exp.renorm_sed(mag * u.ABmag, bandpass='v')
     snr_list = []
     for i in hri.bandnames: snr_list.append(snr_goal) 
-    hri_exp._snr[1]['value'] = [5,5,5,5,5,5,5,5,5,5]
+    hri_exp._snr[1]['value'] = snr_list 
 
-    #Print the current template & mode
+    #Print the current template & SNR goal
     if not silent: 
         print("Current SED template: {}".format(hri_exp.sed_id))
-        print("Current exposure time: {} hours\n".format(hri_exp.exptime[1]['value'][0]))
-
+        print("Current SNR goals: {}".format(hri_exp._snr[1]["value"])) 
+        
     hri_exp.unknown = 'exptime'
     hri_exptime = hri_exp.recover('exptime')
 
     if not silent: 
         for bb, ee in zip(hri.bandnames, hri_exptime): print("{}, exptime = {}".format(bb, ee))
     
-    return hri_exptime, hri 
-
+    return hri_exptime, hri
