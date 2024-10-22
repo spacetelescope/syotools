@@ -95,14 +95,14 @@ class Telescope(PersistentModel):
 
         if ('EAC1' in name): tel = read_yaml.eac1()
 
-        self.name = tel['name'] 
+        self.name = name 
         self.inscribing_aperture = tel["PM_aperture"]['segmentation_parameters']['inscribing_diameter'][0] * u.m 
         self.circumscribing_aperture = tel["PM_aperture"]['segmentation_parameters']['circumscribing_diameter'][0] * u.m 
 
+        self.segment_area = 3. * 3.**0.5 / 2. * (tel["PM_aperture"]['segmentation_parameters']['segment_size'][0] * u.m / 2.)**2. 
+        self.total_collecting_area = self.segment_area * tel["PM_aperture"]['segmentation_parameters']['number_segments'][0] 
+        self.effective_aperture = 2. * (self.total_collecting_area / np.pi )**0.5 
+
         if ('EAC2' in name): print("You can't set EAC2 from the SEI YAML file") 
         if ('EAC3' in name): print("You can't set EAC3 from the SEI YAML file") 
-
-       
-
-
 
