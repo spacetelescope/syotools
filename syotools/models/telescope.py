@@ -5,8 +5,6 @@ Created on Fri Oct 14 20:28:51 2016
 @author: gkanarek, tumlinson
 """
 
-from __future__ import (print_function, division, absolute_import, with_statement,
-                        nested_scopes, generators)
 from syotools.models.base import PersistentModel
 from syotools.defaults import default_telescope
 from syotools.utils import pre_encode
@@ -14,6 +12,7 @@ from syotools.utils.jsonunit import str_jsunit
 import astropy.units as u #for unit conversions
 import numpy as np
 from syotools.sci_eng_interface import read_json 
+from hwo_sci_eng.utils import read_yaml 
 
 # would be true with freestanding Sci-Eng-Interface 
 
@@ -83,7 +82,6 @@ class Telescope(PersistentModel):
         if self.verbose: 
             print('Setting Telescope to: ', name) 
         
-        if ('EAC1' in name): tel = read_json.eac1()
         if ('EAC2' in name): tel = read_json.eac2()
         if ('EAC3' in name): tel = read_json.eac3()
         
@@ -92,4 +90,19 @@ class Telescope(PersistentModel):
         self.temperature = tel['temperature_K'] * u.K 
         self.diff_limited_wavelength = tel['diff_limited_wavelength'] * u.nm 
         self.unobscured_fraction = tel['unobscured_fraction'] 
+
+    def set_from_yaml(self,name): 
+
+        if ('EAC1' in name): tel = read_yaml.eac1()
+
+        self.name = tel['name'] 
+        self.inscribing_aperture = tel["PM_aperture"]['segmentation_parameters']['inscribing_diameter'][0] * u.m 
+        self.circumscribing_aperture = tel["PM_aperture"]['segmentation_parameters']['circumscribing_diameter'][0] * u.m 
+
+        if ('EAC2' in name): print("You can't set EAC2 from the SEI YAML file") 
+        if ('EAC3' in name): print("You can't set EAC3 from the SEI YAML file") 
+
+       
+
+
 
