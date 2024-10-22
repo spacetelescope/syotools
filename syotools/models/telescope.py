@@ -16,7 +16,6 @@ import numpy as np
 from syotools.sci_eng_interface import read_json 
 
 # would be true with freestanding Sci-Eng-Interface 
-#import read_json 
 
 class Telescope(PersistentModel):
     """
@@ -89,7 +88,7 @@ class Telescope(PersistentModel):
         if ('EAC3' in name): tel = read_json.eac3()
         
         self.name = tel['name'] 
-        self.aperture = tel['aperture_id'] * u.m 
+        self.aperture = tel['aperture_od'] * u.m 
         self.temperature = tel['temperature_K'] * u.K 
         self.diff_limited_wavelength = tel['diff_limited_wavelength'] * u.nm 
         self.unobscured_fraction = tel['unobscured_fraction'] 
