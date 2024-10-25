@@ -10,6 +10,7 @@ from syotools.utils import pre_encode
 from syotools.utils.jsonunit import str_jsunit
 import astropy.units as u 
 import numpy as np
+import os 
 from syotools.sci_eng_interface import read_json 
 from hwo_sci_eng.utils import read_yaml 
 
@@ -36,11 +37,11 @@ class Telescope(PersistentModel):
     coronagraphs = [] 
     
     name = ''
-    aperture = pre_encode(0. * u.m)
-    temperature = pre_encode(0. * u.K)
-    ota_emissivity = pre_encode(0. * u.dimensionless_unscaled)
-    diff_limit_wavelength = pre_encode(0. * u.nm)
-    unobscured_fraction = pre_encode(1. * u.dimensionless_unscaled)
+    aperture = pre_encode(0. * u.m) # held over from before SEI integration 
+    temperature = pre_encode(0. * u.K) # held over from before SEI integration
+    ota_emissivity = pre_encode(0. * u.dimensionless_unscaled)  # held over from before SEI integration
+    diff_limit_wavelength = pre_encode(0. * u.nm)  # held over from before SEI integration
+    unobscured_fraction = pre_encode(1. * u.dimensionless_unscaled)  # held over from before SEI integration
 
     verbose = False 
         
@@ -94,6 +95,19 @@ class Telescope(PersistentModel):
 
     def hexagon_area(self, side): 
         return 3. * 3.**0.5 / 2. * side**2
+    
+    def set_coating(self, mirror, coating): 
+        """ Sets the reflectivity curve for a mirror surface by 
+            adding / modifying that mirror's component dictionary 
+            doing this with file I/O here is a bit inelegant but 
+            works for the first iteration of this capability. 
+            JT 102524
+        """
+        with open(os.getenv('SCI_ENG_DIR') + '/obs_config/Tel/'+coating+'_refl.yaml', 'r') as f:
+            coating = yaml.load(f, Loader=yaml.SafeLoader)
+
+        mirror['coating_wave'] = coating['wavelength'] * u.nm 
+        mirror['coating_refl'] = coating['reflectivity'] * u.dimensionless
 
     def set_from_yaml(self, name): 
 
@@ -108,19 +122,25 @@ class Telescope(PersistentModel):
             raise NotImplementedError
         
         # the "tel" dictionary returned by read_yaml is nested, and therefore awkward  
-        # when summoning individual entires. And often, we do not need the individual 
+        # when summoning individual entries. And often, we do not need the individual 
         # mirrors. So, we are going to break this dictionary up and carry the 
         # mirrors and other pieces separately:  
+
         self.pm = tel['PM_aperture'] #primary 
+        self.set_coating(self.pm, 'XeLiF')
         self.sm = tel['SM'] # secondary  
+        self.set_coating(self.pm, 'XeLiF')
         self.m3 = tel['M3'] # tertiary 
+        self.set_coating(self.pm, 'XeLiF')
         self.m4 = tel['M4'] # fold mirror (?) 
+        self.set_coating(self.pm, 'XeLiF')
 
         self.name = name 
-        #self.inscribing_aperture = tel["PM_aperture"]['segmentation_parameters']['inscribing_diameter'][0] * u.m 
-        #self.circumscribing_aperture = tel["PM_aperture"]['segmentation_parameters']['circumscribing_diameter'][0] * u.m 
-
         self.segment_area = self.hexagon_area(self.pm['segmentation_parameters']['segment_size'][0] / 2. * u.m) 
         self.total_collecting_area = self.segment_area * self.pm['segmentation_parameters']['number_segments'][0] 
         self.effective_aperture = 2. * (self.total_collecting_area / np.pi )**0.5 
+
+
+
+
 
