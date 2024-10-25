@@ -1,25 +1,21 @@
 #!/usr/bin/env python
 """
 Created on Fri Oct 14 20:28:51 2016
-
-@author: gkanarek, tumlinson
+@authors: gkanarek, tumlinson
 """
 
 from syotools.models.base import PersistentModel
 from syotools.defaults import default_telescope
 from syotools.utils import pre_encode
 from syotools.utils.jsonunit import str_jsunit
-import astropy.units as u #for unit conversions
+import astropy.units as u 
 import numpy as np
 from syotools.sci_eng_interface import read_json 
 from hwo_sci_eng.utils import read_yaml 
 
-# would be true with freestanding Sci-Eng-Interface 
-
 class Telescope(PersistentModel):
     """
-    The basic telescope class, which provides parameter storage for 
-    optimization.
+    The basic telescope class to provide telescope parameter storage. 
     
     Attributes: #adapted from the original in Telescope.py
         name - The name of the telescope (string)
@@ -61,10 +57,15 @@ class Telescope(PersistentModel):
         result = (1.03 * u.rad * diff_limit_wavelength / aperture).to(u.arcsec)
         return pre_encode(result)
     
-    @property
-    def effective_aperture(self):
-        unobscured, aper = self.recover('unobscured_fraction', 'aperture')
-        return pre_encode(np.sqrt(unobscured) * aper)
+#    @property
+#    def effective_aperture(self):
+#        self.effective_aperture = 2. * (self.total_collecting_area / np.pi )**0.5
+#        return 
+
+#    @effective_aperture.setter
+#    def effective_aperture(self): 
+#        self.effective_aperture = 2. * (self.total_collecting_area / np.pi )**0.5
+#        return
     
     def add_camera(self, camera):
         self.cameras.append(camera)
@@ -91,18 +92,35 @@ class Telescope(PersistentModel):
         self.diff_limited_wavelength = tel['diff_limited_wavelength'] * u.nm 
         self.unobscured_fraction = tel['unobscured_fraction'] 
 
-    def set_from_yaml(self,name): 
+    def hexagon_area(self, side): 
+        return 3. * 3.**0.5 / 2. * side**2
+
+    def set_from_yaml(self, name): 
 
         if ('EAC1' in name): tel = read_yaml.eac1()
 
+        if ('EAC2' in name): 
+            print("You can't set EAC2 from the SEI YAML file") 
+            raise NotImplementedError
+
+        if ('EAC3' in name): 
+            print("You can't set EAC3 from the SEI YAML file") 
+            raise NotImplementedError
+        
+        # the "tel" dictionary returned by read_yaml is nested, and therefore awkward  
+        # when summoning individual entires. And often, we do not need the individual 
+        # mirrors. So, we are going to break this dictionary up and carry the 
+        # mirrors and other pieces separately:  
+        self.pm = tel['PM_aperture'] #primary 
+        self.sm = tel['SM'] # secondary  
+        self.m3 = tel['M3'] # tertiary 
+        self.m4 = tel['M4'] # fold mirror (?) 
+
         self.name = name 
-        self.inscribing_aperture = tel["PM_aperture"]['segmentation_parameters']['inscribing_diameter'][0] * u.m 
-        self.circumscribing_aperture = tel["PM_aperture"]['segmentation_parameters']['circumscribing_diameter'][0] * u.m 
+        #self.inscribing_aperture = tel["PM_aperture"]['segmentation_parameters']['inscribing_diameter'][0] * u.m 
+        #self.circumscribing_aperture = tel["PM_aperture"]['segmentation_parameters']['circumscribing_diameter'][0] * u.m 
 
-        self.segment_area = 3. * 3.**0.5 / 2. * (tel["PM_aperture"]['segmentation_parameters']['segment_size'][0] * u.m / 2.)**2. 
-        self.total_collecting_area = self.segment_area * tel["PM_aperture"]['segmentation_parameters']['number_segments'][0] 
+        self.segment_area = self.hexagon_area(self.pm['segmentation_parameters']['segment_size'][0] / 2. * u.m) 
+        self.total_collecting_area = self.segment_area * self.pm['segmentation_parameters']['number_segments'][0] 
         self.effective_aperture = 2. * (self.total_collecting_area / np.pi )**0.5 
-
-        if ('EAC2' in name): print("You can't set EAC2 from the SEI YAML file") 
-        if ('EAC3' in name): print("You can't set EAC3 from the SEI YAML file") 
 
