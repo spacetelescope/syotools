@@ -17,6 +17,7 @@ from syotools.models.exposure import PhotometricExposure
 from syotools.defaults import default_camera
 from syotools.utils import pre_encode, pre_decode
 from syotools.spectra.utils import mag_from_sed
+from hwo_sci_eng.utils import read_yaml 
 
 def nice_print(arr):
     """
@@ -56,9 +57,6 @@ class Camera(PersistentModel):
         sky_sigma    - sky background emission (float array)
         
         _default_model - used by PersistentModel
-        
-    The following are attributes I haven't included, and the justification:
-        R_effective - this doesn't seem to be used anywhere
     """
     
     _default_model = default_camera
@@ -77,7 +75,7 @@ class Camera(PersistentModel):
     dark_current = pre_encode(np.zeros(1, dtype=float) * (u.electron / u.s / u.pixel))
     detector_rn = pre_encode(np.zeros(1, dtype=float) * (u.electron / u.pixel)**0.5)
     sky_sigma = pre_encode(np.zeros(1, dtype=float) * u.dimensionless_unscaled)
-    
+
     @property
     def pixel_size(self):
         """
@@ -275,3 +273,15 @@ class Camera(PersistentModel):
         exposure.telescope = self.telescope
         exposure.calculate()
             
+    def set_from_yaml(self, name): 
+
+        if ('HRI' in name): hri = read_yaml.HRI()
+        
+        # the "hri" dictionary returned by read_yaml is nested, and therefore awkward  
+        # when summoning individual entries. And often, we do not need the individual 
+        # components. So, we are going to break this dictionary up and carry the 
+        # pieces separately:  
+
+        self.UVIS = hri['UVIS']  
+
+        self.NIR = hri['NIR'] 

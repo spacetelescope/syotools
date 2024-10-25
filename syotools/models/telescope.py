@@ -10,7 +10,7 @@ from syotools.utils import pre_encode
 from syotools.utils.jsonunit import str_jsunit
 import astropy.units as u 
 import numpy as np
-import os 
+import os, yaml
 from syotools.sci_eng_interface import read_json 
 from hwo_sci_eng.utils import read_yaml 
 
@@ -104,10 +104,11 @@ class Telescope(PersistentModel):
             JT 102524
         """
         with open(os.getenv('SCI_ENG_DIR') + '/obs_config/Tel/'+coating+'_refl.yaml', 'r') as f:
-            coating = yaml.load(f, Loader=yaml.SafeLoader)
+            coating_dict = yaml.load(f, Loader=yaml.SafeLoader)
 
-        mirror['coating_wave'] = coating['wavelength'] * u.nm 
-        mirror['coating_refl'] = coating['reflectivity'] * u.dimensionless
+        mirror['coating_name'] = coating 
+        mirror['coating_wave'] = coating_dict['wavelength'] * u.nm 
+        mirror['coating_refl'] = coating_dict['reflectivity'] * u.dimensionless_unscaled
 
     def set_from_yaml(self, name): 
 
