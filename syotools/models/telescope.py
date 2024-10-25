@@ -85,19 +85,6 @@ class Telescope(PersistentModel):
         self.coronagraphs.append(coronagraph)
         coronagraph.telescope = self
 
-    def set_from_json(self,name): 
-        if self.verbose: 
-            print('Setting Telescope to: ', name) 
-        
-        if ('EAC2' in name): tel = read_json.eac2()
-        if ('EAC3' in name): tel = read_json.eac3()
-        
-        self.name = tel['name'] 
-        self.effective_aperture = tel['aperture_od'] * u.m 
-        self.temperature = tel['temperature_K'] * u.K 
-        self.diff_limited_wavelength = tel['diff_limited_wavelength'] * u.nm 
-        self.unobscured_fraction = tel['unobscured_fraction'] 
-
     def hexagon_area(self, side): 
         return 3. * 3.**0.5 / 2. * side**2
     
@@ -114,6 +101,30 @@ class Telescope(PersistentModel):
         mirror['coating_name'] = coating 
         mirror['coating_wave'] = coating_dict['wavelength'] * u.nm 
         mirror['coating_refl'] = coating_dict['reflectivity'] * u.dimensionless_unscaled
+
+    def set_from_sei(self, name): 
+        if name == 'EAC1': 
+            self.set_from_yaml(name)
+        elif name == 'EAC2': 
+            self.set_from_json(name)
+        elif name == 'EAC3': 
+            self.set_from_json(name)
+        else: 
+            print('We do not have information for: ', name)
+            raise NotImplementedError
+
+    def set_from_json(self,name): 
+        if self.verbose: 
+            print('Setting Telescope to: ', name) 
+        
+        if ('EAC2' in name): tel = read_json.eac2()
+        if ('EAC3' in name): tel = read_json.eac3()
+        
+        self.name = tel['name'] 
+        self.effective_aperture = tel['aperture_od'] * u.m 
+        self.temperature = tel['temperature_K'] * u.K 
+        self.diff_limited_wavelength = tel['diff_limited_wavelength'] * u.nm 
+        self.unobscured_fraction = tel['unobscured_fraction'] 
 
     def set_from_yaml(self, name): 
 
