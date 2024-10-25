@@ -88,10 +88,10 @@ class Camera(PersistentModel):
         pixsize = np.zeros(self.n_bands, dtype=float)
         
         #Convert from JsonUnit to Quantity for calculation purposes.
-        fiducials, aperture = self.recover('fiducials', 'telescope.aperture')
+        fiducials, effective_aperture = self.recover('fiducials', 'telescope.effective_aperture')
         
         for ref, bands in enumerate(self.channels):
-            pxs = (0.5 * fiducials[ref] * u.rad / aperture).to(u.arcsec).value
+            pxs = (0.5 * fiducials[ref] * u.rad / effective_aperture).to(u.arcsec).value
             pixsize[bands] = pxs
         
         #serialize with JsonUnit for transportation purposes.
@@ -134,12 +134,12 @@ class Camera(PersistentModel):
         Calculate the FWHM of the camera's PSF.
         """
         #Convert to Quantity for calculations.
-        pivotwave, aperture = self.recover('pivotwave', 'telescope.aperture')
+        pivotwave, effective_aperture = self.recover('pivotwave', 'telescope.effective_aperture')
         diff_limit, diff_fwhm = self.recover('telescope.diff_limit_wavelength',
                                              'telescope.diff_limit_fwhm')
         
-        #fwhm = (1.22 * u.rad * pivotwave / aperture).to(u.arcsec)
-        fwhm = (1.03 * u.rad * pivotwave / aperture).to(u.arcsec)
+        #fwhm = (1.22 * u.rad * pivotwave / effective_aperture).to(u.arcsec)
+        fwhm = (1.03 * u.rad * pivotwave / effective_aperture).to(u.arcsec)
         
         #only use these values where the wavelength is greater than the diffraction limit
         fwhm = np.where(pivotwave > diff_limit, fwhm, diff_fwhm) * u.arcsec
@@ -150,7 +150,7 @@ class Camera(PersistentModel):
     def _print_initcon(self, verbose):
         if verbose: #These are our initial conditions
             print('Telescope diffraction limit: {}'.format(pre_decode(self.telescope.diff_limit_wavelength)))
-            print('Telescope aperture: {}'.format(pre_decode(self.telescope.aperture)))
+            print('Telescope effective_aperture: {}'.format(pre_decode(self.telescope.aperture)))
             print('Telescope temperature: {}'.format(pre_decode(self.telescope.temperature)))
             print('Pivot waves: {}'.format(nice_print(self.pivotwave)))
             print('Pixel sizes: {}'.format(nice_print(self.pixel_size)))
@@ -202,7 +202,7 @@ class Camera(PersistentModel):
         """
         
         #Convert to Quantities for calculation.
-        (bandpass, pivotwave, aperture, ota_emissivity, 
+        (bandpass, pivotwave, effective_aperture, ota_emissivity, 
          total_qe, pixel_size) = self.recover('derived_bandpass', 'pivotwave', 
                 'telescope.effective_aperture',  'telescope.ota_emissivity', 
                 'total_qe', 'pixel_size')
@@ -211,12 +211,12 @@ class Camera(PersistentModel):
         
         bandwidth = bandpass.to(u.cm)
     
-        h = const.h.to(u.erg * u.s) # Planck's constant erg s 
+        h = const.h.to(u.erg * u.s) # Planck's constant erg s /
         c = const.c.to(u.cm / u.s) # speed of light [cm / s] 
     
         energy_per_photon = h * c / pivotwave.to(u.cm) / u.ph
     
-        D = aperture.to(u.cm) # telescope diameter in cm 
+        D = effective_aperture.to(u.cm) # telescope diameter in cm 
         
         Omega = (pixel_size**2 * box * u.pix).to(u.sr)
         

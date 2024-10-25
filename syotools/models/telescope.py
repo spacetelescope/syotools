@@ -20,7 +20,12 @@ class Telescope(PersistentModel):
     
     Attributes: #adapted from the original in Telescope.py
         name - The name of the telescope (string)
-        aperture - The size of the primary telescope aperture, in meters (float)
+        effective_aperture - The size of the primary telescope aperture, in meters (float)
+            note: there is no such thing as "aperture", there is only "effective aperture" 
+                for a circular/keystone primary, this is just the diameter of the circle. 
+                for a hex-pattern segmented primary, this is the diameter of a circle 
+                with the same area as the summed area of all the hex segments. 
+                all code should use ONLY effective_aperture
         unobscured_fraction - The fraction of the primary mirror which is not obscured (float)
         temperature - instrument temperature, in Kelvin (float)
         ota_emissivity - emissivity factor for a TMA (float)
@@ -37,7 +42,7 @@ class Telescope(PersistentModel):
     coronagraphs = [] 
     
     name = ''
-    aperture = pre_encode(0. * u.m) # held over from before SEI integration 
+    effective_aperture = pre_encode(0. * u.m) # held over from before SEI integration 
     temperature = pre_encode(0. * u.K) # held over from before SEI integration
     ota_emissivity = pre_encode(0. * u.dimensionless_unscaled)  # held over from before SEI integration
     diff_limit_wavelength = pre_encode(0. * u.nm)  # held over from before SEI integration
@@ -51,11 +56,11 @@ class Telescope(PersistentModel):
         Diffraction-limited PSF FWHM.
         """
         
-        diff_limit_wavelength, aperture = self.recover('diff_limit_wavelength',
-                                                       'aperture')
+        diff_limit_wavelength, effective_aperture = self.recover('diff_limit_wavelength',
+                                                       'effective_aperture')
         
-        #result = (1.22 * u.rad * diff_limit_wavelength / aperture).to(u.arcsec)
-        result = (1.03 * u.rad * diff_limit_wavelength / aperture).to(u.arcsec)
+        #result = (1.22 * u.rad * diff_limit_wavelength / effective_aperture).to(u.arcsec)
+        result = (1.03 * u.rad * diff_limit_wavelength / effective_aperture).to(u.arcsec)
         return pre_encode(result)
     
 #    @property
@@ -88,7 +93,7 @@ class Telescope(PersistentModel):
         if ('EAC3' in name): tel = read_json.eac3()
         
         self.name = tel['name'] 
-        self.aperture = tel['aperture_od'] * u.m 
+        self.effective_aperture = tel['aperture_od'] * u.m 
         self.temperature = tel['temperature_K'] * u.K 
         self.diff_limited_wavelength = tel['diff_limited_wavelength'] * u.nm 
         self.unobscured_fraction = tel['unobscured_fraction'] 

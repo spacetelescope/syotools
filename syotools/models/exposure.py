@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Mon Oct 30 12:31:11 2017
-@author: gkanarek
+@author: gkanarek, tumlinson 
 """
 
 from __future__ import (print_function, division, absolute_import, with_statement,
@@ -51,7 +51,7 @@ class Exposure(PersistentModel):
                        with this exposure
     
         exp_id       - a unique exposure ID, used for save/load purposes (string)
-                        NOTE: THIS HAS NO DEFAULT, A NEW EXP_ID IS CREATED
+                        note: THIS HAS NO DEFAULT, A NEW EXP_ID IS CREATED
                         WHENEVER A NEW CALCULATION IS SAVED.
         sed_flux     - the spectral energy distribution of the target (float array)
         sed_wav      - the wavelengths associated with the SED flux (float array)
@@ -288,9 +288,6 @@ class PhotometricExposure(Exposure):
         """
         
         self.camera._print_initcon(self.verbose)
-        
-        #We no longer need to check the inputs, since they are now tracked
-        #attributes instead.
 
         #Convert JsonUnits to Quantities for calculations
         (_snr, _nexp) = self.recover('snr', 'n_exp')
@@ -360,9 +357,6 @@ class PhotometricExposure(Exposure):
         """
         
         self.camera._print_initcon(self.verbose)
-        
-        #We no longer need to check the inputs, since they are now tracked
-        #attributes instead.
             
         #Convert JsonUnits to Quantities for calculations
         (_exptime, _nexp, n_bands) = self.recover('_exptime', 'n_exp',
@@ -442,7 +436,7 @@ class SpectrographicExposure(Exposure):
         
         if self.verbose:
             msg1 = "Creating exposure for {} ({})".format(self.telescope.name,
-                                                           self.telescope.recover('aperture'))
+                                                           self.telescope.recover('effective_aperture'))
             msg2 = " with {} in mode {}".format(self.spectrograph.name, self.spectrograph.mode)
             print(msg1 + msg2)
             
@@ -450,7 +444,7 @@ class SpectrographicExposure(Exposure):
         _wave, aeff, bef, aper, R, wrange = self.recover('spectrograph.wave', 
                                                          'spectrograph.aeff', 
                                                          'spectrograph.bef',
-                                                         'telescope.aperture',
+                                                         'telescope.effective_aperture',
                                                          'spectrograph.R',
                                                          'spectrograph.wrange')
         exptime = _exptime.to(u.s)[0] #assume that all are the same
@@ -516,7 +510,7 @@ class SpectrographicExposure(Exposure):
     
         if self.verbose:
             msg1 = "Creating exposure for {} ({})".format(self.telescope.name,
-                                                           self.telescope.recover('aperture'))
+                                                           self.telescope.recover('effective_aperture'))
             msg2 = " with {} in mode {}".format(self.spectrograph.name, self.spectrograph.mode)
             print(msg1 + msg2)
             
@@ -524,7 +518,7 @@ class SpectrographicExposure(Exposure):
         _wave, aeff, bef, aper, R, wrange = self.recover('spectrograph.wave', 
                                                          'spectrograph.aeff', 
                                                          'spectrograph.bef',
-                                                         'telescope.aperture',
+                                                         'telescope.effective_aperture',
                                                          'spectrograph.R',
                                                          'spectrograph.wrange')
         
@@ -629,7 +623,7 @@ class CoronagraphicExposure(Exposure):
         
         self.camera._print_initcon(self.verbose)
 
-        print(' telescope inside the Coron exposure object ', self.telescope.aperture) 
+        print(' telescope inside the Coron exposure object ', self.telescope.effective_aperture) 
         
         #serialize with JsonUnit for transportation
         self._snr = pre_encode(10.)

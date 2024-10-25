@@ -109,7 +109,7 @@ class Coronagraph(PersistentModel):
  
         phi_S = sun_phot / 12.**2 * 10.**2 # correct photon rate to 12 pc for a Solar twin - should be photons / s/ cm^2 / micron 
 
-        collecting_area = np.pi * (self.telescope.aperture.to(u.cm) / 2.)**2 # square cm, 6 meters, filled aperture, this will have to come in from the telescope object in the end. 
+        collecting_area = np.pi * (self.telescope.effective_aperture.to(u.cm) / 2.)**2 # square cm, this will have to come in from the telescope object in the end. 
 
         dlambda = 0.55 / 5 * u.micron # bandpass taken from 0.55 micron central wavelength and spectral resolution per Table 2 
         

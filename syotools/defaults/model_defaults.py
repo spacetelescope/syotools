@@ -60,7 +60,7 @@ default_coronagraph = all_defaults['Coronagraph'] #placeholder
 
 default_telescope = OrderedDict([(key, pre_encode(value)) for key,value in [
                                         ('name', 'LUVOIR'),
-                                        ('aperture', 10. * u.m),
+                                        ('effective_aperture', 10. * u.m),
                                         ('temperature', 270. * u.K),
                                         ('ota_emissivity', 0.09 * u.dimensionless_unscaled),
                                         ('diff_limit_wavelength', 500. * u.nm)]])
