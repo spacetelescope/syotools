@@ -107,7 +107,7 @@ def camera_exptime(telescope, template, mag, snr_goal, silent=False):
 
     # create the basic objects 
     hri, tel = Camera(), Telescope()
-    tel.set_from_json(telescope)
+    tel.set_from_sei(telescope)
     tel.add_camera(hri)
     hri_exp = hri.create_exposure()
 
