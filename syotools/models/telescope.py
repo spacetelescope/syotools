@@ -106,11 +106,11 @@ class Telescope(PersistentModel):
         if name == 'EAC1': 
             self.set_from_yaml(name)
         elif name == 'EAC2': 
-            self.set_from_json(name)
+            self.set_from_yaml(name)
         elif name == 'EAC3': 
-            self.set_from_json(name)
+            self.set_from_yaml(name)
         else: 
-            print('We do not have information for: ', name)
+            print('We do not have SEI information for: ', name)
             raise NotImplementedError
 
     def set_from_json(self,name): 
