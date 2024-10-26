@@ -129,13 +129,9 @@ class Telescope(PersistentModel):
 
         if ('EAC1' in name): tel = read_yaml.eac1()
 
-        if ('EAC2' in name): 
-            print("You can't set EAC2 from the SEI YAML file") 
-            raise NotImplementedError
+        if ('EAC2' in name): tel = read_yaml.eac2()
 
-        if ('EAC3' in name): 
-            print("You can't set EAC3 from the SEI YAML file") 
-            raise NotImplementedError
+        if ('EAC3' in name): tel = read_yaml.eac3()
         
         # the "tel" dictionary returned by read_yaml is nested, and therefore awkward  
         # when summoning individual entries. And often, we do not need the individual 
@@ -152,10 +148,12 @@ class Telescope(PersistentModel):
         self.set_coating(self.pm, 'XeLiF')
 
         self.name = name 
-        self.segment_area = self.hexagon_area(self.pm['segmentation_parameters']['segment_size'][0] / 2. * u.m) 
-        self.total_collecting_area = self.segment_area * self.pm['segmentation_parameters']['number_segments'][0] 
+        if ('hex' in self.pm['segmentation']): # do this only if we have a hex segmented mirror 
+            self.segment_area = self.hexagon_area(self.pm['segmentation_parameters']['segment_size'][0] / 2. * u.m) 
+            self.total_collecting_area = self.segment_area * self.pm['segmentation_parameters']['number_segments'][0] 
+        else: 
+            self.total_collecting_area = np.pi * (self.pm['segmentation_parameters']['circumscribing_diameter'][0]/2.*u.m)**2 
         self.effective_aperture = 2. * (self.total_collecting_area / np.pi )**0.5 
-
 
 
 
