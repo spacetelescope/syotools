@@ -63,7 +63,7 @@ def camera_snr(telescope, template, mag, exptime, silent=False):
     if not silent: 
         for bb, ss in zip(hri.bandnames, hri_snr): print("{}, SNR = {}".format(bb, ss)) 
 
-    return snr, hri_snr
+    return hri_snr, hri
 
 
 
