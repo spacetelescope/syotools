@@ -11,8 +11,7 @@ from syotools.utils.jsonunit import str_jsunit
 import astropy.units as u 
 import numpy as np
 import os, yaml
-from syotools.sci_eng_interface import read_json 
-from hwo_sci_eng.utils import read_yaml 
+from hwo_sci_eng.utils import read_yaml, read_json 
 
 class Telescope(PersistentModel):
     """
