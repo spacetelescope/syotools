@@ -6,9 +6,10 @@ Created on Tue Nov  7 15:04:24 2017
 @author: gkanarek
 """
 import astropy.units as u
-#from astropy.modeling.functional_models import Box1D
-#import numpy as np
 import pysynphot as pys
+import astropy.constants as const
+import numpy as np 
+from syotools.utils import pre_encode, pre_decode
 
 #Define a new unit for spectral flux density
 flambda = u.def_unit(["flambda","flam"], (u.photon / u.s / u.cm**2 / u.nm))
@@ -69,4 +70,19 @@ def mag_from_sed(sed, camera):
     output = np.array([o.value for o in output]) * u.ABmag
     
     return output"""
-    
+
+def planck(wave, temperature):
+    """
+    Planck spectrum for the various wave bands.
+    """
+    wave = wave.to('cm')
+    temp = temperature.to('K')
+    h = const.h.to(u.erg * u.s) # Planck's constant erg s 
+    c = const.c.to(u.cm / u.s) # speed of light [cm / s] 
+    k = const.k_B.to(u.erg / u.K) # Boltzmann's constant [erg deg K^-1] 
+    x = 2. * h * c**2 / wave**5
+    exponent = (h * c / (wave * k * temp))
+
+    result = (x / (np.exp(exponent)-1.)).to(u.erg / u.s / u.cm**3) / u.sr
+
+    return pre_encode(result)

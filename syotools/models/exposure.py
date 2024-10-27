@@ -5,9 +5,6 @@ Created on Mon Oct 30 12:31:11 2017
 @author: gkanarek, tumlinson 
 """
 
-from __future__ import (print_function, division, absolute_import, with_statement,
-                        nested_scopes, generators)
-
 import numpy as np
 import astropy.units as u
 import astropy.constants as const
@@ -17,6 +14,7 @@ from syotools.defaults import default_exposure
 from syotools.utils import pre_encode, pre_decode
 from syotools.spectra import SpectralLibrary
 from syotools.spectra.utils import renorm_sed
+from syotools.models.sources import Source
 
 def nice_print(arr):
     """
@@ -77,6 +75,8 @@ class Exposure(PersistentModel):
     camera = None
     spectrograph = None
     spectropolarimeter = None
+
+    source = Source() # instantiate a source class so that we have access to c_thermal, f_sky, planck function 
     
     exp_id = ''
     _sed = pre_encode(np.zeros(1, dtype=float) * u.ABmag) #default is set via sed_id
@@ -296,9 +296,11 @@ class PhotometricExposure(Exposure):
         
         snr2 = -(_snr**2)
         fstar = self._fstar
-        fsky = self.camera._fsky(verbose=self.verbose)
+        #fsky = self.camera._fsky(verbose=self.verbose) # prior to Source 
+        fsky = Source._fsky(self, verbose=self.verbose)
         Npix = self.camera._sn_box(self.verbose)
-        thermal = pre_decode(self.camera.c_thermal(verbose=self.verbose))
+        #thermal = pre_decode(self.camera.c_thermal(verbose=self.verbose)) # prior to moving c_thermal to Source 
+        thermal = pre_decode(Source.c_thermal(self, verbose=self.verbose))
         
         a = (_total_qe * fstar)**2
         b = snr2 * (_total_qe * (fstar + fsky) + thermal + _dark_current * Npix)
@@ -335,9 +337,11 @@ class PhotometricExposure(Exposure):
         
         exptime = _exptime.to(u.s)
         D = D.to(u.cm)
-        fsky = self.camera._fsky(verbose=self.verbose)
+        #fsky = self.camera._fsky(verbose=self.verbose)  # prior to Source() 
+        fsky = source._fsky(self, verbose=self.verbose)
         Npix = self.camera._sn_box(self.verbose)
-        c_t = pre_decode(self.camera.c_thermal(verbose=self.verbose))
+        #c_t = pre_decode(self.camera.c_thermal(verbose=self.verbose)) # prior to moving c_thermal to Source() 
+        c_t = pre_decode(Source.c_thermal(self, verbose=self.verbose))
         
         snr2 = -(_snr ** 2)
         a0 = (QE * exptime)**2
@@ -372,7 +376,8 @@ class PhotometricExposure(Exposure):
         fstar = self._fstar
         signal_counts = _total_qe * fstar * desired_exp_time
         
-        fsky = self.camera._fsky(verbose=self.verbose)
+        #fsky = self.camera._fsky(verbose=self.verbose)    # prior to Source 
+        fsky = Source._fsky(self, verbose=self.verbose)
         sky_counts = _total_qe * fsky * desired_exp_time
         
         shot_noise_in_signal = np.sqrt(signal_counts)
@@ -383,7 +388,8 @@ class PhotometricExposure(Exposure):
         read_noise = _detector_rn**2 * sn_box * number_of_exposures
         dark_noise = sn_box * _dark_current * desired_exp_time
 
-        thermal = pre_decode(self.camera.c_thermal(verbose=self.verbose))
+        #thermal = pre_decode(self.camera.c_thermal(verbose=self.verbose)) # prior to moving c_thermal to Source() 
+        thermal = pre_decode(Source.c_thermal(self, verbose=self.verbose))
         
         thermal_counts = desired_exp_time * thermal
         snr = signal_counts / np.sqrt(signal_counts + sky_counts + read_noise
@@ -480,22 +486,6 @@ class SpectrographicExposure(Exposure):
 
         #print(' ') 
 
-        """###ORIGINAL CALCULATION
-        wlo, whi = wrange
-        
-        aef_interp = np.interp(swave, wave, aeff, left=0., #interpolated effective areas for input spectrum
-                              right=0.) * aeff.unit * (aper / (15. * u.m))**2
-        bef_interp = np.interp(swave, wave, bef, left=0.,right=0.) * bef.unit  #interpolated background emission
-        phot_energy = const.h.to(u.erg * u.s) * const.c.to(u.cm / u.s) / swave.to(u.cm)
-        
-        #calculate counts from source
-        source_counts = sflux / phot_energy * aef_interp * exptime * swave / R
-        source_counts[(swave < wlo)] = 0.0
-        source_counts[(swave > whi)] = 0.0
-        
-        #calculate counts from background
-        bg_counts = bef_interp / phot_energy * aef_interp * exptime * swave / R"""
-        
         snr = source_counts / np.sqrt(source_counts + bg_counts)
 
         if self.verbose:

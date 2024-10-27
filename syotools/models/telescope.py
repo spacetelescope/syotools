@@ -17,7 +17,7 @@ class Telescope(PersistentModel):
     """
     The basic telescope class to provide telescope parameter storage. 
     
-    Attributes: #adapted from the original in Telescope.py
+    Attributes: 
         name - The name of the telescope (string)
         effective_aperture - The size of the primary telescope aperture, in meters (float)
             note: there is no such thing as "aperture", there is only "effective aperture". 

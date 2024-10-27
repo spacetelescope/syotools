@@ -1,13 +1,8 @@
 #!/usr/bin/env python
 """
 Created on Fri Oct 14 21:31:18 2016
-
 @author: gkanarek, tumlinson
 """
-
-from __future__ import (print_function, division, absolute_import, with_statement,
-                        nested_scopes, generators)
-
 import numpy as np
 import astropy.constants as const
 import astropy.units as u
@@ -63,7 +58,7 @@ class Camera(PersistentModel):
     
     telescope = None
     exposures = []
-    
+
     name = ''
     pivotwave = pre_encode(np.zeros(1, dtype=float) * u.nm)
     bandnames = ['']
@@ -150,7 +145,7 @@ class Camera(PersistentModel):
     def _print_initcon(self, verbose):
         if verbose: #These are our initial conditions
             print('Telescope diffraction limit: {}'.format(pre_decode(self.telescope.diff_limit_wavelength)))
-            print('Telescope effective_aperture: {}'.format(pre_decode(self.telescope.aperture)))
+            print('Telescope effective_aperture: {}'.format(pre_decode(self.telescope.effective_aperture)))
             print('Telescope temperature: {}'.format(pre_decode(self.telescope.temperature)))
             print('Pivot waves: {}'.format(nice_print(self.pivotwave)))
             print('Pixel sizes: {}'.format(nice_print(self.pixel_size)))
@@ -162,26 +157,6 @@ class Camera(PersistentModel):
             print('Detector read noise: {}'.format(nice_print(self.detector_rn)))
             print('Dark rate: {}'.format(nice_print(self.dark_current)))
             
-    def _fsky(self, verbose=True):
-        """
-        Calculate the sky flux as per Eq 6 in the SNR equation paper.
-        """
-        
-        (f0, D, dlam, Phi, fwhm, Sigma) = self.recover('ab_zeropoint', 
-                'telescope.effective_aperture', 'derived_bandpass', 
-                'pixel_size', 'fwhm_psf', 'sky_sigma')
-        
-        D = D.to(u.cm)
-        m = 10.**(-0.4 * Sigma) / u.arcsec**2
-        Npix = self._sn_box(False)
-        
-        if verbose:
-            print('Sky brightness: {}'.format(nice_print(Sigma)))
-        
-        fsky = f0 * np.pi / 4. * D**2 * dlam * m * (Phi**2 * Npix) * u.pix
-        
-        return fsky
-    
     def _sn_box(self, verbose):
         """
         Calculate the number of pixels in the SNR computation box.
@@ -195,66 +170,6 @@ class Camera(PersistentModel):
             print('SN box width: {}'.format(nice_print(sn_box)))
         
         return sn_box**2 / u.arcsec / u.arcsec / u.pix #don't want pix**2 units
-    
-    def c_thermal(self, verbose=True):
-        """
-        Calculate the thermal emission counts for the telescope.
-        """
-        
-        #Convert to Quantities for calculation.
-        (bandpass, pivotwave, effective_aperture, ota_emissivity, 
-         total_qe, pixel_size) = self.recover('derived_bandpass', 'pivotwave', 
-                'telescope.effective_aperture',  'telescope.ota_emissivity', 
-                'total_qe', 'pixel_size')
-        
-        box = self._sn_box(verbose)
-        
-        bandwidth = bandpass.to(u.cm)
-    
-        h = const.h.to(u.erg * u.s) # Planck's constant erg s /
-        c = const.c.to(u.cm / u.s) # speed of light [cm / s] 
-    
-        energy_per_photon = h * c / pivotwave.to(u.cm) / u.ph
-    
-        D = effective_aperture.to(u.cm) # telescope diameter in cm 
-        
-        Omega = (pixel_size**2 * box * u.pix).to(u.sr)
-        
-        planck = pre_decode(self.planck)
-        qepephot = total_qe * planck / energy_per_photon
-        
-        if verbose:
-            print('Planck spectrum: {}'.format(nice_print(planck)))
-            print('QE * Planck / E_phot: {}'.format(nice_print(qepephot)))
-            print('E_phot: {}'.format(nice_print(energy_per_photon)))
-            print('Omega: {}'.format(nice_print(Omega)))
-    
-        thermal = (ota_emissivity * planck / energy_per_photon * 
-    			(np.pi / 4. * D**2) * total_qe * Omega * bandwidth )
-        
-        #serialize with JsonUnit for transportation
-        return pre_encode(thermal) 
-    
-    @property
-    def planck(self):
-        """
-        Planck spectrum for the various wave bands.
-        """
-        #Convert to Quantities for calculation
-        pivotwave, temperature = self.recover('pivotwave', 'telescope.temperature')
-        
-        wave = pivotwave.to('cm')
-        temp = temperature.to('K')
-        h = const.h.to(u.erg * u.s) # Planck's constant erg s 
-        c = const.c.to(u.cm / u.s) # speed of light [cm / s] 
-        k = const.k_B.to(u.erg / u.K) # Boltzmann's constant [erg deg K^-1] 
-        x = 2. * h * c**2 / wave**5 
-        exponent = (h * c / (wave * k * temp)) 
-    
-        result = (x / (np.exp(exponent)-1.)).to(u.erg / u.s / u.cm**3) / u.sr
-        
-        #serialize with JsonUnit for transportation
-        return pre_encode(result)
     
     def interpolate_at_bands(self, sed):
         """
@@ -273,9 +188,9 @@ class Camera(PersistentModel):
         exposure.telescope = self.telescope
         exposure.calculate()
             
-    def set_from_yaml(self, name): 
+    def set_from_sei(self, name): 
 
-        if ('HRI' in name): hri = read_yaml.HRI()
+        if ('HRI' in name): hri = read_yaml.hri()
         
         # the "hri" dictionary returned by read_yaml is nested, and therefore awkward  
         # when summoning individual entries. And often, we do not need the individual 
@@ -285,3 +200,5 @@ class Camera(PersistentModel):
         self.UVIS = hri['UVIS']  
 
         self.NIR = hri['NIR'] 
+
+
