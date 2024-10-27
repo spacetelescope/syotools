@@ -20,8 +20,8 @@ class Telescope(PersistentModel):
     Attributes: #adapted from the original in Telescope.py
         name - The name of the telescope (string)
         effective_aperture - The size of the primary telescope aperture, in meters (float)
-            note: there is no such thing as "aperture", there is only "effective aperture" 
-                for a circular/keystone primary, this is just the diameter of the circle. 
+            note: there is no such thing as "aperture", there is only "effective aperture". 
+                For a circular/keystone primary, this is just the diameter of the circle. 
                 for a hex-pattern segmented primary, this is the diameter of a circle 
                 with the same area as the summed area of all the hex segments. 
                 all code should use ONLY effective_aperture
@@ -41,7 +41,7 @@ class Telescope(PersistentModel):
     coronagraphs = [] 
     
     name = ''
-    effective_aperture = pre_encode(0. * u.m) # held over from before SEI integration 
+    effective_aperture = pre_encode(0. * u.m) # now set by SEI 
     temperature = pre_encode(0. * u.K) # held over from before SEI integration
     ota_emissivity = pre_encode(0. * u.dimensionless_unscaled)  # held over from before SEI integration
     diff_limit_wavelength = pre_encode(0. * u.nm)  # held over from before SEI integration
@@ -129,9 +129,9 @@ class Telescope(PersistentModel):
 
         if ('EAC1' in name): tel = read_yaml.eac1()
 
-        if ('EAC2' in name): tel = read_yaml.eac2()
+        if ('EAC2' in name): tel = read_yaml.eac2() # 102724 EAC2.yaml is still draft 
 
-        if ('EAC3' in name): tel = read_yaml.eac3()
+        if ('EAC3' in name): tel = read_yaml.eac3() # 102724 EAC3.yaml is still draft 
         
         # the "tel" dictionary returned by read_yaml is nested, and therefore awkward  
         # when summoning individual entries. And often, we do not need the individual 
@@ -155,6 +155,8 @@ class Telescope(PersistentModel):
             self.total_collecting_area = np.pi * (self.pm['segmentation_parameters']['circumscribing_diameter'][0]/2.*u.m)**2 
         self.effective_aperture = 2. * (self.total_collecting_area / np.pi )**0.5 
 
+        #WARNING!!! as of Oct 2024, the SEI database lists the diff limited wavelength 
+        # as a property of the camera, not the telescope. This is being set here, arbitarily, until that is fixed. 
+        self.diff_limited_wavelength = 0.5 * u.nm 
 
-
-
+        self.unobscured_fraction = (1. - self.pm['segmentation_parameters']['obscuration_ratio'][0]) * u.dimensionless_unscaled
