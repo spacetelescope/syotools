@@ -5,21 +5,9 @@ Created on Tue Oct 18 11:19:05 2016
 @author: gkanarek
 """
 import os
-
-#pathlib not supported in python 2
-try:
-    from pathlib import Path
-    use_pathlib = True
-except ImportError:
-    use_pathlib = False
-
 import astropy.units as u
 import pysynphot as pys
-
-#JT 050323 
-#from specutils.io.read_fits import read_fits_spectrum1d as read_fits
 import specutils as specu
-
 from syotools.defaults import default_spectra
 
 class _spec_library(object):
@@ -32,6 +20,8 @@ class _spec_library(object):
     
     Each spectrum has an id (given by the user for non-default spectra), which
     is used to access the spectrum and its optional description.
+
+    the property _available_spectra is a dictionary with keys for each spectrum 
     
     PLEASE NOTE:
         Accessing a spectrum with object dot notation (using its spec id) will
@@ -39,7 +29,7 @@ class _spec_library(object):
     return the spectrum's description string (if any) instead.
     """
     
-    _available_spectra = {}
+    _available_spectra = {} 
     _descriptions = {}
     
     def __init__(self):

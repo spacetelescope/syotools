@@ -17,9 +17,7 @@ spec_default_path = os.path.join(current_dir, '..', 'data', 'LUMOS_ETC.fits')
 pol_default_path = os.path.join(current_dir, '..', 'data', 'POLLUX_ETC.fits')
 yaml_default_path = os.path.join(current_dir, 'model_defaults.yaml')
 
-#Now we load the defaults from model_defaults.yaml
-#We use LUVOIR prelim values as defaults for the telescope & camera, and
-#LUMOS prelim values as defaults for the spectrograph.
+# Load the defaults from model_defaults.yaml
 #Default exposure parameters are taken from the default HDI_ETC tool values
 #   --> the _sed, _snr, and _magnitude default values are placeholders
 #Default spectrograph parameters are taken from the default LUMOS_ETC tool values

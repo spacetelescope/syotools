@@ -4,10 +4,6 @@ Created on Tue Oct 18 14:10:45 2016
 
 @author: gkanarek
 """
-
-from __future__ import (print_function, division, absolute_import, with_statement,
-                        nested_scopes, generators)
-
 import os
 
 import pysynphot as pys
@@ -20,6 +16,8 @@ try:
     use_pathlib = True
 except ImportError:
     use_pathlib = False
+
+print('pathlib in spec_defaults') 
 
 pysyn_base = os.environ['PYSYN_CDBS']
 data_base = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','data'))

@@ -6,8 +6,6 @@ Created on Tue Nov  7 15:04:24 2017
 @author: gkanarek
 """
 import astropy.units as u
-#from astropy.modeling.functional_models import Box1D
-#import numpy as np
 import pysynphot as pys
 
 #Define a new unit for spectral flux density
@@ -50,23 +48,3 @@ def mag_from_sed(sed, camera):
     
     return output_mag * u.ABmag
 
-    """## OLD VERSION:
-    pivots = pivots.to(wavelength.unit)
-    passes = passes.to(wavelength.unit)
-    n = camera.n_bands
-    bands = Box1D(amplitudes=[1.]*n, x_0=pivots.value, width=passes.value, n_models=n)
-    
-    #Calculate bandpass coefficients at the spectrum's wavelengths
-    band_coeff = bands(np.tile(wavelength.value[None,...], (n,1)))
-    
-    #Convolve with flux and integrate
-    convol = band_coeff * np.tile(sedflux.value[None,...], (n,1))
-    integ = convol.sum(axis=0)
-    
-    #Ensure the proper unit conversions.
-    integ = integ * sedflux.unit * wavelength.unit
-    output = [i.to(u.ABmag, u.spectral_density(p)) for i,p in zip(integ, pivots)]
-    output = np.array([o.value for o in output]) * u.ABmag
-    
-    return output"""
-    
