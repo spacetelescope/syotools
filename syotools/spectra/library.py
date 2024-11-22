@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 """
 Created on Tue Oct 18 11:19:05 2016
-
 @author: gkanarek
 """
 import os
@@ -9,6 +8,7 @@ import astropy.units as u
 import pysynphot as pys
 import specutils as specu
 from syotools.defaults import default_spectra
+from pathlib import Path
 
 class _spec_library(object):
     """
@@ -143,6 +143,7 @@ class _spec_library(object):
             if not isinstance(specid, (list, tuple)):
                 raise TypeError('specid must be a list or tuple when multispec=True')
         
+        use_pathlib = True
         if use_pathlib:
             path = Path(filepath).resolve() # using pathlib
             extensions = path.suffixes

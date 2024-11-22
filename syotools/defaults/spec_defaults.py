@@ -5,33 +5,24 @@ Created on Tue Oct 18 14:10:45 2016
 @author: gkanarek
 """
 import os
-
 import pysynphot as pys
 import astropy.io.ascii as asc
 from syotools.utils import pre_encode
+from pathlib import Path
 
-#pathlib is not supported in python 2
-try:
-    from pathlib import Path
-    use_pathlib = True
-except ImportError:
-    use_pathlib = False
-
-print('pathlib in spec_defaults') 
-
+# path names to find reference files 
 pysyn_base = os.environ['PYSYN_CDBS']
 data_base = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','data'))
 
+# utility for when we need to load a text file  
 def load_txtfile(spec):
     fname = spec['file']
     band = spec.get('band', 'johnson,v')
-    if use_pathlib:
-        path = Path(fname[0])
-        for f in fname[1:]:
-            path = path / f
-        abspath = str(path.resolve())
-    else:
-        abspath = os.path.abspath(os.path.join(*fname))
+    path = Path(fname[0])
+    for f in fname[1:]:
+        path = path / f
+    abspath = str(path.resolve())
+
     tab = asc.read(abspath, names=['wave','flux']) 
     sp = pys.ArraySpectrum(wave=tab['wave'], flux=tab['flux'], waveunits='Angstrom', fluxunits='flam')
     sp = sp.renorm(30., 'abmag', pys.ObsBandpass(band))
@@ -192,7 +183,3 @@ bb.convert('abmag')
 bb.convert('nm') 
 default_spectra['specs']['Blackbody100000'] = pre_encode(bb)
 default_spectra['descs']['Blackbody100000'] = 'Blackbody (100,000K)'
-
-
-
-
