@@ -13,6 +13,8 @@ from pathlib import Path
 # path names to find reference files 
 pysyn_path = os.environ['PYSYN_CDBS']
 data_path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','data'))
+print('spec_defaults pysyn_path: ', pysyn_path)
+print('spec_defaults data_path: ', data_path)
 
 #this is where the spectral library is compiled
 #these dictionary entries specify the template name, filename, band, etc. 
@@ -99,8 +101,9 @@ specs = {'Classical T Tauri': {'desc': 'Classical T-Tauri Star',
         }
 
 #default_spectra is the object that other routines will import to
-# use the library 
+#use the library 
 default_spectra = {'specs':{}, 'descs':{}}
+psyn_spectra_library = {} # this will gradually become the replacement for default_spectra, with the whole thing in pysynphot form 
 
 # now iterate over the dictionary above to load the spectra
 # from text, fits, or fesc format depending on the type of file 
@@ -124,6 +127,7 @@ flatsp.convert('abmag')
 flatsp.convert('nm') 
 default_spectra['specs']['fab'] = pre_encode(flatsp)
 default_spectra['descs']['fab'] = 'Flat (AB)'
+psyn_spectra_library['Flat (AB)'] = flatsp 
 
 flamsp = pys.FlatSpectrum(30.0, fluxunits='flam')
 flamsp = flamsp.renorm(30.0, 'abmag', pys.ObsBandpass('galex,fuv'))
