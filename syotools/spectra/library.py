@@ -7,7 +7,7 @@ import os
 import astropy.units as u
 import pysynphot as pys
 import specutils as specu
-from syotools.defaults import default_spectra
+from syotools.spectra.spec_defaults import default_spectra
 from pathlib import Path
 
 class _spec_library(object):
