@@ -52,7 +52,7 @@ def mag_from_sed(sed, camera):
     return output_mag * u.ABmag
 
 # utility for when we need to load a text file  
-def load_txtfile(spec):
+def load_txtfile(spec, pre_encode_flag=False):
     fname = spec['file']
     band = spec.get('band', 'johnson,v')
     path = Path(fname[0])
@@ -65,10 +65,12 @@ def load_txtfile(spec):
     sp = sp.renorm(30., 'abmag', pys.ObsBandpass(band))
     sp.convert('abmag')
     sp.convert('nm')
-    return pre_encode(sp)
+    if pre_encode_flag: 
+        return pre_encode(sp)
+    return sp 
 
 # utility for when we need to load an fesc data file  
-def load_fesc(spec):
+def load_fesc(spec, pre_encode_flag=False):
     fname = spec['file']
     band = spec.get('band', 'johnson,v')
 
@@ -82,9 +84,11 @@ def load_fesc(spec):
     sp = sp.renorm(30., 'abmag', pys.ObsBandpass(band))
     sp.convert('abmag')
     sp.convert('nm')
+    if pre_encode_flag: return pre_encode(sp)
+    return sp
 
 # utility for when we need to load a pysynphot spectrum  
-def load_pysfits(spec):
+def load_pysfits(spec, pre_encode_flag=False):
     fname = spec['file']
     band = spec.get('band', 'johnson,v')
     path = Path(fname[0])
@@ -95,4 +99,5 @@ def load_pysfits(spec):
     sp = sp.renorm(30., 'abmag', pys.ObsBandpass(band))
     sp.convert('abmag')
     sp.convert('nm')
-    return pre_encode(sp)
+    if pre_encode_flag: return pre_encode(sp)
+    return sp
