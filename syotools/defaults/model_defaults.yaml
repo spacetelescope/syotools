@@ -1,5 +1,5 @@
 Telescope:
-    name: "LUVOIR"
+    name: "HWO"
     aperture: 
         - JsonUnit
         - {value: 10.0, unit: "m"}
@@ -16,7 +16,7 @@ Telescope:
         - JsonUnit
         - {value: 0.87, unit: ""}
 Camera:
-    name: "HDI"
+    name: "HRI"
     pivotwave: 
         - JsonUnit
         - {value: [225., 275., 336., 475., 606., 775., 850., 1260., 1600., 2220.], unit: "nm"}
@@ -61,7 +61,7 @@ Exposure:
     redshift: 0.
     unknown: "snr"
 Spectrograph:
-    name: "LUMOS"
+    name: "UVI"
     modes: ['G120M', 'G150M', 'G180M','G155L', 'G145LL', 'G300M']
     descriptions:
         G120M: "G120M (R = 30,400)" 
@@ -87,7 +87,7 @@ Spectrograph:
         - {value: [0.0], unit: "cm2"}
     mode: "G150M"
 Spectropolarimeter:
-    name: "POLLUX"
+    name: "SPECPOL"
     modes: ['NUV_POL', 'MUV_POL', 'FUV_POL','NUV_SPEC', 'MUV_SPEC', 'FUV_SPEC']
     descriptions:
         NUV_POL: "NUV_POL (R = 130,440)" 
