@@ -18,6 +18,11 @@ print('spec_defaults data_path: ', data_path)
 
 #this is where the spectral library is compiled
 #these dictionary entries specify the template name, filename, band, etc. 
+# then we will create two dictionaries - one containing the JSON-encoded 
+# spectral templates ("default_spectra") and one containing the 
+# pysynphot objects ("pysyn_spectra_library"), eventually the former 
+# will be deprecated when the JSON encoding is removed. 
+
 specs = {'Classical T Tauri': {'desc': 'Classical T-Tauri Star', 
                   'file': [data_path, 'CTTS_etc_d140pc_101116.txt'],
                   'band': 'galex,fuv'},

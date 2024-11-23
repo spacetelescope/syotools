@@ -65,7 +65,7 @@ def load_txtfile(spec, pre_encode_flag=False):
     sp = sp.renorm(30., 'abmag', pys.ObsBandpass(band))
     sp.convert('abmag')
     sp.convert('nm')
-    if pre_encode_flag: 
+    if pre_encode_flag: # will only do pre_encoded if you insist 
         return pre_encode(sp)
     return sp 
 
@@ -84,7 +84,7 @@ def load_fesc(spec, pre_encode_flag=False):
     sp = sp.renorm(30., 'abmag', pys.ObsBandpass(band))
     sp.convert('abmag')
     sp.convert('nm')
-    if pre_encode_flag: return pre_encode(sp)
+    if pre_encode_flag: return pre_encode(sp) # will only do pre_encoded if you insist 
     return sp
 
 # utility for when we need to load a pysynphot spectrum  
@@ -99,5 +99,5 @@ def load_pysfits(spec, pre_encode_flag=False):
     sp = sp.renorm(30., 'abmag', pys.ObsBandpass(band))
     sp.convert('abmag')
     sp.convert('nm')
-    if pre_encode_flag: return pre_encode(sp)
+    if pre_encode_flag: return pre_encode(sp) # will only do pre_encoded if you insist 
     return sp

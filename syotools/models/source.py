@@ -40,6 +40,7 @@ class Source(PersistentModel):
 
         self.sed = S.FlatSpectrum(30, fluxunits='abmag')
 
+    # READY TO ADD IN NON-PRE-ENCODED PYSYN_SPECTRA_LIBRARY HERE - JT 11222024 
 
     def __repr__(self):
         """
