@@ -16,9 +16,7 @@ from syotools.spectra.utils import renorm_sed
 from syotools.models.source import Source
 
 def nice_print(arr):
-    """
-    Utility to make the verbose output more readable.
-    """
+    """ Utility to make the verbose output more readable. """
     
     arr = pre_decode(arr) #in case it's a JsonUnit serialization
 
@@ -70,7 +68,8 @@ class Exposure(PersistentModel):
     
     _default_model = default_exposure
     
-    source = Source() 
+    source = Source() # this is the Source object, returns a flat spectrum by default. 
+                      # currently an Exposure can have only one Source 
 
     telescope = None
     camera = None
@@ -78,7 +77,7 @@ class Exposure(PersistentModel):
     spectropolarimeter = None
     
     exp_id = ''
-    _sed = pre_encode(np.zeros(1, dtype=float) * u.ABmag) #default is set via sed_id
+    _sed = pre_encode(np.zeros(1, dtype=float) * u.ABmag) # default is set via sed_id
     _sed_id = ''
     n_exp = 0
     _exptime = pre_encode(np.zeros(1, dtype=float) * u.s)
@@ -216,9 +215,7 @@ class Exposure(PersistentModel):
         self.source = new_source
 
 class PhotometricExposure(Exposure):
-    """
-    A subclass of the base Exposure model, for photometric ETC calculations.
-    """
+    """ A subclass of the base Exposure model, for photometric ETC calculations """
     
     def calculate(self):
         """
@@ -385,6 +382,10 @@ class PhotometricExposure(Exposure):
         
         return True           # completed successfully
 
+
+
+
+
 class SpectrographicExposure(Exposure):
     """
     A subclass of the base Exposure model, for spectroscopic ETC calculations.
@@ -547,7 +548,6 @@ class SpectrographicExposure(Exposure):
         self._exptime = pre_encode(t_exp)
         
         return True #completed successfully
-
 
 class CoronagraphicExposure(Exposure):
     """
