@@ -15,8 +15,6 @@ import astropy.units as u #for unit conversions
 import numpy as np
 from syotools.sci_eng_interface import read_json 
 
-# would be true with freestanding Sci-Eng-Interface 
-
 class Telescope(PersistentModel):
     """
     The basic telescope class, which provides parameter storage for 

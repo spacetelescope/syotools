@@ -7,6 +7,9 @@ Created on Tue Nov  7 15:04:24 2017
 """
 import astropy.units as u
 import pysynphot as pys
+from pathlib import Path
+import astropy.io.ascii as asc
+from syotools.utils import pre_encode
 
 #Define a new unit for spectral flux density
 flambda = u.def_unit(["flambda","flam"], (u.photon / u.s / u.cm**2 / u.nm))
@@ -48,3 +51,53 @@ def mag_from_sed(sed, camera):
     
     return output_mag * u.ABmag
 
+# utility for when we need to load a text file  
+def load_txtfile(spec, pre_encode_flag=False):
+    fname = spec['file']
+    band = spec.get('band', 'johnson,v')
+    path = Path(fname[0])
+    for f in fname[1:]:
+        path = path / f
+    abspath = str(path.resolve())
+
+    tab = asc.read(abspath, names=['wave','flux']) 
+    sp = pys.ArraySpectrum(wave=tab['wave'], flux=tab['flux'], waveunits='Angstrom', fluxunits='flam')
+    sp = sp.renorm(30., 'abmag', pys.ObsBandpass(band))
+    sp.convert('abmag')
+    sp.convert('nm')
+    if pre_encode_flag: # will only do pre_encoded if you insist 
+        return pre_encode(sp)
+    return sp 
+
+# utility for when we need to load an fesc data file  
+def load_fesc(spec, pre_encode_flag=False):
+    fname = spec['file']
+    band = spec.get('band', 'johnson,v')
+
+    path = Path(fname[0])
+    for f in fname[1:]:
+        path = path / f
+    abspath = str(path.resolve())
+    tab = asc.read(abspath)
+    sp = pys.ArraySpectrum(wave=tab['lam'], flux=tab['lh1=17.5'], 
+                           waveunits='Angstrom', fluxunits='flam')
+    sp = sp.renorm(30., 'abmag', pys.ObsBandpass(band))
+    sp.convert('abmag')
+    sp.convert('nm')
+    if pre_encode_flag: return pre_encode(sp) # will only do pre_encoded if you insist 
+    return sp
+
+# utility for when we need to load a pysynphot spectrum  
+def load_pysfits(spec, pre_encode_flag=False):
+    fname = spec['file']
+    band = spec.get('band', 'johnson,v')
+    path = Path(fname[0])
+    for f in fname[1:]:
+        path = path / f
+    abspath = str(path.resolve())
+    sp = pys.FileSpectrum(abspath)
+    sp = sp.renorm(30., 'abmag', pys.ObsBandpass(band))
+    sp.convert('abmag')
+    sp.convert('nm')
+    if pre_encode_flag: return pre_encode(sp) # will only do pre_encoded if you insist 
+    return sp
