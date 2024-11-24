@@ -29,8 +29,11 @@ class Source(PersistentModel):
         usage: 
             > from syotools.models.source import Source
             > s = Source()
+            > s.set_sed('Flat (AB)', 25., 0., 0.0, 'galex,fuv')   
+            or 
+            > s.set_sed('QSO', 25., 0.0, 0.0, 'galex,fuv')   
 
-            s.sed can then be manipulated with pysynphot syntax like so: 
+            s.sed can also be manipulated with pysynphot syntax like so: 
             > s.sed.renorm(20., 'abmag', S.ObsBandpass('johnson,v'))
         """
    
