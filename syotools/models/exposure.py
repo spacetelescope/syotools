@@ -13,6 +13,7 @@ from syotools.defaults import default_exposure
 from syotools.utils import pre_encode, pre_decode
 from syotools.spectra import SpectralLibrary
 from syotools.spectra.utils import renorm_sed
+from syotools.models.source import Source
 
 def nice_print(arr):
     """
@@ -62,12 +63,15 @@ class Exposure(PersistentModel):
         unknown      - a flag to indicate which variable should be calculated
                        ('snr', 'exptime', or 'magnitude'). this should generally 
                        be set by the tool, and not be available to users. (string)
+        sources      - list of source objects to be added to this exposure 
         
         _default_model - used by PersistentModel
     """
     
     _default_model = default_exposure
     
+    source = Source() 
+
     telescope = None
     camera = None
     spectrograph = None
@@ -81,7 +85,7 @@ class Exposure(PersistentModel):
     _snr = pre_encode(np.zeros(1, dtype=float) * u.dimensionless_unscaled)
     _snr_goal = pre_encode(np.zeros(1, dtype=float) * u.dimensionless_unscaled)
     _magnitude = pre_encode(np.zeros(1, dtype=float) * u.ABmag)
-    _unknown = '' #one of 'snr', 'magnitude', 'exptime'
+    _unknown = '' # one of 'snr', 'magnitude', 'exptime'
     
     verbose = False #set this for debugging purposes only
     _disable = False #set this to disable recalculating (when updating several attributes at the same time)
@@ -207,7 +211,10 @@ class Exposure(PersistentModel):
         """
         
         raise NotImplementedError
-        
+    
+    def add_source(self, new_source):
+        self.source = new_source
+
 class PhotometricExposure(Exposure):
     """
     A subclass of the base Exposure model, for photometric ETC calculations.
@@ -572,7 +579,6 @@ class CoronagraphicExposure(Exposure):
         print('doesnt exist yet pull it from camera class') 
         
         return False #completed successfully
-        
 
     def _update_magnitude(self):
         """
@@ -598,4 +604,3 @@ class CoronagraphicExposure(Exposure):
         self._snr = pre_encode(10.)
         
         return True #completed successfully
-

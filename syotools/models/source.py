@@ -9,6 +9,7 @@ import astropy.units as u
 from syotools.models.base import PersistentModel
 from syotools.spectra import SpectralLibrary
 from syotools.spectra.utils import renorm_sed
+from syotools.spectra.spec_defaults import default_spectra, pysyn_spectra_library 
 import pysynphot as S 
 
 class Source(PersistentModel):
@@ -33,21 +34,42 @@ class Source(PersistentModel):
             > s.sed.renorm(20., 'abmag', S.ObsBandpass('johnson,v'))
         """
    
-        self.name = 'fab' 
+        self.name = 'Flat (AB)' 
         self.magnitude = 30. 
         self.redshift = 0. 
         self.extinction = 0.  
+        self.renorm_band = 'johnson,v'
 
-        self.sed = S.FlatSpectrum(30, fluxunits='abmag')
+        #set default here 
+        #self.sed = S.FlatSpectrum(30, fluxunits='abmag')
+        self.sed = self.set_sed(self.name, self.magnitude, self.redshift, self.extinction, self.renorm_band)
 
-    # READY TO ADD IN NON-PRE-ENCODED PYSYN_SPECTRA_LIBRARY HERE - JT 11222024 
+
+    def set_sed(self, source_name, magnitude, redshift, extinction, band):   
+        self.name = source_name  
+        self.sed = pysyn_spectra_library[source_name]
+        self.magnitude = magnitude
+        self.redshift = redshift
+        self.extinction = extinction
+        self.renorm_band = band 
+
+        new_sed = pysyn_spectra_library[source_name]
+        
+        #now apply the other quantities via pysynphot 
+        sp_red = new_sed.redshift(redshift)
+        sp_ext = sp_red * S.Extinction(extinction, 'mwavg')
+        sp_norm = sp_ext.renorm(magnitude, 'abmag', S.ObsBandpass(band))  
+        sp_norm.convert('abmag')
+
+        self.sed = sp_norm
 
     def __repr__(self):
         """
         Provide a string representation of the Source object.
         """
         return (f"Source(name={self.name!r}, magnitude={self.magnitude}, "
-                f"redshift={self.redshift}, extinction={self.extinction})")
+                f"redshift={self.redshift}, extinction={self.extinction}, "
+                f"redshift={self.renorm_band}) ")
 
 
 

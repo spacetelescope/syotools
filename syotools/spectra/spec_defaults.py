@@ -13,8 +13,6 @@ from pathlib import Path
 # path names to find reference files 
 pysyn_path = os.environ['PYSYN_CDBS']
 data_path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','reference_data'))
-print('spec_defaults pysyn_path: ', pysyn_path)
-print('spec_defaults data_path: ', data_path)
 
 #this is where the spectral library is compiled
 #these dictionary entries specify the template name, filename, band, etc. 
