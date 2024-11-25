@@ -4,10 +4,6 @@ Created on Fri Oct 14 21:31:18 2016
 
 @author: gkanarek, tumlinson
 """
-
-from __future__ import (print_function, division, absolute_import, with_statement,
-                        nested_scopes, generators)
-
 import numpy as np
 import astropy.constants as const
 import astropy.units as u
@@ -263,6 +259,13 @@ class Camera(PersistentModel):
         Interpolate an SED to obtain magnitudes for the camera's wavebands.
         """
         return mag_from_sed(sed, self)
+    
+    def interpolate_source_at_bands(self, source):
+        """
+        Interpolate an SED to obtain magnitudes for the camera's wavebands.
+        """
+        print("source inside interpolate_source_at_bands",)
+        return mag_from_source(self, source)
     
     def create_exposure(self):
         new_exposure = PhotometricExposure()

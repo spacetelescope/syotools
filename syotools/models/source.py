@@ -72,8 +72,4 @@ class Source(PersistentModel):
         """
         return (f"Source(name={self.name!r}, magnitude={self.magnitude}, "
                 f"redshift={self.redshift}, extinction={self.extinction}, "
-                f"redshift={self.renorm_band}) ")
-
-
-
-
+                f"renorm band={self.renorm_band}) ")
