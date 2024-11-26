@@ -6,7 +6,8 @@ Created on Sat Oct 15 10:59:16 2016
 """
 import os 
 from collections import OrderedDict
-from syotools.utils import ordered_load
+from syotools.utils import ordered_load 
+import astropy.units as u 
 
 cwd = os.getenv('LUVOIR_SIMTOOLS_DIR')
 
@@ -33,3 +34,6 @@ default_spectrograph.update(all_defaults['Spectrograph'])
 default_spectropolarimeter = OrderedDict([("_lumos_default_file", pol_default_path)])
 default_spectropolarimeter.update(all_defaults['Spectropolarimeter'])
 default_coronagraph = all_defaults['Coronagraph'] #placeholder
+
+
+
