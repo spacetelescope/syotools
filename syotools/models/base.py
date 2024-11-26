@@ -136,8 +136,9 @@ class PersistentModel(object):
         
         for arg in args:
             attr = reduce(getattr, [self] + arg.split('.')) #for nested dot access
-            out.append(pre_decode(attr))
-        
+            #out.append(pre_decode(attr))
+            out.append((attr)) #<<- pre-decode omitted by JT Nov 24 - will this work? 
+
         if len(out) == 1:
             return out[0]
         return out

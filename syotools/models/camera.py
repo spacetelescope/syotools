@@ -9,9 +9,9 @@ import astropy.constants as const
 import astropy.units as u
 
 from syotools.models.base import PersistentModel
-from syotools.models.exposure import PhotometricExposure
+from syotools.models.source_exposure import SourcePhotometricExposure
 from syotools.defaults import default_camera
-from syotools.utils import pre_encode, pre_decode
+#from syotools.utils import pre_encode, pre_decode
 from syotools.spectra.utils import mag_from_sed
 
 def nice_print(arr):
@@ -19,8 +19,6 @@ def nice_print(arr):
     Utility to make the verbose output more readable.
     """
     
-    arr = pre_decode(arr) #in case it's a JsonUnit serialization
-
     if isinstance(arr, u.Quantity):
         l = ['{:.2f}'.format(i) for i in arr.value]
     else:
@@ -63,16 +61,16 @@ class Camera(PersistentModel):
     exposures = []
     
     name = ''
-    pivotwave = pre_encode(np.zeros(1, dtype=float) * u.nm)
+    pivotwave = np.zeros(1, dtype=float) * u.nm 
     bandnames = ['']
     channels = [([],0)]
-    fiducials = pre_encode(np.zeros(1, dtype=float) * u.nm)
-    total_qe = pre_encode(np.zeros(1, dtype=float) * u.dimensionless_unscaled)
-    ap_corr = pre_encode(np.zeros(1, dtype=float) * u.dimensionless_unscaled)
-    bandpass_r = pre_encode(np.zeros(1, dtype=float) * u.dimensionless_unscaled)
-    dark_current = pre_encode(np.zeros(1, dtype=float) * (u.electron / u.s / u.pixel))
-    detector_rn = pre_encode(np.zeros(1, dtype=float) * (u.electron / u.pixel)**0.5)
-    sky_sigma = pre_encode(np.zeros(1, dtype=float) * u.dimensionless_unscaled)
+    fiducials = np.zeros(1, dtype=float) * u.nm 
+    total_qe = np.zeros(1, dtype=float) * u.dimensionless_unscaled 
+    ap_corr = np.zeros(1, dtype=float) * u.dimensionless_unscaled 
+    bandpass_r = np.zeros(1, dtype=float) * u.dimensionless_unscaled 
+    dark_current = np.zeros(1, dtype=float) * (u.electron / u.s / u.pixel) 
+    detector_rn = np.zeros(1, dtype=float) * (u.electron / u.pixel)**0.5 
+    sky_sigma = np.zeros(1, dtype=float) * u.dimensionless_unscaled 
     
     @property
     def pixel_size(self):
@@ -89,11 +87,10 @@ class Camera(PersistentModel):
         fiducials, aperture = self.recover('fiducials', 'telescope.aperture')
         
         for ref, bands in enumerate(self.channels):
-            pxs = (0.5 * fiducials[ref] * u.rad / aperture).to(u.arcsec).value
+            pxs = (0.5 * fiducials[0][ref] * u.Unit(fiducials[1])* u.rad / aperture).to(u.arcsec).value
             pixsize[bands] = pxs
-        
-        #serialize with JsonUnit for transportation purposes.
-        return pre_encode(pixsize * u.arcsec / u.pix)
+            
+        return pixsize * u.arcsec / u.pix
     
     @property
     def n_bands(self):
@@ -112,18 +109,17 @@ class Camera(PersistentModel):
         #Convert to Quantity for calculations.
         pivotwave, bandpass_r = self.recover('pivotwave','bandpass_r')
         
-        #serialize with JsonUnit for transportation.
-        return pre_encode(pivotwave / bandpass_r)
+        return np.array(pivotwave[0]) / np.array(bandpass_r[0]) 
     
     @property
     def ab_zeropoint(self):
         """
         AB-magnitude zero points as per Marc Postman's equation.
         """
-        pivotwave = self.recover('pivotwave').to(u.nm)
+        pivotwave = self.pivotwave[0] * u.nm
         abzp = 5509900. * (u.photon / u.s / u.cm**2) / pivotwave
         
-        return pre_encode(abzp)
+        return abzp 
         
     
     @property
@@ -137,19 +133,19 @@ class Camera(PersistentModel):
                                              'telescope.diff_limit_fwhm')
         
         #fwhm = (1.22 * u.rad * pivotwave / aperture).to(u.arcsec)
-        fwhm = (1.03 * u.rad * pivotwave / aperture).to(u.arcsec)
+        pivots = pivotwave[0] * u.Unit(pivotwave[1]) 
+        fwhm = (1.03 * u.rad * pivots / aperture).to(u.arcsec)
         
         #only use these values where the wavelength is greater than the diffraction limit
-        fwhm = np.where(pivotwave > diff_limit, fwhm, diff_fwhm) * u.arcsec
+        fwhm = np.where(pivots.value > diff_limit[0], fwhm.value, diff_fwhm.value) * u.arcsec
         
-        #serialize with JsonUnit for transportation.
-        return pre_encode(fwhm)
+        return fwhm
     
     def _print_initcon(self, verbose):
         if verbose: #These are our initial conditions
-            print('Telescope diffraction limit: {}'.format(pre_decode(self.telescope.diff_limit_wavelength)))
-            print('Telescope aperture: {}'.format(pre_decode(self.telescope.aperture)))
-            print('Telescope temperature: {}'.format(pre_decode(self.telescope.temperature)))
+            print('Telescope diffraction limit: {}'.format(self.telescope.diff_limit_wavelength))
+            print('Telescope aperture: {}'.format(self.telescope.aperture))
+            print('Telescope temperature: {}'.format(self.telescope.temperature))
             print('Pivot waves: {}'.format(nice_print(self.pivotwave)))
             print('Pixel sizes: {}'.format(nice_print(self.pixel_size)))
             print('AB mag zero points: {}'.format(nice_print(self.ab_zeropoint)))
@@ -170,13 +166,13 @@ class Camera(PersistentModel):
                 'pixel_size', 'fwhm_psf', 'sky_sigma')
         
         D = D.to(u.cm)
-        m = 10.**(-0.4 * Sigma) / u.arcsec**2
+        m = 10.**(-0.4 * np.array(Sigma[0])) / u.arcsec**2
         Npix = self._sn_box(False)
         
         if verbose:
-            print('Sky brightness: {}'.format(nice_print(Sigma)))
+            print('Sky brightness: {}'.format(nice_print(Sigma[0])))
         
-        fsky = f0 * np.pi / 4. * D**2 * dlam * m * (Phi**2 * Npix) * u.pix
+        fsky = f0 * np.pi / 4. * D**2 * (dlam*u.nm) * m * (Phi**2 * Npix) * u.pix
         
         return fsky
     
@@ -192,7 +188,7 @@ class Camera(PersistentModel):
             print('PSF width: {}'.format(nice_print(fwhm_psf)))
             print('SN box width: {}'.format(nice_print(sn_box)))
         
-        return sn_box**2 / u.arcsec / u.arcsec / u.pix #don't want pix**2 units
+        return sn_box**2 / u.pix #don't want pix**2 units
     
     def c_thermal(self, verbose=True):
         """
@@ -207,19 +203,20 @@ class Camera(PersistentModel):
         
         box = self._sn_box(verbose)
         
-        bandwidth = bandpass.to(u.cm)
+        bandwidth = (bandpass * u.nm).to(u.cm)
     
         h = const.h.to(u.erg * u.s) # Planck's constant erg s 
         c = const.c.to(u.cm / u.s) # speed of light [cm / s] 
-    
-        energy_per_photon = h * c / pivotwave.to(u.cm) / u.ph
+       
+        pivots = pivotwave[0] * u.Unit(pivotwave[1])
+        energy_per_photon = h * c / pivots.to(u.cm) / u.ph
     
         D = aperture.to(u.cm) # telescope diameter in cm 
         
         Omega = (pixel_size**2 * box * u.pix).to(u.sr)
-        
-        planck = pre_decode(self.planck)
-        qepephot = total_qe * planck / energy_per_photon
+
+        planck = self.planck
+        qepephot = total_qe[0] * planck / energy_per_photon
         
         if verbose:
             print('Planck spectrum: {}'.format(nice_print(planck)))
@@ -227,11 +224,10 @@ class Camera(PersistentModel):
             print('E_phot: {}'.format(nice_print(energy_per_photon)))
             print('Omega: {}'.format(nice_print(Omega)))
     
-        thermal = (ota_emissivity * planck / energy_per_photon * 
-    			(np.pi / 4. * D**2) * total_qe * Omega * bandwidth )
+        thermal = (ota_emissivity[0] * planck / energy_per_photon * 
+    			(np.pi / 4. * D**2) * total_qe[0] * Omega * bandwidth )
         
-        #serialize with JsonUnit for transportation
-        return pre_encode(thermal) 
+        return thermal 
     
     @property
     def planck(self):
@@ -241,7 +237,8 @@ class Camera(PersistentModel):
         #Convert to Quantities for calculation
         pivotwave, temperature = self.recover('pivotwave', 'telescope.temperature')
         
-        wave = pivotwave.to('cm')
+        pivots = pivotwave[0] * u.Unit(pivotwave[1])  
+        wave = pivots.to('cm')
         temp = temperature.to('K')
         h = const.h.to(u.erg * u.s) # Planck's constant erg s 
         c = const.c.to(u.cm / u.s) # speed of light [cm / s] 
@@ -251,8 +248,7 @@ class Camera(PersistentModel):
     
         result = (x / (np.exp(exponent)-1.)).to(u.erg / u.s / u.cm**3) / u.sr
         
-        #serialize with JsonUnit for transportation
-        return pre_encode(result)
+        return result
     
     def interpolate_at_bands(self, sed):
         """
@@ -268,7 +264,7 @@ class Camera(PersistentModel):
         return mag_from_source(self, source)
     
     def create_exposure(self):
-        new_exposure = PhotometricExposure()
+        new_exposure = SourcePhotometricExposure()
         self.add_exposure(new_exposure)
         return new_exposure
         
@@ -277,4 +273,3 @@ class Camera(PersistentModel):
         exposure.camera = self
         exposure.telescope = self.telescope
         exposure.calculate()
-            

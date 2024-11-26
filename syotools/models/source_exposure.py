@@ -11,8 +11,6 @@ import astropy.constants as const
 from syotools.models.base import PersistentModel
 from syotools.defaults import default_exposure
 from syotools.utils import pre_decode
-from syotools.spectra import SpectralLibrary
-#from syotools.spectra.utils import renorm_sed
 from syotools.models.source import Source
 
 def nice_print(arr):
@@ -20,9 +18,11 @@ def nice_print(arr):
     
     if isinstance(arr, u.Quantity):
         l = ['{:.2f}'.format(i) for i in arr.value]
+        unit = str(arr.unit) 
     else:
         l = ['{:.2f}'.format(i) for i in arr]
-    return ', '.join(l)
+        unit = ''
+    return ', '.join(l) + '  ' + unit 
 
 class SourceExposure(PersistentModel):
     """
@@ -72,7 +72,7 @@ class SourceExposure(PersistentModel):
     
     exp_id = ''
     n_exp = 0
-    _exptime = np.zeros(1, dtype=float) * u.s
+    _exptime = np.zeros(1, dtype=float) * u.h 
     _snr = np.zeros(1, dtype=float) * u.dimensionless_unscaled
     _snr_goal = np.zeros(1, dtype=float) * u.dimensionless_unscaled
     _magnitude = np.zeros(1, dtype=float) * u.ABmag
@@ -108,7 +108,8 @@ class SourceExposure(PersistentModel):
         q = quant
         if len(q) < 2:
             import pdb; pdb.set_trace()
-        val = q[1]['value']
+        #val = q[1]['value']
+        val = q # not sure about this. - it should be stripping out the JSON but leaving the intent intact. 
         if not isinstance(val, list):
             if self.camera is None:
                 nb = 1
@@ -156,11 +157,9 @@ class SourceExposure(PersistentModel):
         """
         The exposure's new Source SED interpolated at the camera bandpasses.
         """
-        pivotwaves = self.camera.pivotwave
-        self.source.sed.convert(self.camera.pivotwave[1]['unit']) # <---temporariily convert the sed into the units of the pivotwaves 
-                                                                  # and the camera object still does JSON hence the subscripting here 
+        self.source.sed.convert(self.camera.pivotwave[1]) # <---temporarily convert the sed into the units of the pivotwaves 
         output_mags = [] # <--- create blank list of mags
-        for mag in self.camera.pivotwave[1]['value']: 
+        for mag in self.camera.pivotwave[0]: 
             this_mag = self.source.sed.sample(mag) 
             output_mags.append(this_mag) 
         return np.array(output_mags)
@@ -211,7 +210,7 @@ class SourcePhotometricExposure(SourceExposure):
         return status
     
     @property
-    def _fstar(self):
+    def _fsource(self):
         """
         Calculate the stellar flux as per Eq 2 in the SNR equation paper.
         """
@@ -223,10 +222,10 @@ class SourcePhotometricExposure(SourceExposure):
         
         m = 10.**(-0.4*(mag))
         D = D.to(u.cm)
-        
-        fstar = f0 * c_ap * np.pi / 4. * D**2 * dlam * m
 
-        return fstar
+        fsource = f0 * c_ap[0] * np.pi / 4. * D**2 * (dlam * u.nm) * m
+
+        return fsource
     
     def _update_exptime(self):
         """
@@ -245,7 +244,7 @@ class SourcePhotometricExposure(SourceExposure):
                 'camera.detector_rn', 'camera.dark_current')
         
         snr2 = -(_snr**2)
-        fstar = self._fstar
+        fstar = self._fsource
         fsky = self.camera._fsky(verbose=self.verbose)
         Npix = self.camera._sn_box(self.verbose)
         thermal = self.camera.c_thermal(verbose=self.verbose)
@@ -305,42 +304,45 @@ class SourcePhotometricExposure(SourceExposure):
         """
         
         self.camera._print_initcon(self.verbose)
-        
-        #We no longer need to check the inputs, since they are now tracked
-        #attributes instead.
             
-        #Convert JsonUnits to Quantities for calculations
+        #Convert JsonUnits to Quantities for calculations    
         (_exptime, _nexp, n_bands) = self.recover('_exptime', 'n_exp',
                                                   'camera.n_bands')
+
         (_total_qe, _detector_rn, _dark_current) = self.recover('camera.total_qe',
                              'camera.detector_rn', 'camera.dark_current')
         
         #calculate everything
         number_of_exposures = np.full(n_bands, _nexp)
-        desired_exp_time = (np.full(n_bands, _exptime.value) * _exptime.unit).to(u.second)
+        desired_exp_time = (np.full(n_bands, _exptime[0]) * u.Unit(_exptime[1])).to(u.second)
         time_per_exposure = desired_exp_time / number_of_exposures
         
-        fstar = self._fstar
-        signal_counts = _total_qe * fstar * desired_exp_time
+        fsource = self._fsource
+        signal_counts = _total_qe[0] * fsource * desired_exp_time
         
         fsky = self.camera._fsky(verbose=self.verbose)
-        sky_counts = _total_qe * fsky * desired_exp_time
+        sky_counts = _total_qe[0] * fsky * desired_exp_time
         
         shot_noise_in_signal = np.sqrt(signal_counts)
         shot_noise_in_sky = np.sqrt(sky_counts)
         
-        sn_box = self.camera._sn_box(self.verbose)
+        sn_box = self.camera._sn_box(self.verbose) #<-- units should be "pix"
+
+        rn = _detector_rn[0] * u.Unit(_detector_rn[1])
+        read_noise = np.array(rn)**2 * np.array(sn_box) * number_of_exposures * u.ph 
         
-        read_noise = _detector_rn**2 * sn_box * number_of_exposures
-        dark_noise = sn_box * _dark_current * desired_exp_time
+        dark_rate = _dark_current[0] * u.Unit(_dark_current[1])
+        dark_noise = sn_box * dark_rate * desired_exp_time / u.electron * u.ph 
 
         thermal = self.camera.c_thermal(verbose=self.verbose)
         
-        thermal_counts = desired_exp_time * pre_decode(thermal) #<--- pre_decode is still needed here since "thermal" comes from the Camera object 
+        thermal_counts = desired_exp_time * thermal 
+    
         snr = signal_counts / np.sqrt(signal_counts + sky_counts + read_noise
                                       + dark_noise + thermal_counts)
-        
-        if self.verbose:
+        self._snr = snr
+
+        if True:
             print('# of exposures: {}'.format(_nexp))
             print('Time per exposure: {}'.format(time_per_exposure[0]))
             print('Signal counts: {}'.format(nice_print(signal_counts)))
@@ -352,11 +354,10 @@ class SourcePhotometricExposure(SourceExposure):
             print('Thermal counts: {}'.format(nice_print(thermal_counts)))
             print()
             print('SNR: {}'.format(snr))
+            print() 
             print('Max SNR: {} in {} band'.format(snr.max(), self.camera.bandnames[snr.argmax()]))
         
-        self._snr = snr
-        
-        return True           # completed successfully
+        return True           
 
 
 class SourceSpectrographicExposure(SourceExposure):
@@ -407,8 +408,6 @@ class SourceSpectrographicExposure(SourceExposure):
             funit = u.Unit(sed.fluxunits.name)
         wave = _wave.to(u.AA)
         swave = (sed.wave * u.Unit(sed.waveunits.name)).to(u.AA)
-
-        #print('_update_snr bef: ', bef)
 
         sflux = (sed.flux * funit).to(u.erg / u.s / u.cm**2 / u.AA, equivalencies=u.spectral_density(swave))
         wave = wave.to(swave.unit)

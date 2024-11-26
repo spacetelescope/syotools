@@ -10,14 +10,10 @@ YAML I/O with OrderedDict to preserve element orders.
 Note that this functionality is particularly important for the Exposure 
 model, where we want to load _sed_id after _sed so that the default is 
 loaded from pysynphot and not overwritten by the placeholder.
-"""
-
-from __future__ import (print_function, division, absolute_import, with_statement,
-                        nested_scopes, generators)
+""" 
 
 import yaml
 from collections import OrderedDict
-
 
 #Loading and dumping functions to make use of OrderedDicts
 def _construct_mapping(loader, node):

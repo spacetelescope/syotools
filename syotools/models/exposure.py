@@ -116,7 +116,8 @@ class Exposure(PersistentModel):
         q = pre_encode(quant)
         if len(q) < 2:
             import pdb; pdb.set_trace()
-        val = q[1]['value']
+        #val = q[1]['value'] #<--- this was q[1]['value'] for old JSON format of properties. 
+        val = q[0]          # this is valid for the new format of model_defaults that drops JSON 
         if not isinstance(val, list):
             if self.camera is None:
                 nb = 1
@@ -341,7 +342,8 @@ class PhotometricExposure(Exposure):
         
         #calculate everything
         number_of_exposures = np.full(n_bands, _nexp)
-        desired_exp_time = (np.full(n_bands, _exptime.value) * _exptime.unit).to(u.second)
+        print('here we are in exposure: ', _exptime)
+        desired_exp_time = (np.full(n_bands, _exptime[0]) * u.Unit(_exptime[1])).to(u.second)
         time_per_exposure = desired_exp_time / number_of_exposures
         
         fstar = self._fstar
@@ -358,7 +360,7 @@ class PhotometricExposure(Exposure):
         read_noise = _detector_rn**2 * sn_box * number_of_exposures
         dark_noise = sn_box * _dark_current * desired_exp_time
 
-        thermal = pre_decode(self.camera.c_thermal(verbose=self.verbose))
+        thermal = self.camera.c_thermal(verbose=self.verbose) 
         
         thermal_counts = desired_exp_time * thermal
         snr = signal_counts / np.sqrt(signal_counts + sky_counts + read_noise

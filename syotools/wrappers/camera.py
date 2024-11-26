@@ -33,10 +33,8 @@ def camera_snr(telescope, template, mag, exptime, silent=False):
 
     
     from syotools.models import Telescope, Camera
-    from syotools.utils.jsonunit import str_jsunit
     from syotools.spectra import SpectralLibrary
     import astropy.units as u
-    import numpy as np 
 
     # create the basic objects 
     hri, tel = Camera(), Telescope() 
@@ -103,7 +101,6 @@ def camera_exptime(telescope, template, mag, snr_goal, silent=False):
     from syotools.utils.jsonunit import str_jsunit
     from syotools.spectra import SpectralLibrary
     import astropy.units as u
-    import numpy as np
 
     # create the basic objects 
     hri, tel = Camera(), Telescope()

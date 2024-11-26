@@ -7,9 +7,7 @@ import numpy as np
 import astropy.units as u
 
 from syotools.models.base import PersistentModel
-from syotools.spectra import SpectralLibrary
-from syotools.spectra.utils import renorm_sed
-from syotools.spectra.spec_defaults import default_spectra, pysyn_spectra_library 
+from syotools.spectra.spec_defaults import pysyn_spectra_library 
 import pysynphot as S 
 
 class Source(PersistentModel):
@@ -65,6 +63,9 @@ class Source(PersistentModel):
         sp_norm.convert('abmag')
 
         self.sed = sp_norm
+
+    def list_templates(self): 
+        print(pysyn_spectra_library.keys()) 
 
     def __repr__(self):
         """
