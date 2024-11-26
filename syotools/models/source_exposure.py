@@ -232,13 +232,8 @@ class SourcePhotometricExposure(SourceExposure):
         Calculate the exposure time to achieve the desired S/N for the 
         given SED.
         """
-        
         self.camera._print_initcon(self.verbose)
         
-        #We no longer need to check the inputs, since they are now tracked
-        #attributes instead.
-
-        #Convert JsonUnits to Quantities for calculations
         (_snr, _nexp) = self.recover('snr', 'n_exp')
         (_total_qe, _detector_rn, _dark_current) = self.recover('camera.total_qe', 
                 'camera.detector_rn', 'camera.dark_current')
@@ -248,55 +243,61 @@ class SourcePhotometricExposure(SourceExposure):
         fsky = self.camera._fsky(verbose=self.verbose)
         Npix = self.camera._sn_box(self.verbose)
         thermal = self.camera.c_thermal(verbose=self.verbose)
-        
-        a = (_total_qe * fstar)**2
-        b = snr2 * (_total_qe * (fstar + fsky) + thermal + _dark_current * Npix)
-        c = snr2 * _detector_rn**2 * Npix * _nexp
+
+        dark_rate = _dark_current[0] * u.Unit(_dark_current[1]) #<<-'electron / (pix s)'
+    
+        rn = _detector_rn[0] * u.Unit(_detector_rn[1])
+
+        QE = _total_qe[0] * u.Unit(_total_qe[1]) 
+        a = (QE * fstar)**2
+        b = snr2 * (QE * (fstar + fsky) + thermal + dark_rate * Npix)
+        c = snr2 * rn**2 * Npix * _nexp
         
         texp = ((-b + np.sqrt(b**2 - 4*a*c)) / (2*a)).to(u.s)
         
         self._exptime = texp
         
-        return True #completed successfully
+        return True 
         
     def _update_magnitude(self):
         """
         Calculate the limiting magnitude given the desired S/N and exposure
         time.
         """
-        
         self.camera._print_initcon(self.verbose)
-        
-        #We no longer need to check the inputs, since they are now tracked
-        #attributes instead.
             
-        #Grab values for calculation
         (_snr, _exptime, _nexp) = self.recover('snr', 'exptime', 'n_exp')
         (f0, c_ap, D, dlam) = self.recover('camera.ab_zeropoint', 
                                            'camera.ap_corr', 
                                            'telescope.effective_aperture', 
                                            'camera.derived_bandpass')
-        (QE, RN, DC) = self.recover('camera.total_qe', 
+        (_total_qe, _detector_rn, _dark_current) = self.recover('camera.total_qe', 
                                     'camera.detector_rn', 
                                     'camera.dark_current')
         
         exptime = _exptime.to(u.s)
+        
         D = D.to(u.cm)
         fsky = self.camera._fsky(verbose=self.verbose)
+
         Npix = self.camera._sn_box(self.verbose)
         c_t = self.camera.c_thermal(verbose=self.verbose) 
-        
+
+        QE = _total_qe[0] * u.Unit(_total_qe[1]) 
+        rn = _detector_rn[0] * u.Unit(_detector_rn[1])
+        dark_rate = _dark_current[0] * u.Unit(_dark_current[1]) #<<-'electron / (pix s)'
+
         snr2 = -(_snr ** 2)
+
         a0 = (QE * exptime)**2
         b0 = snr2 * QE * exptime
-        c0 = snr2 * ((QE * fsky + c_t + Npix * DC) * exptime + (RN**2 * Npix * _nexp))
+        c0 = snr2 * ((QE * fsky + c_t + Npix * dark_rate) * exptime + (rn**2 * Npix * _nexp))
         k = (-b0 + np.sqrt(b0**2 - 4. * a0 * c0)) / (2. * a0)
+        flux = (4. * k) / (f0 * c_ap[0] * np.pi * D**2 * (dlam*u.nm))
         
-        flux = (4. * k) / (f0 * c_ap * np.pi * D**2 * dlam)
+        self._magnitude = -2.5 * np.log10(np.array(flux)) * u.mag('AB')
         
-        self._magnitude = -2.5 * np.log10(flux.value) * u.mag('AB')
-        
-        return True #completed successfully
+        return True 
     
     def _update_snr(self):
         """
@@ -318,7 +319,7 @@ class SourcePhotometricExposure(SourceExposure):
         
         QE = _total_qe[0] * u.Unit(_total_qe[1]) 
 
-        signal_counts = QE *  self._fsource * desired_exp_time
+        signal_counts = QE * self._fsource * desired_exp_time
         shot_noise_in_signal = np.sqrt(signal_counts)       
         print('signal ', signal_counts)  
         
