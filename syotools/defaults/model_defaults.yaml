@@ -66,20 +66,20 @@ Spectrograph:
         G145LL: "G145LL (R = 500)"
         G300M: "G300M (R = 28,000)"
     bef:
-        - JsonUnit
-        - {value: [0.0], unit: "cm-2 erg Angstrom-1 s-1"}
+        - 0.0 
+        - 'cm-2 erg Angstrom-1 s-1' 
     R:
-        - JsonUnit
-        - {value: 0.0, unit: "pix"}
+        - 10.0
+        - 'pix'
     wrange:
-        - JsonUnit
-        - {value: [0.0, 1.0], unit: "Angstrom"}
+        - [100.0, 10000.0]
+        - 'Angstrom'
     wave:
-        - JsonUnit
-        - {value: [0.0], unit: "Angstrom"}
+        - 0.0
+        - 'Angstrom'
     aeff:
-        - JsonUnit
-        - {value: [0.0], unit: "cm2"}
+        - 0.0
+        - 'cm2'
     mode: "G150M"
 Spectropolarimeter:
     name: "SPECPOL"
@@ -92,20 +92,19 @@ Spectropolarimeter:
         MUV_SPEC: "MUV_SPEC (R = 137,209)"
         FUV_SPEC: "FUV_SPEC (R = 127,149)"
     bef:
-        - JsonUnit
-        - {value: [0.0], unit: "cm-2 erg Angstrom-1 s-1"}
+        - 0.0 
+        - 'cm-2 erg Angstrom-1 s-1' 
     R:
-        - JsonUnit
-        - {value: 0.0, unit: "pix"}
+        - 10.0
+        - 'pix'
     wrange:
-        - JsonUnit
-        - {value: [0.0, 1.0], unit: "Angstrom"}
+        - [100.0, 10000.0]
+        - 'Angstrom'
     wave:
-        - JsonUnit
-        - {value: [0.0], unit: "Angstrom"}
+        - 0.0
+        - 'Angstrom'
     aeff:
-        - JsonUnit
-        - {value: [0.0], unit: "cm2"}
+        - 0.0
+        - 'cm2'
     mode: "NUV_POL"
 Coronagraph: {}
-    
