@@ -261,7 +261,6 @@ class Camera(PersistentModel):
         """
         Interpolate an SED to obtain magnitudes for the camera's wavebands.
         """
-        print("source inside interpolate_source_at_bands",)
         return mag_from_source(self, source)
     
     def create_exposure(self):

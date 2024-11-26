@@ -189,8 +189,6 @@ class SourceExposure(PersistentModel):
     def add_source(self, new_source):
         self.source = new_source
 
-
-
 class SourcePhotometricExposure(SourceExposure):
     """ A subclass of the base Exposure model, for photometric ETC calculations """
     
@@ -321,24 +319,19 @@ class SourcePhotometricExposure(SourceExposure):
 
         signal_counts = QE * self._fsource * desired_exp_time
         shot_noise_in_signal = np.sqrt(signal_counts)       
-        print('signal ', signal_counts)  
         
         sky_counts = QE * self.camera._fsky(verbose=self.verbose) * desired_exp_time
         shot_noise_in_sky = np.sqrt(sky_counts)
-        print('sky ', sky_counts)  
 
         sn_box = self.camera._sn_box(self.verbose) #<-- units should be "pix"
 
         rn = _detector_rn[0] * u.Unit(_detector_rn[1])
         read_counts = rn**2 * sn_box * number_of_exposures
-        print('read ', rn**2, sn_box, read_counts)  
         
         dark_rate = _dark_current[0] * u.Unit(_dark_current[1])
         dark_counts = sn_box * dark_rate * desired_exp_time 
-        print('dark ', dark_counts)  
         
         thermal_counts = desired_exp_time * self.camera.c_thermal(verbose=self.verbose) 
-        print('thermal', thermal_counts)
 
         snr = signal_counts / np.sqrt(signal_counts + sky_counts + read_counts
                                       + dark_counts + thermal_counts)
@@ -351,16 +344,13 @@ class SourcePhotometricExposure(SourceExposure):
             print('Signal shot noise: {}'.format(nice_print(shot_noise_in_signal)))
             print('Sky counts: {}'.format(nice_print(sky_counts)))
             print('Sky shot noise: {}'.format(nice_print(shot_noise_in_sky)))
-            print('Total read noise: {}'.format(nice_print(read_noise)))
-            print('Dark current noise: {}'.format(nice_print(dark_noise)))
+            print('Total read noise: {}'.format(nice_print(read_counts)))
+            print('Dark current noise: {}'.format(nice_print(dark_counts)))
             print('Thermal counts: {}'.format(nice_print(thermal_counts)))
-            print()
             print('SNR: {}'.format(snr))
-            print() 
             print('Max SNR: {} in {} band'.format(snr.max(), self.camera.bandnames[snr.argmax()]))
         
         return True           
-
 
 class SourceSpectrographicExposure(SourceExposure):
     """
