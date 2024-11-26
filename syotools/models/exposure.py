@@ -331,10 +331,7 @@ class PhotometricExposure(Exposure):
         
         self.camera._print_initcon(self.verbose)
         
-        #We no longer need to check the inputs, since they are now tracked
-        #attributes instead.
-            
-        #Convert JsonUnits to Quantities for calculations
+
         (_exptime, _nexp, n_bands) = self.recover('_exptime', 'n_exp',
                                                   'camera.n_bands')
         (_total_qe, _detector_rn, _dark_current) = self.recover('camera.total_qe',
@@ -348,15 +345,14 @@ class PhotometricExposure(Exposure):
         
         fstar = self._fstar
         signal_counts = _total_qe * fstar * desired_exp_time
-        
+        shot_noise_in_signal = np.sqrt(signal_counts)
+
         fsky = self.camera._fsky(verbose=self.verbose)
         sky_counts = _total_qe * fsky * desired_exp_time
-        
-        shot_noise_in_signal = np.sqrt(signal_counts)
         shot_noise_in_sky = np.sqrt(sky_counts)
         
         sn_box = self.camera._sn_box(self.verbose)
-        
+    
         read_noise = _detector_rn**2 * sn_box * number_of_exposures
         dark_noise = sn_box * _dark_current * desired_exp_time
 

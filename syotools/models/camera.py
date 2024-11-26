@@ -216,7 +216,8 @@ class Camera(PersistentModel):
         Omega = (pixel_size**2 * box * u.pix).to(u.sr)
 
         planck = self.planck
-        qepephot = total_qe[0] * planck / energy_per_photon
+        QE = total_qe[0] * u.Unit(total_qe[1])
+        qepephot = QE * planck / energy_per_photon
         
         if verbose:
             print('Planck spectrum: {}'.format(nice_print(planck)))
@@ -225,7 +226,7 @@ class Camera(PersistentModel):
             print('Omega: {}'.format(nice_print(Omega)))
     
         thermal = (ota_emissivity[0] * planck / energy_per_photon * 
-    			(np.pi / 4. * D**2) * total_qe[0] * Omega * bandwidth )
+    			(np.pi / 4. * D**2) * QE * Omega * bandwidth )
         
         return thermal 
     

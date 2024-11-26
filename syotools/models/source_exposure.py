@@ -226,7 +226,7 @@ class SourcePhotometricExposure(SourceExposure):
         fsource = f0 * c_ap[0] * np.pi / 4. * D**2 * (dlam * u.nm) * m
 
         return fsource
-    
+
     def _update_exptime(self):
         """
         Calculate the exposure time to achieve the desired S/N for the 
@@ -300,49 +300,50 @@ class SourcePhotometricExposure(SourceExposure):
     
     def _update_snr(self):
         """
-        Calculate the SNR for the given exposure time and SED.
+        Calculate the SNR for the given exposure time and source SED.
         """
         
         self.camera._print_initcon(self.verbose)
             
-        #Convert JsonUnits to Quantities for calculations    
         (_exptime, _nexp, n_bands) = self.recover('_exptime', 'n_exp',
                                                   'camera.n_bands')
 
         (_total_qe, _detector_rn, _dark_current) = self.recover('camera.total_qe',
                              'camera.detector_rn', 'camera.dark_current')
         
-        #calculate everything
+        
         number_of_exposures = np.full(n_bands, _nexp)
         desired_exp_time = (np.full(n_bands, _exptime[0]) * u.Unit(_exptime[1])).to(u.second)
         time_per_exposure = desired_exp_time / number_of_exposures
         
-        fsource = self._fsource
-        signal_counts = _total_qe[0] * fsource * desired_exp_time
+        QE = _total_qe[0] * u.Unit(_total_qe[1]) 
+
+        signal_counts = QE *  self._fsource * desired_exp_time
+        shot_noise_in_signal = np.sqrt(signal_counts)       
+        print('signal ', signal_counts)  
         
-        fsky = self.camera._fsky(verbose=self.verbose)
-        sky_counts = _total_qe[0] * fsky * desired_exp_time
-        
-        shot_noise_in_signal = np.sqrt(signal_counts)
+        sky_counts = QE * self.camera._fsky(verbose=self.verbose) * desired_exp_time
         shot_noise_in_sky = np.sqrt(sky_counts)
-        
+        print('sky ', sky_counts)  
+
         sn_box = self.camera._sn_box(self.verbose) #<-- units should be "pix"
 
         rn = _detector_rn[0] * u.Unit(_detector_rn[1])
-        read_noise = np.array(rn)**2 * np.array(sn_box) * number_of_exposures * u.ph 
+        read_counts = rn**2 * sn_box * number_of_exposures
+        print('read ', rn**2, sn_box, read_counts)  
         
         dark_rate = _dark_current[0] * u.Unit(_dark_current[1])
-        dark_noise = sn_box * dark_rate * desired_exp_time / u.electron * u.ph 
-
-        thermal = self.camera.c_thermal(verbose=self.verbose)
+        dark_counts = sn_box * dark_rate * desired_exp_time 
+        print('dark ', dark_counts)  
         
-        thermal_counts = desired_exp_time * thermal 
-    
-        snr = signal_counts / np.sqrt(signal_counts + sky_counts + read_noise
-                                      + dark_noise + thermal_counts)
+        thermal_counts = desired_exp_time * self.camera.c_thermal(verbose=self.verbose) 
+        print('thermal', thermal_counts)
+
+        snr = signal_counts / np.sqrt(signal_counts + sky_counts + read_counts
+                                      + dark_counts + thermal_counts)
         self._snr = snr
 
-        if True:
+        if self.verbose:
             print('# of exposures: {}'.format(_nexp))
             print('Time per exposure: {}'.format(time_per_exposure[0]))
             print('Signal counts: {}'.format(nice_print(signal_counts)))
