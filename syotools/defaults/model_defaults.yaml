@@ -1,65 +1,60 @@
 Telescope:
     name: "HWO"
     aperture: 
-        - JsonUnit
-        - {value: 10.0, unit: "m"}
+        - 10.0
+        - 'm'
     temperature: 
-        - JsonUnit
-        - {value: 270.0, unit: "K"}
+        - 270.0 
+        - 'K'
     ota_emissivity:
-        - JsonUnit
-        - {value: 0.240, unit: ""}
+        - 0.240
+        - ''
     diff_limit_wavelength:
-        - JsonUnit
-        - {value: 500.0, unit: "nm"}
+        - 500. 
+        - 'nm'
     unobscured_fraction:
-        - JsonUnit
-        - {value: 0.87, unit: ""}
+        - 0.87
+        - ''
 Camera:
     name: "HRI"
     pivotwave: 
-        - JsonUnit
-        - {value: [225., 275., 336., 475., 606., 775., 850., 1260., 1600., 2220.], unit: "nm"}
+        - [225., 275., 336., 475., 606., 775., 850., 1260., 1600., 2220.]
+        - 'nm'
     bandnames: ["FUV", "NUV", "U","B","V","R","I", "J", "H", "K"]
     channels: [[0,1], [2, 3, 4, 5, 6], [7, 8, 9]]
     fiducials:
-        - JsonUnit
-        - {value: [400.0, 400.0, 1200.0], unit: "nm"}
+        - [400.0, 400.0, 1200.0]
+        - 'nm'
     total_qe:
-        - JsonUnit
-        - {value: [0.10, 0.112, 0.175, 0.211, 0.211, 0.211, 0.145, 0.342, 0.342, 0.335], unit: "electron / ph"}
+        - [0.10, 0.112, 0.175, 0.211, 0.211, 0.211, 0.145, 0.342, 0.342, 0.335]
+        - 'electron / ph'
     ap_corr:
-        - JsonUnit
-        - {value: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], unit: ""}
+        - [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] 
+        - ''
     bandpass_r:
-        - JsonUnit
-        - {value: [5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0], unit: ""}
+        - [5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0]
+        - ''
     dark_current:
-        - JsonUnit
-        - {value: [0.002, 0.002, 0.002, 0.002, 0.002, 0.002, 0.002, 0.002, 0.002, 0.002], unit: "electron / (pix s)"}
+        - [0.002, 0.002, 0.002, 0.002, 0.002, 0.002, 0.002, 0.002, 0.002, 0.002] 
+        - 'electron / (pix s)'
     detector_rn:
-        - JsonUnit
-        - {value: [2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5], unit: "electron(1/2) / pix(1/2)"}
+        - [2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5, 2.5] 
+        - 'electron(1/2) / pix(1/2)'
     sky_sigma:
-        - JsonUnit
-        - {value: [24.56, 26.27, 23.38, 22.80, 22.41, 22.20, 22.11, 22.32, 22.53, 22.88], unit: ""}
+        - [24.56, 26.27, 23.38, 22.80, 22.41, 22.20, 22.11, 22.32, 22.53, 22.88] 
+        - ''
 Exposure:
-    sed:
-        - JsonUnit
-        - {value: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], unit: "mag(AB)"}
-    sed_id: "fab"
     n_exp: 3
     exptime:
-        - JsonUnit
-        - {value: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], unit: "h"}
+        - [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] 
+        - 'hr'
     snr:
-        - JsonUnit
-        - {value: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], unit: ""}
+        - [10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0] 
+        - '' 
     magnitude:
-        - JsonUnit
-        - {value: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], unit: "mag(AB)"}
-    redshift: 0.
-    unknown: "snr"
+        - [30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0] 
+        - 'mag(AB)'
+    unknown: 'snr'
 Spectrograph:
     name: "UVI"
     modes: ['G120M', 'G150M', 'G180M','G155L', 'G145LL', 'G300M']
