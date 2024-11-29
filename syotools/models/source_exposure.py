@@ -273,7 +273,7 @@ class SourcePhotometricExposure(SourceExposure):
                                     'camera.detector_rn', 
                                     'camera.dark_current')
         
-        exptime = _exptime.to(u.s)
+        exptime = (_exptime[0] * u.Unit(_exptime[1])).to(u.s)
         
         D = D.to(u.cm)
         fsky = self.camera._fsky(verbose=self.verbose)

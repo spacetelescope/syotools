@@ -137,7 +137,24 @@ class PersistentModel(object):
         for arg in args:
             attr = reduce(getattr, [self] + arg.split('.')) #for nested dot access
             #out.append(pre_decode(attr))
-            out.append((attr)) #<<- pre-decode omitted by JT Nov 24 - will this work? 
+            out.append(attr) #<<- pre-decode omitted by JT Nov 24 - will this work? 
+
+        if len(out) == 1:
+            return out[0]
+        return out
+    
+    def return_quantity(self, *args):
+        """
+        return quantity version of a stored attribute 
+        """
+        
+        out = []
+        
+        for arg in args:
+            print('return_quantity', [self] + arg.split('.'))
+            attr = reduce(getattr, [self] + arg.split('.')) #for nested dot access
+            print(attr)
+            out.append(attr)  
 
         if len(out) == 1:
             return out[0]

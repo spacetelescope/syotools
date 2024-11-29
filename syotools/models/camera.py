@@ -11,7 +11,6 @@ import astropy.units as u
 from syotools.models.base import PersistentModel
 from syotools.models.source_exposure import SourcePhotometricExposure
 from syotools.defaults import default_camera
-#from syotools.utils import pre_encode, pre_decode
 from syotools.spectra.utils import mag_from_sed
 
 def nice_print(arr):
@@ -83,7 +82,6 @@ class Camera(PersistentModel):
         
         pixsize = np.zeros(self.n_bands, dtype=float)
         
-        #Convert from JsonUnit to Quantity for calculation purposes.
         fiducials, aperture = self.recover('fiducials', 'telescope.aperture')
         
         for ref, bands in enumerate(self.channels):
@@ -146,15 +144,15 @@ class Camera(PersistentModel):
             print('Telescope diffraction limit: {}'.format(self.telescope.diff_limit_wavelength))
             print('Telescope aperture: {}'.format(self.telescope.aperture))
             print('Telescope temperature: {}'.format(self.telescope.temperature))
-            print('Pivot waves: {}'.format(nice_print(self.pivotwave)))
+            print('Pivot waves: {}'.format(nice_print(self.pivotwave[0] * u.Unit(self.pivotwave[1]))))
             print('Pixel sizes: {}'.format(nice_print(self.pixel_size)))
             print('AB mag zero points: {}'.format(nice_print(self.ab_zeropoint)))
-            print('Quantum efficiency: {}'.format(nice_print(self.total_qe)))
-            print('Aperture correction: {}'.format(nice_print(self.ap_corr)))
-            print('Bandpass resolution: {}'.format(nice_print(self.bandpass_r)))
+            print('Quantum efficiency: {}'.format(nice_print(self.total_qe[0] * u.Unit(self.total_qe[1]))))
+            print('Aperture correction: {}'.format(nice_print(self.ap_corr[0] * u.Unit(self.ap_corr[1])))) 
+            print('Bandpass resolution: {}'.format(nice_print(self.bandpass_r[0] * u.Unit(self.bandpass_r[1]))))
             print('Derived_bandpass: {}'.format(nice_print(self.derived_bandpass)))
-            print('Detector read noise: {}'.format(nice_print(self.detector_rn)))
-            print('Dark rate: {}'.format(nice_print(self.dark_current)))
+            print('Detector read noise: {}'.format(nice_print(self.detector_rn[0] * u.Unit(self.detector_rn[1]))))
+            print('Dark rate: {}'.format(nice_print(self.dark_current[0] * u.Unit(self.dark_current[1]))))
             
     def _fsky(self, verbose=True):
         """
