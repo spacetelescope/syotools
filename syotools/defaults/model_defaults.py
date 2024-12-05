@@ -11,8 +11,7 @@ import astropy.units as u
 
 cwd = os.getenv('LUVOIR_SIMTOOLS_DIR')
 
-#Load data from ascii table file (need a better method? maybe a FITS table?)
-#and establish the default file path
+# Load data from fits files describring LUMOS and establish the default file path
 current_dir = os.path.dirname(os.path.abspath(__file__))
 spec_default_path = os.path.join(current_dir, '..', 'data', 'LUMOS_ETC.fits')
 pol_default_path = os.path.join(current_dir, '..', 'data', 'POLLUX_ETC.fits')

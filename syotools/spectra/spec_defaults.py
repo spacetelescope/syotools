@@ -8,14 +8,13 @@ import pysynphot as pys
 import astropy.io.ascii as asc
 from syotools.utils import pre_encode
 from syotools.spectra.utils import load_txtfile, load_fesc, load_pysfits
-from pathlib import Path
 
 # path names to find reference files 
 pysyn_path = os.environ['PYSYN_CDBS']
 data_path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','reference_data'))
 
-#this is where the spectral library is compiled
-#these dictionary entries specify the template name, filename, band, etc. 
+# this is where the spectral library is compiled
+# these dictionary entries specify the template name, filename, band, etc. 
 # then we will create two dictionaries - one containing the JSON-encoded 
 # spectral templates ("default_spectra") and one containing the 
 # pysynphot objects ("pysyn_spectra_library"), eventually the former 
@@ -115,11 +114,11 @@ for (specid, spec) in specs.items():
     fesc = 'fesc' in spec['file']
     fits = spec['file'][-1].endswith('fits')
     if fits:
-        default_spectra['specs'][specid] = load_pysfits(spec, pre_encode_flag=True)
+        default_spectra['specs'][specid] = load_pysfits(spec) 
     elif fesc:
-        default_spectra['specs'][specid] = load_fesc(spec, pre_encode_flag=True)
+        default_spectra['specs'][specid] = load_fesc(spec) 
     else:
-        default_spectra['specs'][specid] = load_txtfile(spec, pre_encode_flag=True)
+        default_spectra['specs'][specid] = load_txtfile(spec) 
 
 # this loop calls the same routines but gets back pysynphot objects instead of pre_encoded 
 #so these will populate psyn_spectra_library
@@ -128,11 +127,11 @@ for (specid, spec) in specs.items():
     fesc = 'fesc' in spec['file']
     fits = spec['file'][-1].endswith('fits')
     if fits:
-        pysyn_spectra_library[spec['desc']] = load_pysfits(spec, pre_encode_flag=False)
+        pysyn_spectra_library[spec['desc']] = load_pysfits(spec) 
     elif fesc:
-        pysyn_spectra_library[spec['desc']] = load_fesc(spec, pre_encode_flag=False)
+        pysyn_spectra_library[spec['desc']] = load_fesc(spec) 
     else:
-        pysyn_spectra_library[spec['desc']] = load_txtfile(spec, pre_encode_flag=False)        
+        pysyn_spectra_library[spec['desc']] = load_txtfile(spec)         
 
 # now add a few other special cases from pysynphot (pys)
 # and store them in the pre_encoded JSON format \
@@ -142,26 +141,32 @@ flatsp.convert('abmag')
 flatsp.convert('nm') 
 default_spectra['specs']['fab'] = pre_encode(flatsp)
 default_spectra['descs']['fab'] = 'Flat (AB)'
+flatsp.__setattr__('band', 'johnson,v')
 pysyn_spectra_library['Flat (AB)'] = flatsp 
 
 flamsp = pys.FlatSpectrum(30.0, fluxunits='flam')
-flamsp = flamsp.renorm(30.0, 'abmag', pys.ObsBandpass('galex,fuv'))
+flamsp = flamsp.renorm(30.0, 'abmag', pys.ObsBandpass('johnson,v'))
 flamsp.convert('abmag') 
 flamsp.convert('nm') 
 default_spectra['specs']['flam'] = pre_encode(flamsp)
 default_spectra['descs']['flam'] = 'Flat in F_lambda'
+flamsp.__setattr__('band', 'johnson,v')
 pysyn_spectra_library['Flat in F_lambda'] = flamsp 
 
 bb = pys.BlackBody(5000)
 bb.convert('abmag') 
 bb.convert('nm') 
+bb = bb.renorm(30.0, 'abmag', pys.ObsBandpass('galex,fuv'))
 default_spectra['specs']['Blackbody5000'] = pre_encode(bb)
 default_spectra['descs']['Blackbody5000'] = 'Blackbody (5000K)'
+bb.__setattr__('band', 'galex,fuv')
 pysyn_spectra_library['Blackbody (5000K)'] = bb 
 
 bb = pys.BlackBody(100000)
 bb.convert('abmag') 
 bb.convert('nm') 
+bb = bb.renorm(30.0, 'abmag', pys.ObsBandpass('galex,fuv'))
 default_spectra['specs']['Blackbody100000'] = pre_encode(bb)
 default_spectra['descs']['Blackbody100000'] = 'Blackbody (100,000K)'
+bb.__setattr__('band', 'galex,fuv')
 pysyn_spectra_library['Blackbody (100,000K)'] = bb 

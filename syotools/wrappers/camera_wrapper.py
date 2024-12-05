@@ -24,24 +24,23 @@ def camera_snr(telescope, template, magnitude, exptime, silent=False):
 
 	mag = V magnitude to normalize the template spectrum
 
-	exptime =  desired exptime in hours 
+	exptime = desired exptime in hours 
 	
 	outputs are arrays with the SNR in each band for FUV, NUV, U, B, V, R, I, J, H, K 
 	and the camera object "hri" 
        '''
 
-	from syotools.models import Camera, Telescope, Spectrograph, Source, SourcePhotometricExposure
+	from syotools.models import Camera, Telescope, Source, SourcePhotometricExposure
 	import numpy as np, astropy.units as u 
       
-	# create a Telescope, Camera, and Exposure 
-	tel, hri = Telescope(), Camera()
+	tel, hri = Telescope(), Camera()   # create a Telescope, Camera, and Exposure 
 	tel.set_from_json(telescope)
 	
 	source = Source() 
 	redshift = 0. # changes to these are not implemented yet 
 	extinction = 0. 
 	
-	source.set_sed(template, magnitude, redshift, extinction, 'johnson,v')   
+	source.set_sed(template, magnitude, redshift, extinction)   
 	
 	exp = SourcePhotometricExposure() 
 	exp.source = source
@@ -51,8 +50,8 @@ def camera_snr(telescope, template, magnitude, exptime, silent=False):
 	tel.add_camera(hri)
 	hri.add_exposure(exp)
 
-	print('------ Computing SNR as the Unknown -------') 
 	if not silent: 
+		print('------ Computing SNR as the Unknown -------') 
 		for bb, ss in zip(hri.bandnames, exp.snr): print("{}, SNR = {}".format(bb, ss)) 
 	            
 	return exp.snr, hri 
@@ -88,7 +87,7 @@ def camera_exptime(telescope, template, magnitude, snr_goal, silent=False):
 	outputs	are arrays with the exptime in each band for FUV, NUV, U, B, V, R, I, J, H, K 
 	'''
 
-	from syotools.models import Camera, Telescope, Spectrograph, Source, SourcePhotometricExposure
+	from syotools.models import Camera, Telescope, Source, SourcePhotometricExposure
 	import numpy as np, astropy.units as u 
     
 	# create a Telescope, Camera, and Exposure 
@@ -99,7 +98,7 @@ def camera_exptime(telescope, template, magnitude, snr_goal, silent=False):
 	redshift = 0. # changes to these are not implemented yet 
 	extinction = 0. 
 	
-	source.set_sed(template, magnitude, redshift, extinction, 'johnson,v')   
+	source.set_sed(template, magnitude, redshift, extinction)   
 	        
 	exp = SourcePhotometricExposure() 
 	exp.source = source
@@ -109,8 +108,8 @@ def camera_exptime(telescope, template, magnitude, snr_goal, silent=False):
 	tel.add_camera(hri)
 	hri.add_exposure(exp)
 	
-	print('-- Computing Exptime as the Unknown --') 
 	if not silent: 
+		print('-- Computing Exptime as the Unknown --') 
 		for bb, ee in zip(hri.bandnames, exp.exptime): print("{}, SNR = {}".format(bb, ee)) 
 
 	return exp.exptime, hri 
@@ -145,7 +144,7 @@ def camera_magnitude(telescope, template, snr, exptime, silent=False):
 	outputs are arrays with the limiting in each band for FUV, NUV, U, B, V, R, I, J, H, K 
 	'''
 
-	from syotools.models import Camera, Telescope, Spectrograph, Source, SourcePhotometricExposure
+	from syotools.models import Camera, Telescope, Source, SourcePhotometricExposure
 	import numpy as np, astropy.units as u
 	
 	# create a Telescope, Camera, and Exposure 
@@ -156,7 +155,7 @@ def camera_magnitude(telescope, template, snr, exptime, silent=False):
 	redshift = 0. # changes to these are not implemented yet 
 	extinction = 0. 
 	
-	source.set_sed(template, 30., redshift, extinction, 'johnson,v')   
+	source.set_sed(template, 30., redshift, extinction)   
 	        
 	exp = SourcePhotometricExposure() 
 	exp.source = source
@@ -168,8 +167,8 @@ def camera_magnitude(telescope, template, snr, exptime, silent=False):
 	tel.add_camera(hri)
 	hri.add_exposure(exp)
 	
-	print('--- Computing Magnitude as the Unknown ---') 
 	if not silent: 
+		print('--- Computing Magnitude as the Unknown ---') 
 		for bb, mm in zip(hri.bandnames, exp.magnitude): print("{}, SNR = {}".format(bb, mm)) 
 	
 	return exp.magnitude, hri 

@@ -42,25 +42,25 @@ class Source(PersistentModel):
         self.renorm_band = 'johnson,v'
 
         #set default here 
-        #self.sed = S.FlatSpectrum(30, fluxunits='abmag')
-        self.sed = self.set_sed(self.name, self.magnitude, self.redshift, self.extinction, self.renorm_band)
+        self.sed = self.set_sed(self.name, self.magnitude, self.redshift, self.extinction)
 
 
-    def set_sed(self, source_name, magnitude, redshift, extinction, band):   
+    def set_sed(self, source_name, magnitude, redshift, extinction):   
         self.name = source_name  
         self.sed = pysyn_spectra_library[source_name]
         self.magnitude = magnitude
         self.redshift = redshift
         self.extinction = extinction
-        self.renorm_band = band 
+        self.renorm_band = pysyn_spectra_library[source_name].band
 
         new_sed = pysyn_spectra_library[source_name]
         
         #now apply the other quantities via pysynphot 
         sp_red = new_sed.redshift(redshift)
         sp_ext = sp_red * S.Extinction(extinction, 'mwavg')
-        sp_norm = sp_ext.renorm(magnitude, 'abmag', S.ObsBandpass(band))  
+        sp_norm = sp_ext.renorm(magnitude, 'abmag', S.ObsBandpass(self.renorm_band))  
         sp_norm.convert('abmag')
+        
 
         self.sed = sp_norm
 

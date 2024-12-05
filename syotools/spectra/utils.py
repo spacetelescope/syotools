@@ -9,7 +9,6 @@ import astropy.units as u
 import pysynphot as pys
 from pathlib import Path
 import astropy.io.ascii as asc
-from syotools.utils import pre_encode
 
 #Define a new unit for spectral flux density
 flambda = u.def_unit(["flambda","flam"], (u.photon / u.s / u.cm**2 / u.nm))
@@ -24,8 +23,7 @@ def renorm_sed(sed, new_magnitude, bandpass='johnson,v', waveunits='nm', fluxuni
     new_sed = sed.renorm((new_magnitude + 2.5*u.mag('AB')).value, 'abmag', band)
     new_sed.convert(waveunits) 
     new_sed.convert(fluxunits) 
-    #print("Converted SED to mag = ", new_magnitude, " with units ", waveunits, " and ", fluxunits) 
-    
+        
     return new_sed
 
 def mag_from_sed(sed, camera):
@@ -52,7 +50,7 @@ def mag_from_sed(sed, camera):
     return output_mag * u.ABmag
 
 # utility for when we need to load a text file  
-def load_txtfile(spec, pre_encode_flag=False):
+def load_txtfile(spec):
     fname = spec['file']
     band = spec.get('band', 'johnson,v')
     path = Path(fname[0])
@@ -65,12 +63,11 @@ def load_txtfile(spec, pre_encode_flag=False):
     sp = sp.renorm(30., 'abmag', pys.ObsBandpass(band))
     sp.convert('abmag')
     sp.convert('nm')
-    if pre_encode_flag: # will only do pre_encoded if you insist 
-        return pre_encode(sp)
+    sp.__setattr__('band', band)
     return sp 
 
 # utility for when we need to load an fesc data file  
-def load_fesc(spec, pre_encode_flag=False):
+def load_fesc(spec):
     fname = spec['file']
     band = spec.get('band', 'johnson,v')
 
@@ -84,11 +81,11 @@ def load_fesc(spec, pre_encode_flag=False):
     sp = sp.renorm(30., 'abmag', pys.ObsBandpass(band))
     sp.convert('abmag')
     sp.convert('nm')
-    if pre_encode_flag: return pre_encode(sp) # will only do pre_encoded if you insist 
+    sp.__setattr__('band', band)
     return sp
 
 # utility for when we need to load a pysynphot spectrum  
-def load_pysfits(spec, pre_encode_flag=False):
+def load_pysfits(spec):
     fname = spec['file']
     band = spec.get('band', 'johnson,v')
     path = Path(fname[0])
@@ -99,5 +96,5 @@ def load_pysfits(spec, pre_encode_flag=False):
     sp = sp.renorm(30., 'abmag', pys.ObsBandpass(band))
     sp.convert('abmag')
     sp.convert('nm')
-    if pre_encode_flag: return pre_encode(sp) # will only do pre_encoded if you insist 
+    sp.__setattr__('band', band)
     return sp
