@@ -1,28 +1,30 @@
 def camera_snr(telescope, template, magnitude, exptime, silent=False): 
 	''' Run a basic SNR calculation that takes in a telescope, 
 	spectral template, normalization magnitude, and exptime   
-	to compute SNR. For converting magnitude, template, 
-	and SNR to exptime, use camera_exptime.py 
+	to compute SNR.
 	
 	usage: 
 	snr, hri = camera_snr(telescope, template, mag, snr_goal) 
 	
 	positional arguments:
 	
-	1-telescope = 'EAC1', 'EAC2', or 'EAC3'. This argument is a string. 
-	EAC1 = 6 m inner diameter, 7.2 outer diameter hex pattern, off-axis 
-	EAC2 = 6 m diameter off-axis 
-	EAC3 = 8 m diameter on-axis 
+	telescope = 'EAC1', 'EAC2', or 'EAC3'. This argument is a string. 
+
+	    EAC1 = 6 m inner diameter, 7.2 outer diameter hex pattern, off-axis 
+	    EAC2 = 6 m diameter off-axis 
+	    EAC3 = 8 m diameter on-axis 
 	
-	2-template = your choice of spectral template: 
-	'Classical T Tauri', 'M1 Dwarf', 'G Dwarf', '10 Myr Starburst', 'QSO', 
-	'Seyfert 1', 'Seyfert 2', 'Liner', 'O5V Star', 'G2V Star', 'Orion Nebula', 
-	'G191B2B (WD)', 'GD71 (WD)', 'GD153 (WD)', 'Starburst, No Dust', 
-	'Starburst, E(B-V) = 0.6', 'B5V Star', 'M2V Sta', 'Elliptical Galaxy', 
-	'Sbc Galaxy', 'Starburst Galaxy', 'NGC 1068', 'Galaxy with f_esc, HI=1, HeI=1', 
-	'Galaxy with f_esc, HI=0.001, HeI=1', 'Blackbody5000', 'Blackbody100000' 
-	3-mag = V magnitude to normalize the template spectrum, a float. 
-	4-exptime =  desired exptime in hours 
+	spectral template = your choice of spectral template: 
+	    'Classical T Tauri', 'M1 Dwarf', 'G Dwarf', '10 Myr Starburst', 'QSO', 
+	    'Seyfert 1', 'Seyfert 2', 'Liner', 'O5V Star', 'G2V Star', 'Orion Nebula', 
+	    'G191B2B (WD)', 'GD71 (WD)', 'GD153 (WD)', 'Starburst, No Dust', 
+	    'Starburst, E(B-V) = 0.6', 'B5V Star', 'M2V Sta', 'Elliptical Galaxy', 
+	    'Sbc Galaxy', 'Starburst Galaxy', 'NGC 1068', 'Galaxy with f_esc, HI=1, HeI=1', 
+	    'Galaxy with f_esc, HI=0.001, HeI=1', 'Blackbody5000', 'Blackbody100000' 
+
+	mag = V magnitude to normalize the template spectrum
+
+	exptime =  desired exptime in hours 
 	
 	outputs are arrays with the SNR in each band for FUV, NUV, U, B, V, R, I, J, H, K 
 	and the camera object "hri" 
@@ -59,33 +61,33 @@ def camera_snr(telescope, template, magnitude, exptime, silent=False):
 def camera_exptime(telescope, template, magnitude, snr_goal, silent=False): 
 	''' Run a basic SNR calculation that takes in a telescope, 
 	spectral template, normalization magnitude, and SNR goal  
-	to compute exptime. For converting magnitude, template, 
-	and exptime to SNR, use camera_snr.py 
+	to compute exposure time. 
 	
 	usage: 
 	exptime, hri = camera_exptime(telescope, template, mag, snr_goal) 
 	
 	positional arguments:
 	
-	1-telescope = 'EAC1', 'EAC2', or 'EAC3'. This argument is a string. 
-	EAC1 = 6 m inner diameter, 7.2 outer diameter hex pattern, off-axis 
-	EAC2 = 6 m diameter off-axis 
-	EAC3 = 8 m diameter on-axis 
+	telescope = 'EAC1', 'EAC2', or 'EAC3'. This argument is a string. 
+	    EAC1 = 6 m inner diameter, 7.2 outer diameter hex pattern, off-axis 
+	    EAC2 = 6 m diameter off-axis 
+	    EAC3 = 8 m diameter on-axis 
 	
 	2-template = your choice of spectral template: 
-	'Classical T Tauri', 'M1 Dwarf', 'G Dwarf', '10 Myr Starburst', 'QSO', 
-	'Seyfert 1', 'Seyfert 2', 'Liner', 'O5V Star', 'G2V Star', 'Orion Nebula', 
-	'G191B2B (WD)', 'GD71 (WD)', 'GD153 (WD)', 'Starburst, No Dust', 
-	'Starburst, E(B-V) = 0.6', 'B5V Star', 'M2V Sta', 'Elliptical Galaxy', 
-	'Sbc Galaxy', 'Starburst Galaxy', 'NGC 1068', 'Galaxy with f_esc, HI=1, HeI=1', 
-	'Galaxy with f_esc, HI=0.001, HeI=1', 'Blackbody5000', 'Blackbody100000' 
+	    'Classical T Tauri', 'M1 Dwarf', 'G Dwarf', '10 Myr Starburst', 'QSO', 
+	    'Seyfert 1', 'Seyfert 2', 'Liner', 'O5V Star', 'G2V Star', 'Orion Nebula', 
+	    'G191B2B (WD)', 'GD71 (WD)', 'GD153 (WD)', 'Starburst, No Dust', 
+	    'Starburst, E(B-V) = 0.6', 'B5V Star', 'M2V Sta', 'Elliptical Galaxy', 
+	    'Sbc Galaxy', 'Starburst Galaxy', 'NGC 1068', 'Galaxy with f_esc, HI=1, HeI=1', 
+	    'Galaxy with f_esc, HI=0.001, HeI=1', 'Blackbody5000', 'Blackbody100000' 
 	
-	3-mag = V magnitude to normalize the template spectrum, a float.
+	magniotude = V magnitude to normalize the template spectrum, a float.
 	
-	4-snr_goal = desired SNR, per pixel, for each band 
+	snr_goal = desired SNR, per pixel, for each band 
 	
-	outputs	 are arrays with the exptime in each band for FUV, NUV, U, B, V, R, I, J, H, K 
-		'''
+	outputs	are arrays with the exptime in each band for FUV, NUV, U, B, V, R, I, J, H, K 
+	'''
+
 	from syotools.models import Camera, Telescope, Spectrograph, Source, SourcePhotometricExposure
 	import numpy as np, astropy.units as u 
     
@@ -115,28 +117,31 @@ def camera_exptime(telescope, template, magnitude, snr_goal, silent=False):
 
 def camera_magnitude(telescope, template, snr, exptime, silent=False): 
 	''' Run a basic SNR calculation that takes in a telescope, 
-	spectral template, normalization magnitude, and SNR goal  
-	to compute exptime. For converting magnitude, template, 
-	and exptime to SNR, use camera_snr.py 
+	spectral template, SNR goal, and exposure time and computes 
+	the limiting magnitude. 
 	
 	usage: 
 	exptime, hri = camera_magnitude(telescope, template, mag, snr_goal) 
 	
 	positional arguments:
 	
-	1-telescope = 'EAC1', 'EAC2', or 'EAC3'. This argument is a string. 
-	EAC1 = = 6 m inner diameter, 7.2 outer diameter hex pattern, off-axis 
-	EAC2 = 6 m diameter off-axis 
-	EAC3 = 8 m diameter on-axis 
-	2-template = your choice of spectral template: 
-	'Classical T Tauri', 'M1 Dwarf', 'G Dwarf', '10 Myr Starburst', 'QSO', 
-	'Seyfert 1', 'Seyfert 2', 'Liner', 'O5V Star', 'G2V Star', 'Orion Nebula', 
-	'G191B2B (WD)', 'GD71 (WD)', 'GD153 (WD)', 'Starburst, No Dust', 
-	'Starburst, E(B-V) = 0.6', 'B5V Star', 'M2V Sta', 'Elliptical Galaxy', 
-	'Sbc Galaxy', 'Starburst Galaxy', 'NGC 1068', 'Galaxy with f_esc, HI=1, HeI=1', 
-	'Galaxy with f_esc, HI=0.001, HeI=1', 'Blackbody5000', 'Blackbody100000' 
-	3-snr_goal = desired SNR, per pixel, for each band 
-	4-exptime = exposure time per band in hours
+	telescope = 'EAC1', 'EAC2', or 'EAC3'. This argument is a string. 
+	    EAC1 = 6 m inner diameter, 7.2 outer diameter hex pattern, off-axis 
+    	    EAC2 = 6 m diameter off-axis 
+	    EAC3 = 8 m diameter on-axis 
+
+	spectral template = your choice of spectral template: 
+	    'Classical T Tauri', 'M1 Dwarf', 'G Dwarf', '10 Myr Starburst', 'QSO', 
+	    'Seyfert 1', 'Seyfert 2', 'Liner', 'O5V Star', 'G2V Star', 'Orion Nebula', 
+	    'G191B2B (WD)', 'GD71 (WD)', 'GD153 (WD)', 'Starburst, No Dust', 
+	    'Starburst, E(B-V) = 0.6', 'B5V Star', 'M2V Sta', 'Elliptical Galaxy', 
+	    'Sbc Galaxy', 'Starburst Galaxy', 'NGC 1068', 'Galaxy with f_esc, HI=1, HeI=1', 
+	    'Galaxy with f_esc, HI=0.001, HeI=1', 'Blackbody5000', 'Blackbody100000' 
+
+	snr_goal = desired SNR for each band 
+
+	exptime = exposure time per band in hours
+
 	outputs are arrays with the limiting in each band for FUV, NUV, U, B, V, R, I, J, H, K 
 	'''
 
