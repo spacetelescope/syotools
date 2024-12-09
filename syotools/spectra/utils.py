@@ -59,7 +59,7 @@ def load_txtfile(spec):
     abspath = str(path.resolve())
 
     tab = asc.read(abspath, names=['wave','flux']) 
-    sp = pys.ArraySpectrum(wave=tab['wave'], flux=tab['flux'], waveunits='Angstrom', fluxunits='flam')
+    sp = pys.ArraySpectrum(wave=tab['wave'].value, flux=tab['flux'].value, waveunits='Angstrom', fluxunits='flam')
     sp = sp.renorm(30., 'abmag', pys.ObsBandpass(band))
     sp.convert('abmag')
     sp.convert('nm')

@@ -76,8 +76,9 @@ class SourceExposure(PersistentModel):
     _snr_goal = np.zeros(1, dtype=float) * u.dimensionless_unscaled
     _magnitude = np.zeros(1, dtype=float) * u.ABmag
     _unknown = '' # one of 'snr', 'magnitude', 'exptime'
+    _interp_flux = np.zeros(1, dtype=float) * u.dimensionless_unscaled # the source SED interpolated to the Spectrograph wavelength grid 
     
-    verbose = False #set this to True for debugging purposes only
+    verbose = False # set this to True for debugging purposes
     _disable = False #set this to disable recalculating (when updating several attributes at the same time)
     
     def disable(self):
@@ -158,9 +159,13 @@ class SourceExposure(PersistentModel):
         """
         self.source.sed.convert(self.camera.pivotwave[1]) # <---temporarily convert the sed into the units of the pivotwaves 
         output_mags = [] # <--- create blank list of mags
-        for mag in self.camera.pivotwave[0]: 
-            this_mag = self.source.sed.sample(mag) 
+        for magwave in self.camera.pivotwave[0]: 
+            this_mag = self.source.sed.sample(magwave) 
+            #amazingly, the sample method on the pysynphot sed does not check wavelengh limits! 
+            if (magwave > np.max(self.source.sed.wave)): this_mag = 99. 
+            if (magwave < np.min(self.source.sed.wave)): this_mag = 99. 
             output_mags.append(this_mag) 
+            print('getting mags from interpolated _source: ', magwave)
         return np.array(output_mags)
 
     @property
@@ -169,6 +174,7 @@ class SourceExposure(PersistentModel):
             return self._magnitude
         #If magnitude is not unknown, it should be interpolated from the SED
         #at the camera bandpasses. 
+        print('magnitude fcn line 174', self.interpolated_source)
         return self.interpolated_source
     
     @magnitude.setter
@@ -176,6 +182,8 @@ class SourceExposure(PersistentModel):
         if self.unknown == "magnitude":
             return
         self._magnitude = self._ensure_array(new_magnitude)
+        print('magnitude fcn line 182', new_magnitude)
+
         self.calculate()
     
     def calculate(self):
@@ -391,16 +399,17 @@ class SourceSpectrographicExposure(SourceExposure):
                                                          'spectrograph.R',
                                                          'spectrograph.wrange')
         
-        #exptime = _exptime.to(u.s)[0] #assume that all are the same
         exptime = ( self._exptime[0][0] * u.Unit(self._exptime[1])).to(u.s)
-        print('exptime in _update_snr', exptime)
         if self.source.sed.fluxunits.name == "abmag":
             funit = u.ABmag
         elif self.source.sed.fluxunits.name == "photlam":
             funit = u.ph / u.s / u.cm**2 / u.AA
+        elif self.source.sed.fluxunits.name == "flam": 
+            funit = u.erg / u.s / u.cm**2 / u.AA
         else:
-            funit = u.Unit(sed.fluxunits.name)
+            funit = u.Unit(self.source.sed.fluxunits.name)
         wave = _wave.to(u.AA)
+        
         swave = (self.source.sed.wave * u.Unit(self.source.sed.waveunits.name)).to(u.AA)
 
         sflux = (self.source.sed.flux * funit).to(u.erg / u.s / u.cm**2 / u.AA, equivalencies=u.spectral_density(swave))
@@ -408,16 +417,14 @@ class SourceSpectrographicExposure(SourceExposure):
         
         delta_lambda = self.recover('spectrograph.delta_lambda').to(u.AA / u.pix)
 
-        iflux = np.interp(wave, swave, sflux, left=0., right=0.) # JT * (u.erg / u.s / u.cm**2 / u.AA)
+        iflux = np.interp(wave, swave, sflux, left=0., right=0.) 
+        self._interp_flux = iflux 
         phot_energy = const.h.to(u.erg * u.s) * const.c.to(u.cm / u.s) / wave.to(u.cm) / u.ct
         #print('_update_snr phot_energy: ', phot_energy)
 
         scaled_aeff = aeff * (aper / (15 * u.m))**2
         source_counts = iflux / phot_energy * scaled_aeff * exptime * delta_lambda
         #print('_update_snr source_counts: ', source_counts)
-
-        # source counts is coming out with : cm2 ct erg / (Angstrom cm4 pix s)
-        # that's wrong - should be ct / pix so it adds to bg_counts below 
 
         bg_counts = bef / phot_energy * scaled_aeff * exptime 
         
