@@ -31,21 +31,21 @@ def nice_print(arr):
         l = ['{:.2f}'.format(i) for i in arr]
     return ', '.join(l)
 
-class Camera(PersistentModel): 
+class Camera(PersistentModel):
     """
-    The basic camera class, which provides parameter storage for 
+    The basic camera class, which provides parameter storage for
     optimization.
-    
+
     Attributes: #adapted from the original in Telescope.py
         telescope    - the Telescope object associated with the camera
         exposures    - the list of Exposures taken with this camera
-    
+
         name         - name of the camera (string)
         n_bands      - number of wavelength bands (int)
         n_channels   - number of channels (int)
         pivotwave    - central wavelengths for bands, in nanometers (float array)
         bandnames    - names of bands (string list)
-        channels     - grouping of bands into channels [UV, Optical, IR], 
+        channels     - grouping of bands into channels [UV, Optical, IR],
                        and indicating the reference band for pixel size (list of tuples)
         fiducials    - fiducial wavelength of the band, for reference (float array)
         total_qe     - total quantum efficiency in each band (float array)
@@ -54,36 +54,36 @@ class Camera(PersistentModel):
         dark_current - dark current values in each band (float array)
         detector_rn  - read noise for the detector in each band (float array)
         sky_sigma    - sky background emission (float array)
-        
+
         _default_model - used by PersistentModel
-        
+
     The following are attributes I haven't included, and the justification:
         R_effective - this doesn't seem to be used anywhere
     """
-    
-    _default_model = default_camera
-    
-    telescope = None
-    exposures = []
-    
-    name = ''
-    pivotwave = pre_encode(np.zeros(1, dtype=float) * u.nm)
-    bandnames = ['']
-    channels = [([],0)]
-    fiducials = pre_encode(np.zeros(1, dtype=float) * u.nm)
-    total_qe = pre_encode(np.zeros(1, dtype=float) * u.dimensionless_unscaled)
-    ap_corr = pre_encode(np.zeros(1, dtype=float) * u.dimensionless_unscaled)
-    bandpass_r = pre_encode(np.zeros(1, dtype=float) * u.dimensionless_unscaled)
-    dark_current = pre_encode(np.zeros(1, dtype=float) * (u.electron / u.s / u.pixel))
-    detector_rn = pre_encode(np.zeros(1, dtype=float) * (u.electron / u.pixel)**0.5)
-    sky_sigma = pre_encode(np.zeros(1, dtype=float) * u.dimensionless_unscaled)
-    
+
+    def __init__(self, **kw):
+
+        self.telescope = None
+        self.exposures = []
+        self.name = ''
+        self.pivotwave = pre_encode(np.zeros(1, dtype=float) * u.nm)
+        self.bandnames = ['']
+        self.channels = [([],0)]
+        self.fiducials = pre_encode(np.zeros(1, dtype=float) * u.nm)
+        self.total_qe = pre_encode(np.zeros(1, dtype=float) * u.dimensionless_unscaled)
+        self.ap_corr = pre_encode(np.zeros(1, dtype=float) * u.dimensionless_unscaled)
+        self.bandpass_r = pre_encode(np.zeros(1, dtype=float) * u.dimensionless_unscaled)
+        self.dark_current = pre_encode(np.zeros(1, dtype=float) * (u.electron / u.s / u.pixel))
+        self.detector_rn = pre_encode(np.zeros(1, dtype=float) * (u.electron / u.pixel)**0.5)
+        self.sky_sigma = pre_encode(np.zeros(1, dtype=float) * u.dimensionless_unscaled)
+        super().__init__(default_camera, **kw)
+
     @property
     def pixel_size(self):
         """
         Compute the pixel size as a function of pivot wavelength.
-        
-        Use the reference band for each channel as the fiducial: U-band for UV 
+
+        Use the reference band for each channel as the fiducial: U-band for UV
         and optical, J-band for IR.
         """
         
@@ -102,17 +102,17 @@ class Camera(PersistentModel):
     @property
     def n_bands(self):
         return len(self.bandnames)
-    
+
     @property
     def n_channels(self):
         return len(self.channels)
-    
+
     @property
     def derived_bandpass(self):
         """
         Calculate the bandpasses.
         """
-        
+
         #Convert to Quantity for calculations.
         pivotwave, bandpass_r = self.recover('pivotwave','bandpass_r')
         
@@ -191,7 +191,7 @@ class Camera(PersistentModel):
 
         (Phi, fwhm_psf) = self.recover('pixel_size', 'fwhm_psf')
         sn_box = np.round(3. * fwhm_psf / Phi)
-        
+
         if verbose:
             print('PSF width: {}'.format(nice_print(fwhm_psf)))
             print('SN box width: {}'.format(nice_print(sn_box)))
@@ -268,7 +268,7 @@ class Camera(PersistentModel):
         new_exposure = PhotometricExposure()
         self.add_exposure(new_exposure)
         return new_exposure
-        
+
     def add_exposure(self, exposure):
         self.exposures.append(exposure)
         exposure.camera = self

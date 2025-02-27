@@ -1,25 +1,25 @@
 
-def uvspec_snr(telescope, mode, template, fuvmag, exptime, silent=False): 
-    ''' Run a basic SNR calculation that takes in a telescope, 
-        spectral template, normalization magnitude, and exposure 
-        time to compute SNR. For converting magnitude, template, 
-	      and SNR to a desired exposure time, use uvspec_exptime.py 
-      
-        usage: 
-	      wave, snr, uvi = uvspec_snr(telescope, mode, template, uvmag, exptime) 
+def uvspec_snr(telescope, mode, template, fuvmag, exptime, silent=False):
+    ''' Run a basic SNR calculation that takes in a telescope,
+        spectral template, normalization magnitude, and exposure
+        time to compute SNR. For converting magnitude, template,
+	      and SNR to a desired exposure time, use uvspec_exptime.py
+
+        usage:
+	      wave, snr, uvi = uvspec_snr(telescope, mode, template, uvmag, exptime)
 
           positional arguments:
 
-           1-telescope = 'EAC1', 'EAC2', or 'EAC3'. This argument is a string. 
-             EAC1 = 6 m inner diameter, 7.2 outer diameter hex pattern, off-axis 
-             EAC2 = 6 m diameter off-axis 
-             EAC3 = 8 m diameter on-axis 
+           1-telescope = 'EAC1', 'EAC2', or 'EAC3'. This argument is a string.
+             EAC1 = 6 m inner diameter, 7.2 outer diameter hex pattern, off-axis
+             EAC2 = 6 m diameter off-axis
+             EAC3 = 8 m diameter on-axis
 
-           2-mode = your choice of UVI grating, a string: 
+           2-mode = your choice of UVI grating, a string:
 		        ['G120M', 'G150M', 'G180M', 'G155L', 'G145LL', 'G300M']
 
-           3-template = your choice of spectral template: 
-		          ['flam', 'qso', 's99', 'o5v', 'g2v', 'g191b2b', 'gd71', 'gd153', 'ctts', 
+           3-template = your choice of spectral template:
+		          ['flam', 'qso', 's99', 'o5v', 'g2v', 'g191b2b', 'gd71', 'gd153', 'ctts',
                         'mdwarf', 'orion', 'nodust', 'ebv6', 'hi1hei1', 'hi0hei1']
 
            4-fuvmag = FUV magnitude to normalize the template spectrum, a float. 
@@ -83,16 +83,16 @@ def uvspec_exptime(telescope, mode, template, fuvmag, snr_goal, silent=False):
 
           positional arguments:
 
-           1-telescope = 'EAC1', 'EAC2', or 'EAC3'. This argument is a string. 
-             EAC1 = 6 m inner diameter, 7.2 outer diameter hex pattern, off-axis 
-             EAC2 = 6 m diameter off-axis 
-             EAC3 = 8 m diameter on-axis 
+           1-telescope = 'EAC1', 'EAC2', or 'EAC3'. This argument is a string.
+             EAC1 = 6 m inner diameter, 7.2 outer diameter hex pattern, off-axis
+             EAC2 = 6 m diameter off-axis
+             EAC3 = 8 m diameter on-axis
 
-           2-mode = your choice of UVI grating, a string: 
+           2-mode = your choice of UVI grating, a string:
 		        ['G120M', 'G150M', 'G180M', 'G155L', 'G145LL', 'G300M']
 
-           3-template = your choice of spectral template: 
-	          	['flam', 'qso', 's99', 'o5v', 'g2v', 'g191b2b', 'gd71', 'gd153', 'ctts', 
+           3-template = your choice of spectral template:
+	          	['flam', 'qso', 's99', 'o5v', 'g2v', 'g191b2b', 'gd71', 'gd153', 'ctts',
                         'mdwarf', 'orion', 'nodust', 'ebv6', 'hi1hei1', 'hi0hei1']
 
            4-fuvmag = FUV magnitude to normalize the template spectrum, a float. 
@@ -108,8 +108,8 @@ def uvspec_exptime(telescope, mode, template, fuvmag, snr_goal, silent=False):
     from syotools.spectra import SpectralLibrary
     import astropy.units as u
 
-    # create the basic objects 
-    uvi, tel = Spectrograph(), Telescope() 
+    # create the basic objects
+    uvi, tel = Spectrograph(), Telescope()
     tel.set_from_json(telescope)
     tel.add_spectrograph(uvi)
     uvi_exp = uvi.create_exposure()
