@@ -3,3 +3,4 @@
 */*/*pyc
 */*/*/*.pyc
 .DS_store 
+syotools.egg-info

@@ -59,27 +59,28 @@ class SourceExposure(PersistentModel):
         _default_model - used by PersistentModel
     """
 
-    _default_model = default_exposure
+    def __init__(self, **kw):
 
-    source = Source() # this is the Source object, returns a flat spectrum by default.
-                      # currently an Exposure can have only one Source
+        self.source = Source() # this is the Source object, returns a flat spectrum by default.
+                               # currently an Exposure can have only one Source
 
-    telescope = None
-    camera = None
-    spectrograph = None
-    spectropolarimeter = None
+        self.telescope = None
+        self.camera = None
+        self.spectrograph = None
+        self.spectropolarimeter = None
 
-    exp_id = ''
-    n_exp = 0
-    _exptime = np.zeros(1, dtype=float) * u.h
-    _snr = np.zeros(1, dtype=float) * u.dimensionless_unscaled
-    _snr_goal = np.zeros(1, dtype=float) * u.dimensionless_unscaled
-    _magnitude = np.zeros(1, dtype=float) * u.ABmag
-    _unknown = '' # one of 'snr', 'magnitude', 'exptime'
-    _interp_flux = np.zeros(1, dtype=float) * u.dimensionless_unscaled # the source SED interpolated to the Spectrograph wavelength grid
+        self.exp_id = ''
+        self.n_exp = 0
+        self._exptime = np.zeros(1, dtype=float) * u.h
+        self._snr = np.zeros(1, dtype=float) * u.dimensionless_unscaled
+        self._snr_goal = np.zeros(1, dtype=float) * u.dimensionless_unscaled
+        self._magnitude = np.zeros(1, dtype=float) * u.ABmag
+        self._unknown = '' # one of 'snr', 'magnitude', 'exptime'
+        self._interp_flux = np.zeros(1, dtype=float) * u.dimensionless_unscaled # the source SED interpolated to the Spectrograph wavelength grid
 
-    verbose = False # set this to True for debugging purposes
-    _disable = False #set this to disable recalculating (when updating several attributes at the same time)
+        self.verbose = False # set this to True for debugging purposes
+        self._disable = False #set this to disable recalculating (when updating several attributes at the same time)
+        super().__init__(default_exposure, **kw)
 
     def disable(self):
         self._disable = True
@@ -155,7 +156,7 @@ class SourceExposure(PersistentModel):
     @property
     def interpolated_source(self):
         """
-        The exposure's new Source SED interpolated at the camera bandpasses.
+        `The exposure's new Source SED interpolated at the camera bandpasses.
         """
         self.source.sed.convert(self.camera.pivotwave[1]) # <---temporarily convert the sed into the units of the pivotwaves
         output_mags = [] # <--- create blank list of mags
