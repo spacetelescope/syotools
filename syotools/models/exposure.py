@@ -339,7 +339,6 @@ class PhotometricExposure(Exposure):
         
         #calculate everything
         number_of_exposures = np.full(n_bands, _nexp)
-        print('here we are in exposure: ', _exptime)
         desired_exp_time = (np.full(n_bands, _exptime[0]) * u.Unit(_exptime[1])).to(u.second)
         time_per_exposure = desired_exp_time / number_of_exposures
         
