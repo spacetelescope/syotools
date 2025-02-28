@@ -5,18 +5,13 @@ Created on Sat Oct 15 16:56:40 2016
 @author: gkanarek, tumlinson
 """
 
-from __future__ import (print_function, division, absolute_import, with_statement,
-                        nested_scopes, generators)
-
 import numpy as np
 import astropy.units as u
 from astropy.table import QTable
 
 from syotools.models.base import PersistentModel
-from syotools.models.exposure import SpectrographicExposure
-from syotools.defaults import default_spectrograph
-from syotools.defaults import default_spectropolarimeter
-from syotools.utils import pre_encode
+from syotools.models.source_exposure import SourceSpectrographicExposure
+from syotools.defaults import default_spectrograph, default_spectropolarimeter
 
 class Spectrograph(PersistentModel):
     """
@@ -53,13 +48,11 @@ class Spectrograph(PersistentModel):
     name = ''
     modes = []
     descriptions = {}
-    # JT fixed BEF units 05292024 
-    #bef = pre_encode(np.zeros(0, dtype=float) * (u.erg / u.cm**2 / u.s / u.AA))
-    bef = pre_encode(np.zeros(0, dtype=float) * (u.erg / u.cm**2 / u.s / u.pix))
-    R = pre_encode(0. * u.dimensionless_unscaled) 
-    wave = pre_encode(np.zeros(0, dtype=float) * u.AA)
-    aeff = pre_encode(np.zeros(0, dtype=float) * u.cm**2)
-    wrange = pre_encode(np.zeros(2, dtype=float) * u.AA)
+    bef = np.zeros(0, dtype=float) * (u.erg / u.cm**2 / u.s / u.pix) 
+    R = 0. * u.dimensionless_unscaled
+    wave = np.zeros(0, dtype=float) * u.AA
+    aeff = np.zeros(0, dtype=float) * u.cm**2
+    wrange = np.zeros(2, dtype=float) * u.AA
     _mode = ''
     
     #Property wrapper for mode, so that we can use a custom setter to propagate
@@ -73,7 +66,7 @@ class Spectrograph(PersistentModel):
     def mode(self, new_mode):
         """
         Mode is used to set all the other parameters
-        """
+        """ 
         
         nmode = new_mode.upper()
         if self._mode == nmode or nmode not in self.modes:
@@ -81,22 +74,20 @@ class Spectrograph(PersistentModel):
         self._mode = nmode
         table = QTable.read(self._lumos_default_file, nmode)
                 
-        self.R = pre_encode(table.meta['R'] * u.pix)
-        self.wave = pre_encode(table['Wavelength'])
-        #JT 05292024 
-        #self.bef = pre_encode(table['BEF'] / self.recover('delta_lambda'))
-        self.bef = pre_encode(table['BEF']) 
-        self.aeff = pre_encode(table['A_Eff'])
+        self.R = table.meta['R'] * u.pix
+        self.wave = table['Wavelength']
+        self.bef = table['BEF']
+        self.aeff = table['A_Eff']
         wrange = np.array([table.meta['WAVE_LO'], table.meta['WAVE_HI']]) * u.AA
-        self.wrange = pre_encode(wrange)
+        self.wrange = wrange
 
     @property
     def delta_lambda(self):
         wave, R = self.recover('wave', 'R')
-        return pre_encode(wave / R)
+        return wave / R
     
     def create_exposure(self):
-        new_exposure = SpectrographicExposure()
+        new_exposure = SourceSpectrographicExposure()
         self.add_exposure(new_exposure)
         return new_exposure
     
