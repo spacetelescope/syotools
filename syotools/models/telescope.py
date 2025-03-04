@@ -9,8 +9,8 @@ from __future__ import (print_function, division, absolute_import, with_statemen
                         nested_scopes, generators)
 from syotools.models.base import PersistentModel
 from syotools.defaults import default_telescope
-from syotools.utils import pre_encode
-from syotools.utils.jsonunit import str_jsunit
+#from syotools.utils import pre_encode
+#from syotools.utils.jsonunit import str_jsunit
 import astropy.units as u #for unit conversions
 import numpy as np
 from syotools.sci_eng_interface import read_json
@@ -40,11 +40,11 @@ class Telescope(PersistentModel):
         self.coronagraphs = []
 
         self.name = ''
-        self.aperture = pre_encode(0. * u.m)
-        self.temperature = pre_encode(0. * u.K)
-        self.ota_emissivity = pre_encode(0. * u.dimensionless_unscaled)
-        self.diff_limit_wavelength = pre_encode(0. * u.nm)
-        self.unobscured_fraction = pre_encode(1. * u.dimensionless_unscaled)
+        self.aperture = 0. * u.m
+        self.temperature = 0. * u.K
+        self.ota_emissivity = 0. * u.dimensionless_unscaled
+        self.diff_limit_wavelength = 0. * u.nm
+        self.unobscured_fraction = 1. * u.dimensionless_unscaled
 
         self.verbose = False
         super().__init__(default_model=default_telescope, **kw)
@@ -59,13 +59,13 @@ class Telescope(PersistentModel):
                                                        'aperture')
         
         #result = (1.22 * u.rad * diff_limit_wavelength / aperture).to(u.arcsec)
-        result = (1.03 * u.rad * diff_limit_wavelength / aperture).to(u.arcsec)
-        return pre_encode(result)
+        result = (1.03 * u.rad * diff_limit_wavelength[0] * u.Unit(diff_limit_wavelength[1]) / aperture).to(u.arcsec)
+        return result
     
     @property
     def effective_aperture(self):
         unobscured, aper = self.recover('unobscured_fraction', 'aperture')
-        return pre_encode(np.sqrt(unobscured) * aper)
+        return np.sqrt(unobscured) * aper 
     
     def add_camera(self, camera):
         self.cameras.append(camera)

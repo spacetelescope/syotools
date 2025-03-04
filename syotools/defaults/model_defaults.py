@@ -6,12 +6,12 @@ Created on Sat Oct 15 10:59:16 2016
 """
 import os
 from collections import OrderedDict
-from syotools.utils import ordered_load
+from syotools.utils import ordered_load 
+import astropy.units as u 
 
 cwd = os.getenv('LUVOIR_SIMTOOLS_DIR')
 
-#Load data from ascii table file (need a better method? maybe a FITS table?)
-#and establish the default file path
+# Load data from fits files describring LUMOS and establish the default file path
 current_dir = os.path.dirname(os.path.abspath(__file__))
 spec_default_path = os.path.join(current_dir, '..', 'reference_data', 'LUMOS_ETC.fits')
 pol_default_path = os.path.join(current_dir, '..', 'reference_data', 'POLLUX_ETC.fits')
@@ -33,3 +33,6 @@ default_spectrograph.update(all_defaults['Spectrograph'])
 default_spectropolarimeter = OrderedDict([("_lumos_default_file", pol_default_path)])
 default_spectropolarimeter.update(all_defaults['Spectropolarimeter'])
 default_coronagraph = all_defaults['Coronagraph'] #placeholder
+
+
+

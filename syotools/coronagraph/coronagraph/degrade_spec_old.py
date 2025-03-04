@@ -69,8 +69,7 @@ def degrade_spec(specHR, lamHR, lamLR, dlam=None):
         # spectrum over the low-res element, distributing the integrated
         # energey into the low-res element
         if len(lamHI[iss]) == 0:
-            print "No HiRes elements in Low Res bin!"
-            import sys; sys.exit()
+            raise ValueError("No HiRes elements in Low Res bin!")
         elif len(lamHI[iss]) == 1:
             specs = spec[iss]
         elif len(lamHI[iss]) <= 3:

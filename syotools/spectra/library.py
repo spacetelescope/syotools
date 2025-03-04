@@ -176,7 +176,7 @@ class _spec_library(object):
             sp = pys.FileSpectrum(abspath, keepneg=True)
             sp.waveunits = str(waveunits.unit)
             sp.fluxunits = str(fluxunits.unit)
-            self._available_spectra[specid] = sp
+            self.add_spec_from_spectrum1d(specid, sp)
     
     def add_spec_from_arrays(self, specid, wavelength, flux):
         """
