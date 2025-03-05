@@ -244,7 +244,8 @@ class PhotometricExposure(Exposure):
                                            'telescope.effective_aperture', 
                                            'camera.derived_bandpass')
         
-        print("mag in _fstar: ", mag)
+        if self.verbose:
+            print("mag in _fstar: ", mag)
         m = 10.**(-0.4*(mag.value))
         D = D.to(u.cm)
 
