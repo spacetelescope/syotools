@@ -51,6 +51,7 @@ class Source(PersistentModel):
         self.magnitude = magnitude
         self.redshift = redshift
         self.extinction = extinction
+        # if the bandpass is none/unspecified, load the library default
         if bandpass is None:
             self.renorm_band = pysyn_spectra_library[source_name].band
         else:
