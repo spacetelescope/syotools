@@ -42,7 +42,7 @@ def uvspec_snr(telescope, mode, template, fuvmag, exptime, silent=False):
     source = Source() 
     redshift = 0.0 
     extinction = 0.0 
-    source.set_sed(template, fuvmag, redshift, extinction)   
+    source.set_sed(template, fuvmag, redshift, extinction, bandpass="galex,fuv")   
 
     uvi_exp = SourceSpectrographicExposure() 
     uvi_exp.source = source
