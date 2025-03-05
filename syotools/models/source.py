@@ -45,16 +45,20 @@ class Source(PersistentModel):
         self.sed = self.set_sed(self.name, self.magnitude, self.redshift, self.extinction)
 
 
-    def set_sed(self, source_name, magnitude, redshift, extinction):   
+    def set_sed(self, source_name, magnitude, redshift, extinction, bandpass=None):   
         self.name = source_name  
         self.sed = pysyn_spectra_library[source_name]
         self.magnitude = magnitude
         self.redshift = redshift
         self.extinction = extinction
-        self.renorm_band = pysyn_spectra_library[source_name].band
+        # if the bandpass is none/unspecified, load the library default
+        if bandpass is None:
+            self.renorm_band = pysyn_spectra_library[source_name].band
+        else:
+            self.renorm_band = bandpass
 
         new_sed = pysyn_spectra_library[source_name]
-        
+
         #now apply the other quantities via pysynphot 
         sp_red = new_sed.redshift(redshift)
         sp_ext = sp_red * S.Extinction(extinction, 'mwavg')

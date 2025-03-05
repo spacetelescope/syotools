@@ -40,7 +40,7 @@ def camera_snr(telescope, template, magnitude, exptime, silent=False):
 	redshift = 0. # changes to these are not implemented yet 
 	extinction = 0. 
 	
-	source.set_sed(template, magnitude, redshift, extinction)   
+	source.set_sed(template, magnitude, redshift, extinction, bandpass="johnson,v")   
 	
 	exp = SourcePhotometricExposure() 
 	exp.source = source
@@ -98,7 +98,7 @@ def camera_exptime(telescope, template, magnitude, snr_goal, silent=False):
 	redshift = 0. # changes to these are not implemented yet 
 	extinction = 0. 
 	
-	source.set_sed(template, magnitude, redshift, extinction)   
+	source.set_sed(template, magnitude, redshift, extinction, bandpass="johnson,v")   
 	        
 	exp = SourcePhotometricExposure() 
 	exp.source = source
