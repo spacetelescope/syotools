@@ -39,30 +39,30 @@ def uvspec_snr(telescope, mode, template, fuvmag, exptime, silent=False):
     tel.add_spectrograph(uvi)
     uvi.mode = mode
 
-    source = Source() 
-    redshift = 0.0 
-    extinction = 0.0 
-    source.set_sed(template, fuvmag, redshift, extinction, bandpass="galex,fuv")   
+    source = Source()
+    redshift = 0.0
+    extinction = 0.0
+    source.set_sed(template, fuvmag, redshift, extinction, bandpass="galex,fuv")
 
-    uvi_exp = SourceSpectrographicExposure() 
+    uvi_exp = SourceSpectrographicExposure()
     uvi_exp.source = source
-    uvi_exp.verbose = True 
-    uvi.add_exposure(uvi_exp) 
+    uvi_exp.verbose = not silent
+    uvi.add_exposure(uvi_exp)
 
-    uvi_exp.exptime = [[exptime, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0], 'hr'] 
+    uvi_exp.exptime = [[exptime, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0], 'hr']
 
-    uvi_exp.verbose = True 
-    tel.verbose = True 
-    if (silent):  
-       uvi_exp.verbose = False 
-       tel.verbose = False 
-       uvi.verbose = False 
-       print("We have set verbose = False") 
+    uvi_exp.verbose = True
+    tel.verbose = True
+    if (silent):
+       uvi_exp.verbose = False
+       tel.verbose = False
+       uvi.verbose = False
+       print("We have set verbose = False")
 
-    if not silent: 
-        print("Current SED template: {}".format(uvi_exp.source.name)) 
-        print("Current grating mode: {}".format(uvi.descriptions[uvi.mode])) 
-        print("Current exposure time: {} hours\n".format(uvi_exp.exptime))  
+    if not silent:
+        print("Current SED template: {}".format(uvi_exp.source.name))
+        print("Current grating mode: {}".format(uvi.descriptions[uvi.mode]))
+        print("Current exposure time: {} hours\n".format(uvi_exp.exptime))
 
     uvi_exp.enable()
     uvi_snr = uvi_exp.recover('snr')
@@ -114,24 +114,21 @@ def uvspec_exptime(telescope, mode, template, fuvmag, snr_goal, silent=False):
     tel.add_spectrograph(uvi)
     uvi.mode = mode
 
-    source = Source() 
-    redshift = 0.0 
-    extinction = 0.0 
-    source.set_sed(template, fuvmag, redshift, extinction, bandpass="galex,fuv")   
+    source = Source()
+    redshift = 0.0
+    extinction = 0.0
+    source.set_sed(template, fuvmag, redshift, extinction, bandpass="galex,fuv")
 
-    uvi_exp = SourceSpectrographicExposure() 
+    uvi_exp = SourceSpectrographicExposure()
     uvi_exp.source = source
-    uvi_exp.verbose = True 
-    uvi.add_exposure(uvi_exp) 
+    uvi_exp.verbose = not silent
+    uvi.add_exposure(uvi_exp)
 
-    uvi_exp.verbose = False 
-    if (silent):  uvi_exp.verbose = False 
+    if not silent:
+        print("Current SED template: {}".format(source.sed.name))
+        print("Current grating mode: {}".format(uvi.descriptions[uvi.mode]))
+        print("Current exposure time: {} hours\n".format(uvi_exp.exptime))
 
-    if not silent: 
-        print("Current SED template: {}".format(source.sed.name)) 
-        print("Current grating mode: {}".format(uvi.descriptions[uvi.mode])) 
-        print("Current exposure time: {} hours\n".format(uvi_exp.exptime)) 
-    
     uvi_exp._snr_goal= snr_goal * (u.ct)**0.5 / (u.pix)**0.5
 
     snr = uvi_exp.recover('exptime')

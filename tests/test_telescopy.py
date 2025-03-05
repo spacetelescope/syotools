@@ -28,8 +28,8 @@ def test_telescope():
     assert tel1.cameras != tel2.cameras
 
 
-camera_exptime_baseline = pickle.load(open(CAMERA_BASELINE_PICKLE, "rb"))[0:1]
-uvspec_exptime_baseline = pickle.load(open(UVSPEC_BASELINE_PICKLE, "rb"))[0:1]
+camera_exptime_baseline = pickle.load(open(CAMERA_BASELINE_PICKLE, "rb"))
+uvspec_exptime_baseline = pickle.load(open(UVSPEC_BASELINE_PICKLE, "rb"))
 BASELINE_SIZE = 50
 
 @pytest.mark.parametrize("magnitude, snr_goal, expected", camera_exptime_baseline)

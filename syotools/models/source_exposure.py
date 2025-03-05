@@ -166,7 +166,8 @@ class SourceExposure(PersistentModel):
             if (magwave > np.max(self.source.sed.wave)): this_mag = 99.
             if (magwave < np.min(self.source.sed.wave)): this_mag = 99.
             output_mags.append(this_mag)
-            print('getting mags from interpolated _source: ', magwave)
+            if self.verbose:
+                print('getting mags from interpolated _source: ', magwave)
         return np.array(output_mags)
 
     @property
@@ -175,7 +176,8 @@ class SourceExposure(PersistentModel):
             return self._magnitude
         #If magnitude is not unknown, it should be interpolated from the SED
         #at the camera bandpasses.
-        print('magnitude fcn line 174', self.interpolated_source)
+        if self.verbose:
+            print('magnitude fcn line 174', self.interpolated_source)
         return self.interpolated_source
 
     @magnitude.setter
@@ -183,7 +185,8 @@ class SourceExposure(PersistentModel):
         if self.unknown == "magnitude":
             return
         self._magnitude = self._ensure_array(new_magnitude)
-        print('magnitude fcn line 182', new_magnitude)
+        if self.verbose:
+            print('magnitude fcn line 182', new_magnitude)
 
         self.calculate()
 
