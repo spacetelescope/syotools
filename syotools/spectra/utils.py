@@ -7,9 +7,8 @@ Created on Tue Nov  7 15:04:24 2017
 """
 import astropy.units as u
 import pysynphot as pys
-import astropy.constants as const
-import numpy as np 
-from syotools.utils import pre_encode, pre_decode
+from pathlib import Path
+import astropy.io.ascii as asc
 
 #Define a new unit for spectral flux density
 flambda = u.def_unit(["flambda","flam"], (u.photon / u.s / u.cm**2 / u.nm))
@@ -24,8 +23,7 @@ def renorm_sed(sed, new_magnitude, bandpass='johnson,v', waveunits='nm', fluxuni
     new_sed = sed.renorm((new_magnitude + 2.5*u.mag('AB')).value, 'abmag', band)
     new_sed.convert(waveunits) 
     new_sed.convert(fluxunits) 
-    #print("Converted SED to mag = ", new_magnitude, " with units ", waveunits, " and ", fluxunits) 
-    
+        
     return new_sed
 
 def mag_from_sed(sed, camera):
@@ -51,38 +49,52 @@ def mag_from_sed(sed, camera):
     
     return output_mag * u.ABmag
 
-    """## OLD VERSION:
-    pivots = pivots.to(wavelength.unit)
-    passes = passes.to(wavelength.unit)
-    n = camera.n_bands
-    bands = Box1D(amplitudes=[1.]*n, x_0=pivots.value, width=passes.value, n_models=n)
-    
-    #Calculate bandpass coefficients at the spectrum's wavelengths
-    band_coeff = bands(np.tile(wavelength.value[None,...], (n,1)))
-    
-    #Convolve with flux and integrate
-    convol = band_coeff * np.tile(sedflux.value[None,...], (n,1))
-    integ = convol.sum(axis=0)
-    
-    #Ensure the proper unit conversions.
-    integ = integ * sedflux.unit * wavelength.unit
-    output = [i.to(u.ABmag, u.spectral_density(p)) for i,p in zip(integ, pivots)]
-    output = np.array([o.value for o in output]) * u.ABmag
-    
-    return output"""
+# utility for when we need to load a text file  
+def load_txtfile(spec):
+    fname = spec['file']
+    band = spec.get('band', 'johnson,v')
+    path = Path(fname[0])
+    for f in fname[1:]:
+        path = path / f
+    abspath = str(path.resolve())
 
-def planck(wave, temperature):
-    """
-    Planck spectrum for the various wave bands.
-    """
-    wave = wave.to('cm')
-    temp = temperature.to('K')
-    h = const.h.to(u.erg * u.s) # Planck's constant erg s 
-    c = const.c.to(u.cm / u.s) # speed of light [cm / s] 
-    k = const.k_B.to(u.erg / u.K) # Boltzmann's constant [erg deg K^-1] 
-    x = 2. * h * c**2 / wave**5
-    exponent = (h * c / (wave * k * temp))
+    tab = asc.read(abspath, names=['wave','flux']) 
+    sp = pys.ArraySpectrum(wave=tab['wave'].value, flux=tab['flux'].value, waveunits='Angstrom', fluxunits='flam')
+    sp = sp.renorm(30., 'abmag', pys.ObsBandpass(band))
+    sp.convert('abmag')
+    sp.convert('nm')
+    sp.__setattr__('band', band)
+    return sp 
 
-    result = (x / (np.exp(exponent)-1.)).to(u.erg / u.s / u.cm**3) / u.sr
+# utility for when we need to load an fesc data file  
+def load_fesc(spec):
+    fname = spec['file']
+    band = spec.get('band', 'johnson,v')
 
-    return pre_encode(result)
+    path = Path(fname[0])
+    for f in fname[1:]:
+        path = path / f
+    abspath = str(path.resolve())
+    tab = asc.read(abspath)
+    sp = pys.ArraySpectrum(wave=tab['lam'], flux=tab['lh1=17.5'], 
+                           waveunits='Angstrom', fluxunits='flam')
+    sp = sp.renorm(30., 'abmag', pys.ObsBandpass(band))
+    sp.convert('abmag')
+    sp.convert('nm')
+    sp.__setattr__('band', band)
+    return sp
+
+# utility for when we need to load a pysynphot spectrum  
+def load_pysfits(spec):
+    fname = spec['file']
+    band = spec.get('band', 'johnson,v')
+    path = Path(fname[0])
+    for f in fname[1:]:
+        path = path / f
+    abspath = str(path.resolve())
+    sp = pys.FileSpectrum(abspath)
+    sp = sp.renorm(30., 'abmag', pys.ObsBandpass(band))
+    sp.convert('abmag')
+    sp.convert('nm')
+    sp.__setattr__('band', band)
+    return sp

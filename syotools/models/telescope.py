@@ -6,9 +6,9 @@ Created on Fri Oct 14 20:28:51 2016
 
 from syotools.models.base import PersistentModel
 from syotools.defaults import default_telescope
-from syotools.utils import pre_encode
-from syotools.utils.jsonunit import str_jsunit
-import astropy.units as u 
+#from syotools.utils import pre_encode
+#from syotools.utils.jsonunit import str_jsunit
+import astropy.units as u #for unit conversions
 import numpy as np
 import os, yaml
 from hwo_sci_eng.utils import read_yaml, read_json 
@@ -41,11 +41,11 @@ class Telescope(PersistentModel):
     coronagraphs = [] 
     
     name = ''
-    effective_aperture = pre_encode(0. * u.m) # now set by SEI 
-    temperature = pre_encode(0. * u.K) # held over from before SEI integration
-    ota_emissivity = pre_encode(0. * u.dimensionless_unscaled)  # held over from before SEI integration
-    diff_limit_wavelength = pre_encode(0. * u.nm)  # held over from before SEI integration
-    unobscured_fraction = pre_encode(1. * u.dimensionless_unscaled)  # held over from before SEI integration
+    effective_aperture = 0. * u.m 
+    temperature = 0. * u.K
+    ota_emissivity = 0. * u.dimensionless_unscaled 
+    diff_limit_wavelength = 0. * u.nm 
+    unobscured_fraction = 1. * u.dimensionless_unscaled 
 
     verbose = False 
         
@@ -58,19 +58,14 @@ class Telescope(PersistentModel):
         diff_limit_wavelength, effective_aperture = self.recover('diff_limit_wavelength',
                                                        'effective_aperture')
         
-        #result = (1.22 * u.rad * diff_limit_wavelength / effective_aperture).to(u.arcsec)
-        result = (1.03 * u.rad * diff_limit_wavelength / effective_aperture).to(u.arcsec)
-        return pre_encode(result)
+        #result = (1.22 * u.rad * diff_limit_wavelength / aperture).to(u.arcsec)
+        result = (1.03 * u.rad * diff_limit_wavelength[0] * u.Unit(diff_limit_wavelength[1]) / effective_aperture).to(u.arcsec)
+        return result
     
-#    @property
-#    def effective_aperture(self):
-#        self.effective_aperture = 2. * (self.total_collecting_area / np.pi )**0.5
-#        return 
-
-#    @effective_aperture.setter
-#    def effective_aperture(self): 
-#        self.effective_aperture = 2. * (self.total_collecting_area / np.pi )**0.5
-#        return
+    # @property
+    # def effective_aperture(self):
+    #     unobscured, aper = self.recover('unobscured_fraction', 'aperture')
+    #     return np.sqrt(unobscured) * aper 
     
     def add_camera(self, camera):
         self.cameras.append(camera)

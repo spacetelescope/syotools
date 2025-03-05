@@ -2,9 +2,8 @@
 # -*- coding: utf-8 -*-
 """
 Created on Mon Oct 30 12:31:11 2017
-@author: gkanarek, tumlinson 
+@author: gkanarek, jt
 """
-
 import numpy as np
 import astropy.units as u
 import astropy.constants as const
@@ -14,12 +13,10 @@ from syotools.defaults import default_exposure
 from syotools.utils import pre_encode, pre_decode
 from syotools.spectra import SpectralLibrary
 from syotools.spectra.utils import renorm_sed
-from syotools.models.sources import Source
+from syotools.models.source import Source
 
 def nice_print(arr):
-    """
-    Utility to make the verbose output more readable.
-    """
+    """ Utility to make the verbose output more readable. """
     
     arr = pre_decode(arr) #in case it's a JsonUnit serialization
 
@@ -61,16 +58,19 @@ class Exposure(PersistentModel):
         magnitude    - either the input source magnitude, in which case this is
                        equal to the SED interpolated to the desired wavelengths,
                        or the limiting magnitude of the exposure (float array)
-        redshift     - the redshift of the SED (float)
         unknown      - a flag to indicate which variable should be calculated
                        ('snr', 'exptime', or 'magnitude'). this should generally 
                        be set by the tool, and not be available to users. (string)
+        sources      - list of source objects to be added to this exposure 
         
         _default_model - used by PersistentModel
     """
     
     _default_model = default_exposure
     
+    source = Source() # this is the Source object, returns a flat spectrum by default. 
+                      # currently an Exposure can have only one Source 
+
     telescope = None
     camera = None
     spectrograph = None
@@ -79,15 +79,14 @@ class Exposure(PersistentModel):
     source = Source() # instantiate a source class so that we have access to c_thermal, f_sky, planck function 
     
     exp_id = ''
-    _sed = pre_encode(np.zeros(1, dtype=float) * u.ABmag) #default is set via sed_id
+    _sed = pre_encode(np.zeros(1, dtype=float) * u.ABmag) # default is set via sed_id
     _sed_id = ''
     n_exp = 0
     _exptime = pre_encode(np.zeros(1, dtype=float) * u.s)
     _snr = pre_encode(np.zeros(1, dtype=float) * u.dimensionless_unscaled)
     _snr_goal = pre_encode(np.zeros(1, dtype=float) * u.dimensionless_unscaled)
     _magnitude = pre_encode(np.zeros(1, dtype=float) * u.ABmag)
-    _redshift = 0.
-    _unknown = '' #one of 'snr', 'magnitude', 'exptime'
+    _unknown = '' # one of 'snr', 'magnitude', 'exptime'
     
     verbose = False #set this for debugging purposes only
     _disable = False #set this to disable recalculating (when updating several attributes at the same time)
@@ -119,7 +118,8 @@ class Exposure(PersistentModel):
         q = pre_encode(quant)
         if len(q) < 2:
             import pdb; pdb.set_trace()
-        val = q[1]['value']
+        #val = q[1]['value'] #<--- this was q[1]['value'] for old JSON format of properties. 
+        val = q[0]          # this is valid for the new format of model_defaults that drops JSON 
         if not isinstance(val, list):
             if self.camera is None:
                 nb = 1
@@ -154,13 +154,10 @@ class Exposure(PersistentModel):
     @property
     def sed(self):
         """
-        Return a spectrum, redshifted if necessary. We don't just store the 
-        redshifted spectrum because pysynphot doesn't save the original, it 
-        just returns a new copy of the spectrum with redshifted wavelengths.
+        Return a spectrum. 
         """
         sed = pre_decode(self._sed)
-        z = self.recover('redshift')
-        return pre_encode(sed.redshift(z))
+        return pre_encode(sed)
     
     @sed.setter
     def sed(self, new_sed):
@@ -208,31 +205,6 @@ class Exposure(PersistentModel):
             return
         self._magnitude = self._ensure_array(new_magnitude)
         self.calculate()
-        
-    @property
-    def redshift(self):
-        return self._redshift
-    
-    @redshift.setter
-    def redshift(self, new_redshift):
-        if self._redshift == new_redshift:
-            return
-        self._redshift = new_redshift
-        self.calculate()
-    
-    @property
-    def zmax(self):
-        sed = self.recover('_sed')
-        twave = sed.wave * u.Unit(sed.waveunits.name)
-        bwave = self.recover('spectrograph.wave')
-        return (bwave.max() / twave.min() - 1.0).value
-    
-    @property
-    def zmin(self):
-        sed = self.recover('_sed')
-        twave = sed.wave * u.Unit(sed.waveunits.name)
-        bwave = self.recover('spectrograph.wave')
-        return max((bwave.min() / twave.max() - 1.0).value, 0.0)
     
     def calculate(self):
         """
@@ -241,11 +213,12 @@ class Exposure(PersistentModel):
         """
         
         raise NotImplementedError
-        
+    
+    def add_source(self, new_source):
+        self.source = new_source
+
 class PhotometricExposure(Exposure):
-    """
-    A subclass of the base Exposure model, for photometric ETC calculations.
-    """
+    """ A subclass of the base Exposure model, for photometric ETC calculations """
     
     def calculate(self):
         """
@@ -273,13 +246,14 @@ class PhotometricExposure(Exposure):
                                            'telescope.effective_aperture', 
                                            'camera.derived_bandpass')
         
+        if self.verbose:
+            print("mag in _fstar: ", mag)
         m = 10.**(-0.4*(mag.value))
         D = D.to(u.cm)
         
         fstar = f0 * c_ap * np.pi / 4. * D**2 * dlam * m
 
         return fstar
-    
     
     def _update_exptime(self):
         """
@@ -313,7 +287,6 @@ class PhotometricExposure(Exposure):
         
         return True #completed successfully
         
-
     def _update_magnitude(self):
         """
         Calculate the limiting magnitude given the desired S/N and exposure
@@ -361,8 +334,8 @@ class PhotometricExposure(Exposure):
         """
         
         self.camera._print_initcon(self.verbose)
-            
-        #Convert JsonUnits to Quantities for calculations
+        
+
         (_exptime, _nexp, n_bands) = self.recover('_exptime', 'n_exp',
                                                   'camera.n_bands')
         (_total_qe, _detector_rn, _dark_current) = self.recover('camera.total_qe',
@@ -370,26 +343,23 @@ class PhotometricExposure(Exposure):
         
         #calculate everything
         number_of_exposures = np.full(n_bands, _nexp)
-        desired_exp_time = (np.full(n_bands, _exptime.value) * _exptime.unit).to(u.second)
+        desired_exp_time = (np.full(n_bands, _exptime[0]) * u.Unit(_exptime[1])).to(u.second)
         time_per_exposure = desired_exp_time / number_of_exposures
         
         fstar = self._fstar
         signal_counts = _total_qe * fstar * desired_exp_time
-        
-        #fsky = self.camera._fsky(verbose=self.verbose)    # prior to Source 
-        fsky = Source._fsky(self, verbose=self.verbose)
-        sky_counts = _total_qe * fsky * desired_exp_time
-        
         shot_noise_in_signal = np.sqrt(signal_counts)
+
+        fsky = self.camera._fsky(verbose=self.verbose)
+        sky_counts = _total_qe * fsky * desired_exp_time
         shot_noise_in_sky = np.sqrt(sky_counts)
         
         sn_box = self.camera._sn_box(self.verbose)
-        
+    
         read_noise = _detector_rn**2 * sn_box * number_of_exposures
         dark_noise = sn_box * _dark_current * desired_exp_time
 
-        #thermal = pre_decode(self.camera.c_thermal(verbose=self.verbose)) # prior to moving c_thermal to Source() 
-        thermal = pre_decode(Source.c_thermal(self, verbose=self.verbose))
+        thermal = self.camera.c_thermal(verbose=self.verbose) 
         
         thermal_counts = desired_exp_time * thermal
         snr = signal_counts / np.sqrt(signal_counts + sky_counts + read_noise
@@ -413,6 +383,10 @@ class PhotometricExposure(Exposure):
         self._snr = pre_encode(snr)
         
         return True           # completed successfully
+
+
+
+
 
 class SpectrographicExposure(Exposure):
     """
@@ -561,7 +535,6 @@ class SpectrographicExposure(Exposure):
         
         return True #completed successfully
 
-
 class CoronagraphicExposure(Exposure):
     """
     A subclass of the base Exposure model, for coronagraphic imaging calculations.
@@ -584,7 +557,6 @@ class CoronagraphicExposure(Exposure):
         return status
     
     #Calculation methods
-    
     def _update_exptime(self):
         """
         Calculate the exposure time to achieve the desired S/N for the 
@@ -593,7 +565,6 @@ class CoronagraphicExposure(Exposure):
         print('doesnt exist yet pull it from camera class') 
         
         return False #completed successfully
-        
 
     def _update_magnitude(self):
         """
@@ -619,4 +590,3 @@ class CoronagraphicExposure(Exposure):
         self._snr = pre_encode(10.)
         
         return True #completed successfully
-

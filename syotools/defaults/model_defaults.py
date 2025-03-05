@@ -5,35 +5,19 @@ Created on Sat Oct 15 10:59:16 2016
 @author: gkanarek, tumlinson
 """
 import os 
-
-#pathlib not supported in python 2
-try:
-    from pathlib import Path
-    use_pathlib = True
-except ImportError:
-    import os
-    use_pathlib = False
-
-use_pathlib = False
-
 from collections import OrderedDict
-from syotools.utils import ordered_load
+from syotools.utils import ordered_load 
+import astropy.units as u 
 
 cwd = os.getenv('LUVOIR_SIMTOOLS_DIR')
 
-if use_pathlib:
-    spec_default_path = str(cwd+'syotools/'+'data/LUMOS_ETC.fits')
-    pol_default_path = str(cwd+'syotools/'+'data/POLLUX_ETC.fits')
-    yaml_default_path = str(cwd+'syotools/'+'defaults/model_defaults.yaml')
-else:
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    spec_default_path = os.path.join(current_dir, '..', 'data', 'LUMOS_ETC.fits')
-    pol_default_path = os.path.join(current_dir, '..', 'data', 'POLLUX_ETC.fits')
-    yaml_default_path = os.path.join(current_dir, 'model_defaults.yaml')
+# Load data from fits files describring LUMOS and establish the default file path
+current_dir = os.path.dirname(os.path.abspath(__file__))
+spec_default_path = os.path.join(current_dir, '..', 'reference_data', 'LUMOS_ETC.fits')
+pol_default_path = os.path.join(current_dir, '..', 'reference_data', 'POLLUX_ETC.fits')
+yaml_default_path = os.path.join(current_dir, 'model_defaults.yaml')
 
-#Now we load the defaults from model_defaults.yaml
-#We use LUVOIR prelim values as defaults for the telescope & camera, and
-#LUMOS prelim values as defaults for the spectrograph.
+# Load the defaults from model_defaults.yaml
 #Default exposure parameters are taken from the default HDI_ETC tool values
 #   --> the _sed, _snr, and _magnitude default values are placeholders
 #Default spectrograph parameters are taken from the default LUMOS_ETC tool values

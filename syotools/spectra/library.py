@@ -1,26 +1,14 @@
 #!/usr/bin/env python
 """
 Created on Tue Oct 18 11:19:05 2016
-
 @author: gkanarek
 """
 import os
-
-#pathlib not supported in python 2
-try:
-    from pathlib import Path
-    use_pathlib = True
-except ImportError:
-    use_pathlib = False
-
 import astropy.units as u
 import pysynphot as pys
-
-#JT 050323 
-#from specutils.io.read_fits import read_fits_spectrum1d as read_fits
 import specutils as specu
-
-from syotools.defaults import default_spectra
+from syotools.spectra.spec_defaults import default_spectra, pysyn_spectra_library 
+from pathlib import Path
 
 class _spec_library(object):
     """
@@ -32,6 +20,8 @@ class _spec_library(object):
     
     Each spectrum has an id (given by the user for non-default spectra), which
     is used to access the spectrum and its optional description.
+
+    the property _available_spectra is a dictionary with keys for each spectrum 
     
     PLEASE NOTE:
         Accessing a spectrum with object dot notation (using its spec id) will
@@ -39,7 +29,7 @@ class _spec_library(object):
     return the spectrum's description string (if any) instead.
     """
     
-    _available_spectra = {}
+    _available_spectra = {} 
     _descriptions = {}
     
     def __init__(self):
@@ -153,6 +143,7 @@ class _spec_library(object):
             if not isinstance(specid, (list, tuple)):
                 raise TypeError('specid must be a list or tuple when multispec=True')
         
+        use_pathlib = True
         if use_pathlib:
             path = Path(filepath).resolve() # using pathlib
             extensions = path.suffixes
@@ -185,7 +176,7 @@ class _spec_library(object):
             sp = pys.FileSpectrum(abspath, keepneg=True)
             sp.waveunits = str(waveunits.unit)
             sp.fluxunits = str(fluxunits.unit)
-            self._available_spectra[specid] = sp
+            self.add_spec_from_spectrum1d(specid, sp)
     
     def add_spec_from_arrays(self, specid, wavelength, flux):
         """
