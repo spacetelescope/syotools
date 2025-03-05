@@ -13,8 +13,8 @@ cwd = os.getenv('LUVOIR_SIMTOOLS_DIR')
 
 # Load data from fits files describring LUMOS and establish the default file path
 current_dir = os.path.dirname(os.path.abspath(__file__))
-spec_default_path = os.path.join(current_dir, '..', 'data', 'LUMOS_ETC.fits')
-pol_default_path = os.path.join(current_dir, '..', 'data', 'POLLUX_ETC.fits')
+spec_default_path = os.path.join(current_dir, '..', 'reference_data', 'LUMOS_ETC.fits')
+pol_default_path = os.path.join(current_dir, '..', 'reference_data', 'POLLUX_ETC.fits')
 yaml_default_path = os.path.join(current_dir, 'model_defaults.yaml')
 
 # Load the defaults from model_defaults.yaml
