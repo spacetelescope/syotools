@@ -235,7 +235,8 @@ class Camera(PersistentModel):
         
         pivots = pivotwave[0] * u.Unit(pivotwave[1])  
         wave = pivots.to('cm')
-        temp = temperature.to('K')
+        temps = temperature[0] * u.Unit(temperature[1])
+        temp = temps.to('K')
         h = const.h.to(u.erg * u.s) # Planck's constant erg s 
         c = const.c.to(u.cm / u.s) # speed of light [cm / s] 
         k = const.k_B.to(u.erg / u.K) # Boltzmann's constant [erg deg K^-1] 
