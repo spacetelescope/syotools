@@ -275,13 +275,13 @@ class PhotometricExposure(Exposure):
         Npix = self.camera._sn_box(self.verbose)
         #thermal = pre_decode(self.camera.c_thermal(verbose=self.verbose)) # prior to moving c_thermal to Source 
         thermal = pre_decode(Source.c_thermal(self, verbose=self.verbose))
-        
+
         a = (_total_qe * fstar)**2
         b = snr2 * (_total_qe * (fstar + fsky) + thermal + _dark_current * Npix)
         c = snr2 * _detector_rn**2 * Npix * _nexp
         
         texp = ((-b + np.sqrt(b**2 - 4*a*c)) / (2*a)).to(u.s)
-        
+
         #serialize with JsonUnit for transportation
         self._exptime = pre_encode(texp)
         

@@ -89,7 +89,7 @@ class Telescope(PersistentModel):
             works for the first iteration of this capability. 
             JT 102524
         """
-        with open(os.getenv('SCI_ENG_DIR') + '/obs_config/Tel/'+coating+'_refl.yaml', 'r') as f:
+        with open(os.getenv('SCI_ENG_DIR') + '/obs_config/reflectivities/'+coating+'_refl.yaml', 'r') as f:
             coating_dict = yaml.load(f, Loader=yaml.SafeLoader)
 
         mirror['coating_name'] = coating 
@@ -133,14 +133,17 @@ class Telescope(PersistentModel):
         # mirrors. So, we are going to break this dictionary up and carry the 
         # mirrors and other pieces separately:  
 
-        self.pm = tel['PM_aperture'] #primary 
+        self.pm = tel['PM'] #primary 
         self.set_coating(self.pm, 'XeLiF')
         self.sm = tel['SM'] # secondary  
-        self.set_coating(self.pm, 'XeLiF')
+        self.set_coating(self.sm, 'XeLiF')
         self.m3 = tel['M3'] # tertiary 
-        self.set_coating(self.pm, 'XeLiF')
+        self.set_coating(self.m3, 'XeLiF')
         self.m4 = tel['M4'] # fold mirror (?) 
-        self.set_coating(self.pm, 'XeLiF')
+        self.set_coating(self.m4, 'XeLiF')
+
+        self.telescope_wave=self.pm['coating_wave']
+        self.telescope_efficiency=self.pm['coating_refl'] * self.sm['coating_refl'] * self.m3['coating_refl'] * self.m4['coating_refl']
 
         self.name = name 
         if ('hex' in self.pm['segmentation']): # do this only if we have a hex segmented mirror 
@@ -154,4 +157,4 @@ class Telescope(PersistentModel):
         # as a property of the camera, not the telescope. This is being set here, arbitarily, until that is fixed. 
         self.diff_limited_wavelength = 0.5 * u.nm 
 
-        self.unobscured_fraction = (1. - self.pm['segmentation_parameters']['obscuration_ratio'][0]) * u.dimensionless_unscaled
+        self.unobscured_fraction = (1. - self.pm['obscuration_ratio'][0]) * u.dimensionless_unscaled

@@ -250,14 +250,12 @@ class SourcePhotometricExposure(SourceExposure):
         thermal = self.camera.c_thermal(verbose=self.verbose)
 
         dark_rate = _dark_current[0] * u.Unit(_dark_current[1]) #<<-'electron / (pix s)'
-    
         rn = _detector_rn[0] * u.Unit(_detector_rn[1])
 
         QE = _total_qe[0] * u.Unit(_total_qe[1]) 
         a = (QE * fstar)**2
         b = snr2 * (QE * (fstar + fsky) + thermal + dark_rate * Npix)
         c = snr2 * rn**2 * Npix * _nexp
-        
         texp = ((-b + np.sqrt(b**2 - 4*a*c)) / (2*a)).to(u.s)
         
         self._exptime = texp

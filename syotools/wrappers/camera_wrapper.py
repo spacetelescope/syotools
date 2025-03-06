@@ -81,7 +81,7 @@ def camera_exptime(telescope, template, magnitude, snr_goal, silent=False):
 	    'Sbc Galaxy', 'Starburst Galaxy', 'NGC 1068', 'Galaxy with f_esc, HI=1, HeI=1', 
 	    'Galaxy with f_esc, HI=0.001, HeI=1', 'Blackbody5000', 'Blackbody100000' 
 	
-	magniotude = V magnitude to normalize the template spectrum, a float.
+	magnitude = V magnitude to normalize the template spectrum, a float.
 	
 	snr_goal = desired SNR, per pixel, for each band 
 	
@@ -101,7 +101,7 @@ def camera_exptime(telescope, template, magnitude, snr_goal, silent=False):
 	extinction = 0. 
 	
 	source.set_sed(template, magnitude, redshift, extinction, bandpass="johnson,v")   
-	        
+
 	exp = SourcePhotometricExposure() 
 	exp.source = source
 	
