@@ -46,7 +46,7 @@ class Exposure(PersistentModel):
                        with this exposure
 
         exp_id       - a unique exposure ID, used for save/load purposes (string)
-                        NOTE: THIS HAS NO DEFAULT, A NEW EXP_ID IS CREATED
+                        note: THIS HAS NO DEFAULT, A NEW EXP_ID IS CREATED
                         WHENEVER A NEW CALCULATION IS SAVED.
         sed_flux     - the spectral energy distribution of the target (float array)
         sed_wav      - the wavelengths associated with the SED flux (float array)
@@ -271,9 +271,11 @@ class PhotometricExposure(Exposure):
 
         snr2 = -(_snr**2)
         fstar = self._fstar
-        fsky = self.camera._fsky(verbose=self.verbose)
+        #fsky = self.camera._fsky(verbose=self.verbose) # prior to Source 
+        fsky = Source._fsky(self, verbose=self.verbose)
         Npix = self.camera._sn_box(self.verbose)
-        thermal = pre_decode(self.camera.c_thermal(verbose=self.verbose))
+        #thermal = pre_decode(self.camera.c_thermal(verbose=self.verbose)) # prior to moving c_thermal to Source 
+        thermal = pre_decode(Source.c_thermal(self, verbose=self.verbose))
 
         a = (_total_qe * fstar)**2
         b = snr2 * (_total_qe * (fstar + fsky) + thermal + _dark_current * Npix)
@@ -309,10 +311,12 @@ class PhotometricExposure(Exposure):
 
         exptime = _exptime.to(u.s)
         D = D.to(u.cm)
-        fsky = self.camera._fsky(verbose=self.verbose)
+        #fsky = self.camera._fsky(verbose=self.verbose)  # prior to Source() 
+        fsky = source._fsky(self, verbose=self.verbose)
         Npix = self.camera._sn_box(self.verbose)
-        c_t = pre_decode(self.camera.c_thermal(verbose=self.verbose))
-
+        #c_t = pre_decode(self.camera.c_thermal(verbose=self.verbose)) # prior to moving c_thermal to Source() 
+        c_t = pre_decode(Source.c_thermal(self, verbose=self.verbose))
+        
         snr2 = -(_snr ** 2)
         a0 = (QE * exptime)**2
         b0 = snr2 * QE * exptime
@@ -413,7 +417,7 @@ class SpectrographicExposure(Exposure):
 
         if self.verbose:
             msg1 = "Creating exposure for {} ({})".format(self.telescope.name,
-                                                           self.telescope.recover('aperture'))
+                                                           self.telescope.recover('effective_aperture'))
             msg2 = " with {} in mode {}".format(self.spectrograph.name, self.spectrograph.mode)
             print(msg1 + msg2)
 
@@ -421,7 +425,7 @@ class SpectrographicExposure(Exposure):
         _wave, aeff, bef, aper, R, wrange = self.recover('spectrograph.wave',
                                                          'spectrograph.aeff',
                                                          'spectrograph.bef',
-                                                         'telescope.aperture',
+                                                         'telescope.effective_aperture',
                                                          'spectrograph.R',
                                                          'spectrograph.wrange')
         exptime = _exptime.to(u.s)[0] #assume that all are the same
@@ -487,7 +491,7 @@ class SpectrographicExposure(Exposure):
 
         if self.verbose:
             msg1 = "Creating exposure for {} ({})".format(self.telescope.name,
-                                                           self.telescope.recover('aperture'))
+                                                           self.telescope.recover('effective_aperture'))
             msg2 = " with {} in mode {}".format(self.spectrograph.name, self.spectrograph.mode)
             print(msg1 + msg2)
 
@@ -495,7 +499,7 @@ class SpectrographicExposure(Exposure):
         _wave, aeff, bef, aper, R, wrange = self.recover('spectrograph.wave',
                                                          'spectrograph.aeff',
                                                          'spectrograph.bef',
-                                                         'telescope.aperture',
+                                                         'telescope.effective_aperture',
                                                          'spectrograph.R',
                                                          'spectrograph.wrange')
 
@@ -597,8 +601,8 @@ class CoronagraphicExposure(Exposure):
 
         self.camera._print_initcon(self.verbose)
 
-        print(' telescope inside the Coron exposure object ', self.telescope.aperture)
-
+        print(' telescope inside the Coron exposure object ', self.telescope.effective_aperture) 
+        
         #serialize with JsonUnit for transportation
         self._snr = pre_encode(10.)
 

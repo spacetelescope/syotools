@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 """
 Created on Fri Oct 14 21:31:18 2016
-
 @author: gkanarek, tumlinson
 """
 import numpy as np
@@ -12,6 +11,7 @@ from syotools.models.base import PersistentModel
 from syotools.models.source_exposure import SourcePhotometricExposure
 from syotools.defaults import default_camera
 from syotools.spectra.utils import mag_from_sed
+from hwo_sci_eng.utils import read_yaml 
 
 def nice_print(arr):
     """
@@ -81,11 +81,11 @@ class Camera(PersistentModel):
         """
 
         pixsize = np.zeros(self.n_bands, dtype=float)
-
-        fiducials, aperture = self.recover('fiducials', 'telescope.aperture')
-
+        
+        fiducials, effective_aperture = self.recover('fiducials', 'telescope.effective_aperture')
+        
         for ref, bands in enumerate(self.channels):
-            pxs = (0.5 * fiducials[0][ref] * u.Unit(fiducials[1])* u.rad / aperture).to(u.arcsec).value
+            pxs = (0.5 * fiducials[0][ref] * u.Unit(fiducials[1])* u.rad / effective_aperture).to(u.arcsec).value
             pixsize[bands] = pxs
 
         return pixsize * u.arcsec / u.pix
@@ -126,14 +126,14 @@ class Camera(PersistentModel):
         Calculate the FWHM of the camera's PSF.
         """
         #Convert to Quantity for calculations.
-        pivotwave, aperture = self.recover('pivotwave', 'telescope.aperture')
+        pivotwave, effective_aperture = self.recover('pivotwave', 'telescope.effective_aperture')
         diff_limit, diff_fwhm = self.recover('telescope.diff_limit_wavelength',
                                              'telescope.diff_limit_fwhm')
 
         #fwhm = (1.22 * u.rad * pivotwave / aperture).to(u.arcsec)
-        pivots = pivotwave[0] * u.Unit(pivotwave[1])
-        fwhm = (1.03 * u.rad * pivots / aperture).to(u.arcsec)
-
+        pivots = pivotwave[0] * u.Unit(pivotwave[1]) 
+        fwhm = (1.03 * u.rad * pivots / effective_aperture).to(u.arcsec)
+        
         #only use these values where the wavelength is greater than the diffraction limit
         fwhm = np.where(pivots.value > diff_limit[0], fwhm.value, diff_fwhm.value) * u.arcsec
 
@@ -142,7 +142,7 @@ class Camera(PersistentModel):
     def _print_initcon(self, verbose):
         if verbose: #These are our initial conditions
             print('Telescope diffraction limit: {}'.format(self.telescope.diff_limit_wavelength))
-            print('Telescope aperture: {}'.format(self.telescope.aperture))
+            print('Telescope effective_aperture: {}'.format(self.telescope.effective_aperture))
             print('Telescope temperature: {}'.format(self.telescope.temperature))
             print('Pivot waves: {}'.format(nice_print(self.pivotwave[0] * u.Unit(self.pivotwave[1]))))
             print('Pixel sizes: {}'.format(nice_print(self.pixel_size)))
@@ -238,13 +238,14 @@ class Camera(PersistentModel):
 
         pivots = pivotwave[0] * u.Unit(pivotwave[1])
         wave = pivots.to('cm')
-        temp = temperature.to('K')
-        h = const.h.to(u.erg * u.s) # Planck's constant erg s
-        c = const.c.to(u.cm / u.s) # speed of light [cm / s]
-        k = const.k_B.to(u.erg / u.K) # Boltzmann's constant [erg deg K^-1]
-        x = 2. * h * c**2 / wave**5
-        exponent = (h * c / (wave * k * temp))
-
+        temps = temperature[0] * u.Unit(temperature[1])
+        temp = temps.to('K')
+        h = const.h.to(u.erg * u.s) # Planck's constant erg s 
+        c = const.c.to(u.cm / u.s) # speed of light [cm / s] 
+        k = const.k_B.to(u.erg / u.K) # Boltzmann's constant [erg deg K^-1] 
+        x = 2. * h * c**2 / wave**5 
+        exponent = (h * c / (wave * k * temp)) 
+    
         result = (x / (np.exp(exponent)-1.)).to(u.erg / u.s / u.cm**3) / u.sr
 
         return result
@@ -271,3 +272,18 @@ class Camera(PersistentModel):
         exposure.camera = self
         exposure.telescope = self.telescope
         exposure.calculate()
+            
+    def set_from_sei(self, name): 
+
+        if ('HRI' in name): hri = read_yaml.hri()
+        
+        # the "hri" dictionary returned by read_yaml is nested, and therefore awkward  
+        # when summoning individual entries. And often, we do not need the individual 
+        # components. So, we are going to break this dictionary up and carry the 
+        # pieces separately:  
+
+        self.UVIS = hri['UVIS']  
+
+        self.NIR = hri['NIR'] 
+
+

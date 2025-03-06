@@ -5,9 +5,6 @@ Created on Sat Oct 15 10:59:16 2016
 @author: gkanarek
 """
 
-from __future__ import (print_function, division, absolute_import, with_statement,
-                        nested_scopes, generators)
-
 from functools import reduce
 from syotools.persistence import JSON
 from syotools.utils import pre_encode, pre_decode
@@ -166,4 +163,3 @@ class PersistentModel(object):
 
         for attr, quantity in kw.items():
             setattr(self, attr, pre_encode(quantity))
-

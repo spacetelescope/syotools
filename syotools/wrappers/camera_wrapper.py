@@ -34,7 +34,8 @@ def camera_snr(telescope, template, magnitude, exptime, silent=False):
 	import numpy as np, astropy.units as u 
       
 	tel, hri = Telescope(), Camera()   # create a Telescope, Camera, and Exposure 
-	tel.set_from_json(telescope)
+	tel.set_from_sei(telescope)
+	hri.set_from_sei('HRI')
 	
 	source = Source() 
 	redshift = 0. # changes to these are not implemented yet 
@@ -80,7 +81,7 @@ def camera_exptime(telescope, template, magnitude, snr_goal, silent=False):
 	    'Sbc Galaxy', 'Starburst Galaxy', 'NGC 1068', 'Galaxy with f_esc, HI=1, HeI=1', 
 	    'Galaxy with f_esc, HI=0.001, HeI=1', 'Blackbody5000', 'Blackbody100000' 
 	
-	magniotude = V magnitude to normalize the template spectrum, a float.
+	magnitude = V magnitude to normalize the template spectrum, a float.
 	
 	snr_goal = desired SNR, per pixel, for each band 
 	
@@ -92,14 +93,15 @@ def camera_exptime(telescope, template, magnitude, snr_goal, silent=False):
     
 	# create a Telescope, Camera, and Exposure 
 	tel, hri = Telescope(), Camera()
-	tel.set_from_json(telescope)
+	tel.set_from_sei(telescope)
+	hri.set_from_sei('HRI')
 	
 	source = Source() 
 	redshift = 0. # changes to these are not implemented yet 
 	extinction = 0. 
 	
 	source.set_sed(template, magnitude, redshift, extinction, bandpass="johnson,v")   
-	        
+
 	exp = SourcePhotometricExposure() 
 	exp.source = source
 	
@@ -149,7 +151,8 @@ def camera_magnitude(telescope, template, snr, exptime, silent=False):
 	
 	# create a Telescope, Camera, and Exposure 
 	tel, hri = Telescope(), Camera()
-	tel.set_from_json(telescope)
+	tel.set_from_sei(telescope)
+	hri.set_from_sei('HRI')
 	
 	source = Source() 
 	redshift = 0. # changes to these are not implemented yet 

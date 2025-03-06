@@ -33,9 +33,9 @@ def uvspec_snr(telescope, mode, template, fuvmag, exptime, silent=False):
     from syotools.models import Telescope, Spectrograph, Source, SourceSpectrographicExposure
     import numpy as np, astropy.units as u
 
-    # create the basic objects
-    uvi, tel = Spectrograph(), Telescope()
-    tel.set_from_json(telescope)
+    # create the basic objects 
+    uvi, tel = Spectrograph(), Telescope() 
+    tel.set_from_sei(telescope)
     tel.add_spectrograph(uvi)
     uvi.mode = mode
 
