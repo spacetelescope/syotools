@@ -15,9 +15,10 @@ from hwo_sci_eng.utils import read_yaml, read_json
 
 class Telescope(PersistentModel):
     """
-    The basic telescope class to provide telescope parameter storage. 
-    
-    Attributes: 
+    The basic telescope class, which provides parameter storage for
+    optimization.
+
+    Attributes: #adapted from the original in Telescope.py
         name - The name of the telescope (string)
         effective_aperture - The size of the primary telescope aperture, in meters (float)
             note: there is no such thing as "aperture", there is only "effective aperture". 
@@ -29,26 +30,28 @@ class Telescope(PersistentModel):
         temperature - instrument temperature, in Kelvin (float)
         ota_emissivity - emissivity factor for a TMA (float)
         diff_limit_wavelength - diffraction limit wavelength, in nm (float)
-        
+
         _default_model - used by PersistentModel
-        
+
         cameras - the Camera objects for this telescope
     """
-    _default_model = default_telescope
-    
-    cameras = []
-    spectrographs = []
-    coronagraphs = [] 
-    
-    name = ''
-    effective_aperture = 0. * u.m 
-    temperature = 0. * u.K
-    ota_emissivity = 0. * u.dimensionless_unscaled 
-    diff_limit_wavelength = 0. * u.nm 
-    unobscured_fraction = 1. * u.dimensionless_unscaled 
 
-    verbose = False 
-        
+    def __init__(self, **kw):
+
+        self.cameras = []
+        self.spectrographs = []
+        self.coronagraphs = []
+
+        self.name = ''
+        self.aperture = 0. * u.m
+        self.temperature = 0. * u.K
+        self.ota_emissivity = 0. * u.dimensionless_unscaled
+        self.diff_limit_wavelength = 0. * u.nm
+        self.unobscured_fraction = 1. * u.dimensionless_unscaled
+
+        self.verbose = False
+        super().__init__(default_model=default_telescope, **kw)
+
     @property
     def diff_limit_fwhm(self):
         """
@@ -70,7 +73,7 @@ class Telescope(PersistentModel):
     def add_camera(self, camera):
         self.cameras.append(camera)
         camera.telescope = self
-    
+
     def add_spectrograph(self, spectrograph):
         self.spectrographs.append(spectrograph)
         spectrograph.telescope = self
@@ -109,8 +112,9 @@ class Telescope(PersistentModel):
 
     def set_from_json(self,name): 
         if self.verbose: 
-            print('Setting Telescope to: ', name) 
-        
+            print('Setting Telescope to: ', name)
+
+        if ('EAC1' in name): tel = read_json.eac1()
         if ('EAC2' in name): tel = read_json.eac2()
         if ('EAC3' in name): tel = read_json.eac3()
         

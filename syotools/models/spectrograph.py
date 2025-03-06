@@ -16,15 +16,15 @@ from hwo_sci_eng.utils import read_yaml
 
 class Spectrograph(PersistentModel):
     """
-    The basic spectrograph class, which provides parameter storage for 
+    The basic spectrograph class, which provides parameter storage for
     optimization.
-    
+
     Attributes: #adapted from the original in Telescope.py
         telescope    - the Telescope object associated with this spectrograph
         exposures    - the list of Exposures taken with this spectrograph
-    
+
         name         - name of the spectrograph (string)
-        
+
         modes        - supported observing modes (list)
         descriptions - description of supported observing modes (dict)
         mode         - current observing mode (string)
@@ -33,42 +33,43 @@ class Spectrograph(PersistentModel):
         wrange        - effective wavelength range (2-element float array)
         wave         - wavelength in Angstroms (float array)
         aeff         - effective area at given wavelengths in cm^2 (float array)
-        
+
         _lumos_default_file - file path to the fits file containing LUMOS values
-        
+
         _default_model - used by PersistentModel
     """
-    
-    _default_model = default_spectrograph
-    
-    telescope = None
-    exposures = []
-    
-    _lumos_default_file = ''
-    
-    name = ''
-    modes = []
-    descriptions = {}
-    bef = np.zeros(0, dtype=float) * (u.erg / u.cm**2 / u.s / u.pix) 
-    R = 0. * u.dimensionless_unscaled
-    wave = np.zeros(0, dtype=float) * u.AA
-    aeff = np.zeros(0, dtype=float) * u.cm**2
-    wrange = np.zeros(2, dtype=float) * u.AA
-    _mode = ''
-    
+
+    def __init__(self, default_model = default_spectrograph, **kw):
+        self.telescope = None
+        self.exposures = []
+
+        self._lumos_default_file = ''
+
+        self.name = ''
+        self.modes = []
+        self.descriptions = {}
+        self.bef = np.zeros(0, dtype=float) * (u.erg / u.cm**2 / u.s / u.pix)
+        self.R = 0. * u.dimensionless_unscaled
+        self.wave = np.zeros(0, dtype=float) * u.AA
+        self.aeff = np.zeros(0, dtype=float) * u.cm**2
+        self.wrange = np.zeros(2, dtype=float) * u.AA
+        self._mode = ''
+        super().__init__(default_model, **kw)
+
+
     #Property wrapper for mode, so that we can use a custom setter to propagate
     #mode updates to all the rest of the parameters
-    
+
     @property
     def mode(self):
         return self._mode
-    
+
     @mode.setter
     def mode(self, new_mode):
         """
         Mode is used to set all the other parameters
         """ 
-        
+
         nmode = new_mode.upper()
         if self._mode == nmode or nmode not in self.modes:
             return
@@ -91,7 +92,7 @@ class Spectrograph(PersistentModel):
         new_exposure = SourceSpectrographicExposure()
         self.add_exposure(new_exposure)
         return new_exposure
-    
+
     def add_exposure(self, exposure):
         self.exposures.append(exposure)
         exposure.spectrograph = self
@@ -121,15 +122,15 @@ class Spectrograph(PersistentModel):
 
 class Spectropolarimeter(Spectrograph):
     """
-    The basic spectropolarimeter class for POLLUX, which provides parameter storage for 
+    The basic spectropolarimeter class for POLLUX, which provides parameter storage for
     optimization.
-    
+
     Attributes: #adapted from the original in Telescope.py
         telescope    - the Telescope object associated with this spectrograph
         exposures    - the list of Exposures taken with this spectrograph
-    
+
         name         - name of the spectrograph (string)
-        
+
         modes        - supported observing modes (list)
         descriptions - description of supported observing modes (dict)
         mode         - current observing mode (string)
@@ -138,11 +139,12 @@ class Spectropolarimeter(Spectrograph):
         wrange        - effective wavelength range (2-element float array)
         wave         - wavelength in Angstroms (float array)
         aeff         - effective area at given wavelengths in cm^2 (float array)
-        
+
         _lumos_default_file - file path to the fits file containing LUMOS values
-        
+
         _default_model - used by PersistentModel
     """
-    
-    _default_model = default_spectropolarimeter
+
+    def __init__(self, **kw):
+        super().__init__(default_spectropolarimeter, **kw)
 
