@@ -4,7 +4,7 @@ Created on Sat Oct 15 10:59:16 2016
 
 @author: gkanarek, tumlinson
 """
-import os 
+import os
 from collections import OrderedDict
 from syotools.utils import ordered_load 
 import astropy.units as u 
@@ -24,7 +24,7 @@ yaml_default_path = os.path.join(current_dir, 'model_defaults.yaml')
 #   --> the description, bef, R, wrange, wave, and aeff default values are placeholders
 with open(yaml_default_path, 'r') as stream:
     all_defaults = ordered_load(stream)
-    
+
 default_telescope = all_defaults['Telescope']
 default_camera = all_defaults['Camera']
 default_exposure = all_defaults['Exposure']
