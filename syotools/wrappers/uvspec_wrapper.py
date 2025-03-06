@@ -51,7 +51,6 @@ def uvspec_snr(telescope, mode, template, fuvmag, exptime, silent=False):
 
     uvi_exp.exptime = [[exptime, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0], 'hr']
 
-    uvi_exp.verbose = True
     tel.verbose = True
     if (silent):
        uvi_exp.verbose = False
