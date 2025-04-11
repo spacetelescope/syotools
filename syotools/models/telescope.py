@@ -128,7 +128,8 @@ class Telescope(PersistentModel):
 
         if ('EAC1' in name): tel = read_yaml.eac1()
 
-        if ('EAC2' in name): tel = read_yaml.eac2() # 102724 EAC2.yaml is still draft 
+        if ('EAC2' in name): tel = read_yaml.eac2() # 102724 EAC2.yaml is still draft
+        if ('EAC3' in name): tel = read_yaml.eac3() # 102724 EAC3.yaml is still draft
 
         # the "tel" dictionary returned by read_yaml is nested, and therefore awkward
         # when summoning individual entries. And often, we do not need the individual
@@ -152,6 +153,7 @@ class Telescope(PersistentModel):
             self.segment_area = self.hexagon_area(self.pm['segmentation_parameters']['segment_size'][0] / 2. * u.m)
             self.total_collecting_area = self.segment_area * self.pm['segmentation_parameters']['number_segments'][0]
         else:
+            self.total_collecting_area = np.pi * (self.pm['circumscribing_diameter'][0]/2.*u.m)**2
         self.effective_aperture = 2. * (self.total_collecting_area / np.pi )**0.5
 
         #WARNING!!! as of Oct 2024, the SEI database lists the diff limited wavelength
