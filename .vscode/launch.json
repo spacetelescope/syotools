@@ -12,6 +12,31 @@
             ],
             "console": "integratedTerminal",
             "justMyCode": false
+        },
+        {
+            "name": "Python: Interactive Terminal",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "env": {
+                "PYSYN_CDBS": "${workspaceFolder}/syotools/reference_data/pysynphot_data/",
+                "SCI_ENG_DIR": "${workspaceFolder}/hwo_sci_eng"
+            }
+        },
+        {
+            "name": "Python: Interactive REPL",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/.vscode/start_repl.py",
+            "console": "integratedTerminal",
+            "justMyCode": false
+            // "env": {
+            //     "PYSYN_CDBS": "${workspaceFolder}/syotools/reference_data/pysynphot_data/",
+            //     "SCI_ENG_DIR": "${workspaceFolder}/hwo_sci_eng",
+            //     "PYTHONPATH": "${workspaceFolder}"
+            // }
         }
     ]
 }

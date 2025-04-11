@@ -25,6 +25,7 @@ setup(name="syotools",
           "Programming Language :: Python :: 3.9",
       ],
       install_requires=[
+            "hwo_sci_eng==0.1.8",
             "setuptools>=61.0", 
             "astropy>6", 
             "pysynphot==2.0.0", 

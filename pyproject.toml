@@ -11,11 +11,12 @@ authors = [
 ]
 license = {text = "BSD"}
 keywords = ["simulation", "astronomy", "astrophysics"]
-requires-python = ">=3.6"
+requires-python = ">=3.9"
 classifiers = [
-    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.9",
 ]
 dependencies = [
+    "hwo_sci_eng==0.1.8",
     "astropy>6",
     "pysynphot==2.0.0",
     "numpy",
