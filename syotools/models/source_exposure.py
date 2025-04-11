@@ -553,7 +553,8 @@ class SourceCoronagraphicExposure(SourceExposure):
 
         self.camera._print_initcon(self.verbose)
 
-        print(' telescope inside the Coron exposure object ', self.telescope.aperture)
+        print(' telescope inside the Coron exposure object ',
+         self.telescope.effective_aperture)
 
         #serialize with JsonUnit for transportation
         self._snr = 10.

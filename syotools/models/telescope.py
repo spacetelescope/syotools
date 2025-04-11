@@ -136,7 +136,7 @@ class Telescope(PersistentModel):
         # mirrors. So, we are going to break this dictionary up and carry the
         # mirrors and other pieces separately:
 
-        self.pm = tel['PM'] #primary 
+        self.pm = tel['PM'] #primary
         self.set_coating(self.pm, 'XeLiF')
         self.sm = tel['SM'] # secondary
         self.set_coating(self.sm, 'XeLiF')
