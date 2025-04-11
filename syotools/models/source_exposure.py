@@ -397,7 +397,7 @@ class SourceSpectrographicExposure(SourceExposure):
         _wave, aeff, bef, aper, R, wrange = self.recover('spectrograph.wave',
                                                          'spectrograph.aeff',
                                                          'spectrograph.bef',
-                                                         'telescope.aperture',
+                                                         'telescope.effective_aperture',
                                                          'spectrograph.R',
                                                          'spectrograph.wrange')
 
@@ -452,7 +452,7 @@ class SourceSpectrographicExposure(SourceExposure):
         _wave, aeff, bef, aper, R, wrange = self.recover('spectrograph.wave',
                                                          'spectrograph.aeff',
                                                          'spectrograph.bef',
-                                                         'telescope.aperture',
+                                                         'telescope.effective_aperture',
                                                          'spectrograph.R',
                                                          'spectrograph.wrange')
 
