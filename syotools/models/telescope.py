@@ -52,6 +52,15 @@ class Telescope(PersistentModel):
         self.verbose = False
         super().__init__(default_model=default_telescope, **kw)
 
+    def diffraction_limit(self, wavelength: u.Quantity) -> u.Quantity:
+        """
+        Calculate the diffraction limit for a given wavelength.
+        """
+        ap_nm = self.effective_aperture.to(u.nm)
+        diff_limit_radians = 1.22 * u.rad * wavelength.to(u.nm) / ap_nm
+        return diff_limit_radians.to(u.arcsec)
+
+
     @property
     def diff_limit_fwhm(self):
         """
