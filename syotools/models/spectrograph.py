@@ -12,6 +12,7 @@ from astropy.table import QTable
 from syotools.models.base import PersistentModel
 from syotools.models.source_exposure import SourceSpectrographicExposure
 from syotools.defaults import default_spectrograph, default_spectropolarimeter
+from hwo_sci_eng.utils import read_yaml 
 
 class Spectrograph(PersistentModel):
     """
@@ -97,6 +98,27 @@ class Spectrograph(PersistentModel):
         exposure.spectrograph = self
         exposure.telescope = self.telescope
         exposure.calculate()
+
+    def set_from_yaml(self, name): 
+
+        if ('UVI' in name): uvi = read_yaml.uvi()
+        
+        # the "uvi" dictionary returned by read_yaml is nested, and therefore awkward  
+        # when summoning individual entries. And often, we do not need the individual 
+        # components. So, we are going to break this dictionary up and carry the 
+        # pieces separately:  
+
+        self.FUV_Imager = uvi['FUV_Imager']  
+
+        self.FUV_MOS = uvi['FUV_MOS'] 
+        
+        self.NUV_MOS = uvi['NUV_MOS']
+
+        self.MSA = uvi['MSA'] 
+
+        self.MCP = uvi['MCP']
+
+        self.CMOS = uvi['CMOS']
 
 class Spectropolarimeter(Spectrograph):
     """

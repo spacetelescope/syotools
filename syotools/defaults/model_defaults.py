@@ -24,7 +24,6 @@ yaml_default_path = os.path.join(current_dir, 'model_defaults.yaml')
 #   --> the description, bef, R, wrange, wave, and aeff default values are placeholders
 with open(yaml_default_path, 'r') as stream:
     all_defaults = ordered_load(stream)
-
 default_telescope = all_defaults['Telescope']
 default_camera = all_defaults['Camera']
 default_exposure = all_defaults['Exposure']
@@ -33,6 +32,3 @@ default_spectrograph.update(all_defaults['Spectrograph'])
 default_spectropolarimeter = OrderedDict([("_lumos_default_file", pol_default_path)])
 default_spectropolarimeter.update(all_defaults['Spectropolarimeter'])
 default_coronagraph = all_defaults['Coronagraph'] #placeholder
-
-
-
