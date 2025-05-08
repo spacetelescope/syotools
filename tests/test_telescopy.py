@@ -86,6 +86,7 @@ def test_camera_exptime_calculation(magnitude, snr_goal, expected):
 @pytest.mark.parametrize("magnitude, snr_goal, expected", uvspec_exptime_baseline)
 def test_uvspec_exptime_calculation(magnitude, snr_goal, expected):
     wave, exp_times, uvi = uvspec_exptime('EAC1', 'G180M', 'G2V Star', magnitude, snr_goal, True)
+    expected = [q.value for q in expected]
     assert check_relative_diff([q.value for q in exp_times], expected, 0.25) #1e-3)
 
 # def test_generate_camera_exptime_baseline():
