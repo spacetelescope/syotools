@@ -262,8 +262,10 @@ class Camera(PersistentModel):
         """
         return mag_from_source(self, source)
 
-    def create_exposure(self):
+    def create_exposure(self, source=None):
         new_exposure = SourcePhotometricExposure()
+        if source is not None:
+            new_exposure.source = source
         self.add_exposure(new_exposure)
         return new_exposure
 
