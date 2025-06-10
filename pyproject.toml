@@ -80,6 +80,5 @@ python_functions = "test_*"
 pythonpath = ["."]
 addopts = "-q -ra -s"
 env = [
-    "PYSYN_CDBS=syotools/reference_data/pysynphot_data/",
-    "SCI_ENG_DIR=syotools/sci_eng_interface/"
+    "PYSYN_CDBS=syotools/reference_data/pysynphot_data/"
 ]
