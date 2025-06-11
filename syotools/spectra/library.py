@@ -159,7 +159,7 @@ class _spec_library(object):
                                      extensions[-2:] == ['.fits','.gz']):
 
             #JT 
-            new_spec = read_fits(abspath, dispersion_unit=waveunits, 
+            new_spec = pys.FileSpectrum(abspath, dispersion_unit=waveunits, 
                                 flux_unit=fluxunits)
 
             #handle a multispec file

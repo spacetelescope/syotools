@@ -4,12 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "syotools"
-version = "1.1.13"
+version = "1.1.14"
 description = "Science Yield Optimization Tools (SYOTools)"
 authors = [
     {name = "Jason Tumlinson, STScI", email = "tumlinson@stsci.edu"}
 ]
-license = {text = "BSD"}
+license = "BSD-3-Clause"
 keywords = ["simulation", "astronomy", "astrophysics"]
 requires-python = ">=3.9"
 classifiers = [
@@ -40,7 +40,6 @@ packages = [
     "syotools.spectra",
     "syotools.utils",
     "syotools.wrappers",
-    "syotools.sci_eng_interface",
 ]
 include-package-data = true
 
@@ -62,8 +61,7 @@ include-package-data = true
     "reference_data/pysynphot_data/grid/kc96/*",
     "reference_data/pysynphot_data/grid/pickles/*",
     "reference_data/pysynphot_data/grid/pickles/dat_uvk/*",
-    "reference_data/pysynphot_data/extinction/*",
-    "sci_eng_interface/*json"
+    "reference_data/pysynphot_data/extinction/*"
 ]
 
 [project.optional-dependencies]
@@ -82,6 +80,5 @@ python_functions = "test_*"
 pythonpath = ["."]
 addopts = "-q -ra -s"
 env = [
-    "PYSYN_CDBS=syotools/reference_data/pysynphot_data/",
-    "SCI_ENG_DIR=syotools/sci_eng_interface/"
+    "PYSYN_CDBS=syotools/reference_data/pysynphot_data/"
 ]

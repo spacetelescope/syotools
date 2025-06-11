@@ -88,8 +88,10 @@ class Spectrograph(PersistentModel):
         wave, R = self.recover('wave', 'R')
         return wave / R
     
-    def create_exposure(self):
+    def create_exposure(self, source=None):
         new_exposure = SourceSpectrographicExposure()
+        if source is not None:
+            new_exposure.source = source
         self.add_exposure(new_exposure)
         return new_exposure
 
