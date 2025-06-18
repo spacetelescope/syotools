@@ -238,8 +238,11 @@ class Camera(PersistentModel):
 
         pivots = pivotwave[0] * u.Unit(pivotwave[1])
         wave = pivots.to('cm')
-        temps = temperature[0] * u.Unit(temperature[1])
-        temp = temps.to('K')
+        if isinstance(temperature, u.Quantity):
+            temp = temperature
+        else:
+            temps = temperature[0] * u.Unit(temperature[1])
+            temp = temps.to('K')
         h = const.h.to(u.erg * u.s) # Planck's constant erg s 
         c = const.c.to(u.cm / u.s) # speed of light [cm / s] 
         k = const.k_B.to(u.erg / u.K) # Boltzmann's constant [erg deg K^-1] 
@@ -262,8 +265,10 @@ class Camera(PersistentModel):
         """
         return mag_from_source(self, source)
 
-    def create_exposure(self):
+    def create_exposure(self, source=None):
         new_exposure = SourcePhotometricExposure()
+        if source is not None:
+            new_exposure.source = source
         self.add_exposure(new_exposure)
         return new_exposure
 
