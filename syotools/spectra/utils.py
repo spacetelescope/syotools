@@ -76,7 +76,7 @@ def load_fesc(spec):
         path = path / f
     abspath = str(path.resolve())
     tab = asc.read(abspath)
-    sp = pys.ArraySpectrum(wave=tab['lam'], flux=tab['lh1=17.5'], 
+    sp = pys.ArraySpectrum(wave=tab['lam'].value, flux=tab['lh1=17.5'].value, 
                            waveunits='Angstrom', fluxunits='flam')
     sp = sp.renorm(30., 'abmag', pys.ObsBandpass(band))
     sp.convert('abmag')
