@@ -77,9 +77,9 @@ class Spectrograph(PersistentModel):
         table = QTable.read(self._lumos_default_file, nmode)
                 
         self.R = table.meta['R'] * u.pix
-        self.wave = table['Wavelength']
-        self.bef = table['BEF']
-        self.aeff = table['A_Eff']
+        self.wave = table['Wavelength'].copy()  # Copy to remove FITS file weakrefs
+        self.bef = table['BEF'].copy()          # Copy to remove FITS file weakrefs
+        self.aeff = table['A_Eff'].copy()       # Copy to remove FITS file weakrefs
         wrange = np.array([table.meta['WAVE_LO'], table.meta['WAVE_HI']]) * u.AA
         self.wrange = wrange
 
