@@ -34,15 +34,19 @@ class Source(PersistentModel):
             s.sed can also be manipulated with pysynphot syntax like so: 
             > s.sed.renorm(20., 'abmag', S.ObsBandpass('johnson,v'))
         """
-   
-        self.name = 'Flat (AB)' 
+        self.name = 'Flat (AB)'
         self.magnitude = 30. 
         self.redshift = 0. 
         self.extinction = 0.  
         self.renorm_band = 'johnson,v'
 
-        #set default here 
-        self.sed = self.set_sed(self.name, self.magnitude, self.redshift, self.extinction)
+        #set default here
+        self.sed = None # Will be set in set_sed, do this so sed is in __init__.
+        self.set_sed(self.name, self.magnitude, self.redshift, self.extinction)
+
+        # yes this is weird, required because the superclass expects
+        # attributes to be present and initialized.
+        super().__init__()
 
 
     def set_sed(self, source_name, magnitude, redshift, extinction, bandpass=None):   
