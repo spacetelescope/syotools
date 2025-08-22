@@ -1,6 +1,7 @@
-import random
+import syotools.environment
 import pytest
 
+from syotools.models import Spectrograph
 from syotools.models.coronagraph import Coronagraph
 from syotools.models.telescope import Telescope
 from syotools.models.camera import Camera
@@ -141,6 +142,25 @@ def create_eac(name: str):
     telescope = Telescope()
     telescope.set_from_sei(name)
     camera = Camera()
-    camera.set_from_sei('HRI')
     telescope.add_camera(camera)
+    spec = Spectrograph()
+    telescope.add_spectrograph(spec)
+    camera.set_from_sei('HRI')
     return telescope
+
+def test_telescope_pickle():
+  """
+  This test verifies that the telescope can be pickled with a camera and
+  spectrograph attached. Pickling is required to support the DISRA notebook
+  framework. Document gotchas related to pickling found by this test here
+  so that if it starts failing people have some clues about where to look.
+  - Some astropy quantities related to FITS file data retain weakrefs
+    (not pickle) to the table data. Using copy() removes these.
+    The spectrograph class had this issue, resolved with:
+     self.wave = table['Wavelength'].copy()
+  """
+  import pickle
+  telescope = create_eac("EAC1")
+  exp = telescope.cameras[0].create_exposure()
+  tele2 = pickle.loads(pickle.dumps(telescope))
+  assert telescope.name == tele2.name
