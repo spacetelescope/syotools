@@ -8,7 +8,8 @@ import astropy.units as u
 
 from syotools.models.base import PersistentModel
 from syotools.spectra.spec_defaults import pysyn_spectra_library 
-import pysynphot as S 
+import synphot as syn
+import sysynphot as stsyn
 
 class Source(PersistentModel):
     def __init__(self):
@@ -21,7 +22,7 @@ class Source(PersistentModel):
         - redshift (float): The redshift value of the source.
         - extinction (float): The extinction value of the source.
 
-        By default, this object is initialized with a pysynphot 
+        By default, this object is initialized with a synphot 
         flat spectrum in AB mag, normalized to ABmag = 30.  
 
         usage: 
@@ -31,7 +32,7 @@ class Source(PersistentModel):
             or 
             > s.set_sed('QSO', 25., 0.0, 0.0, 'galex,fuv')   
 
-            s.sed can also be manipulated with pysynphot syntax like so: 
+            s.sed can also be manipulated with synphot syntax like so: 
             > s.sed.renorm(20., 'abmag', S.ObsBandpass('johnson,v'))
         """
         self.name = 'Flat (AB)'
@@ -63,11 +64,10 @@ class Source(PersistentModel):
 
         new_sed = pysyn_spectra_library[source_name]
 
-        #now apply the other quantities via pysynphot 
-        sp_red = new_sed.redshift(redshift)
-        sp_ext = sp_red * S.Extinction(extinction, 'mwavg')
-        sp_norm = sp_ext.renorm(magnitude, 'abmag', S.ObsBandpass(self.renorm_band))  
-        sp_norm.convert('abmag')
+        # now apply the other quantities via synphot 
+        new_sed.z = self.redshift
+        sp_ext = new_sed * syn.reddening.from_extinction_model('mwavg').extinction_curve(self.extinction * u.ABmag)
+        sp_norm = sp_ext.normalize(self.magnitude * u.ABmag, stsyn.spectrum.band(self.renorm_band))
         
 
         self.sed = sp_norm

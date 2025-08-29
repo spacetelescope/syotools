@@ -73,7 +73,7 @@ class Scene(PersistentModel):
     def sed(self):
         """
         Return a spectrum, redshifted if necessary. We don't just store the 
-        redshifted spectrum because pysynphot doesn't save the original, it 
+        redshifted spectrum because synphot doesn't save the original, it 
         just returns a new copy of the spectrum with redshifted wavelengths.
         """
         sed = pre_decode(self._sed)
