@@ -8,6 +8,8 @@ import numpy as np
 import astropy.units as u
 import astropy.constants as const
 
+import synphot as syn
+
 from syotools.models.base import PersistentModel
 from syotools.defaults import default_exposure
 from syotools.models.source import Source
@@ -160,13 +162,13 @@ class SourceExposure(PersistentModel):
         """
         output_mags = [] # <--- create blank list of mags
         for magwave in self.camera.pivotwave[0]:
-            this_mag = self.source.sed(magwave * synphot.units.validate_unit(self.camera.pivotwave[1]))
+            this_mag = self.source.sed(magwave * u.Unit(self.camera.pivotwave[1]))
             #amazingly, the sample method on the synphot sed does not check wavelengh limits! #TODO: Check this statement
-            if (magwave > np.max(self.source.sed.wave)): this_mag = 99 * u.ABmag
-            if (magwave < np.min(self.source.sed.wave)): this_mag = 99 * u.ABmag
+            if (magwave > np.max(self.source.sed.waveset)): this_mag = 99 * u.ABmag
+            if (magwave < np.min(self.source.sed.waveset)): this_mag = 99 * u.ABmag
             output_mags.append(this_mag)
             if self.verbose:
-                print('getting mags from interpolated _source: ', magwave * synphot.units.validate_unit(self.camera.pivotwave[1]))
+                print('getting mags from interpolated _source: ', magwave * u.Unit(self.camera.pivotwave[1]))
         return np.array(output_mags)
 
     @property
@@ -406,7 +408,7 @@ class SourceSpectrographicExposure(SourceExposure):
 
         swave = self.source.sed.waveset.to(u.AA)
 
-        sflux = self.source.sed(swave).to(u.erg / u.s / u.cm**2 / u.AA)
+        sflux = syn.units.convert_flux(swave, self.source.sed(swave), (u.erg / u.s / u.cm**2 / u.AA))
 
         delta_lambda = self.recover('spectrograph.delta_lambda').to(u.AA / u.pix)
 
@@ -454,7 +456,7 @@ class SourceSpectrographicExposure(SourceExposure):
 
         swave = self.source.sed.waveset.to(u.AA)
 
-        sflux = self.source.sed(swave).to(u.erg / u.s / u.cm**2 / u.AA)
+        sflux = syn.units.convert_flux(swave, self.source.sed(swave), u.erg / u.s / u.cm**2 / u.AA)
 
         delta_lambda = self.recover('spectrograph.delta_lambda').to(u.AA / u.pix)
 

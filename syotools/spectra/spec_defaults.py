@@ -4,10 +4,15 @@ Created on Tue Oct 18 14:10:45 2016
 @author: gkanarek, jt
 """
 import os
-import pysynphot as pys
+
+import numpy as np
+import synphot as syn
+import stsynphot as stsyn
+import astropy.units as u
 import astropy.io.ascii as asc
+
 from syotools.utils import pre_encode
-from syotools.spectra.utils import load_txtfile, load_fesc, load_pysfits
+from syotools.spectra.utils import load_txtfile, load_fesc, load_synfits
 
 # path names to find reference files 
 pysyn_path = os.environ['PYSYN_CDBS']
@@ -17,7 +22,7 @@ data_path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file_
 # these dictionary entries specify the template name, filename, band, etc. 
 # then we will create two dictionaries - one containing the JSON-encoded 
 # spectral templates ("default_spectra") and one containing the 
-# pysynphot objects ("pysyn_spectra_library"), eventually the former 
+# synphot objects ("syn_spectra_library"), eventually the former 
 # will be deprecated when the JSON encoding is removed. 
 
 specs = {'Classical T Tauri': {'desc': 'Classical T-Tauri Star', 
@@ -86,7 +91,7 @@ specs = {'Classical T Tauri': {'desc': 'Classical T-Tauri Star',
 #default_spectra is the object that other routines will import to
 #use the library 
 default_spectra = {'specs':{}, 'descs':{}}
-pysyn_spectra_library = {} # this will gradually become the replacement for default_spectra, with the whole thing in pysynphot form 
+syn_spectra_library = {} # this will gradually become the replacement for default_spectra, with the whole thing in synphot form 
 
 # now iterate over the dictionary above to load the spectra
 # from text, fits, or fesc format depending on the type of file 
@@ -95,59 +100,62 @@ for (specid, spec) in specs.items():
     fesc = 'fesc' in spec['file']
     fits = spec['file'][-1].endswith('fits')
     if fits:
-        default_spectra['specs'][specid] = load_pysfits(spec) 
+        default_spectra['specs'][specid] = load_synfits(spec)
     elif fesc:
         default_spectra['specs'][specid] = load_fesc(spec) 
     else:
         default_spectra['specs'][specid] = load_txtfile(spec) 
 
-# this loop calls the same routines but gets back pysynphot objects instead of pre_encoded 
-#so these will populate psyn_spectra_library
+# this loop calls the same routines but gets back synphot objects instead of pre_encoded 
+#so these will populate syn_spectra_library
 for (specid, spec) in specs.items():
     default_spectra['descs'][specid] = spec['desc']
     fesc = 'fesc' in spec['file']
     fits = spec['file'][-1].endswith('fits')
     if fits:
-        pysyn_spectra_library[spec['desc']] = load_pysfits(spec) 
+        syn_spectra_library[spec['desc']] = load_synfits(spec) 
     elif fesc:
-        pysyn_spectra_library[spec['desc']] = load_fesc(spec) 
+        syn_spectra_library[spec['desc']] = load_fesc(spec) 
     else:
-        pysyn_spectra_library[spec['desc']] = load_txtfile(spec)         
+        syn_spectra_library[spec['desc']] = load_txtfile(spec)         
 
-# now add a few other special cases from pysynphot (pys)
+wave = np.linspace(100,30000,300) << u.Angstrom
+
+# now add a few other special cases from synphot (syn)
 # and store them in the pre_encoded JSON format \
-flatsp = pys.FlatSpectrum(30.0, fluxunits='abmag') 
-flatsp = flatsp.renorm(30.0, 'abmag', pys.ObsBandpass('johnson,v'))
-flatsp.convert('abmag') 
-flatsp.convert('nm') 
+flatsp = syn.spectrum.SourceSpectrum(syn.models.ConstFlux1D, amplitude=30.0 * u.ABmag)
+flatsp = flatsp.normalize(30.0 * u.ABmag, band=stsyn.band("johnson,v"))
+# This library is built on the idea of storing flux and wavelength arrays, so we need to make this an empirical spectrum.
+flatsp = syn.spectrum.SourceSpectrum(syn.models.Empirical1D, points=wave, lookup_table=flatsp(wave))
 default_spectra['specs']['fab'] = pre_encode(flatsp)
 default_spectra['descs']['fab'] = 'Flat (AB)'
 flatsp.__setattr__('band', 'johnson,v')
-pysyn_spectra_library['Flat (AB)'] = flatsp 
+syn_spectra_library['Flat (AB)'] = flatsp
 
-flamsp = pys.FlatSpectrum(30.0, fluxunits='flam')
-flamsp = flamsp.renorm(30.0, 'abmag', pys.ObsBandpass('johnson,v'))
-flamsp.convert('abmag') 
-flamsp.convert('nm') 
+flamsp = syn.spectrum.SourceSpectrum(syn.models.ConstFlux1D, amplitude=30.0 * syn.units.FLAM)
+flamsp = flamsp.normalize(30.0 * u.ABmag, band=stsyn.band("johnson,v"))
+# This library is built on the idea of storing flux and wavelength arrays, so we need to make this an empirical spectrum.
+flamsp = syn.spectrum.SourceSpectrum(syn.models.Empirical1D, points=wave, lookup_table=flamsp(wave))
 default_spectra['specs']['flam'] = pre_encode(flamsp)
 default_spectra['descs']['flam'] = 'Flat in F_lambda'
 flamsp.__setattr__('band', 'johnson,v')
-pysyn_spectra_library['Flat in F_lambda'] = flamsp 
+syn_spectra_library['Flat in F_lambda'] = flamsp
 
-bb = pys.BlackBody(5000)
-bb.convert('abmag') 
-bb.convert('nm') 
-bb = bb.renorm(30.0, 'abmag', pys.ObsBandpass('galex,fuv'))
+bb = syn.spectrum.SourceSpectrum(syn.models.BlackBody1D, temperature=5000)
+wave = np.linspace(100,3000,300) << u.Angstrom
+bb = bb.normalize(30.0 * u.ABmag, band=stsyn.band('galex,fuv'))
+# This library is built on the idea of storing flux and wavelength arrays, so we need to make this an empirical spectrum.
+bb = syn.spectrum.SourceSpectrum(syn.models.Empirical1D, points=wave, lookup_table=bb(wave))
 default_spectra['specs']['Blackbody5000'] = pre_encode(bb)
 default_spectra['descs']['Blackbody5000'] = 'Blackbody (5000K)'
 bb.__setattr__('band', 'galex,fuv')
-pysyn_spectra_library['Blackbody (5000K)'] = bb 
+syn_spectra_library['Blackbody (5000K)'] = bb
 
-bb = pys.BlackBody(100000)
-bb.convert('abmag') 
-bb.convert('nm') 
-bb = bb.renorm(30.0, 'abmag', pys.ObsBandpass('galex,fuv'))
+bb = syn.spectrum.SourceSpectrum(syn.models.BlackBody1D, temperature=100000)
+bb = bb.normalize(30.0 * u.ABmag, band=stsyn.band('galex,fuv'))
+# This library is built on the idea of storing flux and wavelength arrays, so we need to make this an empirical spectrum.
+bb = syn.spectrum.SourceSpectrum(syn.models.Empirical1D, points=wave, lookup_table=bb(wave))
 default_spectra['specs']['Blackbody100000'] = pre_encode(bb)
 default_spectra['descs']['Blackbody100000'] = 'Blackbody (100,000K)'
 bb.__setattr__('band', 'galex,fuv')
-pysyn_spectra_library['Blackbody (100,000K)'] = bb 
+syn_spectra_library['Blackbody (100,000K)'] = bb 

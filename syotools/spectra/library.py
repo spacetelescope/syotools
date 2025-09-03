@@ -159,7 +159,7 @@ class _spec_library(object):
                                      extensions[-2:] == ['.fits','.gz']):
 
             #JT 
-            new_spec = syn.spectrum.SourceSpectrum.from_file(abspath, ext=1)
+            new_spec = syn.spectrum.SourceSpectrum.from_file(abspath, ext=1, keep_neg=True)
 
             #handle a multispec file
             if multispec:
@@ -178,26 +178,26 @@ class _spec_library(object):
     def add_spec_from_arrays(self, specid, wavelength, flux):
         """
         Accept Quantity arrays for wavelength and flux, store them in a synphot
-        ArraySpectrum, and add them to the library.
+        SourceSpectrum, and add them to the library.
         """
         
         if not (isinstance(wavelength, u.Quantity) and isinstance(flux, u.Quantity)):
             raise TypeError('wavelength and flux must be Quantity arrays')
-        sp = syn.spectrum.SourceSpectrum(Empirical1D, points=wavelength, lookup_table=flux, keep_neg=True)
+        sp = syn.spectrum.SourceSpectrum(syn.models.Empirical1D, points=wavelength, lookup_table=flux, keep_neg=True)
         self._available_spectra[specid] = sp
     
     def add_spec_from_spectrum1d(self, specid, spectrum):
         """
-        Accept specutils.Spectrum1D object, store it in a pysynphot 
-        ArraySpectrum, and add it to the library.
+        Accept specutils.Spectrum1D object, store it in a synphot 
+        SourceSpectrum, and add it to the library.
         """
         self.add_spec_from_arrays(specid, spectrum.wavelength, spectrum.flux)
 
     def save_spec_to_file(self, fname, specid, **options):
         """
-        Save a library spectrum to a FITS file, using pysynphot's writefits.
-        Any options to writefits may be passed via **options; see
-        https://pysynphot.readthedocs.io/en/latest/ref_api.html#pysynphot.spectrum.SourceSpectrum.writefits
+        Save a library spectrum to a FITS file, using synphot's to_fits.
+        Any options to write_fits_spec may be passed via **options; see
+        https://synphot.readthedocs.io/en/latest/api/synphot.spectrum.SourceSpectrum.html#synphot.spectrum.SourceSpectrum.to_fits
         """
         if use_pathlib:
             path = Path(fname)
@@ -206,7 +206,7 @@ class _spec_library(object):
             abspath = os.path.abspath(os.path.expanduser(fname))
         
         outspec = self._available_spectra[specid]
-        outspec.writefits(abspath, **options)
+        outspec.to_fits(abspath, **options)
 
 #Initialize the default library:
 SpectralLibrary = _spec_library()

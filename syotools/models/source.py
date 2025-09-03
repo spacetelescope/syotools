@@ -7,9 +7,9 @@ import numpy as np
 import astropy.units as u
 
 from syotools.models.base import PersistentModel
-from syotools.spectra.spec_defaults import pysyn_spectra_library 
+from syotools.spectra.spec_defaults import syn_spectra_library 
 import synphot as syn
-import sysynphot as stsyn
+import stsynphot as stsyn
 
 class Source(PersistentModel):
     def __init__(self):
@@ -52,28 +52,29 @@ class Source(PersistentModel):
 
     def set_sed(self, source_name, magnitude, redshift, extinction, bandpass=None):   
         self.name = source_name  
-        self.sed = pysyn_spectra_library[source_name]
+        self.sed = syn_spectra_library[source_name]
         self.magnitude = magnitude
         self.redshift = redshift
         self.extinction = extinction
         # if the bandpass is none/unspecified, load the library default
         if bandpass is None:
-            self.renorm_band = pysyn_spectra_library[source_name].band
+            self.renorm_band = syn_spectra_library[source_name].band
         else:
             self.renorm_band = bandpass
 
-        new_sed = pysyn_spectra_library[source_name]
+        new_sed = syn_spectra_library[source_name]
 
         # now apply the other quantities via synphot 
         new_sed.z = self.redshift
-        sp_ext = new_sed * syn.reddening.from_extinction_model('mwavg').extinction_curve(self.extinction * u.ABmag)
+        sp_ext = new_sed * syn.reddening.ReddeningLaw.from_extinction_model('mwavg').extinction_curve(self.extinction)
+        print(sp_ext, stsyn.spectrum.band(self.renorm_band))
         sp_norm = sp_ext.normalize(self.magnitude * u.ABmag, stsyn.spectrum.band(self.renorm_band))
         
 
         self.sed = sp_norm
 
     def list_templates(self): 
-        print(pysyn_spectra_library.keys()) 
+        print(syn_spectra_library.keys()) 
 
     def __repr__(self):
         """

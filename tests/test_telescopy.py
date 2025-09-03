@@ -1,4 +1,4 @@
-import syotools.environment
+#import syotools.environment
 import pytest
 
 from syotools.models import Spectrograph
