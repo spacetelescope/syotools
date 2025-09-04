@@ -86,8 +86,9 @@ def uvspec_exptime(telescope, mode, template, fuvmag, snr_goal, silent=False):
         positional arguments:
 
           1-telescope = 'EAC1', 'EAC2', or 'EAC3'. This argument is a string.
-            EAC1 = 6 m inner diameter, 7.2 outer diameter hex pattern, off-axis EAC2 = 6
-            m diameter off-axis EAC3 = 8 m diameter on-axis
+            EAC1 = 6 m inner diameter, 7.2 outer diameter hex pattern, off-axis 
+            EAC2 = 6 m diameter off-axis 
+            EAC3 = 8 m diameter on-axis
 
           2-mode = your choice of UVI grating, a string:
           ['G120M', 'G150M', 'G180M', 'G155L', 'G145LL', 'G300M']

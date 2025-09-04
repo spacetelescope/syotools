@@ -9,8 +9,9 @@ def camera_snr(telescope, template, magnitude, exptime, silent=False):
 	
 	telescope = 'EAC1', 'EAC2', or 'EAC3'. This argument is a string. 
 
-	    EAC1 = 6 m inner diameter, 7.2 outer diameter hex pattern, off-axis EAC2 = 6 m
-	    diameter off-axis EAC3 = 8 m diameter on-axis 
+	    EAC1 = 6 m inner diameter, 7.2 outer diameter hex pattern, off-axis 
+		EAC2 = 6 m diameter off-axis 
+		EAC3 = 8 m diameter on-axis 
 	
 	spectral template = your choice of spectral template: 
 	    'Classical T Tauri', 'M1 Dwarf', 'G Dwarf', '10 Myr Starburst', 'QSO', 'Seyfert
@@ -67,8 +68,9 @@ def camera_exptime(telescope, template, magnitude, snr_goal, silent=False):
 	positional arguments:
 	
 	telescope = 'EAC1', 'EAC2', or 'EAC3'. This argument is a string. 
-	    EAC1 = 6 m inner diameter, 7.2 outer diameter hex pattern, off-axis EAC2 = 6 m
-	    diameter off-axis EAC3 = 8 m diameter on-axis 
+	    EAC1 = 6 m inner diameter, 7.2 outer diameter hex pattern, off-axis 
+		EAC2 = 6 m diameter off-axis 
+		EAC3 = 8 m diameter on-axis 
 	
 	2-template = your choice of spectral template: 
 	    'Classical T Tauri', 'M1 Dwarf', 'G Dwarf', '10 Myr Starburst', 'QSO', 'Seyfert
@@ -125,7 +127,7 @@ def camera_magnitude(telescope, template, snr, exptime, silent=False):
 	
 	telescope = 'EAC1', 'EAC2', or 'EAC3'. This argument is a string. 
 	    EAC1 = 6 m inner diameter, 7.2 outer diameter hex pattern, off-axis 
-            EAC2 = 6 m diameter off-axis 
+        EAC2 = 6 m diameter off-axis 
 	    EAC3 = 8 m diameter on-axis 
 
 	spectral template = your choice of spectral template: 
