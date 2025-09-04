@@ -67,7 +67,7 @@ class Source(PersistentModel):
         # now apply the other quantities via synphot 
         new_sed.z = self.redshift
         sp_ext = new_sed * syn.reddening.ReddeningLaw.from_extinction_model('mwavg').extinction_curve(self.extinction)
-        print(sp_ext, stsyn.spectrum.band(self.renorm_band))
+
         sp_norm = sp_ext.normalize(self.magnitude * u.ABmag, stsyn.spectrum.band(self.renorm_band))
         
 

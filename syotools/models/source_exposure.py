@@ -162,10 +162,11 @@ class SourceExposure(PersistentModel):
         """
         output_mags = [] # <--- create blank list of mags
         for magwave in self.camera.pivotwave[0]:
-            this_mag = self.source.sed(magwave * u.Unit(self.camera.pivotwave[1]))
+            magwave = magwave * u.Unit(self.camera.pivotwave[1])
+            this_mag = syn.units.convert_flux(magwave, self.source.sed(magwave), u.ABmag).value
             #amazingly, the sample method on the synphot sed does not check wavelengh limits! #TODO: Check this statement
-            if (magwave > np.max(self.source.sed.waveset)): this_mag = 99 * u.ABmag
-            if (magwave < np.min(self.source.sed.waveset)): this_mag = 99 * u.ABmag
+            if (magwave > np.max(self.source.sed.waveset)): this_mag = 99
+            if (magwave < np.min(self.source.sed.waveset)): this_mag = 99
             output_mags.append(this_mag)
             if self.verbose:
                 print('getting mags from interpolated _source: ', magwave * u.Unit(self.camera.pivotwave[1]))
@@ -515,7 +516,7 @@ class SourceCoronagraphicExposure(SourceExposure):
         Calculate the exposure time to achieve the desired S/N for the
         given SED.
         """
-        print('doesnt exist yet pull it from camera class')
+        print("Doesn't exist yet, pull it from camera class")
 
         return False #completed successfully
 
@@ -525,7 +526,7 @@ class SourceCoronagraphicExposure(SourceExposure):
         time.
         """
 
-        print('doesnt exist yet pull it from camera class')
+        print("Doesn't exist yet, pull it from camera class")
 
         return False #completed successfully
 
