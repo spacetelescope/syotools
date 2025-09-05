@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "syotools"
-version = "1.1.14"
+version = "1.2"
 description = "Science Yield Optimization Tools (SYOTools)"
 authors = [
     {name = "Jason Tumlinson, STScI", email = "tumlinson@stsci.edu"}
@@ -16,7 +16,7 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
 ]
 dependencies = [
-    "hwo_sci_eng==0.1.8",
+    "hwo_sci_eng==0.1.9",
     "astropy>6",
     "pysynphot==2.0.0",
     "numpy",
