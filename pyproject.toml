@@ -16,7 +16,7 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
 ]
 dependencies = [
-    "hwo_sci_eng==0.1.8",
+    "hwo_sci_eng==0.1.9",
     "astropy>6",
     "synphot",
     "stsynphot",
