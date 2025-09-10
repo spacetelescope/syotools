@@ -14,7 +14,7 @@ import pickle
 UVSPEC_BASELINE_PICKLE = "tests/baselines/uvspec_exptime.pickle"
 CAMERA_BASELINE_PICKLE = "tests/baselines/camera_exptime.pickle"
 
-def check_relative_diff(actual, expected, rel_tol=0.25):
+def check_relative_diff(actual, expected, rel_tol=0.001):
     """
     Simple function to check if two lists are approximately equal within a relative tolerance.
     Reports percentage differences for values that exceed the tolerance.
@@ -82,13 +82,13 @@ BASELINE_SIZE = 50
 @pytest.mark.parametrize("magnitude, snr_goal, expected", camera_exptime_baseline)
 def test_camera_exptime_calculation(magnitude, snr_goal, expected):
     exp_times, camera = camera_exptime('EAC1', 'G2V Star', magnitude, snr_goal, True)
-    assert check_relative_diff([q.value for q in exp_times], expected, 0.25) #1e-3)
+    assert check_relative_diff([q.value for q in exp_times], expected, 0.0005) #1e-3)
 
 @pytest.mark.parametrize("magnitude, snr_goal, expected", uvspec_exptime_baseline)
 def test_uvspec_exptime_calculation(magnitude, snr_goal, expected):
     wave, exp_times, uvi = uvspec_exptime('EAC1', 'G180M', 'G2V Star', magnitude, snr_goal, True)
     expected = [q.value for q in expected]
-    assert check_relative_diff([q.value for q in exp_times], expected, 0.25) #1e-3)
+    assert check_relative_diff([q.value for q in exp_times], expected, 0.0005) #1e-3)
 
 # def test_generate_camera_exptime_baseline():
 #     baseline = [(mag, snr, [q.value for q in camera_exptime('EAC1', 'G2V Star', mag, snr, True)[0]]) for mag in range(4, 35) for snr in range(3, 10)]
