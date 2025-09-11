@@ -6,6 +6,8 @@ from syotools.models.coronagraph import Coronagraph
 from syotools.models.telescope import Telescope
 from syotools.models.camera import Camera
 
+from syotools.spectra.spec_defaults import syn_spectra_library
+
 from syotools.wrappers.camera_wrapper import camera_exptime
 from syotools.wrappers.uvspec_wrapper import uvspec_exptime
 
@@ -15,12 +17,19 @@ from syotools.models import Camera, Telescope, Source, SourcePhotometricExposure
 import numpy as np, astropy.units as u
 
 
-def compute_source(telescope, sed, magnitude=30, snr=10, exptime=100, redshift=0, extinction=0, bandpass="johnson,v", target="magnitude")
+def compute_observation(telescope, instrument = sed, magnitude=30, snr=10, exptime=100, redshift=0, extinction=0, bandpass="johnson,v", target="magnitude")
     # create a Telescope, Camera, and Exposure 
-	tel, hri = Telescope(), Camera()
+	tel = Telescope()
+    inst = Camera()
 	tel.set_from_sei(telescope)
-	hri.set_from_sei('HRI')
-	
+	if instrument in ["camera", "hri"]:
+		inst.set_from_sei('HRI')
+        tel.add_camera(inst)
+	hri.add_exposure(exp)
+    elif instrument in ["spectroscopy", "uvi"]:
+        inst.set_from_sei('UVI')
+        tel.add_spectrograph(inst)
+
 	source = Source()
 	
     source.set_sed(sed, magnitude, redshift, extinction, bandpass=bandpass)   
@@ -34,21 +43,20 @@ def compute_source(telescope, sed, magnitude=30, snr=10, exptime=100, redshift=0
         exp.exptime = [[exptime, exptime, exptime, exptime, exptime, exptime, exptime, exptime, exptime, exptime], 'hr']
         exp._snr = [snr] * u.Unit('electron(1/2)')  
 
-        tel.add_camera(hri)
-        hri.add_exposure(exp)
+        inst.add_exposure(exp)
 
     elif target == "exptime":
         exp._snr = [snr_goal] * u.Unit('electron(1/2)')  
-        tel.add_camera(hri)
-        hri.add_exposure(exp)
+
+        inst.add_exposure(exp)
 
     elif target == "snr":
 
         exp.exptime = [[exptime, exptime, exptime, exptime, exptime, exptime, exptime, exptime, exptime, exptime], 'hr']
-        tel.add_camera(hri)
-        hri.add_exposure(exp)
 
-    return getattr(exp, target)
+        inst.add_exposure(exp)
+
+    return getattr(exp, target), tel
 
 def check_relative_diff(actual, expected, rel_tol=0.1):
     """
@@ -96,6 +104,15 @@ def check_relative_diff(actual, expected, rel_tol=0.1):
 
     @pytest.mark.parametrize("telescope, sed, magnitude, snr, exptime, redshift, extinction, bandpass, target, expected", test_setups)
 def test_etc_calculation(telescope, sed, magnitude, snr, exptime, redshift, extinction, bandpass, target, expected):
-    result = compute_source(telescope, sed, magnitude, snr, exptime, redshift, extinction, bandpass, target)
+    result = compute_observation(telescope, sed, magnitude, snr, exptime, redshift, extinction, bandpass, target)
     assert check_relative_diff(result, expected, 0.0005) #1e-3)
+
+telescopes = ["EAC1", "EAC2", "EAC3"]
+sed = syn_spectra_library
+redshift = np.logspace(-0.2,5,20)
+extinction = np.linspace(0,6,10)
+snr= np.logspace(0.01,1e2,20)
+exptime = np.logspace(0.1,1e6,20)
+magnitude = np.linspace(5, 30, 20)
+bandpass = ["johnson,v", "galex,fuv", "2mass,j"]
 
