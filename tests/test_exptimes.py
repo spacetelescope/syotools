@@ -53,7 +53,9 @@ try:
     with open("test_exptimes.pickle", "rb") as picklefile:
         test_setups = pickle.load(picklefile)
 except FileNotFoundError:
-    create_comparisons()
+    create_comparisons(True)
+    with open("test_exptimes.pickle", "rb") as picklefile:
+        test_setups = pickle.load(picklefile)
 
 @pytest.mark.parametrize("inputs", test_setups)
 def test_etc_exptimes(inputs):

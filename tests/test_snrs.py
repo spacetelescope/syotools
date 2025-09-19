@@ -53,8 +53,9 @@ try:
     with open("test_snrs.pickle", "rb") as picklefile:
         test_setups = pickle.load(picklefile)
 except FileNotFoundError:
-    create_comparisons()
-    test_setups = pickle.load(picklefile)
+    create_comparisons(True)
+    with open("test_snrs.pickle", "rb") as picklefile:
+        test_setups = pickle.load(picklefile)
 
 @pytest.mark.parametrize("inputs", test_setups)
 def test_etc_snrs(inputs):
