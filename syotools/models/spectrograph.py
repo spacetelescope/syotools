@@ -101,7 +101,7 @@ class Spectrograph(PersistentModel):
         exposure.telescope = self.telescope
         exposure.calculate()
 
-    def set_from_yaml(self, name): 
+    def set_from_sei(self, name): 
 
         if ('UVI' in name): uvi = read_yaml.uvi()
         
@@ -121,6 +121,12 @@ class Spectrograph(PersistentModel):
         self.MCP = uvi['MCP']
 
         self.CMOS = uvi['CMOS']
+
+        # Get a handy list of available dispersers
+        self.modes = list(self.FUV_MOS.keys())
+        self.modes.extend(list(self.NUV_MOS.keys()))
+        self.modes.remove("G165LL") # No data to support mode
+        self.modes.remove("G700L") # No data to support mode
 
 class Spectropolarimeter(Spectrograph):
     """
