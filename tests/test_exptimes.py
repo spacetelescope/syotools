@@ -43,18 +43,18 @@ def create_comparisons(reset):
                 except Exception as err:
                     print(f" Error in calculation: {err}")
     if reset:
-        with open("test_exptimes.pickle", "wb") as picklefile:
+        with open("tests/baselines/test_exptimes.pickle", "wb") as picklefile:
             pickle.dump(saved, picklefile)
 
 '''
 LOAD IT
 '''
 try:    
-    with open("test_exptimes.pickle", "rb") as picklefile:
+    with open("tests/baselines/test_exptimes.pickle", "rb") as picklefile:
         test_setups = pickle.load(picklefile)
 except FileNotFoundError:
     create_comparisons(True)
-    with open("test_exptimes.pickle", "rb") as picklefile:
+    with open("tests/baselines/test_exptimes.pickle", "rb") as picklefile:
         test_setups = pickle.load(picklefile)
 
 @pytest.mark.parametrize("inputs", test_setups)
