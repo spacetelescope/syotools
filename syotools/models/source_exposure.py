@@ -212,7 +212,6 @@ class SourcePhotometricExposure(SourceExposure):
         based on the other two. The "unknown" attribute controls which of these
         parameters is calculated.
         """
-        print("run calculate")
         if self._disable:
             return False
         if self.camera is None or self.telescope is None:

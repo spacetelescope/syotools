@@ -6,13 +6,13 @@ import pytest
 import numpy as np
 import astropy.units as u
 
-from syotools.spectra.spec_defaults import pysyn_spectra_library
+from syotools.spectra.spec_defaults import syn_spectra_library
 from syotools.models import Camera, Spectrograph, Telescope, Source, SourcePhotometricExposure, SourceSpectrographicExposure
 from syotools.wrappers.common import compute_observation, check_relative_diff
 
 telescopes = ["EAC1", "EAC2", "EAC3"]
 instruments = ["hri", "uvi"]
-seds = pysyn_spectra_library
+seds = syn_spectra_library
 redshifts = np.logspace(0,5,20)
 extinctions = np.linspace(0,6,10)
 snrs = np.logspace(0.01,1e2,20)
