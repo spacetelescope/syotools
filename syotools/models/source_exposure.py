@@ -124,6 +124,7 @@ class SourceExposure(PersistentModel):
 
     @property
     def exptime(self):
+        #print(" retrieve exptime")
         return self._exptime
 
     @exptime.setter
@@ -211,6 +212,7 @@ class SourcePhotometricExposure(SourceExposure):
         based on the other two. The "unknown" attribute controls which of these
         parameters is calculated.
         """
+        print("run calculate")
         if self._disable:
             return False
         if self.camera is None or self.telescope is None:
@@ -263,6 +265,10 @@ class SourcePhotometricExposure(SourceExposure):
         b = snr2 * (QE * (fstar + fsky) + thermal + dark_rate * Npix)
         c = snr2 * rn**2 * Npix * _nexp
         texp = ((-b + np.sqrt(b**2 - 4*a*c)) / (2*a)).to(u.s)
+
+        if self.verbose:
+            print("Fstar:", fstar)
+            print("Texp:", texp)
 
         self._exptime = texp
 

@@ -62,11 +62,16 @@ class Source(PersistentModel):
         else:
             self.renorm_band = bandpass
 
+        #print("SET SED:", bandpass, syn_spectra_library[source_name].band, self.renorm_band, stsyn.band(self.renorm_band).waveset)
+        #print("SED_INFO:", self.name, self.sed.waveset, self.renorm_band, self.redshift, self.extinction)
+
         new_sed = syn_spectra_library[source_name]
 
         # now apply the other quantities via synphot 
         new_sed.z = self.redshift
         sp_ext = new_sed * syn.reddening.ReddeningLaw.from_extinction_model('mwavg').extinction_curve(self.extinction)
+
+        #print("Actual norm:", sp_ext.waveset)
 
         sp_norm = sp_ext.normalize(self.magnitude * u.ABmag, stsyn.spectrum.band(self.renorm_band))
         

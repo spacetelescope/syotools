@@ -96,7 +96,7 @@ def camera_exptime(telescope, template, magnitude, snr_goal, silent=False):
 	tel.set_from_sei(telescope)
 	hri.set_from_sei('HRI')
 	
-	source = Source() 
+	source = Source()
 	redshift = 0. # changes to these are not implemented yet 
 	extinction = 0. 
 	

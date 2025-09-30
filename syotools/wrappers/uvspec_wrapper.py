@@ -125,7 +125,7 @@ def uvspec_exptime(telescope, mode, template, fuvmag, snr_goal, silent=False):
     uvi.add_exposure(uvi_exp)
 
     if not silent:
-        print("Current SED template: {}".format(source.sed.name))
+        print("Current SED template: {}".format(template))
         print("Current grating mode: {}".format(uvi.descriptions[uvi.mode]))
         print("Current exposure time: {} hours\n".format(uvi_exp.exptime))
 
@@ -137,5 +137,6 @@ def uvspec_exptime(telescope, mode, template, fuvmag, snr_goal, silent=False):
     uvi_exptime = uvi_exp.recover('exptime')
 
     wave, exptime =  uvi.wave, uvi_exp.exptime
+
 
     return wave, exptime, uvi
