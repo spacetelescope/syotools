@@ -8,6 +8,8 @@ import numpy as np
 import astropy.units as u
 import astropy.constants as const
 
+import synphot as syn
+
 from syotools.models.base import PersistentModel
 from syotools.defaults import default_exposure
 from syotools.models.source import Source
@@ -122,6 +124,7 @@ class SourceExposure(PersistentModel):
 
     @property
     def exptime(self):
+        #print(" retrieve exptime")
         return self._exptime
 
     @exptime.setter
@@ -158,16 +161,16 @@ class SourceExposure(PersistentModel):
         """
         The exposure's new Source SED interpolated at the camera bandpasses.
         """
-        self.source.sed.convert(self.camera.pivotwave[1]) # <---temporarily convert the sed into the units of the pivotwaves
         output_mags = [] # <--- create blank list of mags
         for magwave in self.camera.pivotwave[0]:
-            this_mag = self.source.sed.sample(magwave)
-            #amazingly, the sample method on the pysynphot sed does not check wavelengh limits!
-            if (magwave > np.max(self.source.sed.wave)): this_mag = 99.
-            if (magwave < np.min(self.source.sed.wave)): this_mag = 99.
+            magwave = magwave * u.Unit(self.camera.pivotwave[1])
+            this_mag = syn.units.convert_flux(magwave, self.source.sed(magwave), u.ABmag).value
+            #amazingly, the sample method on the synphot sed does not check wavelengh limits! #TODO: Check this statement
+            if (magwave > np.max(self.source.sed.waveset)): this_mag = 99
+            if (magwave < np.min(self.source.sed.waveset)): this_mag = 99
             output_mags.append(this_mag)
             if self.verbose:
-                print('getting mags from interpolated _source: ', magwave)
+                print('getting mags from interpolated _source: ', magwave * u.Unit(self.camera.pivotwave[1]))
         return np.array(output_mags)
 
     @property
@@ -261,6 +264,10 @@ class SourcePhotometricExposure(SourceExposure):
         b = snr2 * (QE * (fstar + fsky) + thermal + dark_rate * Npix)
         c = snr2 * rn**2 * Npix * _nexp
         texp = ((-b + np.sqrt(b**2 - 4*a*c)) / (2*a)).to(u.s)
+
+        if self.verbose:
+            print("Fstar:", fstar)
+            print("Texp:", texp)
 
         self._exptime = texp
 
@@ -402,20 +409,12 @@ class SourceSpectrographicExposure(SourceExposure):
                                                          'spectrograph.wrange')
 
         exptime = ( self._exptime[0][0] * u.Unit(self._exptime[1])).to(u.s)
-        if self.source.sed.fluxunits.name == "abmag":
-            funit = u.ABmag
-        elif self.source.sed.fluxunits.name == "photlam":
-            funit = u.ph / u.s / u.cm**2 / u.AA
-        elif self.source.sed.fluxunits.name == "flam":
-            funit = u.erg / u.s / u.cm**2 / u.AA
-        else:
-            funit = u.Unit(self.source.sed.fluxunits.name)
+
         wave = _wave.to(u.AA)
 
-        swave = (self.source.sed.wave * u.Unit(self.source.sed.waveunits.name)).to(u.AA)
+        swave = self.source.sed.waveset.to(u.AA)
 
-        sflux = (self.source.sed.flux * funit).to(u.erg / u.s / u.cm**2 / u.AA, equivalencies=u.spectral_density(swave))
-        wave = wave.to(swave.unit)
+        sflux = syn.units.convert_flux(swave, self.source.sed(swave), (u.erg / u.s / u.cm**2 / u.AA))
 
         delta_lambda = self.recover('spectrograph.delta_lambda').to(u.AA / u.pix)
 
@@ -459,20 +458,11 @@ class SourceSpectrographicExposure(SourceExposure):
         if self.verbose:
             print("The requested SNR is {}\n".format(_snr_goal))
 
-        if self.source.sed.fluxunits.name == 'abmag'  == "abmag":
-            funit = u.ABmag
-        elif self.source.sed.fluxunits.name  == "photlam":
-            funit = u.ph / u.s / u.cm**2 / u.AA
-        else:
-            funit = u.Unit(self.source.sed.fluxunits.name)
-
         wave = _wave.to(u.AA)
 
-        swave = (self.source.sed.wave * u.Unit(self.source.sed.waveunits.name)).to(u.AA)
+        swave = self.source.sed.waveset.to(u.AA)
 
-        sflux = (self.source.sed.flux * funit).to(u.erg / u.s / u.cm**2 / u.AA, equivalencies=u.spectral_density(swave))
-
-        wave = wave.to(swave.unit)
+        sflux = syn.units.convert_flux(swave, self.source.sed(swave), u.erg / u.s / u.cm**2 / u.AA)
 
         delta_lambda = self.recover('spectrograph.delta_lambda').to(u.AA / u.pix)
 
@@ -500,7 +490,7 @@ class SourceSpectrographicExposure(SourceExposure):
         if self.verbose:
             print("Exptime: {}".format(t_exp))
 
-        self._exptime = t_exp
+        self._exptime = (t_exp.value)*u.s
 
         return True #completed successfully
 
@@ -531,7 +521,7 @@ class SourceCoronagraphicExposure(SourceExposure):
         Calculate the exposure time to achieve the desired S/N for the
         given SED.
         """
-        print('doesnt exist yet pull it from camera class')
+        print("Doesn't exist yet, pull it from camera class")
 
         return False #completed successfully
 
@@ -541,7 +531,7 @@ class SourceCoronagraphicExposure(SourceExposure):
         time.
         """
 
-        print('doesnt exist yet pull it from camera class')
+        print("Doesn't exist yet, pull it from camera class")
 
         return False #completed successfully
 

@@ -7,8 +7,9 @@ import numpy as np
 import astropy.units as u
 
 from syotools.models.base import PersistentModel
-from syotools.spectra.spec_defaults import pysyn_spectra_library 
-import pysynphot as S 
+from syotools.spectra.spec_defaults import syn_spectra_library 
+import synphot as syn
+import stsynphot as stsyn
 
 class Source(PersistentModel):
     def __init__(self):
@@ -21,7 +22,7 @@ class Source(PersistentModel):
         - redshift (float): The redshift value of the source.
         - extinction (float): The extinction value of the source.
 
-        By default, this object is initialized with a pysynphot 
+        By default, this object is initialized with a synphot 
         flat spectrum in AB mag, normalized to ABmag = 30.  
 
         usage: 
@@ -31,7 +32,7 @@ class Source(PersistentModel):
             or 
             > s.set_sed('QSO', 25., 0.0, 0.0, 'galex,fuv')   
 
-            s.sed can also be manipulated with pysynphot syntax like so: 
+            s.sed can also be manipulated with synphot syntax like so: 
             > s.sed.renorm(20., 'abmag', S.ObsBandpass('johnson,v'))
         """
         self.name = 'Flat (AB)'
@@ -51,29 +52,34 @@ class Source(PersistentModel):
 
     def set_sed(self, source_name, magnitude, redshift, extinction, bandpass=None):   
         self.name = source_name  
-        self.sed = pysyn_spectra_library[source_name]
+        self.sed = syn_spectra_library[source_name]
         self.magnitude = magnitude
         self.redshift = redshift
         self.extinction = extinction
         # if the bandpass is none/unspecified, load the library default
         if bandpass is None:
-            self.renorm_band = pysyn_spectra_library[source_name].band
+            self.renorm_band = syn_spectra_library[source_name].band
         else:
             self.renorm_band = bandpass
 
-        new_sed = pysyn_spectra_library[source_name]
+        #print("SET SED:", bandpass, syn_spectra_library[source_name].band, self.renorm_band, stsyn.band(self.renorm_band).waveset)
+        #print("SED_INFO:", self.name, self.sed.waveset, self.renorm_band, self.redshift, self.extinction)
 
-        #now apply the other quantities via pysynphot 
-        sp_red = new_sed.redshift(redshift)
-        sp_ext = sp_red * S.Extinction(extinction, 'mwavg')
-        sp_norm = sp_ext.renorm(magnitude, 'abmag', S.ObsBandpass(self.renorm_band))  
-        sp_norm.convert('abmag')
+        new_sed = syn_spectra_library[source_name]
+
+        # now apply the other quantities via synphot 
+        new_sed.z = self.redshift
+        sp_ext = new_sed * syn.reddening.ReddeningLaw.from_extinction_model('mwavg').extinction_curve(self.extinction)
+
+        #print("Actual norm:", sp_ext.waveset)
+
+        sp_norm = sp_ext.normalize(self.magnitude * u.ABmag, stsyn.spectrum.band(self.renorm_band))
         
 
         self.sed = sp_norm
 
     def list_templates(self): 
-        print(pysyn_spectra_library.keys()) 
+        print(syn_spectra_library.keys()) 
 
     def __repr__(self):
         """

@@ -17,7 +17,7 @@ hi1hei1   Galaxy with f_esc, HI=1, HeI=1
 hi0hei1   Galaxy with f_esc, HI=0.001, HeI=1
 
 Most of these templates are drawn from the STScI
-pysynphot package. To request addtional spectral 
+synphot package. To request additional spectral 
 templates, you can do the following: 
 
 (1) visit the #etcs_and_tools channel on the HWO Community Slack Team, 

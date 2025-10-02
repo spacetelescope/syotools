@@ -5,9 +5,9 @@ Created on Tue Oct 18 11:19:05 2016
 """
 import os
 import astropy.units as u
-import pysynphot as pys
+import synphot as syn
 import specutils as specu
-from syotools.spectra.spec_defaults import default_spectra, pysyn_spectra_library 
+from syotools.spectra.spec_defaults import default_spectra, syn_spectra_library 
 from pathlib import Path
 
 class _spec_library(object):
@@ -15,7 +15,7 @@ class _spec_library(object):
     This is a container object for spectra, which can handle spectra stored
     in the data/ folder, as well as accept new spectra from user upload.
     
-    pysynphot is the package which will handle all the gruntwork of spectrum
+    synphot is the package which will handle all the gruntwork of spectrum
     processing; we also use specutils for somewhat more forgiving file IO.
     
     Each spectrum has an id (given by the user for non-default spectra), which
@@ -47,9 +47,9 @@ class _spec_library(object):
         """
         Add or change an item in the _available_spectra dict. We do some type
         checking & parsing to keep conversions under the hood; everything
-        should eventually be stored as an ArraySpectrum or FileSpectrum.
+        should eventually be stored as an SourceSpectrum or FileSpectrum.
         """
-        if isinstance(value, pys.SourceSpectrum):
+        if isinstance(value, syn.spectrum.SourceSpectrum):
             self._available_spectra[key] = value
         elif isinstance(value, specu.Spectrum1D):
             self.add_spec_from_spectrum1d(key, value)
@@ -57,7 +57,7 @@ class _spec_library(object):
             self.add_spec_from_arrays(key, *value)
         else:
             name = lambda cls: '{}.{}'.format(cls.__module__, cls.__name__)
-            allowed = ', '.join([name(s) for s in (pys.spectrum.SourceSpectrum,
+            allowed = ', '.join([name(s) for s in (syn.spectrum.SourceSpectrum,
                                                  specu.Spectrum1D, u.Quantity, 
                                                  list, tuple)])
             raise TypeError('Only the following types are supported: '+allowed)
@@ -117,7 +117,7 @@ class _spec_library(object):
         Load a spectrum from a FITS or ascii file.
         
         FITS loading is accomplished by specutils.io.readfits, while ascii
-        (and final spectrum format) is handled by pysynphot.
+        (and final spectrum format) is handled by synphot.
         
         Arguments:
             filepath  - the file path to be loaded. pathlib.Path.resolve() is
@@ -127,12 +127,12 @@ class _spec_library(object):
                         strings must be valid for dot access -- i.e., 
                         alphanumeric characters & underscores only.
             waveunits - units for the wavelength array. if None, the units are
-                        read from the header, if any. only optional for FITS
-                        files, must be included for an ascii file.
+                        read from the header, if any. Must be included for an 
+                        ascii file, ignored for fits.
                         (astropy.units.Unit, None)
             fluxunits - units for the flux array. if None, the units are read
-                        from the header, if any. only optional for FITS files,
-                        must be included for an ascii file. (astropy.units.Unit, 
+                        from the header, if any. Must be included for an ascii
+                        file, ignored for fits. (astropy.units.Unit, 
                         None)
             multispec - is the file a multispec file? if so, specid MUST be
                         a list of the same length as the number of spectra.
@@ -159,8 +159,7 @@ class _spec_library(object):
                                      extensions[-2:] == ['.fits','.gz']):
 
             #JT 
-            new_spec = pys.FileSpectrum(abspath, dispersion_unit=waveunits, 
-                                flux_unit=fluxunits)
+            new_spec = syn.spectrum.SourceSpectrum.from_file(abspath, ext=1, keep_neg=True)
 
             #handle a multispec file
             if multispec:
@@ -173,37 +172,32 @@ class _spec_library(object):
         else:
             if waveunits is None or fluxunits is None:
                 raise ValueError('Wavelength and flux units must be specified for ascii files')
-            sp = pys.FileSpectrum(abspath, keepneg=True)
-            sp.waveunits = str(waveunits.unit)
-            sp.fluxunits = str(fluxunits.unit)
+            sp = syn.spectrum.SourceSpectrum.from_file(abspath, wave_unit=waveunits, flux_unit=fluxunits, keep_neg=True)
             self.add_spec_from_spectrum1d(specid, sp)
     
     def add_spec_from_arrays(self, specid, wavelength, flux):
         """
-        Accept Quantity arrays for wavelength and flux, store them in a pysynphot
-        ArraySpectrum, and add them to the library.
+        Accept Quantity arrays for wavelength and flux, store them in a synphot
+        SourceSpectrum, and add them to the library.
         """
         
         if not (isinstance(wavelength, u.Quantity) and isinstance(flux, u.Quantity)):
             raise TypeError('wavelength and flux must be Quantity arrays')
-        sp = pys.ArraySpectrum(wave=wavelength.value, flux=flux.value,
-                               waveunits=str(wavelength.unit), 
-                               fluxunits=str(flux.unit), name=specid,
-                               keepneg=True)
+        sp = syn.spectrum.SourceSpectrum(syn.models.Empirical1D, points=wavelength, lookup_table=flux, keep_neg=True)
         self._available_spectra[specid] = sp
     
     def add_spec_from_spectrum1d(self, specid, spectrum):
         """
-        Accept specutils.Spectrum1D object, store it in a pysynphot 
-        ArraySpectrum, and add it to the library.
+        Accept specutils.Spectrum1D object, store it in a synphot 
+        SourceSpectrum, and add it to the library.
         """
         self.add_spec_from_arrays(specid, spectrum.wavelength, spectrum.flux)
 
     def save_spec_to_file(self, fname, specid, **options):
         """
-        Save a library spectrum to a FITS file, using pysynphot's writefits.
-        Any options to writefits may be passed via **options; see
-        https://pysynphot.readthedocs.io/en/latest/ref_api.html#pysynphot.spectrum.SourceSpectrum.writefits
+        Save a library spectrum to a FITS file, using synphot's to_fits.
+        Any options to write_fits_spec may be passed via **options; see
+        https://synphot.readthedocs.io/en/latest/api/synphot.spectrum.SourceSpectrum.html#synphot.spectrum.SourceSpectrum.to_fits
         """
         if use_pathlib:
             path = Path(fname)
@@ -212,7 +206,7 @@ class _spec_library(object):
             abspath = os.path.abspath(os.path.expanduser(fname))
         
         outspec = self._available_spectra[specid]
-        outspec.writefits(abspath, **options)
+        outspec.to_fits(abspath, **options)
 
 #Initialize the default library:
 SpectralLibrary = _spec_library()

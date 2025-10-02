@@ -9,7 +9,7 @@ from collections import OrderedDict
 from syotools.utils import ordered_load 
 import astropy.units as u 
 
-cwd = os.getenv('LUVOIR_SIMTOOLS_DIR')
+cwd = os.getenv('SYOTOOLS_DATA_DIR')
 
 # Load data from fits files describring LUMOS and establish the default file path
 current_dir = os.path.dirname(os.path.abspath(__file__))

@@ -6,7 +6,7 @@ import pytest
 import numpy as np
 import astropy.units as u
 
-from syotools.spectra.spec_defaults import pysyn_spectra_library
+from syotools.spectra.spec_defaults import syn_spectra_library
 from syotools.models import Camera, Spectrograph, Telescope, Source, SourcePhotometricExposure, SourceSpectrographicExposure
 
 def _do_calculation(tel, inst, exp, mode=None, source=None, snr=10.0, exptime=100, bandpass=None, target="magnitude", verbose=False):

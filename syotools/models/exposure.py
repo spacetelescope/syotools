@@ -50,7 +50,7 @@ class Exposure(PersistentModel):
                         WHENEVER A NEW CALCULATION IS SAVED.
         sed_flux     - the spectral energy distribution of the target (float array)
         sed_wav      - the wavelengths associated with the SED flux (float array)
-        sed_id       - for default (pysynphot) spectra, the id (i.e. the key
+        sed_id       - for default (synphot) spectra, the id (i.e. the key
                        into the default spectra dictionary), otherwise "user" (string)
         n_exp        - the desired number of exposures (integer)
         exptime      - the desired exposure time (float array)

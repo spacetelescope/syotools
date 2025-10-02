@@ -9,7 +9,7 @@ from __future__ import (print_function, division, absolute_import, with_statemen
                         nested_scopes, generators)
 
 import astropy.units as u
-import pysynphot as pys
+import synphot as syn
 import numpy as np
 
 # JT omitted 050323 
@@ -109,14 +109,14 @@ class JsonUnit(object):
 
 class JsonSpectrum(object):
     """
-    A version of JsonUnit to handle pysynphot spectra.
+    A version of JsonUnit to handle synphot spectra.
     """
     def __init__(self, spectrum=None):
         if spectrum is not None:
-            self._wave = spectrum.wave
-            self._wunit = spectrum.waveunits.name
-            self._flux = spectrum.flux
-            self._funit = spectrum.fluxunits.name
+            self._wave = spectrum.waveset.value
+            self._wunit = spectrum.waveset.unit
+            self._flux = spectrum(spectrum.waveset).value
+            self._funit = spectrum(spectrum.waveset).unit
             
     
     def encode_json(self):
@@ -139,25 +139,24 @@ class JsonSpectrum(object):
     
     @property
     def use(self):
-        spec = pys.ArraySpectrum(wave=self._wave, flux=self._flux,
-                                 waveunits=self._wunit, 
-                                 fluxunits=self._funit)
+        spec = syn.spectrum.SourceSpectrum(Empirical1D, points=self._wave * u.Unit(self._wunit), 
+                                                        lookup_table=self._flux * u.Unit(self._funit)),
         return spec
     
     @use.setter
     def use(self, new_spec):
-        if not isinstance(new_spec, pys.spectrum.SourceSpectrum):
-            raise TypeError("JsonSpectrum.use expects a pysynphot.spectrum.SourceSpectrum object.")
-        self._wave = new_spec.wave
-        self._wunit = new_spec.waveunits.name
-        self._flux = new_spec.flux
-        self._funit = new_spec.fluxunits.name
+        if not isinstance(new_spec, syn.spectrum.SourceSpectrum):
+            raise TypeError("JsonSpectrum.use expects a synphot.spectrum.SourceSpectrum object.")
+        self._wave = new_spec.waveset.value
+        self._wunit = new_spec.waveset.unit
+        self._flux = new_spec(new_spec.waveset).value
+        self._funit = new_spec(new_spec.waveset).unit
     
     def __repr__(self):
         wave, flux = self.wave, self.flux
         ww = "{} {}".format(np.array_str(wave.value, precision=3), wave.unit)
         ff = "{} {}".format(np.array_str(flux.value, precision=3), flux.unit)
-        return "<Spectrum (wave {}; flux {})>".format(ww, ff)
+        return f"<Spectrum (wave {ww}; flux {ff})>"
     
     @property
     def wave(self):
@@ -206,7 +205,7 @@ def pre_encode(quant):
     Same for JsonSpectra.
     """
     
-    if isinstance(quant, pys.spectrum.SourceSpectrum):
+    if isinstance(quant, syn.spectrum.SourceSpectrum):
         return JsonSpectrum(quant).encode_json()
     
     if not isinstance(quant, u.Quantity):
