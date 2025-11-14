@@ -247,12 +247,12 @@ class SourcePhotometricExposure(SourceExposure):
         self.camera._print_initcon(self.verbose)
 
         (_snr, _nexp) = self.recover('snr', 'n_exp')
-        (_total_qe, _detector_rn, _dark_current) = self.recover('camera.total_qe',
-                'camera.detector_rn', 'camera.dark_current')
+        (_total_qe, _detector_rn, _dark_current, _tel_eff) = self.recover('camera.total_qe',
+                'camera.detector_rn', 'camera.dark_current', "telescope.telescope_efficiency")
 
         snr2 = -(_snr**2)
-        fstar = self._fsource
-        fsky = self.camera._fsky(verbose=self.verbose)
+        fstar = self._fsource * _tel_eff
+        fsky = self.camera._fsky(verbose=self.verbose) * _tel_eff
         Npix = self.camera._sn_box(self.verbose)
         thermal = self.camera.c_thermal(verbose=self.verbose)
 
@@ -285,9 +285,8 @@ class SourcePhotometricExposure(SourceExposure):
                                            'camera.ap_corr',
                                            'telescope.effective_aperture',
                                            'camera.derived_bandpass')
-        (_total_qe, _detector_rn, _dark_current) = self.recover('camera.total_qe',
-                                    'camera.detector_rn',
-                                    'camera.dark_current')
+        (_total_qe, _detector_rn, _dark_current, _tel_eff) = self.recover('camera.total_qe',
+                'camera.detector_rn', 'camera.dark_current', "telescope.telescope_efficiency")
 
         exptime = (_exptime[0] * u.Unit(_exptime[1])).to(u.s)
 
@@ -323,9 +322,8 @@ class SourcePhotometricExposure(SourceExposure):
         (_exptime, _nexp, n_bands) = self.recover('_exptime', 'n_exp',
                                                   'camera.n_bands')
 
-        (_total_qe, _detector_rn, _dark_current) = self.recover('camera.total_qe',
-                             'camera.detector_rn', 'camera.dark_current')
-
+        (_total_qe, _detector_rn, _dark_current, _tel_eff) = self.recover('camera.total_qe',
+                'camera.detector_rn', 'camera.dark_current', "telescope.telescope_efficiency")
 
         number_of_exposures = np.full(n_bands, _nexp)
         desired_exp_time = (np.full(n_bands, _exptime[0]) * u.Unit(_exptime[1])).to(u.second)
@@ -333,10 +331,10 @@ class SourcePhotometricExposure(SourceExposure):
 
         QE = _total_qe[0] * u.Unit(_total_qe[1])
 
-        signal_counts = QE * self._fsource * desired_exp_time
+        signal_counts = QE * self._fsource * desired_exp_time * _tel_eff
         shot_noise_in_signal = np.sqrt(signal_counts)
 
-        sky_counts = QE * self.camera._fsky(verbose=self.verbose) * desired_exp_time
+        sky_counts = QE * self.camera._fsky(verbose=self.verbose) * desired_exp_time * _tel_eff
         shot_noise_in_sky = np.sqrt(sky_counts)
 
         sn_box = self.camera._sn_box(self.verbose) #<-- units should be "pix"

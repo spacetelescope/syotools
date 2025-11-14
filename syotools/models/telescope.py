@@ -94,13 +94,22 @@ class Telescope(PersistentModel):
     def hexagon_area(self, side):
         return 3. * 3.**0.5 / 2. * side**2
 
-    def set_coating(self, mirror, coating):
-        """ Sets the reflectivity curve for a mirror surface by
-            adding / modifying that mirror's component dictionary
-            doing this with file I/O here is a bit inelegant but
-            works for the first iteration of this capability.
-            JT 102524
+    def set_coating(self, mirror, coating="XeLiF"):
+        """ 
+        Sets the reflectivity curve for a mirror surface by
+        adding / modifying that mirror's component dictionary
+        doing this with file I/O here is a bit inelegant but
+        works for the first iteration of this capability.
+        JT 102524
         """
+        if "reflectivity" in mirror:
+            if "XeLiF" in mirror["reflectivity"]:
+                coating = "XeLiF"
+            elif "ProtectedAg" in mirror["reflectivity"]:
+                coating = "ProtectedAg"
+            elif "ProtectedAl" in mirror["reflectivity"]:
+                coating = "ProtectedAl"
+
         with open(os.getenv('SCI_ENG_DIR') + '/obs_config/reflectivities/'+coating+'_refl.yaml', 'r') as f:
             coating_dict = yaml.load(f, Loader=yaml.SafeLoader)
 
@@ -109,12 +118,8 @@ class Telescope(PersistentModel):
         mirror['coating_refl'] = coating_dict['reflectivity'] * u.dimensionless_unscaled
 
     def set_from_sei(self, name):
-        if name == 'EAC1':
-            self.set_from_yaml(name)
-        elif name == 'EAC2':
-            self.set_from_yaml(name)
-        elif name == 'EAC3':
-            self.set_from_yaml(name)
+        if name in ("EAC1", "EAC2", "EAC3"):
+            tel = self.set_from_yaml(name.lower())
         else:
             print('We do not have SEI information for: ', name)
             raise NotImplementedError
@@ -135,10 +140,7 @@ class Telescope(PersistentModel):
 
     def set_from_yaml(self, name):
 
-        if ('EAC1' in name): tel = read_yaml.eac1()
-
-        if ('EAC2' in name): tel = read_yaml.eac2() # 102724 EAC2.yaml is still draft
-        if ('EAC3' in name): tel = read_yaml.eac3() # 102724 EAC3.yaml is still draft
+        tel = read_yaml.read_hwo(name.lower())
 
         # the "tel" dictionary returned by read_yaml is nested, and therefore awkward
         # when summoning individual entries. And often, we do not need the individual
@@ -146,13 +148,13 @@ class Telescope(PersistentModel):
         # mirrors and other pieces separately:
 
         self.pm = tel['PM'] #primary
-        self.set_coating(self.pm, 'XeLiF')
+        self.set_coating(self.pm)
         self.sm = tel['SM'] # secondary
-        self.set_coating(self.sm, 'XeLiF')
+        self.set_coating(self.sm)
         self.m3 = tel['M3'] # tertiary
-        self.set_coating(self.m3, 'XeLiF')
+        self.set_coating(self.m3)
         self.m4 = tel['M4'] # fold mirror (?)
-        self.set_coating(self.m4, 'XeLiF')
+        self.set_coating(self.m4)
 
         self.telescope_wave=self.pm['coating_wave']
         self.telescope_efficiency=self.pm['coating_refl'] * self.sm['coating_refl'] * self.m3['coating_refl'] * self.m4['coating_refl']
