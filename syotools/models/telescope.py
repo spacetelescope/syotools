@@ -3,6 +3,7 @@
 Created on Fri Oct 14 20:28:51 2016
 @authors: gkanarek, tumlinson
 """
+import os, yaml
 
 from syotools.models.base import PersistentModel
 from syotools.defaults import default_telescope
@@ -10,7 +11,7 @@ from syotools.defaults import default_telescope
 #from syotools.utils.jsonunit import str_jsunit
 import astropy.units as u #for unit conversions
 import numpy as np
-import os, yaml
+import scipy as sc
 from hwo_sci_eng.utils import read_yaml, read_json
 
 class Telescope(PersistentModel):
@@ -156,8 +157,10 @@ class Telescope(PersistentModel):
         self.m4 = tel['M4'] # fold mirror (?)
         self.set_coating(self.m4)
 
-        self.telescope_wave=self.pm['coating_wave']
-        self.telescope_efficiency=self.pm['coating_refl'] * self.sm['coating_refl'] * self.m3['coating_refl'] * self.m4['coating_refl']
+        telescope_wave=self.pm['coating_wave']
+        telescope_efficiency=self.pm['coating_refl'] * self.sm['coating_refl'] * self.m3['coating_refl'] * self.m4['coating_refl']
+
+        self.telescope_efficiency = sc.interpolate.interp1d(telescope_wave, telescope_efficiency)
 
         self.name = name
         if ('hex' in self.pm['segmentation']): # do this only if we have a hex segmented mirror
