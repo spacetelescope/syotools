@@ -160,7 +160,8 @@ class Telescope(PersistentModel):
         telescope_wave=self.pm['coating_wave']
         telescope_efficiency=self.pm['coating_refl'] * self.sm['coating_refl'] * self.m3['coating_refl'] * self.m4['coating_refl']
 
-        self.telescope_efficiency = sc.interpolate.interp1d(telescope_wave, telescope_efficiency)
+        # we are saving the integrator *function* as an attribute
+        self.telescope_efficiency = sc.interpolate.make_interp_spline(telescope_wave, telescope_efficiency)
 
         self.name = name
         if ('hex' in self.pm['segmentation']): # do this only if we have a hex segmented mirror
