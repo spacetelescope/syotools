@@ -1,6 +1,7 @@
 #import syotools.environment
 import sys
 
+import yaml
 import pytest
 import numpy as np
 import astropy.units as u
@@ -34,25 +35,25 @@ def create_comparisons(reset):
     for telescope in telescopes:
         for instrument in instruments:
             for exptime in exptimes:
-                print(telescope, instrument, sed, magnitude, snr, exptime, redshift, extinction, target, end="")
+                print(telescope, instrument, sed, magnitude, snr, exptime, redshift, extinction, target)
                 try:
                     result = compute_observation(telescope, instrument=instrument, sed=sed, magnitude=magnitude, snr=snr, exptime=exptime, redshift=redshift, extinction=extinction, target=target)
                     #result = np.median(result)
-                    print(result)
-                    saved.append({"telescope": telescope, "instrument": instrument, "sed": sed, "magnitude": magnitude, "snr": snr, "exptime": exptime, "redshift": redshift, "extinction": extinction, "target": target, "result": result})
+                    #print(result)
+                    saved.append({"telescope": telescope, "instrument": instrument, "sed": sed, "magnitude": magnitude, "snr": snr, "exptime": exptime, "redshift": redshift, "extinction": extinction, "target": target, "expected": result})
                 except Exception as err:
                     print(f" Error in calculation: {err}")
     if reset:
-        write_yaml(saved, "tests/baselines/test_exptimes.yml")
+        write_yaml(saved, "tests/baselines/test_exptimes.yml.xz")
 
 '''
 LOAD IT
 '''
 try:    
-    test_setups = read_yaml("tests/baselines/test_exptimes.yml")
-except FileNotFoundError:
+    test_setups = read_yaml("tests/baselines/test_exptimes.yml.xz")
+except (FileNotFoundError, yaml.io.UnsupportedOperation):
     create_comparisons(True)
-    test_setups = read_yaml("tests/baselines/test_exptimes.yml")
+    test_setups = read_yaml("tests/baselines/test_exptimes.yml.xz")
 
 @pytest.mark.parametrize("inputs", test_setups)
 def test_etc_exptimes(inputs):
@@ -60,7 +61,7 @@ def test_etc_exptimes(inputs):
                         magnitude=inputs["magnitude"], snr=inputs["snr"], exptime=inputs["exptime"], 
                         redshift=inputs["redshift"], extinction=inputs["extinction"], target=inputs["target"])
     result = [res.value for res in result]
-    assert check_relative_diff(result, [res.value for res in inputs["result"]], 0.0005) #1e-3)
+    assert check_relative_diff(result, [res.value for res in inputs["expected"]], 0.0005) #1e-3)
 
 
 if __name__ == "__main__":

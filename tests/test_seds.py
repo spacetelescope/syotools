@@ -1,7 +1,7 @@
 #import syotools.environment
 import sys
-import yaml
 
+import yaml
 import pytest
 import numpy as np
 import astropy.units as u
@@ -35,25 +35,25 @@ def create_comparisons(reset=False):
     for telescope in telescopes:
         for instrument in instruments:
             for sed in seds:
-                print(telescope, instrument, sed, magnitude, snr, exptime, redshift, extinction, target, end="")
+                print(telescope, instrument, sed, magnitude, snr, exptime, redshift, extinction, target)
                 try:
                     result = compute_observation(telescope, instrument=instrument, sed=sed, magnitude=magnitude, snr=snr, exptime=exptime, redshift=redshift, extinction=extinction, target=target)
                     #result = np.median(result)
-                    print(result)
+                    #print(result)
                     saved.append({"telescope": telescope, "instrument": instrument, "sed": sed, "magnitude": magnitude, "snr": snr, "exptime": exptime, "redshift": redshift, "extinction": extinction, "target": target, "expected": result})
                 except Exception as err:
                     print(f" Error in calculation: {err}")
     if reset:
-        write_yaml(saved, "tests/baselines/test_seds.yml")
+        write_yaml(saved, "tests/baselines/test_seds.yml.xz")
 
 '''
 LOAD IT
 '''
 try:    
-    test_setups = read_yaml("tests/baselines/test_seds.yml")
-except FileNotFoundError:
+    test_setups = read_yaml("tests/baselines/test_seds.yml.xz")
+except (FileNotFoundError, yaml.io.UnsupportedOperation):
     create_comparisons(True)
-    test_setups = read_yaml("tests/baselines/test_seds.yml")
+    test_setups = read_yaml("tests/baselines/test_seds.yml.xz")
 
 
 @pytest.mark.parametrize("inputs", test_setups)
