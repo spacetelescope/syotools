@@ -532,14 +532,6 @@ class SourceIFSExposure(SourceSpectrographicExposure):
             else:
                 self.wavelength = syn.utils.merge_wavelengths(self.wavelength, syn.models.get_waveset(source.sed.model))
 
-    @property
-    def source(self):
-        return self.sources
-
-    @source.setter
-    def source(self, source):
-        self.add_source(source)
-
     def calculate(self):
         """
         Wrapper to calculate the exposure time, SNR, or limiting magnitude,
