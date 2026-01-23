@@ -9,6 +9,7 @@ import astropy.units as u
 import astropy.constants as const
 
 import synphot as syn
+from synphot.models import Empirical1D
 
 from syotools.models.base import PersistentModel
 from syotools.defaults import default_exposure
@@ -34,7 +35,7 @@ class SourceExposure(PersistentModel):
     stripped out.
 
     The SNR, exptime, and limiting magnitude can each be calculated from the
-    other two. To trigger such calculations when parameters are updated, we
+    other two. To trigger such calculations when parameters are 1updated, we
     will need to create property setters.
 
     Attributes:
@@ -492,7 +493,98 @@ class SourceSpectrographicExposure(SourceExposure):
 
         self._exptime = (t_exp.value)*u.s
 
-        return True #completed successfully
+        return exptime
+
+class SourceIFSExposure(SourceSpectrographicExposure):
+    """ 
+    This is currently a subclass of Spectrographic exposure that accepts multiple
+    sources and produces multiple returns. 
+    """
+    def __init__(self, default_model=default_exposure, **kw):
+
+        self.sources = []
+
+        self.telescope = None
+        self.camera = None
+        self.spectrograph = None
+        self.spectropolarimeter = None
+
+        self.exp_id = ''
+        self.n_exp = 0
+        self._exptime = np.zeros(1, dtype=float) * u.h
+        self._snr = np.zeros(1, dtype=float) * u.dimensionless_unscaled
+        self._snr_goal = np.zeros(1, dtype=float) * u.dimensionless_unscaled
+        self._magnitude = np.zeros(1, dtype=float) * u.ABmag
+        self._unknown = '' # one of 'snr', 'magnitude', 'exptime'
+        self._interp_flux = np.zeros(1, dtype=float) * u.dimensionless_unscaled # the source SED interpolated to the Spectrograph wavelength grid
+
+        self.verbose = False # set this to True for debugging purposes
+        self._disable = False #set this to disable recalculating (when updating several attributes at the same time)
+        super().__init__(default_model, **kw)
+
+    def add_source(self, source):
+        # and now the magic: create a master wavelength array from all of the sources.
+        self.sources.append(source)
+        self.wavelength = []
+        for source in self.sources:
+            if isinstance(source.sed.model, Empirical1D):
+                self.wavelength = syn.utils.merge_wavelengths(self.wavelength, source.sed.waveset)
+            else:
+                self.wavelength = syn.utils.merge_wavelengths(self.wavelength, syn.models.get_waveset(source.sed.model))
+
+    @property
+    def source(self):
+        return self.sources
+
+    @source.setter
+    def source(self, source):
+        self.add_source(source)
+
+    def calculate(self):
+        """
+        Wrapper to calculate the exposure time, SNR, or limiting magnitude,
+        based on the other two. The "unknown" attribute controls which of these
+        parameters is calculated.
+        """
+        if self._disable:
+            return False
+        if self.spectrograph is None or self.telescope is None:
+            return False
+
+        if self.unknown == "snr":
+            self._update_snr()
+        if self.unknown == "exptime":
+            self._update_exptime()
+
+    def _update_exptime(self):
+        self._exptimes = []
+        if self.sources == []:
+            self._exptimes = [None]
+            self._exptime = None
+        else:
+            # loop through by setting all the sources.
+            for source in self.sources:
+                self.source = source
+                super()._update_exptime()
+                self._exptimes.append(self._exptime)
+            
+            # and set the regular exposure time to the maximum
+            self._exptime = np.max(self._exptimes)
+
+    def _update_snr(self):
+        self._snrs = []
+        if self.sources == []:
+            self._snrs = [None]
+            self._snr = None
+        else:
+            # loop through by setting all the sources.
+            for source in self.sources:
+                self.source = source
+                super()._update_snr()
+                self._snrs.append(self._snr)
+            
+            # and set the regular snr to the minimum
+            self._snr = np.min(self._snrs)
 
 class SourceCoronagraphicExposure(SourceExposure):
     """

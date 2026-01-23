@@ -7,7 +7,7 @@ import numpy as np
 import astropy.units as u
 
 from syotools.spectra.spec_defaults import syn_spectra_library
-from syotools.models import Camera, Spectrograph, Telescope, Source, SourcePhotometricExposure, SourceSpectrographicExposure
+from syotools.models import Camera, Spectrograph, IFS, Telescope, Source, SourcePhotometricExposure, SourceSpectrographicExposure, SourceIFSExposure
 
 def _do_calculation(tel, inst, exp, mode=None, source=None, snr=10.0, exptime=100, bandpass=None, target="magnitude", verbose=False):
 
@@ -19,7 +19,7 @@ def _do_calculation(tel, inst, exp, mode=None, source=None, snr=10.0, exptime=10
         inst.mode = mode
 
     if target == "magnitude":
-        if isinstance(inst, Spectrograph):
+        if isinstance(inst, (Spectrograph, IFS)):
             raise NotImplementedError("Spectrographs cannot currently solve for limiting magnitude")
         
         exp.exptime = [[exptime, exptime, exptime, exptime, exptime, exptime, exptime, exptime, exptime, exptime], 'hr']
@@ -87,7 +87,7 @@ def compute_observation(telescope, instrument="hri", sed="G2V Star", magnitude=2
         exp.verbose = verbose
 
         result.append(_do_calculation(tel, inst, exp, source=source, snr=snr, exptime=exptime, bandpass=bandpass, target=target, verbose=verbose))
-        
+
     elif instrument in ["spectroscopy", "uvi"]:
         inst = Spectrograph()
         inst.set_from_sei('UVI')
@@ -98,6 +98,18 @@ def compute_observation(telescope, instrument="hri", sed="G2V Star", magnitude=2
 
         for mode in inst.modes:
             result.append(_do_calculation(tel, inst, exp, mode=mode, source=source, snr=snr, exptime=exptime, bandpass=bandpass, target=target, verbose=verbose))
+
+    elif instrument in ["ifs", "IFS"]:
+        inst = IFS()
+        inst.set_from_sei('UVI')
+        inst.bandnames = inst.modes
+        exp = SourceIFSExposure() 
+        exp.sources.append(source)
+        exp.verbose = verbose
+
+        for mode in inst.modes:
+            result.append(_do_calculation(tel, inst, exp, mode=mode, source=source, snr=snr, exptime=exptime, bandpass=bandpass, target=target, verbose=verbose))
+
 
     return result
 
