@@ -1,12 +1,13 @@
 #import syotools.environment
 import sys
-import pickle
+import yaml
 
 import pytest
 import numpy as np
 import astropy.units as u
 
 from syotools.spectra.spec_defaults import syn_spectra_library
+from syotools.utils.yaml_utils import read_yaml, write_yaml
 from syotools.models import Camera, Spectrograph, Telescope, Source, SourcePhotometricExposure, SourceSpectrographicExposure
 from syotools.wrappers.common import compute_observation, check_relative_diff
 
@@ -43,19 +44,16 @@ def create_comparisons(reset):
                 except Exception as err:
                     print(f" Error in calculation: {err}")
     if reset:
-        with open("tests/baselines/test_snrs.pickle", "wb") as picklefile:
-            pickle.dump(saved, picklefile)
+        write_yaml(saved, "tests/baselines/test_snrs.yml")
 
 '''
 LOAD IT
 '''
 try:    
-    with open("tests/baselines/test_snrs.pickle", "rb") as picklefile:
-        test_setups = pickle.load(picklefile)
+    test_setups = read_yaml("tests/baselines/test_snrs.yml")
 except FileNotFoundError:
     create_comparisons(True)
-    with open("tests/baselines/test_snrs.pickle", "rb") as picklefile:
-        test_setups = pickle.load(picklefile)
+    test_setups = read_yaml("tests/baselines/test_snrs.yml")
 
 @pytest.mark.parametrize("inputs", test_setups)
 def test_etc_snrs(inputs):

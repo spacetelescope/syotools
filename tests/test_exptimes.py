@@ -1,11 +1,11 @@
 #import syotools.environment
 import sys
-import pickle
 
 import pytest
 import numpy as np
 import astropy.units as u
 
+from syotools.utils.yaml_utils import read_yaml, write_yaml
 from syotools.spectra.spec_defaults import syn_spectra_library
 from syotools.models import Camera, Spectrograph, Telescope, Source, SourcePhotometricExposure, SourceSpectrographicExposure
 from syotools.wrappers.common import compute_observation, check_relative_diff
@@ -39,23 +39,20 @@ def create_comparisons(reset):
                     result = compute_observation(telescope, instrument=instrument, sed=sed, magnitude=magnitude, snr=snr, exptime=exptime, redshift=redshift, extinction=extinction, target=target)
                     #result = np.median(result)
                     print(result)
-                    saved.append({"telescope": telescope, "instrument": instrument, "sed": sed, "magnitude": magnitude, "snr": snr, "exptime": exptime, "redshift": redshift, "extinction": extinction, "target": target, "expected": result})
+                    saved.append({"telescope": telescope, "instrument": instrument, "sed": sed, "magnitude": magnitude, "snr": snr, "exptime": exptime, "redshift": redshift, "extinction": extinction, "target": target, "result": result})
                 except Exception as err:
                     print(f" Error in calculation: {err}")
     if reset:
-        with open("tests/baselines/test_exptimes.pickle", "wb") as picklefile:
-            pickle.dump(saved, picklefile)
+        write_yaml(saved, "tests/baselines/test_exptimes.yml")
 
 '''
 LOAD IT
 '''
 try:    
-    with open("tests/baselines/test_exptimes.pickle", "rb") as picklefile:
-        test_setups = pickle.load(picklefile)
+    test_setups = read_yaml("tests/baselines/test_exptimes.yml")
 except FileNotFoundError:
     create_comparisons(True)
-    with open("tests/baselines/test_exptimes.pickle", "rb") as picklefile:
-        test_setups = pickle.load(picklefile)
+    test_setups = read_yaml("tests/baselines/test_exptimes.yml")
 
 @pytest.mark.parametrize("inputs", test_setups)
 def test_etc_exptimes(inputs):
@@ -63,7 +60,7 @@ def test_etc_exptimes(inputs):
                         magnitude=inputs["magnitude"], snr=inputs["snr"], exptime=inputs["exptime"], 
                         redshift=inputs["redshift"], extinction=inputs["extinction"], target=inputs["target"])
     result = [res.value for res in result]
-    assert check_relative_diff(result, [res.value for res in inputs["expected"]], 0.0005) #1e-3)
+    assert check_relative_diff(result, [res.value for res in inputs["result"]], 0.0005) #1e-3)
 
 
 if __name__ == "__main__":
