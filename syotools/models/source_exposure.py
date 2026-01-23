@@ -227,7 +227,7 @@ class SourcePhotometricExposure(SourceExposure):
         Calculate the stellar flux as per Eq 2 in the SNR equation paper.
         """
         mag = self.recover('magnitude')
-        (f0, c_ap, D, dlam, tel_eff) = self.recover('camera.ab_zeropoint',
+        (f0, c_ap, D, dlam, _tel_eff) = self.recover('camera.ab_zeropoint',
                                            'camera.ap_corr',
                                            'telescope.effective_aperture',
                                            'camera.derived_bandpass',
@@ -239,7 +239,7 @@ class SourcePhotometricExposure(SourceExposure):
         fsource = f0 * c_ap[0] * np.pi / 4. * D**2 * (dlam * u.nm) * m
 
         # telescope efficiency reduces counts at detector (HWOE-183)
-        fsource *= tel_eff(dlam)
+        fsource *= _tel_eff(dlam)
 
         return fsource
 
@@ -310,10 +310,11 @@ class SourcePhotometricExposure(SourceExposure):
 
         a0 = (QE * exptime)**2
         b0 = snr2 * QE * exptime
-        c0 = snr2 * ((QE * fsky + c_t + Npix * dark_rate) * exptime + (rn**2 * Npix * _nexp))
+        c0 = snr2 * ((QE * fsky * _tel_eff(dlam) + c_t + Npix * dark_rate) * exptime + (rn**2 * Npix * _nexp))
         k = (-b0 + np.sqrt(b0**2 - 4. * a0 * c0)) / (2. * a0)
-        # telescope efficiency reduces the flux at the detector, so it must be divided out to 
-        # find the actual flux required to get that SNR in that time. (HWOE-183)
+        # telescope efficiency reduces the flux at the detector, so it must be divided out
+        # (increase flux) to find the actual flux required to get that SNR in that time.
+        # (HWOE-183)
         flux = (4. * k) / (f0 * c_ap[0] * np.pi * D**2 * (dlam*u.nm)) / _tel_eff(dlam)
 
         self._magnitude = -2.5 * np.log10(np.array(flux)) * u.mag('AB')
