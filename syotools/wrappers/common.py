@@ -73,6 +73,10 @@ def compute_observation(telescope, instrument="hri", sed="G2V Star", magnitude=2
 	
     source.set_sed(sed, magnitude, redshift, extinction, bandpass=bandpass)   
 
+    # create the source
+    source2 = Source()
+	
+    source2.set_sed(sed, magnitude+2, redshift, extinction, bandpass=bandpass)   
 
     # create a Telescope, Camera, and Exposure 
     tel = Telescope()
@@ -103,8 +107,10 @@ def compute_observation(telescope, instrument="hri", sed="G2V Star", magnitude=2
         inst = IFS()
         inst.set_from_sei('UVI')
         inst.bandnames = inst.modes
+        print(inst.bandnames)
         exp = SourceIFSExposure() 
-        exp.sources.append(source)
+        exp.add_source(source)
+        exp.add_source(source2)
         exp.verbose = verbose
 
         for mode in inst.modes:

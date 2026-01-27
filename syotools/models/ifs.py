@@ -90,7 +90,7 @@ class IFS(Spectrograph):
         return wave / R
     
     def create_exposure(self, source=None):
-        new_exposure = SourceSpectrographicExposure()
+        new_exposure = SourceIFSExposure()
         if source is not None:
             new_exposure.source = source
         self.add_exposure(new_exposure)

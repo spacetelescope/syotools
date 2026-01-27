@@ -437,6 +437,8 @@ class SourceSpectrographicExposure(SourceExposure):
 
         self._snr = snr
 
+        return True
+
     def _update_exptime(self):
         """
         Calculate the exptime based on the current SED and spectrograph parameters.
@@ -493,7 +495,7 @@ class SourceSpectrographicExposure(SourceExposure):
 
         self._exptime = (t_exp.value)*u.s
 
-        return exptime
+        return True
 
 class SourceIFSExposure(SourceSpectrographicExposure):
     """ 
@@ -561,7 +563,10 @@ class SourceIFSExposure(SourceSpectrographicExposure):
                 self._exptimes.append(self._exptime)
             
             # and set the regular exposure time to the maximum
-            self._exptime = np.max(self._exptimes)
+            # the output is a spectrum, so we want to find the highest entire
+            # spectrum, not any specific value.
+            sorted(self._exptimes, key=(lambda a: np.nanmean(a)))[-1]
+            self._exptime = np.max(self._exptimes, axis=0)
 
     def _update_snr(self):
         self._snrs = []
@@ -576,7 +581,9 @@ class SourceIFSExposure(SourceSpectrographicExposure):
                 self._snrs.append(self._snr)
             
             # and set the regular snr to the minimum
-            self._snr = np.min(self._snrs)
+            # the output is a spectrum, so we want to find the lowest entire
+            # spectrum, not any specific value.
+            self._snr = sorted(self._snrs, key=(lambda a: np.nanmean(a)))[0]
 
 class SourceCoronagraphicExposure(SourceExposure):
     """
