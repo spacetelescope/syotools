@@ -159,9 +159,9 @@ class Camera(PersistentModel):
         Calculate the sky flux as per Eq 6 in the SNR equation paper.
         """
 
-        (f0, D, dlam, Phi, fwhm, Sigma, tel_eff) = self.recover('ab_zeropoint',
+        (f0, D, dlam, Phi, fwhm, Sigma, tel_eff, pivot) = self.recover('ab_zeropoint',
                 'telescope.effective_aperture', 'derived_bandpass',
-                'pixel_size', 'fwhm_psf', 'sky_sigma', 'telescope.telescope_efficiency')
+                'pixel_size', 'fwhm_psf', 'sky_sigma', 'telescope.telescope_efficiency', 'pivotwave')
 
         D = D.to(u.cm)
         m = 10.**(-0.4 * np.array(Sigma[0])) / u.arcsec**2
@@ -172,7 +172,7 @@ class Camera(PersistentModel):
 
         fsky = f0 * np.pi / 4. * D**2 * (dlam*u.nm) * m * (Phi**2 * Npix) * u.pix
         # telescope efficiency reduces counts at detector (HWOE-183)
-        fsky *= tel_eff(dlam*u.nm)
+        fsky *= tel_eff(pivotwave)
 
         return fsky
 
