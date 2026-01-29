@@ -50,22 +50,22 @@ class Source(PersistentModel):
         super().__init__()
 
 
-    def set_sed(self, source_name, magnitude, redshift, extinction, bandpass=None):   
+    def set_sed(self, source_name, magnitude, redshift, extinction, bandpass=None, library=syn_spectra_library):
         self.name = source_name  
-        self.sed = syn_spectra_library[source_name]
+        self.sed = library[source_name]
         self.magnitude = magnitude
         self.redshift = redshift
         self.extinction = extinction
         # if the bandpass is none/unspecified, load the library default
         if bandpass is None:
-            self.renorm_band = syn_spectra_library[source_name].band
+            self.renorm_band = library[source_name].band
         else:
             self.renorm_band = bandpass
 
-        #print("SET SED:", bandpass, syn_spectra_library[source_name].band, self.renorm_band, stsyn.band(self.renorm_band).waveset)
+        #print("SET SED:", bandpass, library[source_name].band, self.renorm_band, stsyn.band(self.renorm_band).waveset)
         #print("SED_INFO:", self.name, self.sed.waveset, self.renorm_band, self.redshift, self.extinction)
 
-        new_sed = syn_spectra_library[source_name]
+        new_sed = library[source_name]
 
         # now apply the other quantities via synphot 
         new_sed.z = self.redshift
