@@ -129,31 +129,4 @@ class IFS(Spectrograph):
         self.modes.remove("G165LL") # No data to support mode
         self.modes.remove("G700L") # No data to support mode
 
-class Spectropolarimeter(Spectrograph):
-    """
-    The basic spectropolarimeter class for POLLUX, which provides parameter storage for
-    optimization.
-
-    Attributes: #adapted from the original in Telescope.py
-        telescope    - the Telescope object associated with this spectrograph
-        exposures    - the list of Exposures taken with this spectrograph
-
-        name         - name of the spectrograph (string)
-
-        modes        - supported observing modes (list)
-        descriptions - description of supported observing modes (dict)
-        mode         - current observing mode (string)
-        bef          - background emission function in erg/cm2/s/pixel (float array)
-        R            - spectral resolution (float)
-        wrange        - effective wavelength range (2-element float array)
-        wave         - wavelength in Angstroms (float array)
-        aeff         - effective area at given wavelengths in cm^2 (float array)
-
-        _lumos_default_file - file path to the fits file containing LUMOS values
-
-        _default_model - used by PersistentModel
-    """
-
-    def __init__(self, **kw):
-        super().__init__(default_spectropolarimeter, **kw)
 

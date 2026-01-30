@@ -22,7 +22,7 @@ def _do_calculation(tel, inst, exp, mode=None, source=None, snr=10.0, exptime=10
         if isinstance(inst, (Spectrograph, IFS)):
             raise NotImplementedError("Spectrographs cannot currently solve for limiting magnitude")
         
-        exp.exptime = [[exptime, exptime, exptime, exptime, exptime, exptime, exptime, exptime, exptime, exptime], 'hr']
+        exp._exptime = [[exptime, exptime, exptime, exptime, exptime, exptime, exptime, exptime, exptime, exptime], 'hr']
         exp._snr = [snr] * u.Unit('electron(1/2)')  
         tel.add_camera(inst)
         inst.add_exposure(exp)
@@ -44,7 +44,7 @@ def _do_calculation(tel, inst, exp, mode=None, source=None, snr=10.0, exptime=10
 
     elif target == "snr":
 
-        exp.exptime = [[exptime, exptime, exptime, exptime, exptime, exptime, exptime, exptime, exptime, exptime], 'hr']
+        exp._exptime = [[exptime, exptime, exptime, exptime, exptime, exptime, exptime, exptime, exptime, exptime], 'hr']
         exp.unknown = target
         tel.add_camera(inst)
         inst.add_exposure(exp)
@@ -109,8 +109,8 @@ def compute_observation(telescope, instrument="hri", sed="G2V Star", magnitude=2
         inst.bandnames = inst.modes
         print(inst.bandnames)
         exp = SourceIFSExposure() 
-        exp.add_source(source)
-        exp.add_source(source2)
+        exp.source = source
+        #exp.source = source2
         exp.verbose = verbose
 
         for mode in inst.modes:

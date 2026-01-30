@@ -76,7 +76,6 @@ class SourceExposure(PersistentModel):
         self.n_exp = 0
         self._exptime = np.zeros(1, dtype=float) * u.h
         self._snr = np.zeros(1, dtype=float) * u.dimensionless_unscaled
-        self._snr_goal = np.zeros(1, dtype=float) * u.dimensionless_unscaled
         self._magnitude = np.zeros(1, dtype=float) * u.ABmag
         self._unknown = '' # one of 'snr', 'magnitude', 'exptime'
         self._interp_flux = np.zeros(1, dtype=float) * u.dimensionless_unscaled # the source SED interpolated to the Spectrograph wavelength grid
@@ -219,7 +218,7 @@ class SourcePhotometricExposure(SourceExposure):
             return False
         status = {'magnitude': self._update_magnitude,
                   'exptime': self._update_exptime,
-                  'snr': self._update_snr}[self.unknown]()
+                  'snr': self._update_snr}[self.unknown](self.source)
         return status
 
     @property
@@ -240,14 +239,14 @@ class SourcePhotometricExposure(SourceExposure):
 
         return fsource
 
-    def _update_exptime(self):
+    def _update_exptime(self, source):
         """
         Calculate the exposure time to achieve the desired S/N for the
         given SED.
         """
         self.camera._print_initcon(self.verbose)
 
-        (_snr, _nexp) = self.recover('snr', 'n_exp')
+        (_snr, _nexp) = self.recover('_snr', 'n_exp')
         (_total_qe, _detector_rn, _dark_current) = self.recover('camera.total_qe',
                 'camera.detector_rn', 'camera.dark_current')
 
@@ -274,7 +273,7 @@ class SourcePhotometricExposure(SourceExposure):
 
         return True
 
-    def _update_magnitude(self):
+    def _update_magnitude(self, source):
         """
         Calculate the limiting magnitude given the desired S/N and exposure
         time.
@@ -314,7 +313,7 @@ class SourcePhotometricExposure(SourceExposure):
 
         return True
 
-    def _update_snr(self):
+    def _update_snr(self, source):
         """
         Calculate the SNR for the given exposure time and source SED.
         """
@@ -386,11 +385,11 @@ class SourceSpectrographicExposure(SourceExposure):
             return False
 
         if self.unknown == "snr":
-            self._update_snr()
+            self._update_snr(self.source)
         if self.unknown == "exptime":
-            self._update_exptime()
+            self._update_exptime(self.source)
 
-    def _update_snr(self):
+    def _update_snr(self, source):
         """
         Calculate the SNR based on the current SED and spectrograph parameters.
         """
@@ -401,21 +400,21 @@ class SourceSpectrographicExposure(SourceExposure):
             msg2 = " with {} in mode {}".format(self.spectrograph.name, self.spectrograph.mode)
             print(msg1 + msg2)
 
-        _exptime = self.recover('exptime')
+        _exptime = self.recover('_exptime')
         _wave, aeff, bef, aper, R, wrange = self.recover('spectrograph.wave',
                                                          'spectrograph.aeff',
                                                          'spectrograph.bef',
                                                          'telescope.effective_aperture',
                                                          'spectrograph.R',
-                                                         'spectrograph.wrange')
+                                                          'spectrograph.wrange')
 
         exptime = ( self._exptime[0][0] * u.Unit(self._exptime[1])).to(u.s)
 
         wave = _wave.to(u.AA)
 
-        swave = self.source.sed.waveset.to(u.AA)
+        swave = source.sed.waveset.to(u.AA)
 
-        sflux = syn.units.convert_flux(swave, self.source.sed(swave), (u.erg / u.s / u.cm**2 / u.AA))
+        sflux = syn.units.convert_flux(swave, source.sed(swave), (u.erg / u.s / u.cm**2 / u.AA))
 
         delta_lambda = self.recover('spectrograph.delta_lambda').to(u.AA / u.pix)
 
@@ -437,9 +436,12 @@ class SourceSpectrographicExposure(SourceExposure):
 
         self._snr = snr
 
+        print(self._snr)
+
+
         return True
 
-    def _update_exptime(self):
+    def _update_exptime(self, source):
         """
         Calculate the exptime based on the current SED and spectrograph parameters.
         """
@@ -450,7 +452,7 @@ class SourceSpectrographicExposure(SourceExposure):
             msg2 = " with {} in mode {}".format(self.spectrograph.name, self.spectrograph.mode)
             print(msg1 + msg2)
 
-        _snr_goal, _exptime = self.recover('_snr_goal', '_exptime')
+        _snr, _exptime = self.recover('_snr', '_exptime')
         _wave, aeff, bef, aper, R, wrange = self.recover('spectrograph.wave',
                                                          'spectrograph.aeff',
                                                          'spectrograph.bef',
@@ -459,13 +461,13 @@ class SourceSpectrographicExposure(SourceExposure):
                                                          'spectrograph.wrange')
 
         if self.verbose:
-            print("The requested SNR is {}\n".format(_snr_goal))
+            print("The requested SNR is {}\n".format(_snr))
 
         wave = _wave.to(u.AA)
 
-        swave = self.source.sed.waveset.to(u.AA)
+        swave = source.sed.waveset.to(u.AA)
 
-        sflux = syn.units.convert_flux(swave, self.source.sed(swave), u.erg / u.s / u.cm**2 / u.AA)
+        sflux = syn.units.convert_flux(swave, source.sed(swave), u.erg / u.s / u.cm**2 / u.AA)
 
         delta_lambda = self.recover('spectrograph.delta_lambda').to(u.AA / u.pix)
 
@@ -486,14 +488,14 @@ class SourceSpectrographicExposure(SourceExposure):
             print('aeff = ', aeff) #<--- this has the correct units, "cm2"
             print('aper = ', aper)#<--- this has the correct units, "m"
             print('scaled_aeff = ', scaled_aeff, '\n') #<--- this has the correct units, "cm2"
-            print('SNR^2 :', (_snr_goal)**2)
+            print('SNR^2 :', (_snr)**2)
 
-        t_exp = (_snr_goal)**2 * (iflux / phot_energy * scaled_aeff * delta_lambda + bef / phot_energy * scaled_aeff) / ((iflux/phot_energy)**2 * scaled_aeff**2 * delta_lambda**2)
+        t_exp = (_snr)**2 * (iflux / phot_energy * scaled_aeff * delta_lambda + bef / phot_energy * scaled_aeff) / ((iflux/phot_energy)**2 * scaled_aeff**2 * delta_lambda**2)
 
         if self.verbose:
             print("Exptime: {}".format(t_exp))
 
-        self._exptime = (t_exp.value)*u.s
+        self._exptime = t_exp
 
         return True
 
@@ -515,7 +517,6 @@ class SourceIFSExposure(SourceSpectrographicExposure):
         self.n_exp = 0
         self._exptime = np.zeros(1, dtype=float) * u.h
         self._snr = np.zeros(1, dtype=float) * u.dimensionless_unscaled
-        self._snr_goal = np.zeros(1, dtype=float) * u.dimensionless_unscaled
         self._magnitude = np.zeros(1, dtype=float) * u.ABmag
         self._unknown = '' # one of 'snr', 'magnitude', 'exptime'
         self._interp_flux = np.zeros(1, dtype=float) * u.dimensionless_unscaled # the source SED interpolated to the Spectrograph wavelength grid
@@ -534,23 +535,15 @@ class SourceIFSExposure(SourceSpectrographicExposure):
             else:
                 self.wavelength = syn.utils.merge_wavelengths(self.wavelength, syn.models.get_waveset(source.sed.model))
 
-    def calculate(self):
-        """
-        Wrapper to calculate the exposure time, SNR, or limiting magnitude,
-        based on the other two. The "unknown" attribute controls which of these
-        parameters is calculated.
-        """
-        if self._disable:
-            return False
-        if self.spectrograph is None or self.telescope is None:
-            return False
+    @property
+    def source(self):
+        return self.sources[-1]
 
-        if self.unknown == "snr":
-            self._update_snr()
-        if self.unknown == "exptime":
-            self._update_exptime()
+    @source.setter
+    def source(self, new_source):
+        self.sources.append(new_source)
 
-    def _update_exptime(self):
+    def _update_exptime(self, source):
         self._exptimes = []
         if self.sources == []:
             self._exptimes = [None]
@@ -558,17 +551,15 @@ class SourceIFSExposure(SourceSpectrographicExposure):
         else:
             # loop through by setting all the sources.
             for source in self.sources:
-                self.source = source
-                super()._update_exptime()
+                super()._update_exptime(source)
                 self._exptimes.append(self._exptime)
             
             # and set the regular exposure time to the maximum
             # the output is a spectrum, so we want to find the highest entire
             # spectrum, not any specific value.
-            sorted(self._exptimes, key=(lambda a: np.nanmean(a)))[-1]
-            self._exptime = np.max(self._exptimes, axis=0)
+            self._exptime = sorted(self._exptimes, key=(lambda a: np.nanmean(a)))[-1]
 
-    def _update_snr(self):
+    def _update_snr(self, source):
         self._snrs = []
         if self.sources == []:
             self._snrs = [None]
@@ -576,8 +567,7 @@ class SourceIFSExposure(SourceSpectrographicExposure):
         else:
             # loop through by setting all the sources.
             for source in self.sources:
-                self.source = source
-                super()._update_snr()
+                super()._update_snr(source)
                 self._snrs.append(self._snr)
             
             # and set the regular snr to the minimum
