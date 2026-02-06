@@ -224,7 +224,7 @@ class SourcePhotometricExposure(SourceExposure):
         """
         Calculate the stellar flux as per Eq 2 in the SNR equation paper.
         """
-        mag = self.interploated_source(source)
+        mag = self.interpolated_source(source)
         (f0, c_ap, D, dlam) = self.recover('camera.ab_zeropoint',
                                            'camera.ap_corr',
                                            'telescope.effective_aperture',
