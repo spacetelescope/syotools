@@ -4,14 +4,17 @@ Created on Fri Oct 14 20:28:51 2016
 @authors: gkanarek, tumlinson
 """
 import os, yaml
+import math
 
 from syotools.models.base import PersistentModel
 from syotools.defaults import default_telescope
+from syotools.spectra import utils
 #from syotools.utils import pre_encode
 #from syotools.utils.jsonunit import str_jsunit
 import astropy.units as u #for unit conversions
 import numpy as np
 import scipy as sc
+import synphot as syn
 from hwo_sci_eng.utils import read_yaml, read_json
 
 class Telescope(PersistentModel):
@@ -95,29 +98,6 @@ class Telescope(PersistentModel):
     def hexagon_area(self, side):
         return 3. * 3.**0.5 / 2. * side**2
 
-    def set_coating(self, mirror, coating="XeLiF"):
-        """ 
-        Sets the reflectivity curve for a mirror surface by
-        adding / modifying that mirror's component dictionary
-        doing this with file I/O here is a bit inelegant but
-        works for the first iteration of this capability.
-        JT 102524
-        """
-        if "reflectivity" in mirror:
-            if "XeLiF" in mirror["reflectivity"]:
-                coating = "XeLiF"
-            elif "ProtectedAg" in mirror["reflectivity"]:
-                coating = "ProtectedAg"
-            elif "ProtectedAl" in mirror["reflectivity"]:
-                coating = "ProtectedAl"
-
-        with open(os.getenv('SCI_ENG_DIR') + '/obs_config/reflectivities/'+coating+'_refl.yaml', 'r') as f:
-            coating_dict = yaml.load(f, Loader=yaml.SafeLoader)
-
-        mirror['coating_name'] = coating
-        mirror['coating_wave'] = coating_dict['wavelength'] * u.nm
-        mirror['coating_refl'] = coating_dict['reflectivity'] * u.dimensionless_unscaled
-
     def set_from_sei(self, name):
         if name in ("EAC1", "EAC2", "EAC3"):
             tel = self.set_from_yaml(name.lower())
@@ -147,21 +127,16 @@ class Telescope(PersistentModel):
         # when summoning individual entries. And often, we do not need the individual
         # mirrors. So, we are going to break this dictionary up and carry the
         # mirrors and other pieces separately:
+        self.mirrors = {}
+        self.mirrors['PM'] = utils.set_coating(tel['PM']) # primary
+        self.mirrors['SM'] = utils.set_coating(tel['SM']) # secondary
+        self.mirrors['M3'] = utils.set_coating(tel['M3']) # tertiary
+        self.mirrors['M4'] = utils.set_coating(tel['M4']) # fold mirror (?)
 
-        self.pm = tel['PM'] #primary
-        self.set_coating(self.pm)
-        self.sm = tel['SM'] # secondary
-        self.set_coating(self.sm)
-        self.m3 = tel['M3'] # tertiary
-        self.set_coating(self.m3)
-        self.m4 = tel['M4'] # fold mirror (?)
-        self.set_coating(self.m4)
+        # we are saving the integrated SpectralElement as an attribute
+        self.telescope_efficiency = utils.mirror_efficiency(self.mirrors)
 
-        telescope_wave=self.pm['coating_wave']
-        telescope_efficiency=self.pm['coating_refl'] * self.sm['coating_refl'] * self.m3['coating_refl'] * self.m4['coating_refl']
-
-        # we are saving the integrator *function* as an attribute
-        self.telescope_efficiency = sc.interpolate.make_interp_spline(telescope_wave, telescope_efficiency)
+        self.pm = tel['PM']
 
         self.name = name
         if ('hex' in self.pm['segmentation']): # do this only if we have a hex segmented mirror

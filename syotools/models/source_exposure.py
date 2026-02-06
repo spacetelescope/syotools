@@ -222,16 +222,24 @@ class SourcePhotometricExposure(SourceExposure):
         return status
 
     @property
+    def _internal_efficiency(self):
+        self.mode = "nir"
+        (tel_eff, inst_eff) = self.recover('telescope.telescope_efficiency', f"camera.instrument_efficiency_{self.mode}")
+
+        # multiply the telescope efficiency by the instrumental efficiency
+        return tel_eff * inst_eff
+
+    @property
     def _fsource(self):
         """
         Calculate the stellar flux as per Eq 2 in the SNR equation paper.
         """
         mag = self.recover('magnitude')
-        (f0, c_ap, D, dlam, _tel_eff, pivotwave) = self.recover('camera.ab_zeropoint',
+        (f0, c_ap, D, dlam, int_eff, pivotwave) = self.recover('camera.ab_zeropoint',
                                            'camera.ap_corr',
                                            'telescope.effective_aperture',
                                            'camera.derived_bandpass',
-                                           'telescope.telescope_efficiency',
+                                           "_internal_efficiency",
                                            "camera.pivotwave")
 
         m = 10.**(-0.4*(mag))
@@ -240,9 +248,33 @@ class SourcePhotometricExposure(SourceExposure):
         fsource = f0 * c_ap[0] * np.pi / 4. * D**2 * (dlam * u.nm) * m
 
         # telescope efficiency reduces counts at detector (HWOE-183)
-        fsource *= _tel_eff(pivotwave)
+        print("Pivot Wave", pivotwave)
+        fsource *= int_eff(pivotwave[0] * u.Unit(pivotwave[1]))
 
         return fsource
+
+    def _fsky(self, verbose=True):
+        """
+        Calculate the sky flux as per Eq 6 in the SNR equation paper.
+        """
+
+        (f0, D, dlam, Phi, fwhm, Sigma, int_eff, pivotwave) = self.recover('camera.ab_zeropoint',
+                'telescope.effective_aperture', 'camera.derived_bandpass', 'camera.pixel_size', 
+                'camera.fwhm_psf', 'camera.sky_sigma', '_internal_efficiency', 'camera.pivotwave')
+
+        D = D.to(u.cm)
+        m = 10.**(-0.4 * np.array(Sigma[0])) / u.arcsec**2
+        Npix = self.camera._sn_box(False)
+
+        if verbose:
+            print('Sky brightness: {}'.format(nice_print(Sigma[0])))
+
+        fsky = f0 * np.pi / 4. * D**2 * (dlam*u.nm) * m * (Phi**2 * Npix) * u.pix
+        # telescope efficiency reduces counts at detector (HWOE-183)
+        print("Pivot Wave", pivotwave)
+        fsky *= int_eff(pivotwave[0] * u.Unit(pivotwave[1]))
+
+        return fsky
 
     def _update_exptime(self):
         """
@@ -259,7 +291,7 @@ class SourcePhotometricExposure(SourceExposure):
 
         fstar = self._fsource
 
-        fsky = self.camera._fsky(verbose=self.verbose)
+        fsky = self._fsky(verbose=self.verbose)
         Npix = self.camera._sn_box(self.verbose)
         thermal = self.camera.c_thermal(verbose=self.verbose)
 
@@ -293,13 +325,13 @@ class SourcePhotometricExposure(SourceExposure):
                                            'telescope.effective_aperture',
                                            'camera.derived_bandpass',
                                            "camera.pivotwave")
-        (_total_qe, _detector_rn, _dark_current, _tel_eff) = self.recover('camera.total_qe',
-                'camera.detector_rn', 'camera.dark_current', "telescope.telescope_efficiency")
+        (_total_qe, _detector_rn, _dark_current, int_eff) = self.recover('camera.total_qe',
+                'camera.detector_rn', 'camera.dark_current', "_internal_efficiency")
 
         exptime = (_exptime[0] * u.Unit(_exptime[1])).to(u.s)
 
         D = D.to(u.cm)
-        fsky = self.camera._fsky(verbose=self.verbose)
+        fsky = self._fsky(verbose=self.verbose)
 
         Npix = self.camera._sn_box(self.verbose)
         c_t = self.camera.c_thermal(verbose=self.verbose)
@@ -312,12 +344,12 @@ class SourcePhotometricExposure(SourceExposure):
 
         a0 = (QE * exptime)**2
         b0 = snr2 * QE * exptime
-        c0 = snr2 * ((QE * fsky * _tel_eff(pivotwave) + c_t + Npix * dark_rate) * exptime + (rn**2 * Npix * _nexp))
+        c0 = snr2 * ((QE * fsky + c_t + Npix * dark_rate) * exptime + (rn**2 * Npix * _nexp))
         k = (-b0 + np.sqrt(b0**2 - 4. * a0 * c0)) / (2. * a0)
         # telescope efficiency reduces the flux at the detector, so it must be divided out
         # (increase flux) to find the actual flux required to get that SNR in that time.
         # (HWOE-183)
-        flux = (4. * k) / (f0 * c_ap[0] * np.pi * D**2 * (dlam*u.nm)) / _tel_eff(pivotwave)
+        flux = (4. * k) / (f0 * c_ap[0] * np.pi * D**2 * (dlam*u.nm)) / int_eff(pivotwave[0] * u.Unit(pivotwave[1]))
 
         self._magnitude = -2.5 * np.log10(np.array(flux)) * u.mag('AB')
 
@@ -333,9 +365,8 @@ class SourcePhotometricExposure(SourceExposure):
         (_exptime, _nexp, n_bands) = self.recover('_exptime', 'n_exp',
                                                   'camera.n_bands')
 
-        (_total_qe, _detector_rn, _dark_current, _tel_eff, pivotwave) = self.recover('camera.total_qe',
-                'camera.detector_rn', 'camera.dark_current', "telescope.telescope_efficiency",
-                "camera.pivotwave")
+        (_total_qe, _detector_rn, _dark_current, pivotwave) = self.recover('camera.total_qe',
+                'camera.detector_rn', 'camera.dark_current', "camera.pivotwave")
 
         number_of_exposures = np.full(n_bands, _nexp)
         desired_exp_time = (np.full(n_bands, _exptime[0]) * u.Unit(_exptime[1])).to(u.second)
@@ -348,7 +379,7 @@ class SourcePhotometricExposure(SourceExposure):
         shot_noise_in_signal = np.sqrt(signal_counts)
 
         # telescope efficiency reduces counts at detector (HWOE-183)
-        sky_counts = QE * self.camera._fsky(verbose=self.verbose) * desired_exp_time
+        sky_counts = QE * self._fsky(verbose=self.verbose) * desired_exp_time
         shot_noise_in_sky = np.sqrt(sky_counts)
 
         sn_box = self.camera._sn_box(self.verbose) #<-- units should be "pix"
@@ -401,6 +432,13 @@ class SourceSpectrographicExposure(SourceExposure):
         if self.unknown == "exptime":
             self._update_exptime()
 
+    @property
+    def _internal_efficiency(self):
+        (tel_eff, inst_eff) = self.recover('telescope.telescope_efficiency', f"spectrograph.instrument_efficiency_{self.spectrograph.mode}")
+
+        # multiply the telescope efficiency by the instrumental efficiency
+        return tel_eff * inst_eff
+
     def _update_snr(self):
         """
         Calculate the SNR based on the current SED and spectrograph parameters.
@@ -413,18 +451,18 @@ class SourceSpectrographicExposure(SourceExposure):
             print(msg1 + msg2)
 
         _exptime = self.recover('exptime')
-        _wave, aeff, bef, aper, R, wrange, _tel_eff = self.recover('spectrograph.wave',
+        _wave, aeff, bef, aper, R, wrange, int_eff = self.recover('spectrograph.wave',
                                                          'spectrograph.aeff',
                                                          'spectrograph.bef',
                                                          'telescope.effective_aperture',
                                                          'spectrograph.R',
                                                          'spectrograph.wrange',
-                                                         "telescope.telescope_efficiency")
+                                                         "_internal_efficiency")
 
         exptime = ( self._exptime[0][0] * u.Unit(self._exptime[1])).to(u.s)
 
         wave = _wave.to(u.AA)
-        telescope_efficiency = _tel_eff(wave)
+        internal_efficiency = int_eff(wave)
 
         swave = self.source.sed.waveset.to(u.AA)
 
@@ -434,7 +472,7 @@ class SourceSpectrographicExposure(SourceExposure):
 
         iflux = np.interp(wave, swave, sflux, left=0., right=0.)
         # telescope efficiency reduces counts at detector (HWOE-183)
-        iflux *= telescope_efficiency
+        iflux *= internal_efficiency
         self._interp_flux = iflux
         phot_energy = const.h.to(u.erg * u.s) * const.c.to(u.cm / u.s) / wave.to(u.cm) / u.ct
         #print('_update_snr phot_energy: ', phot_energy)
@@ -444,7 +482,7 @@ class SourceSpectrographicExposure(SourceExposure):
         #print('_update_snr source_counts: ', source_counts)
 
         # telescope efficiency reduces counts at detector (HWOE-183)
-        bef *= telescope_efficiency
+        bef *= internal_efficiency
         bg_counts = bef / phot_energy * scaled_aeff * exptime
 
         snr = source_counts / np.sqrt(source_counts + bg_counts)
@@ -466,19 +504,19 @@ class SourceSpectrographicExposure(SourceExposure):
             print(msg1 + msg2)
 
         _snr_goal, _exptime = self.recover('_snr_goal', '_exptime')
-        _wave, aeff, bef, aper, R, wrange, _tel_eff = self.recover('spectrograph.wave',
+        _wave, aeff, bef, aper, R, wrange, int_eff = self.recover('spectrograph.wave',
                                                          'spectrograph.aeff',
                                                          'spectrograph.bef',
                                                          'telescope.effective_aperture',
                                                          'spectrograph.R',
                                                          'spectrograph.wrange',
-                                                         "telescope.telescope_efficiency")
+                                                         "_internal_efficiency")
 
         if self.verbose:
             print("The requested SNR is {}\n".format(_snr_goal))
 
         wave = _wave.to(u.AA)
-        telescope_efficiency = _tel_eff(wave)
+        telescope_efficiency = int_eff(wave)
 
         swave = self.source.sed.waveset.to(u.AA)
 
