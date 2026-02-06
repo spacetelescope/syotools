@@ -82,7 +82,7 @@ def compute_observation(telescope, instrument="hri", sed="G2V Star", magnitude=2
     tel = Telescope()
     tel.set_from_sei(telescope)
     result = []
-    if instrument in ["camera", "hri"]:
+    if instrument.lower() in ["camera", "hri", "imaging"]:
         inst = Camera()
         inst.set_from_sei('HRI')
         exp = SourcePhotometricExposure()
@@ -92,7 +92,7 @@ def compute_observation(telescope, instrument="hri", sed="G2V Star", magnitude=2
 
         result.append(_do_calculation(tel, inst, exp, source=source, snr=snr, exptime=exptime, bandpass=bandpass, target=target, verbose=verbose))
 
-    elif instrument in ["spectroscopy", "uvi"]:
+    elif instrument.lower() in ["spectroscopy", "uvi"]:
         inst = Spectrograph()
         inst.set_from_sei('UVI')
         inst.bandnames = inst.modes
@@ -103,11 +103,10 @@ def compute_observation(telescope, instrument="hri", sed="G2V Star", magnitude=2
         for mode in inst.modes:
             result.append(_do_calculation(tel, inst, exp, mode=mode, source=source, snr=snr, exptime=exptime, bandpass=bandpass, target=target, verbose=verbose))
 
-    elif instrument in ["ifs", "IFS"]:
+    elif instrument.lower() in ["ifs", "ifu"]:
         inst = IFS()
         inst.set_from_sei('UVI')
         inst.bandnames = inst.modes
-        print(inst.bandnames)
         exp = SourceIFSExposure() 
         exp.source = source
         #exp.source = source2
@@ -115,7 +114,8 @@ def compute_observation(telescope, instrument="hri", sed="G2V Star", magnitude=2
 
         for mode in inst.modes:
             result.append(_do_calculation(tel, inst, exp, mode=mode, source=source, snr=snr, exptime=exptime, bandpass=bandpass, target=target, verbose=verbose))
-
+    else:
+        raise ValueError(f"Unrecognized instrument {instrument}. Valid options are 'camera', 'spectroscopy', 'ifs'.")
 
     return result
 

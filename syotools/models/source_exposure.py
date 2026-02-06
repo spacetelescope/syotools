@@ -434,7 +434,7 @@ class SourceSpectrographicExposure(SourceExposure):
 
         self._snr = snr
 
-        print(self._snr)
+        print(self.spectrograph.mode, self._snr)
 
 
         return True
@@ -504,6 +504,7 @@ class SourceIFSExposure(SourceSpectrographicExposure):
     """
     def __init__(self, default_model=default_exposure, **kw):
 
+        # need this before so super().__init__ has somewhere to put the default source
         self.sources = []
 
         self.telescope = None
@@ -522,6 +523,8 @@ class SourceIFSExposure(SourceSpectrographicExposure):
         self.verbose = False # set this to True for debugging purposes
         self._disable = False #set this to disable recalculating (when updating several attributes at the same time)
         super().__init__(default_model, **kw)
+        # Do this after, because by default super().__init__ loads a default source
+        self.sources = []
 
     def add_source(self, source):
         # and now the magic: create a master wavelength array from all of the sources.
@@ -532,6 +535,10 @@ class SourceIFSExposure(SourceSpectrographicExposure):
                 self.wavelength = syn.utils.merge_wavelengths(self.wavelength, source.sed.waveset)
             else:
                 self.wavelength = syn.utils.merge_wavelengths(self.wavelength, syn.models.get_waveset(source.sed.model))
+
+    @property
+    def num_sources(self):
+        return len(self.sources)
 
     @property
     def source(self):
