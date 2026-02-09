@@ -73,7 +73,7 @@ def uvspec_snr(telescope, mode, template, fuvmag, exptime, silent=False):
 
 
 
-def uvspec_exptime(telescope, mode, template, fuvmag, snr_goal, silent=False):
+def uvspec_exptime(telescope, mode, template, fuvmag, snr, silent=False):
 
     ''' 
     Run a basic SNR calculation that takes in a telescope, spectral template,
@@ -81,7 +81,7 @@ def uvspec_exptime(telescope, mode, template, fuvmag, snr_goal, silent=False):
     magnitude, template, and exptime to SNR, use uvspec_snr.py
 
       usage:
-	      wave, exptime, uvi = uvspec_exptime(telescope, mode, template, uvmag, snr_goal)
+	      wave, exptime, uvi = uvspec_exptime(telescope, mode, template, uvmag, snr)
 
         positional arguments:
 
@@ -99,7 +99,7 @@ def uvspec_exptime(telescope, mode, template, fuvmag, snr_goal, silent=False):
 
           4-fuvmag = FUV magnitude to normalize the template spectrum, a float.
 
-          5-snr_goal = desired SNR, per pixel
+          5-snr = desired SNR, per pixel
 
       outputs are two arrays of floats for wavelength and exptime and the Spectrograph
       object in case it is needed by other code.
@@ -129,7 +129,7 @@ def uvspec_exptime(telescope, mode, template, fuvmag, snr_goal, silent=False):
         print("Current grating mode: {}".format(uvi.descriptions[uvi.mode]))
         print("Current exposure time: {} hours\n".format(uvi_exp.exptime))
 
-    uvi_exp._snr_goal= snr_goal * (u.ct)**0.5 / (u.pix)**0.5
+    uvi_exp._snr= snr * (u.ct)**0.5 / (u.pix)**0.5
 
     snr = uvi_exp.recover('exptime')
     uvi_exp.unknown = 'exptime' #< --- this triggers the _update_exptime function in the SpectrographicExposure exposure object

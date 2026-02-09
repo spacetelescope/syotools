@@ -81,6 +81,32 @@ Spectrograph:
         - 0.0
         - 'cm2'
     mode: "G150M"
+IFS:
+    name: "IFS"
+    modes: ['G120M', 'G150M', 'G180M','G155L', 'G145LL', 'G300M']
+    descriptions:
+        G120M: "G120M (R = 30,400)" 
+        G150M: "G150M (R = 37,800)"
+        G180M: "G180M (R = 40,800)"
+        G155L: "G155L (R = 11,600)"
+        G145LL: "G145LL (R = 500)"
+        G300M: "G300M (R = 28,000)"
+    bef:
+        - 0.0 
+        - 'cm-2 erg Angstrom-1 s-1' 
+    R:
+        - 10.0
+        - 'pix'
+    wrange:
+        - [100.0, 10000.0]
+        - 'Angstrom'
+    wave:
+        - 0.0
+        - 'Angstrom'
+    aeff:
+        - 0.0
+        - 'cm2'
+    mode: "G150M"
 Spectropolarimeter:
     name: "SPECPOL"
     modes: ['NUV_POL', 'MUV_POL', 'FUV_POL','NUV_SPEC', 'MUV_SPEC', 'FUV_SPEC']
