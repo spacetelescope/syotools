@@ -35,7 +35,7 @@ class SourceExposure(PersistentModel):
     stripped out.
 
     The SNR, exptime, and limiting magnitude can each be calculated from the
-    other two. To trigger such calculations when parameters are 1updated, we
+    other two. To trigger such calculations when parameters are updated, we
     will need to create property setters.
 
     Attributes:
@@ -164,7 +164,7 @@ class SourceExposure(PersistentModel):
         for magwave in self.camera.pivotwave[0]:
             magwave = magwave * u.Unit(self.camera.pivotwave[1])
             this_mag = syn.units.convert_flux(magwave, source.sed(magwave), u.ABmag).value
-            #amazingly, the sample method on the synphot sed does not check wavelengh limits! #TODO: Check this statement
+            #amazingly, the sample method on the synphot sed does not check wavelength limits! #TODO: Check this statement
             if (magwave > np.max(source.sed.waveset)): this_mag = 99
             if (magwave < np.min(source.sed.waveset)): this_mag = 99
             output_mags.append(this_mag)
