@@ -6,6 +6,7 @@ Created on Fri Oct 14 21:31:18 2016
 import numpy as np
 import astropy.constants as const
 import astropy.units as u
+from synphot.blackbody import BlackBody1D
 
 from syotools.models.base import PersistentModel
 from syotools.models.source_exposure import SourcePhotometricExposure
@@ -69,6 +70,7 @@ class Camera(PersistentModel):
         self.dark_current = np.zeros(1, dtype=float) * (u.electron / u.s / u.pixel)
         self.detector_rn = np.zeros(1, dtype=float) * (u.electron / u.pixel)**0.5
         self.sky_sigma = np.zeros(1, dtype=float) * u.dimensionless_unscaled
+        self.temperature = 140 * u.K
         super().__init__(default_camera, **kw)
 
     @property
@@ -193,23 +195,42 @@ class Camera(PersistentModel):
 
         Omega = (pixel_size**2 * box * u.pix).to(u.sr)
 
-        planck = self.planck
         QE = total_qe[0] * u.Unit(total_qe[1])
-        qepephot = QE * planck / energy_per_photon
+        qepephot = QE * self.temp_spec(pivots) / energy_per_photon
 
         if verbose:
-            print('Planck spectrum: {}'.format(nice_print(planck)))
+            print('Planck spectrum: {}'.format(nice_print(temp_spec)))
             print('QE * Planck / E_phot: {}'.format(nice_print(qepephot)))
             print('E_phot: {}'.format(nice_print(energy_per_photon)))
             print('Omega: {}'.format(nice_print(Omega)))
 
-        thermal = (ota_emissivity[0] * planck / energy_per_photon *
+        thermal = (ota_emissivity[0] * temp_spec(pivots) / energy_per_photon *
     			(np.pi / 4. * D**2) * QE * Omega * bandwidth )
 
         return thermal
 
     @property
-    def planck(self):
+    def temp_spec(self):
+        telescope_temp, instrument_temp = self.recover("telescope.temperature", "temperature")
+        if isinstance(telescope_temp, u.Quantity):
+            tel_temp = telescope_temp
+        else:
+            tel_temp = telescope_temp[0] * u.Unit(telescope_temp[1])
+
+        bb_t = BlackBody1D(temperature=temp, bolometric_flux=u.erg/u.sr)
+
+        if isinstance(instrument_temp, u.Quantity):
+            ins_temp = instrument_temp
+        else:
+            ins_temp = instrument_temp[0] * u.Unit(instrument_temp[1])
+
+        bb_i = BlackBody1D(temperature=temp, bolometric_flux=u.erg/u.sr)
+
+        return bb_t + bb_i
+
+
+    @property
+    def planck(self, temp):
         """
         Planck spectrum for the various wave bands.
         """
