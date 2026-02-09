@@ -298,6 +298,8 @@ class Camera(PersistentModel):
 
         self.instrument_efficiency_uvis = mirror_efficiency(self.uvis_mirrors)
 
+        self.instrument_temp = self.uvis["detector"]["detector_T"]
+
         self.nir_mirrors = {}
         for mirror in range(1, self.nir["n_refl_optics"][0] + 1):
             self.nir_mirrors[f"mirror{mirror}"] = set_coating(self.nir)
