@@ -474,7 +474,8 @@ class SourceSpectrographicExposure(SourceExposure):
         # telescope efficiency reduces counts at detector (HWOE-183)
         iflux *= internal_efficiency
         self._interp_flux = iflux
-        phot_energy = const.h.to(u.erg * u.s) * const.c.to(u.cm / u.s) / wave.to(u.cm) / u.ct
+        phot_energy = const.h.to(u.erg * u.s) * const.c.to(u.cm / u.s) / wave.to(u.cm) / u.pix
+
         #print('_update_snr phot_energy: ', phot_energy)
 
         scaled_aeff = aeff * (aper / (15 * u.m))**2
@@ -551,7 +552,7 @@ class SourceSpectrographicExposure(SourceExposure):
         if self.verbose:
             print("Exptime: {}".format(t_exp))
 
-        self._exptime = (t_exp.value)*u.s
+        self._exptime = t_exp
 
         return True #completed successfully
 

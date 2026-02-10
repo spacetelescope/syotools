@@ -37,32 +37,38 @@ def create_comparisons(reset=False):
             for sed in seds:
                 print(telescope, instrument, sed, magnitude, snr, exptime, redshift, extinction, target)
                 try:
-                    result = compute_observation(telescope, instrument=instrument, sed=sed, magnitude=magnitude, snr=snr, exptime=exptime, redshift=redshift, extinction=extinction, target=target)
+                    actual = compute_observation(telescope, instrument=instrument, sed=sed, magnitude=magnitude, snr=snr, exptime=exptime, redshift=redshift, extinction=extinction, target=target)
                     #result = np.median(result)
-                    #print(result)
+                    result = []
+                    if actual is not None:
+                        for band in actual:
+                            result.append({"mean": np.nanmean(band).value, "median": np.nanmedian(band).value, "std": np.nanstd(band).value, "len": len(band)})
                     saved.append({"telescope": telescope, "instrument": instrument, "sed": sed, "magnitude": magnitude, "snr": snr, "exptime": exptime, "redshift": redshift, "extinction": extinction, "target": target, "expected": result})
                 except Exception as err:
                     print(f" Error in calculation: {err}")
     if reset:
-        write_yaml(saved, "tests/baselines/test_seds.yml.xz")
+        write_yaml(saved, "tests/baselines/test_seds.yml")
 
 '''
 LOAD IT
 '''
 try:    
-    test_setups = read_yaml("tests/baselines/test_seds.yml.xz")
+    test_setups = read_yaml("tests/baselines/test_seds.yml")
 except (FileNotFoundError, yaml.io.UnsupportedOperation):
     create_comparisons(True)
-    test_setups = read_yaml("tests/baselines/test_seds.yml.xz")
+    test_setups = read_yaml("tests/baselines/test_seds.yml")
 
 
 @pytest.mark.parametrize("inputs", test_setups)
 def test_etc_seds(inputs):
-    result = compute_observation(inputs["telescope"], instrument=inputs["instrument"], sed=inputs["sed"], 
+    actual = compute_observation(inputs["telescope"], instrument=inputs["instrument"], sed=inputs["sed"], 
                         magnitude=inputs["magnitude"], snr=inputs["snr"], exptime=inputs["exptime"], 
                         redshift=inputs["redshift"], extinction=inputs["extinction"], target=inputs["target"])
-    result = [res.value for res in result]
-    assert check_relative_diff(result, [res.value for res in inputs["expected"]], 0.0005) #1e-3)
+    result = []
+    if actual is not None:
+        for band in actual:
+            result.append({"mean": np.nanmean(band).value, "median": np.nanmedian(band).value, "std": np.nanstd(band).value, "len": len(band)})
+    assert check_relative_diff(result, inputs["expected"], 0.0005) #1e-3)
 
 
 if __name__ == "__main__":

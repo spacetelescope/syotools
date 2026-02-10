@@ -27,12 +27,13 @@ def simplify_data(data):
 
 def complexify_data(data):
     if isinstance(data, list):
-        if data[0] == "!Astropy": # Special astropy handling
-            #print("Astropy", data, type[data[2]])
-            data = complexify_data(data[1]) * u.Unit(data[2]) 
-        else:
-            for idx,x in enumerate(data):
-                data[idx] = complexify_data(x)
+        if len(data) > 0:
+            if data[0] == "!Astropy": # Special astropy handling
+                #print("Astropy", data, type[data[2]])
+                data = complexify_data(data[1]) * u.Unit(data[2]) 
+            else:
+                for idx,x in enumerate(data):
+                    data[idx] = complexify_data(x)
     elif isinstance(data, dict):
         for key in data:
             data[key] = complexify_data(data[key])
@@ -41,11 +42,11 @@ def complexify_data(data):
 
 def write_yaml(data, outfilename):
     data=simplify_data(data)
-    with lzma.open(outfilename, "wt") as outfile:
-        outfile.write(yaml.dump(data, Dumper=yaml.Dumper))
+    with open(outfilename, "w") as outfile:
+        yaml.dump(data, outfile, Dumper=yaml.Dumper)
 
 def read_yaml(infilename):
-    with lzma.open(infilename, "rt") as infile:
+    with open(infilename, "r") as infile:
         data = yaml.load(infile, Loader=yaml.Loader)
     data = complexify_data(data)
 

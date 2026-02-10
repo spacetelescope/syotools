@@ -122,7 +122,9 @@ def check_relative_diff(actual, expected, rel_tol=0.1):
     differences = []
 
     for i, (a, e) in enumerate(zip(actual, expected)):
-        for j, (act, exp) in enumerate(zip(actual[i], expected[i])):
+        for key in expected[i].keys():
+            act = actual[i][key]
+            exp = expected[i][key]
             if exp == 0:
                 # Can't calculate relative difference if expected is zero
                 if act != 0:
