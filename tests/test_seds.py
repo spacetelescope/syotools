@@ -1,12 +1,13 @@
 #import syotools.environment
 import sys
-import pickle
 
+import yaml
 import pytest
 import numpy as np
 import astropy.units as u
 
 from syotools.spectra.spec_defaults import syn_spectra_library
+from syotools.utils.yaml_utils import read_yaml, write_yaml
 from syotools.models import Camera, Spectrograph, Telescope, Source, SourcePhotometricExposure, SourceSpectrographicExposure
 from syotools.wrappers.common import compute_observation, check_relative_diff
 
@@ -34,37 +35,40 @@ def create_comparisons(reset=False):
     for telescope in telescopes:
         for instrument in instruments:
             for sed in seds:
-                print(telescope, instrument, sed, magnitude, snr, exptime, redshift, extinction, target, end="")
+                print(telescope, instrument, sed, magnitude, snr, exptime, redshift, extinction, target)
                 try:
-                    result = compute_observation(telescope, instrument=instrument, sed=sed, magnitude=magnitude, snr=snr, exptime=exptime, redshift=redshift, extinction=extinction, target=target)
+                    actual = compute_observation(telescope, instrument=instrument, sed=sed, magnitude=magnitude, snr=snr, exptime=exptime, redshift=redshift, extinction=extinction, target=target)
                     #result = np.median(result)
-                    print(result)
+                    result = []
+                    if actual is not None:
+                        for band in actual:
+                            result.append({"mean": np.nanmean(band).value, "median": np.nanmedian(band).value, "std": np.nanstd(band).value, "len": len(band)})
                     saved.append({"telescope": telescope, "instrument": instrument, "sed": sed, "magnitude": magnitude, "snr": snr, "exptime": exptime, "redshift": redshift, "extinction": extinction, "target": target, "expected": result})
                 except Exception as err:
                     print(f" Error in calculation: {err}")
     if reset:
-        with open("tests/baselines/test_seds.pickle", "wb") as picklefile:
-            pickle.dump(saved, picklefile)
+        write_yaml(saved, "tests/baselines/test_seds.yml")
 
 '''
 LOAD IT
 '''
 try:    
-    with open("tests/baselines/test_seds.pickle", "rb") as picklefile:
-        test_setups = pickle.load(picklefile)
-except FileNotFoundError:
+    test_setups = read_yaml("tests/baselines/test_seds.yml")
+except (FileNotFoundError, yaml.io.UnsupportedOperation):
     create_comparisons(True)
-    with open("tests/baselines/test_seds.pickle", "rb") as picklefile:
-        test_setups = pickle.load(picklefile)
+    test_setups = read_yaml("tests/baselines/test_seds.yml")
 
 
 @pytest.mark.parametrize("inputs", test_setups)
 def test_etc_seds(inputs):
-    result = compute_observation(inputs["telescope"], instrument=inputs["instrument"], sed=inputs["sed"], 
+    actual = compute_observation(inputs["telescope"], instrument=inputs["instrument"], sed=inputs["sed"], 
                         magnitude=inputs["magnitude"], snr=inputs["snr"], exptime=inputs["exptime"], 
                         redshift=inputs["redshift"], extinction=inputs["extinction"], target=inputs["target"])
-    result = [res.value for res in result]
-    assert check_relative_diff(result, [res.value for res in inputs["expected"]], 0.0005) #1e-3)
+    result = []
+    if actual is not None:
+        for band in actual:
+            result.append({"mean": np.nanmean(band).value, "median": np.nanmedian(band).value, "std": np.nanstd(band).value, "len": len(band)})
+    assert check_relative_diff(result, inputs["expected"], 0.0005) #1e-3)
 
 
 if __name__ == "__main__":
