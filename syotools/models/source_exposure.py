@@ -223,6 +223,8 @@ class SourcePhotometricExposure(SourceExposure):
 
     @property
     def _internal_efficiency(self):
+        # right now there is no indication from the SEI database as to what the filters are, or which detector they're on.
+        # until then, we hardcode one of the detectors.
         self.mode = "nir"
         (tel_eff, inst_eff) = self.recover('telescope.telescope_efficiency', f"camera.instrument_efficiency_{self.mode}")
 
