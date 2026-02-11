@@ -130,11 +130,9 @@ class Spectrograph(PersistentModel):
 
         for disperser in self.fuv_mos:
             fuvmos_mirrors = {}
-            print(self.fuv_mos[disperser])
             if isinstance(self.fuv_mos[disperser], dict):
                 for mirror in range(1, self.fuv_mos[disperser]["N_refl_optics"][0] + 1):
                     fuvmos_mirrors[f"mirror{mirror}"] = set_coating(self.fuv_mos[disperser])
-            print(f"instrument_efficiency_{disperser}")
             setattr(self, f"instrument_efficiency_{disperser}", mirror_efficiency(fuvmos_mirrors))
 
         for disperser in self.nuv_mos:

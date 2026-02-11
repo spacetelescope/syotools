@@ -248,7 +248,6 @@ class SourcePhotometricExposure(SourceExposure):
         fsource = f0 * c_ap[0] * np.pi / 4. * D**2 * (dlam * u.nm) * m
 
         # telescope efficiency reduces counts at detector (HWOE-183)
-        print("Pivot Wave", pivotwave)
         fsource *= int_eff(pivotwave[0] * u.Unit(pivotwave[1]))
 
         return fsource
@@ -271,7 +270,6 @@ class SourcePhotometricExposure(SourceExposure):
 
         fsky = f0 * np.pi / 4. * D**2 * (dlam*u.nm) * m * (Phi**2 * Npix) * u.pix
         # telescope efficiency reduces counts at detector (HWOE-183)
-        print("Pivot Wave", pivotwave)
         fsky *= int_eff(pivotwave[0] * u.Unit(pivotwave[1]))
 
         return fsky
