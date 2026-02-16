@@ -122,7 +122,9 @@ def check_relative_diff(actual, expected, rel_tol=0.1):
     differences = []
 
     for i, (a, e) in enumerate(zip(actual, expected)):
-        for j, (act, exp) in enumerate(zip(actual[i], expected[i])):
+        for key in expected[i].keys():
+            act = actual[i][key]
+            exp = expected[i][key]
             if exp == 0:
                 # Can't calculate relative difference if expected is zero
                 if act != 0:
@@ -134,15 +136,15 @@ def check_relative_diff(actual, expected, rel_tol=0.1):
 
                 if rel_diff > rel_tol:
                     all_within_tolerance = False
-                    differences.append((i, j, act, exp, pct_diff))
+                    differences.append((i, key, act, exp, pct_diff))
 
     if not all_within_tolerance:
         print("\nValues exceeding relative tolerance:")
         for i, j, act, exp, pct in differences:
             if pct == "inf":
-                print(f"  Index {i},{j}: actual={act}, expected={exp}, difference=infinite (division by zero)")
+                print(f"  Index {i},{key}: actual={act}, expected={exp}, difference=infinite (division by zero)")
             else:
-                print(f"  Index {i},{j}: actual={act:.6g}, expected={exp:.6g}, difference={pct:.2f}%")
+                print(f"  Index {i},{key}: actual={act:.6g}, expected={exp:.6g}, difference={pct:.2f}%")
 
     return all_within_tolerance
 

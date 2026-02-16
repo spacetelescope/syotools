@@ -37,6 +37,7 @@ def uvspec_snr(telescope, mode, template, fuvmag, exptime, silent=False):
     # create the basic objects 
     uvi, tel = Spectrograph(), Telescope() 
     tel.set_from_sei(telescope)
+    uvi.set_from_sei("uvi")
     tel.add_spectrograph(uvi)
     uvi.mode = mode
 
@@ -110,7 +111,8 @@ def uvspec_exptime(telescope, mode, template, fuvmag, snr_goal, silent=False):
 
     # create the basic objects
     uvi, tel = Spectrograph(), Telescope()
-    tel.set_from_json(telescope)
+    tel.set_from_sei(telescope)
+    uvi.set_from_sei("uvi")
     tel.add_spectrograph(uvi)
     uvi.mode = mode
 
