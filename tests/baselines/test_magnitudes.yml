@@ -1,0 +1,4320 @@
+- expected:
+  - len: 10
+    mean: 3.3341181061619756e-05
+    median: 5.900306643782045e-07
+    std: 8.40552171848765e-05
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 5.0
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 0.000112020313161588
+    median: 1.9823961105092882e-06
+    std: 0.00028241026526777175
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 6.315789473684211
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 0.0003763679343490603
+    median: 6.66049403127673e-06
+    std: 0.0009488472808612578
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 7.631578947368421
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 0.0012645282943729989
+    median: 2.2378087215748127e-05
+    std: 0.003187955657278618
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 8.947368421052632
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 0.0042485900977996495
+    median: 7.518673078944638e-05
+    std: 0.010710965396408435
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 10.263157894736842
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 0.014274545008266137
+    median: 0.00025261854106537775
+    std: 0.03598705186437019
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 11.578947368421053
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 0.04796049038795909
+    median: 0.0008488064474074576
+    std: 0.1209116985603327
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 12.894736842105264
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 0.16114545307318817
+    median: 0.0028524457573794655
+    std: 0.40626101921662616
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 14.210526315789474
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 0.5414975686606314
+    median: 0.00959059498967791
+    std: 1.3651854149020524
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 15.526315789473685
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 1.8202156836526249
+    median: 0.032300719625513535
+    std: 4.589284118445415
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 16.842105263157897
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 6.125564654196061
+    median: 0.10941420477634863
+    std: 15.447514542566005
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 18.157894736842106
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 20.693773816020325
+    median: 0.377971836270804
+    std: 52.22201220723193
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 19.473684210526315
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 70.81916561924342
+    median: 1.3983151779671794
+    std: 179.12360613075697
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 20.789473684210527
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 253.11329597490302
+    median: 5.233588470423437
+    std: 644.7800658070094
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 22.10526315789474
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 1040.9483566332644
+    median: 17.61000034272904
+    std: 2706.5957437345446
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 23.42105263157895
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 6121.089099695912
+    median: 59.461882671641234
+    std: 16610.188080105694
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 24.736842105263158
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 54994.69327630849
+    median: 203.1514805275257
+    std: 155011.84519278602
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 26.05263157894737
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 589041.4047250457
+    median: 721.9052133701682
+    std: 1683268.4947971704
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 27.368421052631582
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 6570842.1114458
+    median: 2916.5104728652777
+    std: 18832709.27663238
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 28.68421052631579
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 73951199.38376245
+    median: 18315.29932693178
+    std: 212078857.41283533
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 30.0
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 5.0
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 6.315789473684211
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 7.631578947368421
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 8.947368421052632
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 10.263157894736842
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 11.578947368421053
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 12.894736842105264
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 14.210526315789474
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 15.526315789473685
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 16.842105263157897
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 18.157894736842106
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 19.473684210526315
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 20.789473684210527
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 22.10526315789474
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 23.42105263157895
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 24.736842105263158
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 26.05263157894737
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 27.368421052631582
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 28.68421052631579
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 30.0
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 3.96188607709621e-05
+    median: 7.01125221723093e-07
+    std: 9.988164311224831e-05
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 5.0
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 0.00013311217762246568
+    median: 2.355653757273921e-06
+    std: 0.00033558418442443443
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 6.315789473684211
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 0.00044723278181188546
+    median: 7.914573269805903e-06
+    std: 0.0011275020310404452
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 7.631578947368421
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 0.0015026214803280573
+    median: 2.6591581055126103e-05
+    std: 0.0037882036532969434
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 8.947368421052632
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 0.005048541919993704
+    median: 8.934347920105694e-05
+    std: 0.012727695227552242
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 10.263157894736842
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 0.016962260144348706
+    median: 0.0003001846160938113
+    std: 0.04276296127159836
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 11.578947368421053
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 0.05699097743998159
+    median: 0.0010086420890471775
+    std: 0.14367824131812496
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 12.894736842105264
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 0.19148910007399655
+    median: 0.0033897159998427383
+    std: 0.4827605761067936
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 14.210526315789474
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 0.6434789026350832
+    median: 0.011398568745435492
+    std: 1.6223015899426743
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 15.526315789473685
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 2.163218057769444
+    median: 0.038407431290872304
+    std: 5.4541818841480465
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 16.842105263157897
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 7.282102838785846
+    median: 0.13030139557030923
+    std: 18.365107328371167
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 18.157894736842106
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 24.626251151903052
+    median: 0.45253625893678906
+    std: 62.15734016661278
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 19.473684210526315
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 84.56996660201557
+    median: 1.7058054931910533
+    std: 214.03116319396466
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 20.789473684210527
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 305.77774712729877
+    median: 6.21973609094965
+    std: 780.3454093877883
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 22.10526315789474
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 1302.8039139294056
+    median: 20.934037740475894
+    std: 3403.698770536948
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 23.42105263157895
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 8191.325698655887
+    median: 70.75213823151897
+    std: 22378.387054217877
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 24.736842105263158
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 76644.9222770798
+    median: 242.48651101937764
+    std: 216734.34528426756
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 26.05263157894737
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 829345.0172727094
+    median: 870.7666347354748
+    std: 2371777.022234018
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 27.368421052631582
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 9271654.426204141
+    median: 3635.380156202853
+    std: 26577521.260707784
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 28.68421052631579
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 104400933.64042607
+    median: 25009.078848267607
+    std: 299413048.236095
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 30.0
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 5.0
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 6.315789473684211
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 7.631578947368421
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 8.947368421052632
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 10.263157894736842
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 11.578947368421053
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 12.894736842105264
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 14.210526315789474
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 15.526315789473685
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 16.842105263157897
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 18.157894736842106
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 19.473684210526315
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 20.789473684210527
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 22.10526315789474
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 23.42105263157895
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 24.736842105263158
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 26.05263157894737
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 27.368421052631582
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 28.68421052631579
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 30.0
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 3.96188607709621e-05
+    median: 7.01125221723093e-07
+    std: 9.988164311224831e-05
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 5.0
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 0.00013311217762246568
+    median: 2.355653757273921e-06
+    std: 0.00033558418442443443
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 6.315789473684211
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 0.00044723278181188546
+    median: 7.914573269805903e-06
+    std: 0.0011275020310404452
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 7.631578947368421
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 0.0015026214803280573
+    median: 2.6591581055126103e-05
+    std: 0.0037882036532969434
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 8.947368421052632
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 0.005048541919993704
+    median: 8.934347920105694e-05
+    std: 0.012727695227552242
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 10.263157894736842
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 0.016962260144348706
+    median: 0.0003001846160938113
+    std: 0.04276296127159836
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 11.578947368421053
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 0.05699097743998159
+    median: 0.0010086420890471775
+    std: 0.14367824131812496
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 12.894736842105264
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 0.19148910007399655
+    median: 0.0033897159998427383
+    std: 0.4827605761067936
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 14.210526315789474
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 0.6434789026350832
+    median: 0.011398568745435492
+    std: 1.6223015899426743
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 15.526315789473685
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 2.163218057769444
+    median: 0.038407431290872304
+    std: 5.4541818841480465
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 16.842105263157897
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 7.282102838785846
+    median: 0.13030139557030923
+    std: 18.365107328371167
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 18.157894736842106
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 24.626251151903052
+    median: 0.45253625893678906
+    std: 62.15734016661278
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 19.473684210526315
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 84.56996660201557
+    median: 1.7058054931910533
+    std: 214.03116319396466
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 20.789473684210527
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 305.77774712729877
+    median: 6.21973609094965
+    std: 780.3454093877883
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 22.10526315789474
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 1302.8039139294056
+    median: 20.934037740475894
+    std: 3403.698770536948
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 23.42105263157895
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 8191.325698655887
+    median: 70.75213823151897
+    std: 22378.387054217877
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 24.736842105263158
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 76644.9222770798
+    median: 242.48651101937764
+    std: 216734.34528426756
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 26.05263157894737
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 829345.0172727094
+    median: 870.7666347354748
+    std: 2371777.022234018
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 27.368421052631582
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 9271654.426204141
+    median: 3635.380156202853
+    std: 26577521.260707784
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 28.68421052631579
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 104400933.64042607
+    median: 25009.078848267607
+    std: 299413048.236095
+  exptime: 10000
+  extinction: 0
+  instrument: hri
+  magnitude: 30.0
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 5.0
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 6.315789473684211
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 7.631578947368421
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 8.947368421052632
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 10.263157894736842
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 11.578947368421053
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 12.894736842105264
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 14.210526315789474
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 15.526315789473685
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 16.842105263157897
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 18.157894736842106
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 19.473684210526315
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 20.789473684210527
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 22.10526315789474
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 23.42105263157895
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 24.736842105263158
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 26.05263157894737
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 27.368421052631582
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 28.68421052631579
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 20600
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 850
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  - len: 28769
+    mean: 0.0
+    median: 0.0
+    std: 0.0
+  exptime: 10000
+  extinction: 0
+  instrument: uvi
+  magnitude: 30.0
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: exptime
+  telescope: EAC3

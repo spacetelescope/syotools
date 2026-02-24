@@ -5,10 +5,15 @@ Created on Tue Nov  7 15:04:24 2017
 
 @author: gkanarek
 """
+import os
+import math
+from pathlib import Path
+
+import yaml
+
 import astropy.units as u
 import synphot as syn
 import stsynphot as stsyn
-from pathlib import Path
 import astropy.io.ascii as asc
 
 #Define a new unit for spectral flux density
@@ -85,3 +90,39 @@ def load_synfits(spec):
     sp = sp.normalize(30.*u.ABmag, stsyn.band(band))
     sp.__setattr__('band', band)
     return sp
+
+# Utility for loading mirror coatings
+def set_coating(mirror, coating="XeLiF"):
+    """ 
+    Loads the reflectivity curve for a mirror surface by
+    adding / modifying that mirror's component dictionary
+    doing this with file I/O here is a bit inelegant but
+    works for the first iteration of this capability.
+    JT 102524
+    """
+    examine = True
+    if "reflectivity" in mirror:
+        mirrorkey = "reflectivity"
+    elif "optical_coating" in mirror:
+        mirrorkey = "optical_coating"
+    elif "reflectivities" in mirror:
+        mirrorkey = "reflectivities"
+    else:
+        examine = False # if there's no recognized reflectivity key, skip the examination step
+
+    if examine:
+        if "XeLiF" in mirror[mirrorkey]:
+            coating = "XeLiF"
+        elif "ProtectedAg" in mirror[mirrorkey]:
+            coating = "ProtectedAg"
+        elif "ProtectedAl" in mirror[mirrorkey]:
+            coating = "ProtectedAl"
+
+    with open(os.getenv('SCI_ENG_DIR') + '/obs_config/reflectivities/'+coating+'_refl.yaml', 'r') as f:
+        coating_dict = yaml.load(f, Loader=yaml.SafeLoader)
+
+    return {"coating_name": coating, "coating": syn.spectrum.SpectralElement(syn.models.Empirical1D, points=coating_dict['wavelength'] * u.nm, lookup_table=coating_dict['reflectivity'] * u.dimensionless_unscaled)}
+
+# Utility for getting combined mirror throughput
+def mirror_efficiency(mirrors):
+    return math.prod([mirrors[mirror]["coating"] for mirror in mirrors])

@@ -10,7 +10,7 @@ import astropy.units as u
 from syotools.models.base import PersistentModel
 from syotools.models.source_exposure import SourcePhotometricExposure
 from syotools.defaults import default_camera
-from syotools.spectra.utils import mag_from_sed
+from syotools.spectra.utils import mag_from_sed, mirror_efficiency, set_coating
 from hwo_sci_eng.utils import read_yaml 
 
 def nice_print(arr):
@@ -154,26 +154,6 @@ class Camera(PersistentModel):
             print('Detector read noise: {}'.format(nice_print(self.detector_rn[0] * u.Unit(self.detector_rn[1]))))
             print('Dark rate: {}'.format(nice_print(self.dark_current[0] * u.Unit(self.dark_current[1]))))
 
-    def _fsky(self, verbose=True):
-        """
-        Calculate the sky flux as per Eq 6 in the SNR equation paper.
-        """
-
-        (f0, D, dlam, Phi, fwhm, Sigma) = self.recover('ab_zeropoint',
-                'telescope.effective_aperture', 'derived_bandpass',
-                'pixel_size', 'fwhm_psf', 'sky_sigma')
-
-        D = D.to(u.cm)
-        m = 10.**(-0.4 * np.array(Sigma[0])) / u.arcsec**2
-        Npix = self._sn_box(False)
-
-        if verbose:
-            print('Sky brightness: {}'.format(nice_print(Sigma[0])))
-
-        fsky = f0 * np.pi / 4. * D**2 * (dlam*u.nm) * m * (Phi**2 * Npix) * u.pix
-
-        return fsky
-
     def _sn_box(self, verbose):
         """
         Calculate the number of pixels in the SNR computation box.
@@ -287,8 +267,19 @@ class Camera(PersistentModel):
         # components. So, we are going to break this dictionary up and carry the 
         # pieces separately:  
 
-        self.UVIS = hri['UVIS']  
+        self.uvis = hri['UVIS']  
 
-        self.NIR = hri['NIR'] 
+        self.nir = hri['NIR'] 
 
+        self.uvis_mirrors = {}
+        for mirror in range(1, self.uvis["n_refl_optics"][0] + 1):
+            self.uvis_mirrors[f"mirror{mirror}"] = set_coating(self.uvis)
+
+        self.instrument_efficiency_uvis = mirror_efficiency(self.uvis_mirrors)
+
+        self.nir_mirrors = {}
+        for mirror in range(1, self.nir["n_refl_optics"][0] + 1):
+            self.nir_mirrors[f"mirror{mirror}"] = set_coating(self.nir)
+
+        self.instrument_efficiency_nir = mirror_efficiency(self.nir_mirrors)
 

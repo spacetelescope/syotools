@@ -11,6 +11,7 @@ from astropy.table import QTable
 
 from syotools.models.base import PersistentModel
 from syotools.models.source_exposure import SourceSpectrographicExposure
+from syotools.spectra.utils import mirror_efficiency, set_coating
 from syotools.defaults import default_spectrograph, default_spectropolarimeter
 from hwo_sci_eng.utils import read_yaml 
 
@@ -103,28 +104,47 @@ class Spectrograph(PersistentModel):
 
     def set_from_sei(self, name): 
 
-        if ('UVI' in name): uvi = read_yaml.uvi()
+        if ('uvi' in name.lower()): uvi = read_yaml.uvi()
         
         # the "uvi" dictionary returned by read_yaml is nested, and therefore awkward  
         # when summoning individual entries. And often, we do not need the individual 
         # components. So, we are going to break this dictionary up and carry the 
         # pieces separately:  
 
-        self.FUV_Imager = uvi['FUV_Imager']  
+        self.fuv_imager = uvi['FUV_Imager']  
 
-        self.FUV_MOS = uvi['FUV_MOS'] 
+        self.fuv_mos = uvi['FUV_MOS'] 
         
-        self.NUV_MOS = uvi['NUV_MOS']
+        self.nuv_mos = uvi['NUV_MOS']
 
-        self.MSA = uvi['MSA'] 
+        self.msa = uvi['MSA'] 
 
-        self.MCP = uvi['MCP']
+        self.mcp = uvi['MCP']
 
-        self.CMOS = uvi['CMOS']
+        self.cmos = uvi['CMOS']
+
+        self.imager_mirrors = {}
+        for mirror in range(1, self.fuv_imager["N_refl_optics"][0] + 1):
+            self.imager_mirrors[f"mirror{mirror}"] = set_coating(self.fuv_imager)
+        self.instrument_efficiency_imager = mirror_efficiency(self.imager_mirrors)
+
+        for disperser in self.fuv_mos:
+            fuvmos_mirrors = {}
+            if isinstance(self.fuv_mos[disperser], dict):
+                for mirror in range(1, self.fuv_mos[disperser]["N_refl_optics"][0] + 1):
+                    fuvmos_mirrors[f"mirror{mirror}"] = set_coating(self.fuv_mos[disperser])
+            setattr(self, f"instrument_efficiency_{disperser}", mirror_efficiency(fuvmos_mirrors))
+
+        for disperser in self.nuv_mos:
+            nuvmos_mirrors = {}
+            if isinstance(self.nuv_mos[disperser], dict):
+                for mirror in range(1, self.nuv_mos[disperser]["N_refl_optics"][0] + 1):
+                    nuvmos_mirrors[f"mirror{mirror}"] = set_coating(self.nuv_mos[disperser])
+            setattr(self, f"instrument_efficiency_{disperser}", mirror_efficiency(nuvmos_mirrors))
 
         # Get a handy list of available dispersers
-        self.modes = list(self.FUV_MOS.keys())
-        self.modes.extend(list(self.NUV_MOS.keys()))
+        self.modes = list(self.fuv_mos.keys())
+        self.modes.extend(list(self.nuv_mos.keys()))
         self.modes.remove("G165LL") # No data to support mode
         self.modes.remove("G700L") # No data to support mode
 

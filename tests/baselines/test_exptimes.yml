@@ -1,0 +1,6480 @@
+- expected:
+  - len: 10
+    mean: 433.31811724176094
+    median: 489.6120093369665
+    std: 256.6847384290207
+  exptime: 0.1
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 81024.87623442382
+    median: 91326.769546014
+    std: 47192.96537287949
+  exptime: 3448.372413793103
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 114585.66563640707
+    median: 129154.62815376729
+    std: 66740.42843335056
+  exptime: 6896.644827586207
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 140337.8743244569
+    median: 158181.08961366166
+    std: 81739.79198785215
+  exptime: 10344.91724137931
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 162048.02735758337
+    median: 182651.5706179191
+    std: 94384.86319828873
+  exptime: 13793.189655172413
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 181175.07381277508
+    median: 204210.5173271448
+    std: 105525.40550833668
+  exptime: 17241.462068965513
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 198467.255666134
+    median: 223701.30648891517
+    std: 115597.23186320919
+  exptime: 20689.734482758617
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 214369.06440116232
+    median: 241624.94420625328
+    std: 124859.23602670852
+  exptime: 24138.00689655172
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 229170.11142994487
+    median: 258307.86437989547
+    std: 133480.10199242996
+  exptime: 27586.279310344824
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 243071.5618360104
+    median: 273976.80912502424
+    std: 141576.9982541138
+  exptime: 31034.551724137928
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 256219.8828623215
+    median: 288796.8681896627
+    std: 149235.234584132
+  exptime: 34482.82413793103
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 268725.64554684085
+    median: 302892.6711130279
+    std: 156519.21303187124
+  exptime: 37931.096551724135
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 280674.75265002204
+    median: 316361.04272146453
+    std: 163478.96762229546
+  exptime: 41379.368965517235
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 292135.51816877024
+    median: 329278.9827633094
+    std: 170154.28781428537
+  exptime: 44827.64137931034
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 303163.3308570164
+    median: 341708.9223702935
+    std: 176577.43476537906
+  exptime: 48275.91379310344
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 313803.83900919027
+    median: 353702.3137686474
+    std: 182774.99630708978
+  exptime: 51724.18620689655
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 324095.19215423556
+    median: 365302.1569921566
+    std: 188769.19261837087
+  exptime: 55172.45862068965
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 334069.6600681899
+    median: 376544.82474328286
+    std: 194578.81921865616
+  exptime: 58620.73103448275
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 343754.828298689
+    median: 387461.4099220426
+    std: 200219.9433005147
+  exptime: 62069.00344827586
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 353174.498200601
+    median: 398078.7400962335
+    std: 205706.42795497694
+  exptime: 65517.27586206896
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 362349.37612728344
+    median: 408420.1543195831
+    std: 211050.3335906648
+  exptime: 68965.54827586206
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 371297.6091768122
+    median: 418506.1069951782
+    std: 216262.22997894397
+  exptime: 72413.82068965517
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 380035.2072913799
+    median: 428354.6436424928
+    std: 221351.44210553585
+  exptime: 75862.09310344828
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 388576.3798554762
+    median: 437981.78029218805
+    std: 226326.24622198616
+  exptime: 79310.36551724139
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 396933.8070537362
+    median: 447401.80934562837
+    std: 231194.02789793204
+  exptime: 82758.63793103448
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 405118.86080847675
+    median: 456627.54860342084
+    std: 235961.4107060824
+  exptime: 86206.91034482759
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 413141.7862953871
+    median: 465670.5458598353
+    std: 240634.36194595974
+  exptime: 89655.1827586207
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 421011.85230813705
+    median: 474541.24838545313
+    std: 245218.2802237097
+  exptime: 93103.45517241379
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 428737.4767669768
+    median: 483249.1443935021
+    std: 249718.06855453708
+  exptime: 96551.7275862069
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 436326.3322160368
+    median: 491802.88195056294
+    std: 254138.19580956956
+  exptime: 100000.0
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 0.007481344529241235
+    median: 0.0031480249931447554
+    std: 0.015106500718335776
+  - len: 20600
+    mean: 0.005803177534656109
+    median: 0.004708256048973913
+    std: 0.004781446526556772
+  - len: 20600
+    mean: 0.018525187430077087
+    median: 0.007257420393477752
+    std: 0.018378363223226214
+  - len: 20600
+    mean: 0.030746671608285432
+    median: 0.017569672853852962
+    std: 0.03433545628395946
+  - len: 850
+    mean: 0.08205592136497475
+    median: 0.06549962965792955
+    std: 0.10213284253566252
+  - len: 850
+    mean: 0.08205592136497475
+    median: 0.06549962965792955
+    std: 0.10213284253566252
+  - len: 850
+    mean: 0.08205592136497475
+    median: 0.06549962965792955
+    std: 0.10213284253566252
+  - len: 850
+    mean: 0.08205592136497475
+    median: 0.06549962965792955
+    std: 0.10213284253566252
+  - len: 850
+    mean: 0.08205592136497475
+    median: 0.06549962965792955
+    std: 0.10213284253566252
+  - len: 28769
+    mean: 1.2955629178756187
+    median: 1.3489153418878859
+    std: 0.8422909423939572
+  - len: 28769
+    mean: 1.2955629178756187
+    median: 1.3489153418878859
+    std: 0.8422909423939572
+  - len: 28769
+    mean: 1.2955629178756187
+    median: 1.3489153418878859
+    std: 0.8422909423939572
+  exptime: 0.1
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 1.3892702517515767
+    median: 0.584581749664459
+    std: 2.8052460321829664
+  - len: 20600
+    mean: 1.0776381014160379
+    median: 0.8743134393694697
+    std: 0.8879047601300538
+  - len: 20600
+    mean: 3.4400891048575404
+    median: 1.3476880014956938
+    std: 3.4128241524124707
+  - len: 20600
+    mean: 5.709593514749947
+    median: 3.2626520184254546
+    std: 6.376023428566726
+  - len: 850
+    mean: 15.237615389434259
+    median: 12.163146160271245
+    std: 18.96585825008311
+  - len: 850
+    mean: 15.237615389434259
+    median: 12.163146160271245
+    std: 18.96585825008311
+  - len: 850
+    mean: 15.237615389434259
+    median: 12.163146160271245
+    std: 18.96585825008311
+  - len: 850
+    mean: 15.237615389434259
+    median: 12.163146160271245
+    std: 18.96585825008311
+  - len: 850
+    mean: 15.237615389434259
+    median: 12.163146160271245
+    std: 18.96585825008311
+  - len: 28769
+    mean: 240.58336226090285
+    median: 250.4907973816053
+    std: 156.41169110900515
+  - len: 28769
+    mean: 240.58336226090285
+    median: 250.4907973816053
+    std: 156.41169110900515
+  - len: 28769
+    mean: 240.58336226090285
+    median: 250.4907973816053
+    std: 156.41169110900515
+  exptime: 3448.372413793103
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 1.9647105879207276
+    median: 0.8267174450924346
+    std: 3.9671882228843893
+  - len: 20600
+    mean: 1.523999369546335
+    median: 1.236456959561925
+    std: 1.2556778503630341
+  - len: 20600
+    mean: 4.864985397321331
+    median: 1.905904831989296
+    std: 4.8264272113381175
+  - len: 20600
+    mean: 8.074526044885504
+    median: 4.614053282447787
+    std: 9.01699343460476
+  - len: 850
+    mean: 21.549086113764
+    median: 17.201161554696153
+    std: 26.821579506191775
+  - len: 850
+    mean: 21.549086113764
+    median: 17.201161554696153
+    std: 26.821579506191775
+  - len: 850
+    mean: 21.549086113764
+    median: 17.201161554696153
+    std: 26.821579506191775
+  - len: 850
+    mean: 21.549086113764
+    median: 17.201161554696153
+    std: 26.821579506191775
+  - len: 850
+    mean: 21.549086113764
+    median: 17.201161554696153
+    std: 26.821579506191775
+  - len: 28769
+    mean: 340.23378713797297
+    median: 354.2449146750667
+    std: 221.1979312225276
+  - len: 28769
+    mean: 340.23378713797297
+    median: 354.2449146750667
+    std: 221.1979312225276
+  - len: 28769
+    mean: 340.23378713797297
+    median: 354.2449146750667
+    std: 221.1979312225276
+  exptime: 6896.644827586207
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 2.4062634012455364
+    median: 1.0125155040786118
+    std: 4.858781687882974
+  - len: 20600
+    mean: 1.8665059011778373
+    median: 1.5143406602994482
+    std: 1.537881290842389
+  - len: 20600
+    mean: 5.958351515556968
+    median: 2.334241527311353
+    std: 5.911127689146985
+  - len: 20600
+    mean: 9.889210463702042
+    median: 5.651024437497921
+    std: 11.043489776233729
+  - len: 850
+    mean: 26.392068920804775
+    median: 21.066983484718282
+    std: 32.849512557292044
+  - len: 850
+    mean: 26.392068920804775
+    median: 21.066983484718282
+    std: 32.849512557292044
+  - len: 850
+    mean: 26.392068920804775
+    median: 21.066983484718282
+    std: 32.849512557292044
+  - len: 850
+    mean: 26.392068920804775
+    median: 21.066983484718282
+    std: 32.849512557292044
+  - len: 850
+    mean: 26.392068920804775
+    median: 21.066983484718282
+    std: 32.849512557292044
+  - len: 28769
+    mean: 416.6985788597486
+    median: 433.8585939835906
+    std: 270.91037713360714
+  - len: 28769
+    mean: 416.6985788597486
+    median: 433.8585939835906
+    std: 270.91037713360714
+  - len: 28769
+    mean: 416.6985788597486
+    median: 433.8585939835906
+    std: 270.91037713360714
+  exptime: 10344.91724137931
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 2.7785102875569243
+    median: 1.16915078496273
+    std: 5.6104310516413305
+  - len: 20600
+    mean: 2.1552527647321913
+    median: 1.7486078628506787
+    std: 1.7757902087672899
+  - len: 20600
+    mean: 6.88010338946518
+    median: 2.6953466914386963
+    std: 6.825574077574377
+  - len: 20600
+    mean: 11.419062848642774
+    median: 6.525233075770565
+    std: 12.751908181752741
+  - len: 850
+    mean: 30.47489936821124
+    median: 24.326027778082235
+    std: 37.93130400205626
+  - len: 850
+    mean: 30.47489936821124
+    median: 24.326027778082235
+    std: 37.93130400205626
+  - len: 850
+    mean: 30.47489936821124
+    median: 24.326027778082235
+    std: 37.93130400205626
+  - len: 850
+    mean: 30.47489936821124
+    median: 24.326027778082235
+    std: 37.93130400205626
+  - len: 850
+    mean: 30.47489936821124
+    median: 24.326027778082235
+    std: 37.93130400205626
+  - len: 28769
+    mean: 481.16149195173625
+    median: 500.97614671128906
+    std: 312.8199803404834
+  - len: 28769
+    mean: 481.16149195173625
+    median: 500.97614671128906
+    std: 312.8199803404834
+  - len: 28769
+    mean: 481.16149195173625
+    median: 500.97614671128906
+    std: 312.8199803404834
+  exptime: 13793.189655172413
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 3.1064666874031626
+    median: 1.3071493678835524
+    std: 6.272648059626457
+  - len: 20600
+    mean: 2.409644098334818
+    median: 1.9550016062935256
+    std: 1.9853923708890635
+  - len: 20600
+    mean: 7.6921838587309175
+    median: 3.0134870277262213
+    std: 7.631218278853674
+  - len: 20600
+    mean: 12.766891128505536
+    median: 7.295427074069187
+    std: 14.25705643230488
+  - len: 850
+    mean: 34.071948595357654
+    median: 27.197306149224858
+    std: 42.40845636593166
+  - len: 850
+    mean: 34.071948595357654
+    median: 27.197306149224858
+    std: 42.40845636593166
+  - len: 850
+    mean: 34.071948595357654
+    median: 27.197306149224858
+    std: 42.40845636593166
+  - len: 850
+    mean: 34.071948595357654
+    median: 27.197306149224858
+    std: 42.40845636593166
+  - len: 850
+    mean: 34.071948595357654
+    median: 27.197306149224858
+    std: 42.40845636593166
+  - len: 28769
+    mean: 537.9545120646424
+    median: 560.107953500005
+    std: 349.7431168182837
+  - len: 28769
+    mean: 537.9545120646424
+    median: 560.107953500005
+    std: 349.7431168182837
+  - len: 28769
+    mean: 537.9545120646424
+    median: 560.107953500005
+    std: 349.7431168182837
+  exptime: 17241.462068965513
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 3.4029621128998047
+    median: 1.4319096975500143
+    std: 6.8713383539635045
+  - len: 20600
+    mean: 2.639631580617621
+    median: 2.141595924351117
+    std: 2.1748873228779506
+  - len: 20600
+    mean: 8.42636115908348
+    median: 3.301108048140639
+    std: 8.359576744702185
+  - len: 20600
+    mean: 13.985421760997163
+    median: 7.99173608754651
+    std: 15.617815274615062
+  - len: 850
+    mean: 37.32393160784093
+    median: 29.793141762649004
+    std: 46.456113907491776
+  - len: 850
+    mean: 37.32393160784093
+    median: 29.793141762649004
+    std: 46.456113907491776
+  - len: 850
+    mean: 37.32393160784093
+    median: 29.793141762649004
+    std: 46.456113907491776
+  - len: 850
+    mean: 37.32393160784093
+    median: 29.793141762649004
+    std: 46.456113907491776
+  - len: 850
+    mean: 37.32393160784093
+    median: 29.793141762649004
+    std: 46.456113907491776
+  - len: 28769
+    mean: 589.299357512117
+    median: 613.5672249837312
+    std: 383.124203651133
+  - len: 28769
+    mean: 589.299357512117
+    median: 613.5672249837312
+    std: 383.124203651133
+  - len: 28769
+    mean: 589.299357512117
+    median: 613.5672249837312
+    std: 383.124203651133
+  exptime: 20689.734482758617
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 3.67561790774251
+    median: 1.5466387082693798
+    std: 7.421891124865967
+  - len: 20600
+    mean: 2.8511269845708282
+    median: 2.313187179150093
+    std: 2.349145986959078
+  - len: 20600
+    mean: 9.101507141682685
+    median: 3.5656029819265624
+    std: 9.029371754536454
+  - len: 20600
+    mean: 15.105976783340845
+    median: 8.632058572144
+    std: 16.869162687877342
+  - len: 850
+    mean: 40.31443984788676
+    median: 32.1802599492909
+    std: 50.178320691615134
+  - len: 850
+    mean: 40.31443984788676
+    median: 32.1802599492909
+    std: 50.178320691615134
+  - len: 850
+    mean: 40.31443984788676
+    median: 32.1802599492909
+    std: 50.178320691615134
+  - len: 850
+    mean: 40.31443984788676
+    median: 32.1802599492909
+    std: 50.178320691615134
+  - len: 850
+    mean: 40.31443984788676
+    median: 32.1802599492909
+    std: 50.178320691615134
+  - len: 28769
+    mean: 636.5158352136109
+    median: 662.728118895305
+    std: 413.8212936580983
+  - len: 28769
+    mean: 636.5158352136109
+    median: 662.728118895305
+    std: 413.8212936580983
+  - len: 28769
+    mean: 636.5158352136109
+    median: 662.728118895305
+    std: 413.8212936580983
+  exptime: 24138.00689655172
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 3.9293998098441634
+    median: 1.6534258997295823
+    std: 7.934333303061986
+  - len: 20600
+    mean: 3.047982165778207
+    median: 2.472900472799383
+    std: 2.511342045376667
+  - len: 20600
+    mean: 9.729917888496859
+    median: 3.811788937487001
+    std: 9.652801935846183
+  - len: 20600
+    mean: 16.14896428024696
+    median: 9.2280563876071
+    std: 18.03388881046311
+  - len: 850
+    mean: 43.09793788374302
+    median: 34.40213604877714
+    std: 53.64286733085111
+  - len: 850
+    mean: 43.09793788374302
+    median: 34.40213604877714
+    std: 53.64286733085111
+  - len: 850
+    mean: 43.09793788374302
+    median: 34.40213604877714
+    std: 53.64286733085111
+  - len: 850
+    mean: 43.09793788374302
+    median: 34.40213604877714
+    std: 53.64286733085111
+  - len: 850
+    mean: 43.09793788374302
+    median: 34.40213604877714
+    std: 53.64286733085111
+  - len: 28769
+    mean: 680.4638742734012
+    median: 708.4859769782195
+    std: 442.39345694348737
+  - len: 28769
+    mean: 680.4638742734012
+    median: 708.4859769782195
+    std: 442.39345694348737
+  - len: 28769
+    mean: 680.4638742734012
+    median: 708.4859769782195
+    std: 442.39345694348737
+  exptime: 27586.279310344824
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 4.1677570379628985
+    median: 1.7537226456529496
+    std: 8.41562962937372
+  - len: 20600
+    mean: 3.2328726364730294
+    median: 2.6229065120507937
+    std: 2.6636799488128045
+  - len: 20600
+    mean: 10.320134300661083
+    median: 4.043011895007604
+    std: 10.238340497547979
+  - len: 20600
+    mean: 17.128559778059333
+    median: 9.787829902117615
+    std: 19.127823751441777
+  - len: 850
+    mean: 45.71225699320769
+    median: 36.48896818263306
+    std: 56.896841419537644
+  - len: 850
+    mean: 45.71225699320769
+    median: 36.48896818263306
+    std: 56.896841419537644
+  - len: 850
+    mean: 45.71225699320769
+    median: 36.48896818263306
+    std: 56.896841419537644
+  - len: 850
+    mean: 45.71225699320769
+    median: 36.48896818263306
+    std: 56.896841419537644
+  - len: 850
+    mean: 45.71225699320769
+    median: 36.48896818263306
+    std: 56.896841419537644
+  - len: 28769
+    mean: 721.7407844265516
+    median: 751.4627067094249
+    std: 469.2290255386558
+  - len: 28769
+    mean: 721.7407844265516
+    median: 751.4627067094249
+    std: 469.2290255386558
+  - len: 28769
+    mean: 721.7407844265516
+    median: 751.4627067094249
+    std: 469.2290255386558
+  exptime: 31034.551724137928
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 4.393200950261119
+    median: 1.8485856836661327
+    std: 8.870851095216691
+  - len: 20600
+    mean: 3.407746423138044
+    median: 2.7647857771526363
+    std: 2.8077647462951925
+  - len: 20600
+    mean: 10.87837496368238
+    median: 4.261708045185364
+    std: 10.792156738798141
+  - len: 20600
+    mean: 18.05508440346961
+    median: 10.3172769514402
+    std: 20.16249333054555
+  - len: 850
+    mean: 48.18494193205132
+    median: 38.46274344541537
+    std: 59.97452718917202
+  - len: 850
+    mean: 48.18494193205132
+    median: 38.46274344541537
+    std: 59.97452718917202
+  - len: 850
+    mean: 48.18494193205132
+    median: 38.46274344541537
+    std: 59.97452718917202
+  - len: 850
+    mean: 48.18494193205132
+    median: 38.46274344541537
+    std: 59.97452718917202
+  - len: 850
+    mean: 48.18494193205132
+    median: 38.46274344541537
+    std: 59.97452718917202
+  - len: 28769
+    mean: 760.7814637713913
+    median: 792.1111156746432
+    std: 494.61074196736126
+  - len: 28769
+    mean: 760.7814637713913
+    median: 792.1111156746432
+    std: 494.61074196736126
+  - len: 28769
+    mean: 760.7814637713913
+    median: 792.1111156746432
+    std: 494.61074196736126
+  exptime: 34482.82413793103
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 4.607627421055344
+    median: 1.9388127660593704
+    std: 9.30382589305182
+  - len: 20600
+    mean: 3.5740741297802154
+    median: 2.8997314041360034
+    std: 2.944808121316027
+  - len: 20600
+    mean: 11.409334411667574
+    median: 4.46971651691943
+    std: 11.318907986455287
+  - len: 20600
+    mean: 18.936329780669517
+    median: 10.820849929310114
+    std: 21.146598618746406
+  - len: 850
+    mean: 50.53678678524438
+    median: 40.340060332905786
+    std: 62.90180648923731
+  - len: 850
+    mean: 50.53678678524438
+    median: 40.340060332905786
+    std: 62.90180648923731
+  - len: 850
+    mean: 50.53678678524438
+    median: 40.340060332905786
+    std: 62.90180648923731
+  - len: 850
+    mean: 50.53678678524438
+    median: 40.340060332905786
+    std: 62.90180648923731
+  - len: 850
+    mean: 50.53678678524438
+    median: 40.340060332905786
+    std: 62.90180648923731
+  - len: 28769
+    mean: 797.9142255478513
+    median: 830.7730373426914
+    std: 518.752054194536
+  - len: 28769
+    mean: 797.9142255478513
+    median: 830.7730373426914
+    std: 518.752054194536
+  - len: 28769
+    mean: 797.9142255478513
+    median: 830.7730373426914
+    std: 518.752054194536
+  exptime: 37931.096551724135
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 4.812509357200986
+    median: 2.0250236674701334
+    std: 9.717528149840154
+  - len: 20600
+    mean: 3.7329982702806417
+    median: 3.028670341704361
+    std: 3.0757514321218404
+  - len: 20600
+    mean: 11.916659833361534
+    median: 4.668466131487627
+    std: 11.82221252291196
+  - len: 20600
+    mean: 19.77834923111964
+    median: 11.302007905349482
+    std: 22.086899487715357
+  - len: 850
+    mean: 52.78394650042135
+    median: 42.13381423485316
+    std: 65.69878695725042
+  - len: 850
+    mean: 52.78394650042135
+    median: 42.13381423485316
+    std: 65.69878695725042
+  - len: 850
+    mean: 52.78394650042135
+    median: 42.13381423485316
+    std: 65.69878695725042
+  - len: 850
+    mean: 52.78394650042135
+    median: 42.13381423485316
+    std: 65.69878695725042
+  - len: 850
+    mean: 52.78394650042135
+    median: 42.13381423485316
+    std: 65.69878695725042
+  - len: 28769
+    mean: 833.3941366755071
+    median: 867.7140425139343
+    std: 541.8187901804422
+  - len: 28769
+    mean: 833.3941366755071
+    median: 867.7140425139343
+    std: 541.8187901804422
+  - len: 28769
+    mean: 833.3941366755071
+    median: 867.7140425139343
+    std: 541.8187901804422
+  exptime: 41379.368965517235
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 5.009018084917739
+    median: 2.1077112624345853
+    std: 10.114323034076484
+  - len: 20600
+    mean: 3.8854274265095117
+    median: 3.1523397439531573
+    std: 3.201343291968275
+  - len: 20600
+    mean: 12.403251648291358
+    median: 4.859093156142588
+    std: 12.304947779976619
+  - len: 20600
+    mean: 20.58595664655861
+    median: 11.763501697730728
+    std: 22.988771711827372
+  - len: 850
+    mean: 54.93926826725522
+    median: 43.854260184065936
+    std: 68.38145915157776
+  - len: 850
+    mean: 54.93926826725522
+    median: 43.854260184065936
+    std: 68.38145915157776
+  - len: 850
+    mean: 54.93926826725522
+    median: 43.854260184065936
+    std: 68.38145915157776
+  - len: 850
+    mean: 54.93926826725522
+    median: 43.854260184065936
+    std: 68.38145915157776
+  - len: 850
+    mean: 54.93926826725522
+    median: 43.854260184065936
+    std: 68.38145915157776
+  - len: 28769
+    mean: 867.4240386100679
+    median: 903.1453258341908
+    std: 563.9428242775549
+  - len: 28769
+    mean: 867.4240386100679
+    median: 903.1453258341908
+    std: 563.9428242775549
+  - len: 28769
+    mean: 867.4240386100679
+    median: 903.1453258341908
+    std: 563.9428242775549
+  exptime: 44827.64137931034
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 5.198103311489576
+    median: 2.1872751719372197
+    std: 10.496128216269296
+  - len: 20600
+    mean: 4.032098273532825
+    median: 3.2713372928962405
+    std: 3.3221906739169853
+  - len: 20600
+    mean: 12.871461506667863
+    median: 5.042518872477962
+    std: 12.76944676949658
+  - len: 20600
+    mean: 21.36305511390752
+    median: 12.207561660399065
+    std: 23.85657395051913
+  - len: 850
+    mean: 57.0131685430965
+    median: 45.509712925994016
+    std: 70.96278816213199
+  - len: 850
+    mean: 57.0131685430965
+    median: 45.509712925994016
+    std: 70.96278816213199
+  - len: 850
+    mean: 57.0131685430965
+    median: 45.509712925994016
+    std: 70.96278816213199
+  - len: 850
+    mean: 57.0131685430965
+    median: 45.509712925994016
+    std: 70.96278816213199
+  - len: 850
+    mean: 57.0131685430965
+    median: 45.509712925994016
+    std: 70.96278816213199
+  - len: 28769
+    mean: 900.1683945085425
+    median: 937.2381231983787
+    std: 585.2310797588354
+  - len: 28769
+    mean: 900.1683945085425
+    median: 937.2381231983787
+    std: 585.2310797588354
+  - len: 28769
+    mean: 900.1683945085425
+    median: 937.2381231983787
+    std: 585.2310797588354
+  exptime: 48275.91379310344
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 5.380547732229946
+    median: 2.264044741111005
+    std: 10.864524132564611
+  - len: 20600
+    mean: 4.173617937495052
+    median: 3.386155564424168
+    std: 3.4387938110174208
+  - len: 20600
+    mean: 13.323227506292264
+    median: 5.219502548952448
+    std: 13.217632228582461
+  - len: 20600
+    mean: 22.112861337821254
+    median: 12.63602592559768
+    std: 24.693898365682596
+  - len: 850
+    mean: 59.01423198606945
+    median: 47.10702500605428
+    std: 73.45345908661035
+  - len: 850
+    mean: 59.01423198606945
+    median: 47.10702500605428
+    std: 73.45345908661035
+  - len: 850
+    mean: 59.01423198606945
+    median: 47.10702500605428
+    std: 73.45345908661035
+  - len: 850
+    mean: 59.01423198606945
+    median: 47.10702500605428
+    std: 73.45345908661035
+  - len: 850
+    mean: 59.01423198606945
+    median: 47.10702500605428
+    std: 73.45345908661035
+  - len: 28769
+    mean: 931.7627456523328
+    median: 970.1335575974539
+    std: 605.7716767704146
+  - len: 28769
+    mean: 931.7627456523328
+    median: 970.1335575974539
+    std: 605.7716767704146
+  - len: 28769
+    mean: 931.7627456523328
+    median: 970.1335575974539
+    std: 605.7716767704146
+  exptime: 51724.18620689655
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 5.5570054670380475
+    median: 2.3382952126991574
+    std: 11.220831596713015
+  - len: 20600
+    mean: 4.310493810334789
+    median: 3.4972062176926038
+    std: 3.5515707617225427
+  - len: 20600
+    mean: 13.760169368551141
+    median: 5.390678727001434
+    std: 13.651111041271218
+  - len: 20600
+    mean: 22.838063606434975
+    median: 13.050430670759805
+    std: 25.503747025343852
+  - len: 850
+    mean: 60.94963302996757
+    median: 48.65192328403533
+    std: 75.86240175365569
+  - len: 850
+    mean: 60.94963302996757
+    median: 48.65192328403533
+    std: 75.86240175365569
+  - len: 850
+    mean: 60.94963302996757
+    median: 48.65192328403533
+    std: 75.86240175365569
+  - len: 850
+    mean: 60.94963302996757
+    median: 48.65192328403533
+    std: 75.86240175365569
+  - len: 850
+    mean: 60.94963302996757
+    median: 48.65192328403533
+    std: 75.86240175365569
+  - len: 28769
+    mean: 962.3203676006553
+    median: 1001.9495693781026
+    std: 625.6382597306425
+  - len: 28769
+    mean: 962.3203676006553
+    median: 1001.9495693781026
+    std: 625.6382597306425
+  - len: 28769
+    mean: 962.3203676006553
+    median: 1001.9495693781026
+    std: 625.6382597306425
+  exptime: 55172.45862068965
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 5.728029820328859
+    median: 2.4102594079706865
+    std: 11.566167853550606
+  - len: 20600
+    mean: 4.44315508278617
+    median: 3.6048374653588544
+    std: 3.6608751517025486
+  - len: 20600
+    mean: 14.18365717711773
+    median: 5.556584150084518
+    std: 14.071242432428347
+  - len: 20600
+    mean: 23.54093587853782
+    median: 13.45207531172197
+    std: 26.288659307214747
+  - len: 850
+    mean: 62.825440357149965
+    median: 50.14925197398556
+    std: 78.19716969224515
+  - len: 850
+    mean: 62.825440357149965
+    median: 50.14925197398556
+    std: 78.19716969224515
+  - len: 850
+    mean: 62.825440357149965
+    median: 50.14925197398556
+    std: 78.19716969224515
+  - len: 850
+    mean: 62.825440357149965
+    median: 50.14925197398556
+    std: 78.19716969224515
+  - len: 850
+    mean: 62.825440357149965
+    median: 50.14925197398556
+    std: 78.19716969224515
+  - len: 28769
+    mean: 991.9370774462193
+    median: 1032.7859214654497
+    std: 644.8931226957952
+  - len: 28769
+    mean: 991.9370774462193
+    median: 1032.7859214654497
+    std: 644.8931226957952
+  - len: 28769
+    mean: 991.9370774462193
+    median: 1032.7859214654497
+    std: 644.8931226957952
+  exptime: 58620.73103448275
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 5.894093779747874
+    median: 2.4801363522376354
+    std: 11.901487970469145
+  - len: 20600
+    mean: 4.571968644954015
+    median: 3.70934697409691
+    std: 3.767009274900167
+  - len: 20600
+    mean: 14.594862136546324
+    median: 5.717677648853176
+    std: 14.479188324047282
+  - len: 20600
+    mean: 24.223422028757394
+    median: 13.842070643230052
+    std: 27.050805977066233
+  - len: 850
+    mean: 64.64684172990897
+    median: 51.6031521117163
+    std: 80.46421997336769
+  - len: 850
+    mean: 64.64684172990897
+    median: 51.6031521117163
+    std: 80.46421997336769
+  - len: 850
+    mean: 64.64684172990897
+    median: 51.6031521117163
+    std: 80.46421997336769
+  - len: 850
+    mean: 64.64684172990897
+    median: 51.6031521117163
+    std: 80.46421997336769
+  - len: 850
+    mean: 64.64684172990897
+    median: 51.6031521117163
+    std: 80.46421997336769
+  - len: 28769
+    mean: 1020.6947836283056
+    median: 1062.7278953605721
+    std: 663.5895172181981
+  - len: 28769
+    mean: 1020.6947836283056
+    median: 1062.7278953605721
+    std: 663.5895172181981
+  - len: 28769
+    mean: 1020.6947836283056
+    median: 1062.7278953605721
+    std: 663.5895172181981
+  exptime: 62069.00344827586
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 6.055605448371658
+    median: 2.548097768467687
+    std: 12.22761599846577
+  - len: 20600
+    mean: 4.697251056862589
+    median: 3.8109915765885582
+    std: 3.87023395649599
+  - len: 20600
+    mean: 14.994794785244101
+    median: 5.874355111450095
+    std: 14.875951245358474
+  - len: 20600
+    mean: 24.88719927049142
+    median: 14.221375080916147
+    std: 27.79206001445297
+  - len: 850
+    mean: 66.41831325194876
+    median: 53.01719666466312
+    std: 82.66912388532508
+  - len: 850
+    mean: 66.41831325194876
+    median: 53.01719666466312
+    std: 82.66912388532508
+  - len: 850
+    mean: 66.41831325194876
+    median: 53.01719666466312
+    std: 82.66912388532508
+  - len: 850
+    mean: 66.41831325194876
+    median: 53.01719666466312
+    std: 82.66912388532508
+  - len: 850
+    mean: 66.41831325194876
+    median: 53.01719666466312
+    std: 82.66912388532508
+  - len: 28769
+    mean: 1048.6641583650699
+    median: 1091.8490736259218
+    std: 681.7733897882994
+  - len: 28769
+    mean: 1048.6641583650699
+    median: 1091.8490736259218
+    std: 681.7733897882994
+  - len: 28769
+    mean: 1048.6641583650699
+    median: 1091.8490736259218
+    std: 681.7733897882994
+  exptime: 65517.27586206896
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 6.212919861726404
+    median: 2.614293049688464
+    std: 12.545268833335156
+  - len: 20600
+    mean: 4.819277714756722
+    median: 3.909994708361636
+    std: 3.970776105353376
+  - len: 20600
+    mean: 15.384334256586277
+    median: 6.0269609468325385
+    std: 15.262403362031076
+  - len: 20600
+    mean: 25.533726721240836
+    median: 14.59082241314842
+    std: 28.514050846644526
+  - len: 850
+    mean: 68.14374897828917
+    median: 54.39449399060719
+    std: 84.816728255763
+  - len: 850
+    mean: 68.14374897828917
+    median: 54.39449399060719
+    std: 84.816728255763
+  - len: 850
+    mean: 68.14374897828917
+    median: 54.39449399060719
+    std: 84.816728255763
+  - len: 850
+    mean: 68.14374897828917
+    median: 54.39449399060719
+    std: 84.816728255763
+  - len: 850
+    mean: 68.14374897828917
+    median: 54.39449399060719
+    std: 84.816728255763
+  - len: 28769
+    mean: 1075.9066840358448
+    median: 1120.2134705394576
+    std: 699.4847122596574
+  - len: 28769
+    mean: 1075.9066840358448
+    median: 1120.2134705394576
+    std: 699.4847122596574
+  - len: 28769
+    mean: 1075.9066840358448
+    median: 1120.2134705394576
+    std: 699.4847122596574
+  exptime: 68965.54827586206
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 6.366348173805794
+    median: 2.6788531243106277
+    std: 12.855074764285298
+  - len: 20600
+    mean: 4.938289976571327
+    median: 4.006552188853035
+    std: 4.0688345849488705
+  - len: 20600
+    mean: 15.76425102518874
+    median: 6.175796995843472
+    std: 15.639309042166555
+  - len: 20600
+    mean: 26.164283155111818
+    median: 14.951143374068945
+    std: 29.218206507640115
+  - len: 850
+    mean: 69.82656166816591
+    median: 55.737768261824385
+    std: 86.91128085615047
+  - len: 850
+    mean: 69.82656166816591
+    median: 55.737768261824385
+    std: 86.91128085615047
+  - len: 850
+    mean: 69.82656166816591
+    median: 55.737768261824385
+    std: 86.91128085615047
+  - len: 850
+    mean: 69.82656166816591
+    median: 55.737768261824385
+    std: 86.91128085615047
+  - len: 850
+    mean: 69.82656166816591
+    median: 55.737768261824385
+    std: 86.91128085615047
+  - len: 28769
+    mean: 1102.4762439465505
+    median: 1147.8771883691782
+    std: 716.7585160613879
+  - len: 28769
+    mean: 1102.4762439465505
+    median: 1147.8771883691782
+    std: 716.7585160613879
+  - len: 28769
+    mean: 1102.4762439465505
+    median: 1147.8771883691782
+    std: 716.7585160613879
+  exptime: 72413.82068965517
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 6.516164894476375
+    median: 2.741893501507346
+    std: 13.157588087870781
+  - len: 20600
+    mean: 5.054500775888644
+    median: 4.100836776145827
+    std: 4.16458483891333
+  - len: 20600
+    mean: 16.135224828057233
+    median: 6.321129551994165
+    std: 16.00734263541103
+  - len: 20600
+    mean: 26.779996746951404
+    median: 15.302982640384105
+    std: 29.905786854071845
+  - len: 850
+    mean: 71.46976216541002
+    median: 57.04942282901269
+    std: 88.95652920444564
+  - len: 850
+    mean: 71.46976216541002
+    median: 57.04942282901269
+    std: 88.95652920444564
+  - len: 850
+    mean: 71.46976216541002
+    median: 57.04942282901269
+    std: 88.95652920444564
+  - len: 850
+    mean: 71.46976216541002
+    median: 57.04942282901269
+    std: 88.95652920444564
+  - len: 850
+    mean: 71.46976216541002
+    median: 57.04942282901269
+    std: 88.95652920444564
+  - len: 28769
+    mean: 1128.4203756490665
+    median: 1174.8897223052904
+    std: 733.6257070250947
+  - len: 28769
+    mean: 1128.4203756490665
+    median: 1174.8897223052904
+    std: 733.6257070250947
+  - len: 28769
+    mean: 1128.4203756490665
+    median: 1174.8897223052904
+    std: 733.6257070250947
+  exptime: 75862.09310344828
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 6.662613660861045
+    median: 2.8035166997162015
+    std: 13.453300761701323
+  - len: 20600
+    mean: 5.168099098722176
+    median: 4.1930017990906165
+    std: 4.2581825796151
+  - len: 20600
+    mean: 16.49785895559617
+    median: 6.463194960104379
+    std: 16.367102650698534
+  - len: 20600
+    mean: 27.381868791457375
+    median: 15.646912385254439
+    std: 30.577910052834714
+  - len: 850
+    mean: 73.07602269939412
+    median: 58.33159075010821
+    std: 90.95579935411547
+  - len: 850
+    mean: 73.07602269939412
+    median: 58.33159075010821
+    std: 90.95579935411547
+  - len: 850
+    mean: 73.07602269939412
+    median: 58.33159075010821
+    std: 90.95579935411547
+  - len: 850
+    mean: 73.07602269939412
+    median: 58.33159075010821
+    std: 90.95579935411547
+  - len: 850
+    mean: 73.07602269939412
+    median: 58.33159075010821
+    std: 90.95579935411547
+  - len: 28769
+    mean: 1153.781270385972
+    median: 1201.2950010629677
+    std: 750.1137151589868
+  - len: 28769
+    mean: 1153.781270385972
+    median: 1201.2950010629677
+    std: 750.1137151589868
+  - len: 28769
+    mean: 1153.781270385972
+    median: 1201.2950010629677
+    std: 750.1137151589868
+  exptime: 79310.36551724139
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 6.805911890098058
+    median: 2.8638142044425687
+    std: 13.742651799398386
+  - len: 20600
+    mean: 5.279253592598772
+    median: 4.283184085439732
+    std: 4.3497667618124325
+  - len: 20600
+    mean: 16.85269177269717
+    median: 6.602204129799633
+    std: 16.71912318602737
+  - len: 20600
+    mean: 27.970792824988834
+    median: 15.983443205134499
+    std: 31.235573934815474
+  - len: 850
+    mean: 74.64772791682581
+    median: 59.58617552547525
+    std: 92.91205941206357
+  - len: 850
+    mean: 74.64772791682581
+    median: 59.58617552547525
+    std: 92.91205941206357
+  - len: 850
+    mean: 74.64772791682581
+    median: 59.58617552547525
+    std: 92.91205941206357
+  - len: 850
+    mean: 74.64772791682581
+    median: 59.58617552547525
+    std: 92.91205941206357
+  - len: 850
+    mean: 74.64772791682581
+    median: 59.58617552547525
+    std: 92.91205941206357
+  - len: 28769
+    mean: 1178.5965788203162
+    median: 1227.1322257927823
+    std: 766.247018481093
+  - len: 28769
+    mean: 1178.5965788203162
+    median: 1227.1322257927823
+    std: 766.247018481093
+  - len: 28769
+    mean: 1178.5965788203162
+    median: 1227.1322257927823
+    std: 766.247018481093
+  exptime: 82758.63793103448
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 6.946254567582739
+    median: 2.9228680622885506
+    std: 14.026034919898851
+  - len: 20600
+    mean: 5.388115505046371
+    median: 4.37150634591227
+    std: 4.439462003779167
+  - len: 20600
+    mean: 17.2002060991235
+    median: 6.738346210367053
+    std: 17.063883234498917
+  - len: 20600
+    mean: 28.547570194401956
+    median: 16.313033016324454
+    std: 31.87967338093973
+  - len: 850
+    mean: 76.18701643145339
+    median: 60.81488426419458
+    std: 94.82797125445398
+  - len: 850
+    mean: 76.18701643145339
+    median: 60.81488426419458
+    std: 94.82797125445398
+  - len: 850
+    mean: 76.18701643145339
+    median: 60.81488426419458
+    std: 94.82797125445398
+  - len: 850
+    mean: 76.18701643145339
+    median: 60.81488426419458
+    std: 94.82797125445398
+  - len: 850
+    mean: 76.18701643145339
+    median: 60.81488426419458
+    std: 94.82797125445398
+  - len: 28769
+    mean: 1202.9000670547994
+    median: 1252.4365531153348
+    std: 782.0475695203661
+  - len: 28769
+    mean: 1202.9000670547994
+    median: 1252.4365531153348
+    std: 782.0475695203661
+  - len: 28769
+    mean: 1202.9000670547994
+    median: 1252.4365531153348
+    std: 782.0475695203661
+  exptime: 86206.91034482759
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 7.083817359273881
+    median: 2.9807521905595955
+    std: 14.303804831894778
+  - len: 20600
+    mean: 5.494821097767893
+    median: 4.458079132870826
+    std: 4.52738057642934
+  - len: 20600
+    mean: 17.540836916154127
+    median: 6.871791609907325
+    std: 17.401814329881475
+  - len: 20600
+    mean: 29.112922847941018
+    median: 16.63609436411153
+    std: 32.51101460602961
+  - len: 850
+    mean: 77.69581496006488
+    median: 62.01925493249671
+    std: 96.7059330148894
+  - len: 850
+    mean: 77.69581496006488
+    median: 62.01925493249671
+    std: 96.7059330148894
+  - len: 850
+    mean: 77.69581496006488
+    median: 62.01925493249671
+    std: 96.7059330148894
+  - len: 850
+    mean: 77.69581496006488
+    median: 62.01925493249671
+    std: 96.7059330148894
+  - len: 850
+    mean: 77.69581496006488
+    median: 62.01925493249671
+    std: 96.7059330148894
+  - len: 28769
+    mean: 1226.7221555975611
+    median: 1277.23965628213
+    std: 797.5351457172649
+  - len: 28769
+    mean: 1226.7221555975611
+    median: 1277.23965628213
+    std: 797.5351457172649
+  - len: 28769
+    mean: 1226.7221555975611
+    median: 1277.23965628213
+    std: 797.5351457172649
+  exptime: 89655.1827586207
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 7.218759189877156
+    median: 3.037533462121073
+    std: 14.576282439759826
+  - len: 20600
+    mean: 5.599493646503157
+    median: 4.543002462857062
+    std: 4.613624051075291
+  - len: 20600
+    mean: 17.874977750640852
+    median: 7.002694496350487
+    std: 17.73330688006959
+  - len: 20600
+    mean: 29.667503931002116
+    median: 16.953000477542453
+    std: 33.130326991316345
+  - len: 850
+    mean: 79.1758666001878
+    median: 63.20067892591544
+    std: 98.54811428091861
+  - len: 850
+    mean: 79.1758666001878
+    median: 63.20067892591544
+    std: 98.54811428091861
+  - len: 850
+    mean: 79.1758666001878
+    median: 63.20067892591544
+    std: 98.54811428091861
+  - len: 850
+    mean: 79.1758666001878
+    median: 63.20067892591544
+    std: 98.54811428091861
+  - len: 850
+    mean: 79.1758666001878
+    median: 63.20067892591544
+    std: 98.54811428091861
+  - len: 28769
+    mean: 1250.090365832572
+    median: 1301.5701900320114
+    std: 812.7276396898324
+  - len: 28769
+    mean: 1250.090365832572
+    median: 1301.5701900320114
+    std: 812.7276396898324
+  - len: 28769
+    mean: 1250.090365832572
+    median: 1301.5701900320114
+    std: 812.7276396898324
+  exptime: 93103.45517241379
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 7.3512243948421165
+    median: 3.0932726109227158
+    std: 14.843759188910504
+  - len: 20600
+    mean: 5.702245110303774
+    median: 4.626367170914171
+    std: 4.6982846748032525
+  - len: 20600
+    mean: 18.20298600374938
+    median: 7.131194885041502
+    std: 18.058715453591336
+  - len: 20600
+    mean: 30.211906630364886
+    median: 17.264090323312324
+    std: 33.73827296098035
+  - len: 850
+    mean: 80.62875443334609
+    median: 64.36041991015354
+    std: 100.35648547238846
+  - len: 850
+    mean: 80.62875443334609
+    median: 64.36041991015354
+    std: 100.35648547238846
+  - len: 850
+    mean: 80.62875443334609
+    median: 64.36041991015354
+    std: 100.35648547238846
+  - len: 850
+    mean: 80.62875443334609
+    median: 64.36041991015354
+    std: 100.35648547238846
+  - len: 850
+    mean: 80.62875443334609
+    median: 64.36041991015354
+    std: 100.35648547238846
+  - len: 28769
+    mean: 1273.0296926862704
+    median: 1325.4541786045413
+    std: 827.6413015173622
+  - len: 28769
+    mean: 1273.0296926862704
+    median: 1325.4541786045413
+    std: 827.6413015173622
+  - len: 28769
+    mean: 1273.0296926862704
+    median: 1325.4541786045413
+    std: 827.6413015173622
+  exptime: 96551.7275862069
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 20600
+    mean: 7.481344529241234
+    median: 3.1480249931447553
+    std: 15.106500718335775
+  - len: 20600
+    mean: 5.803177534656109
+    median: 4.708256048973913
+    std: 4.781446526556772
+  - len: 20600
+    mean: 18.525187430077086
+    median: 7.257420393477752
+    std: 18.378363223226213
+  - len: 20600
+    mean: 30.746671608285432
+    median: 17.569672853852964
+    std: 34.335456283959466
+  - len: 850
+    mean: 82.05592136497475
+    median: 65.49962965792955
+    std: 102.13284253566252
+  - len: 850
+    mean: 82.05592136497475
+    median: 65.49962965792955
+    std: 102.13284253566252
+  - len: 850
+    mean: 82.05592136497475
+    median: 65.49962965792955
+    std: 102.13284253566252
+  - len: 850
+    mean: 82.05592136497475
+    median: 65.49962965792955
+    std: 102.13284253566252
+  - len: 850
+    mean: 82.05592136497475
+    median: 65.49962965792955
+    std: 102.13284253566252
+  - len: 28769
+    mean: 1295.5629178756185
+    median: 1348.915341887886
+    std: 842.2909423939572
+  - len: 28769
+    mean: 1295.5629178756185
+    median: 1348.915341887886
+    std: 842.2909423939572
+  - len: 28769
+    mean: 1295.5629178756185
+    median: 1348.915341887886
+    std: 842.2909423939572
+  exptime: 100000.0
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC1
+- expected:
+  - len: 10
+    mean: 395.3801603105379
+    median: 448.74036154488977
+    std: 236.0635201671338
+  exptime: 0.1
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 74000.87865321252
+    median: 83772.85160023467
+    std: 43369.14893858391
+  exptime: 3448.372413793103
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 104652.3062942232
+    median: 118471.85314948323
+    std: 61332.77341044836
+  exptime: 6896.644827586207
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 128172.07333889378
+    median: 145097.44764161343
+    std: 75116.80976147897
+  exptime: 10344.91724137931
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 148000.18768667564
+    median: 167543.90062174405
+    std: 86737.31102160229
+  exptime: 13793.189655172413
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 165469.12318192635
+    median: 187319.64114578848
+    std: 96975.18825849508
+  exptime: 17241.462068965513
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 181262.25723492942
+    median: 205198.28771806334
+    std: 106230.94253691426
+  exptime: 20689.734482758617
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 195785.54867305467
+    median: 221639.4067079752
+    std: 114742.4906771279
+  exptime: 24138.00689655172
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 209303.5026952895
+    median: 236942.43167761533
+    std: 122664.84900451211
+  exptime: 27586.279310344824
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 221999.84552207583
+    median: 251315.35021311283
+    std: 130105.69240355436
+  exptime: 31034.551724137928
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 234008.347250978
+    median: 264909.596987685
+    std: 137143.4183995592
+  exptime: 34482.82413793103
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 245429.99359174367
+    median: 277839.4930524022
+    std: 143837.21084901708
+  exptime: 37931.096551724135
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 256343.24045262532
+    median: 290193.85455769737
+    std: 150233.04975714383
+  exptime: 41379.368965517235
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 266810.47973620123
+    median: 302043.3123684287
+    std: 156367.50063181357
+  exptime: 44827.64137931034
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 276882.298582577
+    median: 313445.13374740776
+    std: 162270.21066217875
+  exptime: 48275.91379310344
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 286600.3880661727
+    median: 324446.51515059994
+    std: 167965.61339409757
+  exptime: 51724.18620689655
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 295999.59055882215
+    median: 335086.8999480682
+    std: 173474.12861104953
+  exptime: 55172.45862068965
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 305109.37839125824
+    median: 345399.65234528657
+    std: 178813.02892091058
+  exptime: 58620.73103448275
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 313954.9457384128
+    median: 355413.2934538085
+    std: 183997.0796680693
+  exptime: 62069.00344827586
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 322558.030631574
+    median: 365152.4318515777
+    std: 189039.02068325793
+  exptime: 65517.27586206896
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 330937.5444041205
+    median: 374638.476148085
+    std: 193949.93517759308
+  exptime: 68965.54827586206
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 339110.0609942722
+    median: 383890.1889004165
+    std: 198739.53650418905
+  exptime: 72413.82068965517
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 347090.20245297736
+    median: 392924.1230281435
+    std: 203416.39408957967
+  exptime: 75862.09310344828
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 354890.94636262377
+    median: 401754.96982722415
+    std: 207988.11360006724
+  exptime: 79310.36551724139
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 362523.873671057
+    median: 410395.83953094843
+    std: 212461.48218776434
+  exptime: 82758.63793103448
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 369999.370476192
+    median: 418858.4897405687
+    std: 216842.58674884177
+  exptime: 86206.91034482759
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 377326.7938062288
+    median: 427153.51309709286
+    std: 221136.91108097762
+  exptime: 89655.1827586207
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 384514.60894925456
+    median: 435290.49274550716
+    std: 225349.41636699092
+  exptime: 93103.45517241379
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 391570.50408158696
+    median: 443278.13209999946
+    std: 229484.60835413478
+  exptime: 96551.7275862069
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 398501.4866195834
+    median: 451124.36391919997
+    std: 233546.59382221318
+  exptime: 100000.0
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 0.006863081465949605
+    median: 0.0028878702084034506
+    std: 0.013858089904847585
+  - len: 20600
+    mean: 0.005323599257599332
+    median: 0.004319162778877556
+    std: 0.004386304748909762
+  - len: 20600
+    mean: 0.01699425417552576
+    median: 0.006657662562979632
+    std: 0.01685956361437696
+  - len: 20600
+    mean: 0.028205747139393434
+    median: 0.01611770393072724
+    std: 0.031497952370235865
+  - len: 850
+    mean: 0.07527476790973191
+    median: 0.06008669866424277
+    std: 0.09369251956403958
+  - len: 850
+    mean: 0.07527476790973191
+    median: 0.06008669866424277
+    std: 0.09369251956403958
+  - len: 850
+    mean: 0.07527476790973191
+    median: 0.06008669866424277
+    std: 0.09369251956403958
+  - len: 850
+    mean: 0.07527476790973191
+    median: 0.06008669866424277
+    std: 0.09369251956403958
+  - len: 850
+    mean: 0.07527476790973191
+    median: 0.06008669866424277
+    std: 0.09369251956403958
+  - len: 28769
+    mean: 1.188496775531542
+    median: 1.237440121339359
+    std: 0.7726834839763058
+  - len: 28769
+    mean: 1.188496775531542
+    median: 1.237440121339359
+    std: 0.7726834839763058
+  - len: 28769
+    mean: 1.188496775531542
+    median: 1.237440121339359
+    std: 0.7726834839763058
+  exptime: 0.1
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 1.2744600758225475
+    median: 0.5362715426048483
+    std: 2.5734187184741515
+  - len: 20600
+    mean: 0.9885814043080344
+    median: 0.8020596214643032
+    std: 0.8145277468453971
+  - len: 20600
+    mean: 3.1557979564346383
+    median: 1.2363142091366603
+    std: 3.130786196975576
+  - len: 20600
+    mean: 5.237749080533342
+    median: 2.9930243835154333
+    std: 5.849104803023267
+  - len: 850
+    mean: 13.97836917625568
+    median: 11.157976036783321
+    std: 17.39850767909684
+  - len: 850
+    mean: 13.97836917625568
+    median: 11.157976036783321
+    std: 17.39850767909684
+  - len: 850
+    mean: 13.97836917625568
+    median: 11.157976036783321
+    std: 17.39850767909684
+  - len: 850
+    mean: 13.97836917625568
+    median: 11.157976036783321
+    std: 17.39850767909684
+  - len: 850
+    mean: 13.97836917625568
+    median: 11.157976036783321
+    std: 17.39850767909684
+  - len: 28769
+    mean: 220.7014004093864
+    median: 229.79007879951084
+    std: 143.4857296188336
+  - len: 28769
+    mean: 220.7014004093864
+    median: 229.79007879951084
+    std: 143.4857296188336
+  - len: 28769
+    mean: 220.7014004093864
+    median: 229.79007879951084
+    std: 143.4857296188336
+  exptime: 3448.372413793103
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 1.8023456571490442
+    median: 0.7583969903824952
+    std: 3.639337268587576
+  - len: 20600
+    mean: 1.3980550937564065
+    median: 1.1342753711510323
+    std: 1.1519078353291674
+  - len: 20600
+    mean: 4.462939914338876
+    median: 1.748399646235268
+    std: 4.427568201333585
+  - len: 20600
+    mean: 7.407242084411988
+    median: 4.232744988805241
+    std: 8.27182337048466
+  - len: 850
+    mean: 19.76825595151747
+    median: 15.779646639373937
+    std: 24.605027141439233
+  - len: 850
+    mean: 19.76825595151747
+    median: 15.779646639373937
+    std: 24.605027141439233
+  - len: 850
+    mean: 19.76825595151747
+    median: 15.779646639373937
+    std: 24.605027141439233
+  - len: 850
+    mean: 19.76825595151747
+    median: 15.779646639373937
+    std: 24.605027141439233
+  - len: 850
+    mean: 19.76825595151747
+    median: 15.779646639373937
+    std: 24.605027141439233
+  - len: 28769
+    mean: 312.1166508867208
+    median: 324.9698899456947
+    std: 202.9179937036921
+  - len: 28769
+    mean: 312.1166508867208
+    median: 324.9698899456947
+    std: 202.9179937036921
+  - len: 28769
+    mean: 312.1166508867208
+    median: 324.9698899456947
+    std: 202.9179937036921
+  exptime: 6896.644827586207
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 2.2074082655508986
+    median: 0.9288405797738757
+    std: 4.457248883388476
+  - len: 20600
+    mean: 1.7122566680882936
+    median: 1.3891945863759199
+    std: 1.410789804260159
+  - len: 20600
+    mean: 5.4659495621676895
+    median: 2.1413383250196625
+    std: 5.422628342764036
+  - len: 20600
+    mean: 9.0719598303531
+    median: 5.184020189022591
+    std: 10.130848767415419
+  - len: 850
+    mean: 24.2110115836104
+    median: 19.32599458991903
+    std: 30.134807976861758
+  - len: 850
+    mean: 24.2110115836104
+    median: 19.32599458991903
+    std: 30.134807976861758
+  - len: 850
+    mean: 24.2110115836104
+    median: 19.32599458991903
+    std: 30.134807976861758
+  - len: 850
+    mean: 24.2110115836104
+    median: 19.32599458991903
+    std: 30.134807976861758
+  - len: 850
+    mean: 24.2110115836104
+    median: 19.32599458991903
+    std: 30.134807976861758
+  - len: 28769
+    mean: 382.26234365788895
+    median: 398.00424423358663
+    std: 248.5221715123507
+  - len: 28769
+    mean: 382.26234365788895
+    median: 398.00424423358663
+    std: 248.5221715123507
+  - len: 28769
+    mean: 382.26234365788895
+    median: 398.00424423358663
+    std: 248.5221715123507
+  exptime: 10344.91724137931
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 2.5488924327638527
+    median: 1.0725314215668056
+    std: 5.146781466354011
+  - len: 20600
+    mean: 1.9771413074556443
+    median: 1.6041017985254287
+    std: 1.6290377781120076
+  - len: 20600
+    mean: 6.311527275812345
+    median: 2.47260152904596
+    std: 6.261504300887716
+  - len: 20600
+    mean: 10.475384242594464
+    median: 5.98598367021927
+    std: 11.698082390887357
+  - len: 850
+    mean: 27.95643432984128
+    median: 22.31570939306331
+    std: 34.79663694918951
+  - len: 850
+    mean: 27.95643432984128
+    median: 22.31570939306331
+    std: 34.79663694918951
+  - len: 850
+    mean: 27.95643432984128
+    median: 22.31570939306331
+    std: 34.79663694918951
+  - len: 850
+    mean: 27.95643432984128
+    median: 22.31570939306331
+    std: 34.79663694918951
+  - len: 850
+    mean: 27.95643432984128
+    median: 22.31570939306331
+    std: 34.79663694918951
+  - len: 28769
+    mean: 441.398000671617
+    median: 459.575159777571
+    std: 286.96833849345967
+  - len: 28769
+    mean: 441.398000671617
+    median: 459.575159777571
+    std: 286.96833849345967
+  - len: 28769
+    mean: 441.398000671617
+    median: 459.575159777571
+    std: 286.96833849345967
+  exptime: 13793.189655172413
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 2.849746307441986
+    median: 1.199125713952276
+    std: 5.754272440225825
+  - len: 20600
+    mean: 2.2105095796856444
+    median: 1.7934390319296791
+    std: 1.8213182844378946
+  - len: 20600
+    mean: 7.056496899346394
+    median: 2.764450545892044
+    std: 7.00056955370939
+  - len: 20600
+    mean: 11.711827137404843
+    median: 6.692528347348981
+    std: 13.078844234095579
+  - len: 850
+    mean: 31.256221124373607
+    median: 24.949703496068413
+    std: 38.90379459827884
+  - len: 850
+    mean: 31.256221124373607
+    median: 24.949703496068413
+    std: 38.90379459827884
+  - len: 850
+    mean: 31.256221124373607
+    median: 24.949703496068413
+    std: 38.90379459827884
+  - len: 850
+    mean: 31.256221124373607
+    median: 24.949703496068413
+    std: 38.90379459827884
+  - len: 850
+    mean: 31.256221124373607
+    median: 24.949703496068413
+    std: 38.90379459827884
+  - len: 28769
+    mean: 493.49760953319685
+    median: 513.8202764987108
+    std: 320.84012352288397
+  - len: 28769
+    mean: 493.49760953319685
+    median: 513.8202764987108
+    std: 320.84012352288397
+  - len: 28769
+    mean: 493.49760953319685
+    median: 513.8202764987108
+    std: 320.84012352288397
+  exptime: 17241.462068965513
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 3.121739162671609
+    median: 1.313575770739929
+    std: 6.303486588411196
+  - len: 20600
+    mean: 2.421490750367755
+    median: 1.9646130770371086
+    std: 1.9951532532463474
+  - len: 20600
+    mean: 7.730001321322481
+    median: 3.028302382511565
+    std: 7.668736013360376
+  - len: 20600
+    mean: 12.829657624539664
+    median: 7.331293941727315
+    std: 14.327149101460538
+  - len: 850
+    mean: 34.23945819537379
+    median: 27.331017605786336
+    std: 42.61695114994079
+  - len: 850
+    mean: 34.23945819537379
+    median: 27.331017605786336
+    std: 42.61695114994079
+  - len: 850
+    mean: 34.23945819537379
+    median: 27.331017605786336
+    std: 42.61695114994079
+  - len: 850
+    mean: 34.23945819537379
+    median: 27.331017605786336
+    std: 42.61695114994079
+  - len: 850
+    mean: 34.23945819537379
+    median: 27.331017605786336
+    std: 42.61695114994079
+  - len: 28769
+    mean: 540.5992843438274
+    median: 562.8616398350867
+    std: 351.4625761395686
+  - len: 28769
+    mean: 540.5992843438274
+    median: 562.8616398350867
+    std: 351.4625761395686
+  - len: 28769
+    mean: 540.5992843438274
+    median: 562.8616398350867
+    std: 351.4625761395686
+  exptime: 20689.734482758617
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 3.371862509465065
+    median: 1.4188235031491554
+    std: 6.808541328670712
+  - len: 20600
+    mean: 2.6155080398177297
+    median: 2.1220239215620467
+    std: 2.1550110706562906
+  - len: 20600
+    mean: 8.349352811135086
+    median: 3.270939286988926
+    std: 8.283178738195737
+  - len: 20600
+    mean: 13.857609268173384
+    median: 7.9186997695294385
+    std: 15.475084369761213
+  - len: 850
+    mean: 36.98282893519317
+    median: 29.52086282942755
+    std: 46.031552401454036
+  - len: 850
+    mean: 36.98282893519317
+    median: 29.52086282942755
+    std: 46.031552401454036
+  - len: 850
+    mean: 36.98282893519317
+    median: 29.52086282942755
+    std: 46.031552401454036
+  - len: 850
+    mean: 36.98282893519317
+    median: 29.52086282942755
+    std: 46.031552401454036
+  - len: 850
+    mean: 36.98282893519317
+    median: 29.52086282942755
+    std: 46.031552401454036
+  - len: 28769
+    mean: 583.9137623409275
+    median: 607.9598462517688
+    std: 379.62283913266424
+  - len: 28769
+    mean: 583.9137623409275
+    median: 607.9598462517688
+    std: 379.62283913266424
+  - len: 28769
+    mean: 583.9137623409275
+    median: 607.9598462517688
+    std: 379.62283913266424
+  exptime: 24138.00689655172
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 3.604671714000382
+    median: 1.5167857332866381
+    std: 7.278634959809049
+  - len: 20600
+    mean: 2.796094983827583
+    median: 2.268538407190391
+    std: 2.303803143795681
+  - len: 20600
+    mean: 8.925831294729441
+    median: 3.496780278829374
+    std: 8.855088253382089
+  - len: 20600
+    mean: 14.814403615934765
+    median: 8.465443947004996
+    std: 16.54355678585999
+  - len: 850
+    mean: 39.53629692556919
+    median: 31.559121676940748
+    std: 49.20978670609311
+  - len: 850
+    mean: 39.53629692556919
+    median: 31.559121676940748
+    std: 49.20978670609311
+  - len: 850
+    mean: 39.53629692556919
+    median: 31.559121676940748
+    std: 49.20978670609311
+  - len: 850
+    mean: 39.53629692556919
+    median: 31.559121676940748
+    std: 49.20978670609311
+  - len: 850
+    mean: 39.53629692556919
+    median: 31.559121676940748
+    std: 49.20978670609311
+  - len: 28769
+    mean: 624.2299075414572
+    median: 649.9362458819372
+    std: 405.83378069799375
+  - len: 28769
+    mean: 624.2299075414572
+    median: 649.9362458819372
+    std: 405.83378069799375
+  - len: 28769
+    mean: 624.2299075414572
+    median: 649.9362458819372
+    std: 405.83378069799375
+  exptime: 27586.279310344824
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 3.8233309494069245
+    median: 1.608793892428526
+    std: 7.720156652043521
+  - len: 20600
+    mean: 2.9657059886004147
+    median: 2.406147852089366
+    std: 2.4435517461421914
+  - len: 20600
+    mean: 9.467271847746504
+    median: 3.708894824290982
+    std: 9.392237536469835
+  - len: 20600
+    mean: 15.713044719667709
+    median: 8.978957422764708
+    std: 17.54708824855909
+  - len: 850
+    mean: 41.934567043475994
+    median: 33.473496677909615
+    std: 52.1948503094946
+  - len: 850
+    mean: 41.934567043475994
+    median: 33.473496677909615
+    std: 52.1948503094946
+  - len: 850
+    mean: 41.934567043475994
+    median: 33.473496677909615
+    std: 52.1948503094946
+  - len: 850
+    mean: 41.934567043475994
+    median: 33.473496677909615
+    std: 52.1948503094946
+  - len: 850
+    mean: 41.934567043475994
+    median: 33.473496677909615
+    std: 52.1948503094946
+  - len: 28769
+    mean: 662.0956676246228
+    median: 689.3613513736736
+    std: 430.45164086121207
+  - len: 28769
+    mean: 662.0956676246228
+    median: 689.3613513736736
+    std: 430.45164086121207
+  - len: 28769
+    mean: 662.0956676246228
+    median: 689.3613513736736
+    std: 430.45164086121207
+  exptime: 31034.551724137928
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 4.030144033613596
+    median: 1.6958173887328702
+    std: 8.137758326838487
+  - len: 20600
+    mean: 3.1261280944732497
+    median: 2.5363021246157995
+    std: 2.57572928445251
+  - len: 20600
+    mean: 9.979379147837584
+    median: 3.909517785724326
+    std: 9.900286051814891
+  - len: 20600
+    mean: 16.56300076159913
+    median: 9.464650631679934
+    std: 18.496252076528013
+  - len: 850
+    mean: 44.20290772857362
+    median: 35.28415789943272
+    std: 55.01819417249096
+  - len: 850
+    mean: 44.20290772857362
+    median: 35.28415789943272
+    std: 55.01819417249096
+  - len: 850
+    mean: 44.20290772857362
+    median: 35.28415789943272
+    std: 55.01819417249096
+  - len: 850
+    mean: 44.20290772857362
+    median: 35.28415789943272
+    std: 55.01819417249096
+  - len: 850
+    mean: 44.20290772857362
+    median: 35.28415789943272
+    std: 55.01819417249096
+  - len: 28769
+    mean: 697.9100004337049
+    median: 726.6505500062386
+    std: 453.7357961243443
+  - len: 28769
+    mean: 697.9100004337049
+    median: 726.6505500062386
+    std: 453.7357961243443
+  - len: 28769
+    mean: 697.9100004337049
+    median: 726.6505500062386
+    std: 453.7357961243443
+  exptime: 34482.82413793103
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 4.226850164679329
+    median: 1.7785880477339924
+    std: 8.53495181239862
+  - len: 20600
+    mean: 3.2787103738039356
+    median: 2.6600957592814156
+    std: 2.7014473079254997
+  - len: 20600
+    mean: 10.466459769829415
+    median: 4.100336305248296
+    std: 10.383506241826412
+  - len: 20600
+    mean: 17.371419461149095
+    median: 9.926608018839936
+    std: 19.39903027870757
+  - len: 850
+    mean: 46.36039462944427
+    median: 37.00633212705867
+    std: 57.70356125208641
+  - len: 850
+    mean: 46.36039462944427
+    median: 37.00633212705867
+    std: 57.70356125208641
+  - len: 850
+    mean: 46.36039462944427
+    median: 37.00633212705867
+    std: 57.70356125208641
+  - len: 850
+    mean: 46.36039462944427
+    median: 37.00633212705867
+    std: 57.70356125208641
+  - len: 850
+    mean: 46.36039462944427
+    median: 37.00633212705867
+    std: 57.70356125208641
+  - len: 28769
+    mean: 731.9740871939747
+    median: 762.1174259134878
+    std: 475.8820549769398
+  - len: 28769
+    mean: 731.9740871939747
+    median: 762.1174259134878
+    std: 475.8820549769398
+  - len: 28769
+    mean: 731.9740871939747
+    median: 762.1174259134878
+    std: 475.8820549769398
+  exptime: 37931.096551724135
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 4.414800527501562
+    median: 1.8576744254997042
+    std: 8.914465451944038
+  - len: 20600
+    mean: 3.424500922400829
+    median: 2.7783791011601204
+    std: 2.8215693803643425
+  - len: 20600
+    mean: 10.931859496472669
+    median: 4.282661125442877
+    std: 10.845217371742049
+  - len: 20600
+    mean: 18.14385388944823
+    median: 10.368002794156418
+    std: 20.261624086680698
+  - len: 850
+    mean: 48.4218476385899
+    median: 38.651849067337636
+    std: 60.26939747786315
+  - len: 850
+    mean: 48.4218476385899
+    median: 38.651849067337636
+    std: 60.26939747786315
+  - len: 850
+    mean: 48.4218476385899
+    median: 38.651849067337636
+    std: 60.26939747786315
+  - len: 850
+    mean: 48.4218476385899
+    median: 38.651849067337636
+    std: 60.26939747786315
+  - len: 850
+    mean: 48.4218476385899
+    median: 38.651849067337636
+    std: 60.26939747786315
+  - len: 28769
+    mean: 764.521915932782
+    median: 796.0056029561802
+    std: 497.0425412513075
+  - len: 28769
+    mean: 764.521915932782
+    median: 796.0056029561802
+    std: 497.0425412513075
+  - len: 28769
+    mean: 764.521915932782
+    median: 796.0056029561802
+    std: 497.0425412513075
+  exptime: 41379.368965517235
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 4.5950696491572876
+    median: 1.9335286651014771
+    std: 9.278468954943005
+  - len: 20600
+    mean: 3.564333236351327
+    median: 2.8918283854647515
+    std: 2.9367822491497915
+  - len: 20600
+    mean: 11.378239054782673
+    median: 4.457534611713301
+    std: 11.28805908057816
+  - len: 20600
+    mean: 18.884720115164583
+    median: 10.791358446440986
+    std: 21.088965017413866
+  - len: 850
+    mean: 50.399052245769724
+    median: 40.2301162706538
+    std: 62.730371938288606
+  - len: 850
+    mean: 50.399052245769724
+    median: 40.2301162706538
+    std: 62.730371938288606
+  - len: 850
+    mean: 50.399052245769724
+    median: 40.2301162706538
+    std: 62.730371938288606
+  - len: 850
+    mean: 50.399052245769724
+    median: 40.2301162706538
+    std: 62.730371938288606
+  - len: 850
+    mean: 50.399052245769724
+    median: 40.2301162706538
+    std: 62.730371938288606
+  - len: 28769
+    mean: 795.7395651591107
+    median: 828.5088225204748
+    std: 517.3382311196808
+  - len: 28769
+    mean: 795.7395651591107
+    median: 828.5088225204748
+    std: 517.3382311196808
+  - len: 28769
+    mean: 795.7395651591107
+    median: 828.5088225204748
+    std: 517.3382311196808
+  exptime: 44827.64137931034
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 4.768528752517372
+    median: 2.0065173625918473
+    std: 9.628721514395277
+  - len: 20600
+    mean: 3.6988831114261105
+    median: 3.000991901387943
+    std: 3.0476427267041974
+  - len: 20600
+    mean: 11.807755753103288
+    median: 4.6258019103572146
+    std: 11.714171578601304
+  - len: 20600
+    mean: 19.597598671637243
+    median: 11.198721011772333
+    std: 21.88505152795972
+  - len: 850
+    mean: 52.301564085683296
+    median: 41.748761346612405
+    std: 65.0983782800109
+  - len: 850
+    mean: 52.301564085683296
+    median: 41.748761346612405
+    std: 65.0983782800109
+  - len: 850
+    mean: 52.301564085683296
+    median: 41.748761346612405
+    std: 65.0983782800109
+  - len: 850
+    mean: 52.301564085683296
+    median: 41.748761346612405
+    std: 65.0983782800109
+  - len: 850
+    mean: 52.301564085683296
+    median: 41.748761346612405
+    std: 65.0983782800109
+  - len: 28769
+    mean: 825.7779066902244
+    median: 859.7841694581815
+    std: 536.8672116478366
+  - len: 28769
+    mean: 825.7779066902244
+    median: 859.7841694581815
+    std: 536.8672116478366
+  - len: 28769
+    mean: 825.7779066902244
+    median: 859.7841694581815
+    std: 536.8672116478366
+  exptime: 48275.91379310344
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 4.935895850457472
+    median: 2.076942645812827
+    std: 9.966672958200034
+  - len: 20600
+    mean: 3.8287075004794895
+    median: 3.1063215180358217
+    std: 3.154609706500106
+  - len: 20600
+    mean: 12.222187523602551
+    median: 4.788159543405677
+    std: 12.12531870670615
+  - len: 20600
+    mean: 20.285440433005498
+    median: 11.59177671797767
+    std: 22.6531789216701
+  - len: 850
+    mean: 54.13725837485537
+    median: 43.21407054192503
+    std: 67.38321857746753
+  - len: 850
+    mean: 54.13725837485537
+    median: 43.21407054192503
+    std: 67.38321857746753
+  - len: 850
+    mean: 54.13725837485537
+    median: 43.21407054192503
+    std: 67.38321857746753
+  - len: 850
+    mean: 54.13725837485537
+    median: 43.21407054192503
+    std: 67.38321857746753
+  - len: 850
+    mean: 54.13725837485537
+    median: 43.21407054192503
+    std: 67.38321857746753
+  - len: 28769
+    mean: 854.761280589948
+    median: 889.9611042666564
+    std: 555.7103206770641
+  - len: 28769
+    mean: 854.761280589948
+    median: 889.9611042666564
+    std: 555.7103206770641
+  - len: 28769
+    mean: 854.761280589948
+    median: 889.9611042666564
+    std: 555.7103206770641
+  exptime: 51724.18620689655
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 5.097771005992884
+    median: 2.145057011272528
+    std: 10.293534947220666
+  - len: 20600
+    mean: 3.9542718642580064
+    median: 3.2081948747899847
+    std: 3.2580666983744173
+  - len: 20600
+    mean: 12.62302023286297
+    median: 4.945189613386859
+    std: 12.522974555012306
+  - len: 20600
+    mean: 20.950711525565676
+    median: 11.971934791811517
+    std: 23.396101173762794
+  - len: 850
+    mean: 55.91271664731432
+    median: 44.63129744505023
+    std: 69.59308469259093
+  - len: 850
+    mean: 55.91271664731432
+    median: 44.63129744505023
+    std: 69.59308469259093
+  - len: 850
+    mean: 55.91271664731432
+    median: 44.63129744505023
+    std: 69.59308469259093
+  - len: 850
+    mean: 55.91271664731432
+    median: 44.63129744505023
+    std: 69.59308469259093
+  - len: 850
+    mean: 55.91271664731432
+    median: 44.63129744505023
+    std: 69.59308469259093
+  - len: 28769
+    mean: 882.7936012533434
+    median: 919.1478206274321
+    std: 573.9351166042101
+  - len: 28769
+    mean: 882.7936012533434
+    median: 919.1478206274321
+    std: 573.9351166042101
+  - len: 28769
+    mean: 882.7936012533434
+    median: 919.1478206274321
+    std: 573.9351166042101
+  exptime: 55172.45862068965
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 5.254661798110332
+    median: 2.211074039742422
+    std: 10.610332396470454
+  - len: 20600
+    mean: 4.075969924900953
+    median: 3.3069314077925895
+    std: 3.358338104147357
+  - len: 20600
+    mean: 13.011510739972893
+    median: 5.097384506939973
+    std: 12.908386021179146
+  - len: 20600
+    mean: 21.5954979867084
+    median: 12.34038726456042
+    std: 24.116147806162807
+  - len: 850
+    mean: 57.633506065654814
+    median: 46.00488594111088
+    std: 71.73490592592636
+  - len: 850
+    mean: 57.633506065654814
+    median: 46.00488594111088
+    std: 71.73490592592636
+  - len: 850
+    mean: 57.633506065654814
+    median: 46.00488594111088
+    std: 71.73490592592636
+  - len: 850
+    mean: 57.633506065654814
+    median: 46.00488594111088
+    std: 71.73490592592636
+  - len: 850
+    mean: 57.633506065654814
+    median: 46.00488594111088
+    std: 71.73490592592636
+  - len: 28769
+    mean: 909.9627673877244
+    median: 947.4358369941416
+    std: 591.5987454651765
+  - len: 28769
+    mean: 909.9627673877244
+    median: 947.4358369941416
+    std: 591.5987454651765
+  - len: 28769
+    mean: 909.9627673877244
+    median: 947.4358369941416
+    std: 591.5987454651765
+  exptime: 58620.73103448275
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 5.407002126455889
+    median: 2.2751763089563664
+    std: 10.917941445965344
+  - len: 20600
+    mean: 4.19413825248187
+    median: 3.402804184354637
+    std: 3.4557012359982386
+  - len: 20600
+    mean: 13.388733460398411
+    median: 5.245165136660052
+    std: 13.282619005228627
+  - len: 20600
+    mean: 22.22158304802749
+    median: 12.698153134186994
+    std: 24.8153101911791
+  - len: 850
+    mean: 59.30438567219866
+    median: 47.33863484808889
+    std: 73.81460573201535
+  - len: 850
+    mean: 59.30438567219866
+    median: 47.33863484808889
+    std: 73.81460573201535
+  - len: 850
+    mean: 59.30438567219866
+    median: 47.33863484808889
+    std: 73.81460573201535
+  - len: 850
+    mean: 59.30438567219866
+    median: 47.33863484808889
+    std: 73.81460573201535
+  - len: 850
+    mean: 59.30438567219866
+    median: 47.33863484808889
+    std: 73.81460573201535
+  - len: 28769
+    mean: 936.3439184669298
+    median: 974.9033871504505
+    std: 608.7500580701849
+  - len: 28769
+    mean: 936.3439184669298
+    median: 974.9033871504505
+    std: 608.7500580701849
+  - len: 28769
+    mean: 936.3439184669298
+    median: 974.9033871504505
+    std: 608.7500580701849
+  exptime: 62069.00344827586
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 5.555166368208689
+    median: 2.3375213505869326
+    std: 11.217118046604714
+  - len: 20600
+    mean: 4.309067246303573
+    median: 3.4960488123419813
+    std: 3.5503953643490807
+  - len: 20600
+    mean: 13.755615421010942
+    median: 5.388894674242249
+    std: 13.646593186738887
+  - len: 20600
+    mean: 22.830505316940293
+    median: 13.0461116122468
+    std: 25.495306524146436
+  - len: 850
+    mean: 60.92946166259712
+    median: 48.63582186112177
+    std: 75.8372949843561
+  - len: 850
+    mean: 60.92946166259712
+    median: 48.63582186112177
+    std: 75.8372949843561
+  - len: 850
+    mean: 60.92946166259712
+    median: 48.63582186112177
+    std: 75.8372949843561
+  - len: 850
+    mean: 60.92946166259712
+    median: 48.63582186112177
+    std: 75.8372949843561
+  - len: 850
+    mean: 60.92946166259712
+    median: 48.63582186112177
+    std: 75.8372949843561
+  - len: 28769
+    mean: 962.0018863121234
+    median: 1001.6179727491178
+    std: 625.4312038625319
+  - len: 28769
+    mean: 962.0018863121234
+    median: 1001.6179727491178
+    std: 625.4312038625319
+  - len: 28769
+    mean: 962.0018863121234
+    median: 1001.6179727491178
+    std: 625.4312038625319
+  exptime: 65517.27586206896
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 5.699480218533557
+    median: 2.3982462117270615
+    std: 11.508519849459464
+  - len: 20600
+    mean: 4.421009543690315
+    median: 3.5868702624285325
+    std: 3.6426286461706647
+  - len: 20600
+    mean: 14.112963103045233
+    median: 5.5288890664688575
+    std: 14.001108655054276
+  - len: 20600
+    mean: 23.42360332855078
+    median: 13.385027582307735
+    std: 26.157631575429953
+  - len: 850
+    mean: 62.512306284690084
+    median: 49.899298461329536
+    std: 77.80741996567944
+  - len: 850
+    mean: 62.512306284690084
+    median: 49.899298461329536
+    std: 77.80741996567944
+  - len: 850
+    mean: 62.512306284690084
+    median: 49.899298461329536
+    std: 77.80741996567944
+  - len: 850
+    mean: 62.512306284690084
+    median: 49.899298461329536
+    std: 77.80741996567944
+  - len: 850
+    mean: 62.512306284690084
+    median: 49.899298461329536
+    std: 77.80741996567944
+  - len: 28769
+    mean: 986.993072359762
+    median: 1027.6383178875165
+    std: 641.678851396412
+  - len: 28769
+    mean: 986.993072359762
+    median: 1027.6383178875165
+    std: 641.678851396412
+  - len: 28769
+    mean: 986.993072359762
+    median: 1027.6383178875165
+    std: 641.678851396412
+  exptime: 68965.54827586206
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 5.840229117460523
+    median: 2.457471000780405
+    std: 11.79272322151842
+  - len: 20600
+    mean: 4.530186556603981
+    median: 3.6754481714085543
+    std: 3.7325835107355365
+  - len: 20600
+    mean: 14.461483308605594
+    median: 5.665425209863888
+    std: 14.346866610410906
+  - len: 20600
+    mean: 24.002050178260838
+    median: 13.715571390178274
+    std: 26.803595365392244
+  - len: 850
+    mean: 64.05605026512262
+    median: 51.13156369366107
+    std: 79.72887740892246
+  - len: 850
+    mean: 64.05605026512262
+    median: 51.13156369366107
+    std: 79.72887740892246
+  - len: 850
+    mean: 64.05605026512262
+    median: 51.13156369366107
+    std: 79.72887740892246
+  - len: 850
+    mean: 64.05605026512262
+    median: 51.13156369366107
+    std: 79.72887740892246
+  - len: 850
+    mean: 64.05605026512262
+    median: 51.13156369366107
+    std: 79.72887740892246
+  - len: 28769
+    mean: 1011.3669069651435
+    median: 1053.0158885065864
+    std: 657.5251370813904
+  - len: 28769
+    mean: 1011.3669069651435
+    median: 1053.0158885065864
+    std: 657.5251370813904
+  - len: 28769
+    mean: 1011.3669069651435
+    median: 1053.0158885065864
+    std: 657.5251370813904
+  exptime: 72413.82068965517
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 5.977664889186423
+    median: 2.5153016811686997
+    std: 12.070236651916863
+  - len: 20600
+    mean: 4.636793621660342
+    median: 3.761941020527413
+    std: 3.8204209029014735
+  - len: 20600
+    mean: 14.801799600799907
+    median: 5.7987473912737135
+    std: 14.684485673771855
+  - len: 20600
+    mean: 24.56688080783166
+    median: 14.038334436072349
+    std: 27.434353635313208
+  - len: 850
+    mean: 65.56345562967931
+    median: 52.334822294386306
+    std: 81.60510513477914
+  - len: 850
+    mean: 65.56345562967931
+    median: 52.334822294386306
+    std: 81.60510513477914
+  - len: 850
+    mean: 65.56345562967931
+    median: 52.334822294386306
+    std: 81.60510513477914
+  - len: 850
+    mean: 65.56345562967931
+    median: 52.334822294386306
+    std: 81.60510513477914
+  - len: 850
+    mean: 65.56345562967931
+    median: 52.334822294386306
+    std: 81.60510513477914
+  - len: 28769
+    mean: 1035.166999146669
+    median: 1077.7960894825826
+    std: 672.9984126715188
+  - len: 28769
+    mean: 1035.166999146669
+    median: 1077.7960894825826
+    std: 672.9984126715188
+  - len: 28769
+    mean: 1035.166999146669
+    median: 1077.7960894825826
+    std: 672.9984126715188
+  exptime: 75862.09310344828
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 6.112011036507586
+    median: 2.5718322991407376
+    std: 12.341511442575197
+  - len: 20600
+    mean: 4.7410041069487185
+    median: 3.846489467442123
+    std: 3.9062836668678074
+  - len: 20600
+    mean: 15.134465413730421
+    median: 5.929072423832086
+    std: 15.014514892912738
+  - len: 20600
+    mean: 25.11901376433127
+    median: 14.35384160839713
+    std: 28.05093214606547
+  - len: 850
+    mean: 67.03697377300037
+    median: 53.511031044178814
+    std: 83.43915432954559
+  - len: 850
+    mean: 67.03697377300037
+    median: 53.511031044178814
+    std: 83.43915432954559
+  - len: 850
+    mean: 67.03697377300037
+    median: 53.511031044178814
+    std: 83.43915432954559
+  - len: 850
+    mean: 67.03697377300037
+    median: 53.511031044178814
+    std: 83.43915432954559
+  - len: 850
+    mean: 67.03697377300037
+    median: 53.511031044178814
+    std: 83.43915432954559
+  - len: 28769
+    mean: 1058.4320534358355
+    median: 1102.0192192337568
+    std: 688.1238413417069
+  - len: 28769
+    mean: 1058.4320534358355
+    median: 1102.0192192337568
+    std: 688.1238413417069
+  - len: 28769
+    mean: 1058.4320534358355
+    median: 1102.0192192337568
+    std: 688.1238413417069
+  exptime: 79310.36551724139
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 6.243467009071878
+    median: 2.6271467797816275
+    std: 12.606950326750393
+  - len: 20600
+    mean: 4.842972722857233
+    median: 3.9292190323726595
+    std: 3.9902992740833225
+  - len: 20600
+    mean: 15.459974621472195
+    median: 6.056593787459127
+    std: 15.337444227634075
+  - len: 20600
+    mean: 25.659268741706573
+    median: 14.662561307591885
+    std: 28.654246267157607
+  - len: 850
+    mean: 68.47879227307494
+    median: 54.661936136923856
+    std: 85.23374781388586
+  - len: 850
+    mean: 68.47879227307494
+    median: 54.661936136923856
+    std: 85.23374781388586
+  - len: 850
+    mean: 68.47879227307494
+    median: 54.661936136923856
+    std: 85.23374781388586
+  - len: 850
+    mean: 68.47879227307494
+    median: 54.661936136923856
+    std: 85.23374781388586
+  - len: 850
+    mean: 68.47879227307494
+    median: 54.661936136923856
+    std: 85.23374781388586
+  - len: 28769
+    mean: 1081.1966090209855
+    median: 1125.7212393027016
+    std: 702.9238782310281
+  - len: 28769
+    mean: 1081.1966090209855
+    median: 1125.7212393027016
+    std: 702.9238782310281
+  - len: 28769
+    mean: 1081.1966090209855
+    median: 1125.7212393027016
+    std: 702.9238782310281
+  exptime: 82758.63793103448
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 6.372211678557717
+    median: 2.681320389310165
+    std: 12.866914486196336
+  - len: 20600
+    mean: 4.942838217722061
+    median: 4.010242285146358
+    std: 4.072582044288559
+  - len: 20600
+    mean: 15.778770143256619
+    median: 6.181485000024743
+    std: 15.65371308674314
+  - len: 20600
+    mean: 26.1883808630006
+    median: 14.96491360746291
+    std: 29.24511692598718
+  - len: 850
+    mean: 69.89087300725296
+    median: 55.78910360512362
+    std: 86.99132748482727
+  - len: 850
+    mean: 69.89087300725296
+    median: 55.78910360512362
+    std: 86.99132748482727
+  - len: 850
+    mean: 69.89087300725296
+    median: 55.78910360512362
+    std: 86.99132748482727
+  - len: 850
+    mean: 69.89087300725296
+    median: 55.78910360512362
+    std: 86.99132748482727
+  - len: 850
+    mean: 69.89087300725296
+    median: 55.78910360512362
+    std: 86.99132748482727
+  - len: 28769
+    mean: 1103.4916415526475
+    median: 1148.934400944563
+    std: 717.4186616974998
+  - len: 28769
+    mean: 1103.4916415526475
+    median: 1148.934400944563
+    std: 717.4186616974998
+  - len: 28769
+    mean: 1103.4916415526475
+    median: 1148.934400944563
+    std: 717.4186616974998
+  exptime: 86206.91034482759
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 6.498406193777498
+    median: 2.734420936458734
+    std: 13.121729316253498
+  - len: 20600
+    mean: 5.0407255924924526
+    median: 4.0896606420083605
+    std: 4.153234970257915
+  - len: 20600
+    mean: 16.09125101323351
+    median: 6.303902386995955
+    std: 15.963717341783552
+  - len: 20600
+    mean: 26.707012414196246
+    median: 15.261276960292886
+    std: 29.82428371127139
+  - len: 850
+    mean: 71.27498346722342
+    median: 56.89394431650254
+    std: 88.71409329268847
+  - len: 850
+    mean: 71.27498346722342
+    median: 56.89394431650254
+    std: 88.71409329268847
+  - len: 850
+    mean: 71.27498346722342
+    median: 56.89394431650254
+    std: 88.71409329268847
+  - len: 850
+    mean: 71.27498346722342
+    median: 56.89394431650254
+    std: 88.71409329268847
+  - len: 850
+    mean: 71.27498346722342
+    median: 56.89394431650254
+    std: 88.71409329268847
+  - len: 28769
+    mean: 1125.3450575688487
+    median: 1171.687759913226
+    std: 731.6263347613415
+  - len: 28769
+    mean: 1125.3450575688487
+    median: 1171.687759913226
+    std: 731.6263347613415
+  - len: 28769
+    mean: 1125.3450575688487
+    median: 1171.687759913226
+    std: 731.6263347613415
+  exptime: 89655.1827586207
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 6.622196345798285
+    median: 2.7865097676766366
+    std: 13.371689201554297
+  - len: 20600
+    mean: 5.136747935322792
+    median: 4.167565854069805
+    std: 4.232351229385973
+  - len: 20600
+    mean: 16.397778236945715
+    median: 6.423987375767149
+    std: 16.2678151370935
+  - len: 20600
+    mean: 27.21576256433922
+    median: 15.5519937512431
+    std: 30.392415727713292
+  - len: 850
+    mean: 72.63272269982711
+    median: 57.97773468078385
+    std: 90.40403552892538
+  - len: 850
+    mean: 72.63272269982711
+    median: 57.97773468078385
+    std: 90.40403552892538
+  - len: 850
+    mean: 72.63272269982711
+    median: 57.97773468078385
+    std: 90.40403552892538
+  - len: 850
+    mean: 72.63272269982711
+    median: 57.97773468078385
+    std: 90.40403552892538
+  - len: 850
+    mean: 72.63272269982711
+    median: 57.97773468078385
+    std: 90.40403552892538
+  - len: 28769
+    mean: 1146.782104068909
+    median: 1194.0076029017173
+    std: 745.5633113832768
+  - len: 28769
+    mean: 1146.782104068909
+    median: 1194.0076029017173
+    std: 745.5633113832768
+  - len: 28769
+    mean: 1146.782104068909
+    median: 1194.0076029017173
+    std: 745.5633113832768
+  exptime: 93103.45517241379
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 6.7437145420964075
+    median: 2.8376425978214286
+    std: 13.617061502280922
+  - len: 20600
+    mean: 5.231007952897564
+    median: 4.244041249708223
+    std: 4.310015445401169
+  - len: 20600
+    mean: 16.698679679699605
+    median: 6.541868410726258
+    std: 16.56633173943272
+  - len: 20600
+    mean: 27.715175478876994
+    median: 15.837374934585668
+    std: 30.950120656338335
+  - len: 850
+    mean: 73.96554295972545
+    median: 59.04163393353406
+    std: 92.06296177663725
+  - len: 850
+    mean: 73.96554295972545
+    median: 59.04163393353406
+    std: 92.06296177663725
+  - len: 850
+    mean: 73.96554295972545
+    median: 59.04163393353406
+    std: 92.06296177663725
+  - len: 850
+    mean: 73.96554295972545
+    median: 59.04163393353406
+    std: 92.06296177663725
+  - len: 850
+    mean: 73.96554295972545
+    median: 59.04163393353406
+    std: 92.06296177663725
+  - len: 28769
+    mean: 1167.8257103826722
+    median: 1215.9178034899137
+    std: 759.2444987257264
+  - len: 28769
+    mean: 1167.8257103826722
+    median: 1215.9178034899137
+    std: 759.2444987257264
+  - len: 28769
+    mean: 1167.8257103826722
+    median: 1215.9178034899137
+    std: 759.2444987257264
+  exptime: 96551.7275862069
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 20600
+    mean: 6.863081465949605
+    median: 2.887870208403451
+    std: 13.858089904847585
+  - len: 20600
+    mean: 5.323599257599332
+    median: 4.319162778877556
+    std: 4.386304748909763
+  - len: 20600
+    mean: 16.994254175525754
+    median: 6.657662562979631
+    std: 16.85956361437696
+  - len: 20600
+    mean: 28.20574713939343
+    median: 16.117703930727238
+    std: 31.49795237023587
+  - len: 850
+    mean: 75.27476790973189
+    median: 60.086698664242775
+    std: 93.69251956403959
+  - len: 850
+    mean: 75.27476790973189
+    median: 60.086698664242775
+    std: 93.69251956403959
+  - len: 850
+    mean: 75.27476790973189
+    median: 60.086698664242775
+    std: 93.69251956403959
+  - len: 850
+    mean: 75.27476790973189
+    median: 60.086698664242775
+    std: 93.69251956403959
+  - len: 850
+    mean: 75.27476790973189
+    median: 60.086698664242775
+    std: 93.69251956403959
+  - len: 28769
+    mean: 1188.4967755315417
+    median: 1237.4401213393592
+    std: 772.6834839763059
+  - len: 28769
+    mean: 1188.4967755315417
+    median: 1237.4401213393592
+    std: 772.6834839763059
+  - len: 28769
+    mean: 1188.4967755315417
+    median: 1237.4401213393592
+    std: 772.6834839763059
+  exptime: 100000.0
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC2
+- expected:
+  - len: 10
+    mean: 395.3801603105379
+    median: 448.74036154488977
+    std: 236.0635201671338
+  exptime: 0.1
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 74000.87865321252
+    median: 83772.85160023467
+    std: 43369.14893858391
+  exptime: 3448.372413793103
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 104652.3062942232
+    median: 118471.85314948323
+    std: 61332.77341044836
+  exptime: 6896.644827586207
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 128172.07333889378
+    median: 145097.44764161343
+    std: 75116.80976147897
+  exptime: 10344.91724137931
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 148000.18768667564
+    median: 167543.90062174405
+    std: 86737.31102160229
+  exptime: 13793.189655172413
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 165469.12318192635
+    median: 187319.64114578848
+    std: 96975.18825849508
+  exptime: 17241.462068965513
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 181262.25723492942
+    median: 205198.28771806334
+    std: 106230.94253691426
+  exptime: 20689.734482758617
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 195785.54867305467
+    median: 221639.4067079752
+    std: 114742.4906771279
+  exptime: 24138.00689655172
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 209303.5026952895
+    median: 236942.43167761533
+    std: 122664.84900451211
+  exptime: 27586.279310344824
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 221999.84552207583
+    median: 251315.35021311283
+    std: 130105.69240355436
+  exptime: 31034.551724137928
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 234008.347250978
+    median: 264909.596987685
+    std: 137143.4183995592
+  exptime: 34482.82413793103
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 245429.99359174367
+    median: 277839.4930524022
+    std: 143837.21084901708
+  exptime: 37931.096551724135
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 256343.24045262532
+    median: 290193.85455769737
+    std: 150233.04975714383
+  exptime: 41379.368965517235
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 266810.47973620123
+    median: 302043.3123684287
+    std: 156367.50063181357
+  exptime: 44827.64137931034
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 276882.298582577
+    median: 313445.13374740776
+    std: 162270.21066217875
+  exptime: 48275.91379310344
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 286600.3880661727
+    median: 324446.51515059994
+    std: 167965.61339409757
+  exptime: 51724.18620689655
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 295999.59055882215
+    median: 335086.8999480682
+    std: 173474.12861104953
+  exptime: 55172.45862068965
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 305109.37839125824
+    median: 345399.65234528657
+    std: 178813.02892091058
+  exptime: 58620.73103448275
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 313954.9457384128
+    median: 355413.2934538085
+    std: 183997.0796680693
+  exptime: 62069.00344827586
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 322558.030631574
+    median: 365152.4318515777
+    std: 189039.02068325793
+  exptime: 65517.27586206896
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 330937.5444041205
+    median: 374638.476148085
+    std: 193949.93517759308
+  exptime: 68965.54827586206
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 339110.0609942722
+    median: 383890.1889004165
+    std: 198739.53650418905
+  exptime: 72413.82068965517
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 347090.20245297736
+    median: 392924.1230281435
+    std: 203416.39408957967
+  exptime: 75862.09310344828
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 354890.94636262377
+    median: 401754.96982722415
+    std: 207988.11360006724
+  exptime: 79310.36551724139
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 362523.873671057
+    median: 410395.83953094843
+    std: 212461.48218776434
+  exptime: 82758.63793103448
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 369999.370476192
+    median: 418858.4897405687
+    std: 216842.58674884177
+  exptime: 86206.91034482759
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 377326.7938062288
+    median: 427153.51309709286
+    std: 221136.91108097762
+  exptime: 89655.1827586207
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 384514.60894925456
+    median: 435290.49274550716
+    std: 225349.41636699092
+  exptime: 93103.45517241379
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 391570.50408158696
+    median: 443278.13209999946
+    std: 229484.60835413478
+  exptime: 96551.7275862069
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 10
+    mean: 398501.4866195834
+    median: 451124.36391919997
+    std: 233546.59382221318
+  exptime: 100000.0
+  extinction: 0
+  instrument: hri
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 0.006863081465949605
+    median: 0.0028878702084034506
+    std: 0.013858089904847585
+  - len: 20600
+    mean: 0.005323599257599332
+    median: 0.004319162778877556
+    std: 0.004386304748909762
+  - len: 20600
+    mean: 0.01699425417552576
+    median: 0.006657662562979632
+    std: 0.01685956361437696
+  - len: 20600
+    mean: 0.028205747139393434
+    median: 0.01611770393072724
+    std: 0.031497952370235865
+  - len: 850
+    mean: 0.07527476790973191
+    median: 0.06008669866424277
+    std: 0.09369251956403958
+  - len: 850
+    mean: 0.07527476790973191
+    median: 0.06008669866424277
+    std: 0.09369251956403958
+  - len: 850
+    mean: 0.07527476790973191
+    median: 0.06008669866424277
+    std: 0.09369251956403958
+  - len: 850
+    mean: 0.07527476790973191
+    median: 0.06008669866424277
+    std: 0.09369251956403958
+  - len: 850
+    mean: 0.07527476790973191
+    median: 0.06008669866424277
+    std: 0.09369251956403958
+  - len: 28769
+    mean: 1.188496775531542
+    median: 1.237440121339359
+    std: 0.7726834839763058
+  - len: 28769
+    mean: 1.188496775531542
+    median: 1.237440121339359
+    std: 0.7726834839763058
+  - len: 28769
+    mean: 1.188496775531542
+    median: 1.237440121339359
+    std: 0.7726834839763058
+  exptime: 0.1
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 1.2744600758225475
+    median: 0.5362715426048483
+    std: 2.5734187184741515
+  - len: 20600
+    mean: 0.9885814043080344
+    median: 0.8020596214643032
+    std: 0.8145277468453971
+  - len: 20600
+    mean: 3.1557979564346383
+    median: 1.2363142091366603
+    std: 3.130786196975576
+  - len: 20600
+    mean: 5.237749080533342
+    median: 2.9930243835154333
+    std: 5.849104803023267
+  - len: 850
+    mean: 13.97836917625568
+    median: 11.157976036783321
+    std: 17.39850767909684
+  - len: 850
+    mean: 13.97836917625568
+    median: 11.157976036783321
+    std: 17.39850767909684
+  - len: 850
+    mean: 13.97836917625568
+    median: 11.157976036783321
+    std: 17.39850767909684
+  - len: 850
+    mean: 13.97836917625568
+    median: 11.157976036783321
+    std: 17.39850767909684
+  - len: 850
+    mean: 13.97836917625568
+    median: 11.157976036783321
+    std: 17.39850767909684
+  - len: 28769
+    mean: 220.7014004093864
+    median: 229.79007879951084
+    std: 143.4857296188336
+  - len: 28769
+    mean: 220.7014004093864
+    median: 229.79007879951084
+    std: 143.4857296188336
+  - len: 28769
+    mean: 220.7014004093864
+    median: 229.79007879951084
+    std: 143.4857296188336
+  exptime: 3448.372413793103
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 1.8023456571490442
+    median: 0.7583969903824952
+    std: 3.639337268587576
+  - len: 20600
+    mean: 1.3980550937564065
+    median: 1.1342753711510323
+    std: 1.1519078353291674
+  - len: 20600
+    mean: 4.462939914338876
+    median: 1.748399646235268
+    std: 4.427568201333585
+  - len: 20600
+    mean: 7.407242084411988
+    median: 4.232744988805241
+    std: 8.27182337048466
+  - len: 850
+    mean: 19.76825595151747
+    median: 15.779646639373937
+    std: 24.605027141439233
+  - len: 850
+    mean: 19.76825595151747
+    median: 15.779646639373937
+    std: 24.605027141439233
+  - len: 850
+    mean: 19.76825595151747
+    median: 15.779646639373937
+    std: 24.605027141439233
+  - len: 850
+    mean: 19.76825595151747
+    median: 15.779646639373937
+    std: 24.605027141439233
+  - len: 850
+    mean: 19.76825595151747
+    median: 15.779646639373937
+    std: 24.605027141439233
+  - len: 28769
+    mean: 312.1166508867208
+    median: 324.9698899456947
+    std: 202.9179937036921
+  - len: 28769
+    mean: 312.1166508867208
+    median: 324.9698899456947
+    std: 202.9179937036921
+  - len: 28769
+    mean: 312.1166508867208
+    median: 324.9698899456947
+    std: 202.9179937036921
+  exptime: 6896.644827586207
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 2.2074082655508986
+    median: 0.9288405797738757
+    std: 4.457248883388476
+  - len: 20600
+    mean: 1.7122566680882936
+    median: 1.3891945863759199
+    std: 1.410789804260159
+  - len: 20600
+    mean: 5.4659495621676895
+    median: 2.1413383250196625
+    std: 5.422628342764036
+  - len: 20600
+    mean: 9.0719598303531
+    median: 5.184020189022591
+    std: 10.130848767415419
+  - len: 850
+    mean: 24.2110115836104
+    median: 19.32599458991903
+    std: 30.134807976861758
+  - len: 850
+    mean: 24.2110115836104
+    median: 19.32599458991903
+    std: 30.134807976861758
+  - len: 850
+    mean: 24.2110115836104
+    median: 19.32599458991903
+    std: 30.134807976861758
+  - len: 850
+    mean: 24.2110115836104
+    median: 19.32599458991903
+    std: 30.134807976861758
+  - len: 850
+    mean: 24.2110115836104
+    median: 19.32599458991903
+    std: 30.134807976861758
+  - len: 28769
+    mean: 382.26234365788895
+    median: 398.00424423358663
+    std: 248.5221715123507
+  - len: 28769
+    mean: 382.26234365788895
+    median: 398.00424423358663
+    std: 248.5221715123507
+  - len: 28769
+    mean: 382.26234365788895
+    median: 398.00424423358663
+    std: 248.5221715123507
+  exptime: 10344.91724137931
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 2.5488924327638527
+    median: 1.0725314215668056
+    std: 5.146781466354011
+  - len: 20600
+    mean: 1.9771413074556443
+    median: 1.6041017985254287
+    std: 1.6290377781120076
+  - len: 20600
+    mean: 6.311527275812345
+    median: 2.47260152904596
+    std: 6.261504300887716
+  - len: 20600
+    mean: 10.475384242594464
+    median: 5.98598367021927
+    std: 11.698082390887357
+  - len: 850
+    mean: 27.95643432984128
+    median: 22.31570939306331
+    std: 34.79663694918951
+  - len: 850
+    mean: 27.95643432984128
+    median: 22.31570939306331
+    std: 34.79663694918951
+  - len: 850
+    mean: 27.95643432984128
+    median: 22.31570939306331
+    std: 34.79663694918951
+  - len: 850
+    mean: 27.95643432984128
+    median: 22.31570939306331
+    std: 34.79663694918951
+  - len: 850
+    mean: 27.95643432984128
+    median: 22.31570939306331
+    std: 34.79663694918951
+  - len: 28769
+    mean: 441.398000671617
+    median: 459.575159777571
+    std: 286.96833849345967
+  - len: 28769
+    mean: 441.398000671617
+    median: 459.575159777571
+    std: 286.96833849345967
+  - len: 28769
+    mean: 441.398000671617
+    median: 459.575159777571
+    std: 286.96833849345967
+  exptime: 13793.189655172413
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 2.849746307441986
+    median: 1.199125713952276
+    std: 5.754272440225825
+  - len: 20600
+    mean: 2.2105095796856444
+    median: 1.7934390319296791
+    std: 1.8213182844378946
+  - len: 20600
+    mean: 7.056496899346394
+    median: 2.764450545892044
+    std: 7.00056955370939
+  - len: 20600
+    mean: 11.711827137404843
+    median: 6.692528347348981
+    std: 13.078844234095579
+  - len: 850
+    mean: 31.256221124373607
+    median: 24.949703496068413
+    std: 38.90379459827884
+  - len: 850
+    mean: 31.256221124373607
+    median: 24.949703496068413
+    std: 38.90379459827884
+  - len: 850
+    mean: 31.256221124373607
+    median: 24.949703496068413
+    std: 38.90379459827884
+  - len: 850
+    mean: 31.256221124373607
+    median: 24.949703496068413
+    std: 38.90379459827884
+  - len: 850
+    mean: 31.256221124373607
+    median: 24.949703496068413
+    std: 38.90379459827884
+  - len: 28769
+    mean: 493.49760953319685
+    median: 513.8202764987108
+    std: 320.84012352288397
+  - len: 28769
+    mean: 493.49760953319685
+    median: 513.8202764987108
+    std: 320.84012352288397
+  - len: 28769
+    mean: 493.49760953319685
+    median: 513.8202764987108
+    std: 320.84012352288397
+  exptime: 17241.462068965513
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 3.121739162671609
+    median: 1.313575770739929
+    std: 6.303486588411196
+  - len: 20600
+    mean: 2.421490750367755
+    median: 1.9646130770371086
+    std: 1.9951532532463474
+  - len: 20600
+    mean: 7.730001321322481
+    median: 3.028302382511565
+    std: 7.668736013360376
+  - len: 20600
+    mean: 12.829657624539664
+    median: 7.331293941727315
+    std: 14.327149101460538
+  - len: 850
+    mean: 34.23945819537379
+    median: 27.331017605786336
+    std: 42.61695114994079
+  - len: 850
+    mean: 34.23945819537379
+    median: 27.331017605786336
+    std: 42.61695114994079
+  - len: 850
+    mean: 34.23945819537379
+    median: 27.331017605786336
+    std: 42.61695114994079
+  - len: 850
+    mean: 34.23945819537379
+    median: 27.331017605786336
+    std: 42.61695114994079
+  - len: 850
+    mean: 34.23945819537379
+    median: 27.331017605786336
+    std: 42.61695114994079
+  - len: 28769
+    mean: 540.5992843438274
+    median: 562.8616398350867
+    std: 351.4625761395686
+  - len: 28769
+    mean: 540.5992843438274
+    median: 562.8616398350867
+    std: 351.4625761395686
+  - len: 28769
+    mean: 540.5992843438274
+    median: 562.8616398350867
+    std: 351.4625761395686
+  exptime: 20689.734482758617
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 3.371862509465065
+    median: 1.4188235031491554
+    std: 6.808541328670712
+  - len: 20600
+    mean: 2.6155080398177297
+    median: 2.1220239215620467
+    std: 2.1550110706562906
+  - len: 20600
+    mean: 8.349352811135086
+    median: 3.270939286988926
+    std: 8.283178738195737
+  - len: 20600
+    mean: 13.857609268173384
+    median: 7.9186997695294385
+    std: 15.475084369761213
+  - len: 850
+    mean: 36.98282893519317
+    median: 29.52086282942755
+    std: 46.031552401454036
+  - len: 850
+    mean: 36.98282893519317
+    median: 29.52086282942755
+    std: 46.031552401454036
+  - len: 850
+    mean: 36.98282893519317
+    median: 29.52086282942755
+    std: 46.031552401454036
+  - len: 850
+    mean: 36.98282893519317
+    median: 29.52086282942755
+    std: 46.031552401454036
+  - len: 850
+    mean: 36.98282893519317
+    median: 29.52086282942755
+    std: 46.031552401454036
+  - len: 28769
+    mean: 583.9137623409275
+    median: 607.9598462517688
+    std: 379.62283913266424
+  - len: 28769
+    mean: 583.9137623409275
+    median: 607.9598462517688
+    std: 379.62283913266424
+  - len: 28769
+    mean: 583.9137623409275
+    median: 607.9598462517688
+    std: 379.62283913266424
+  exptime: 24138.00689655172
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 3.604671714000382
+    median: 1.5167857332866381
+    std: 7.278634959809049
+  - len: 20600
+    mean: 2.796094983827583
+    median: 2.268538407190391
+    std: 2.303803143795681
+  - len: 20600
+    mean: 8.925831294729441
+    median: 3.496780278829374
+    std: 8.855088253382089
+  - len: 20600
+    mean: 14.814403615934765
+    median: 8.465443947004996
+    std: 16.54355678585999
+  - len: 850
+    mean: 39.53629692556919
+    median: 31.559121676940748
+    std: 49.20978670609311
+  - len: 850
+    mean: 39.53629692556919
+    median: 31.559121676940748
+    std: 49.20978670609311
+  - len: 850
+    mean: 39.53629692556919
+    median: 31.559121676940748
+    std: 49.20978670609311
+  - len: 850
+    mean: 39.53629692556919
+    median: 31.559121676940748
+    std: 49.20978670609311
+  - len: 850
+    mean: 39.53629692556919
+    median: 31.559121676940748
+    std: 49.20978670609311
+  - len: 28769
+    mean: 624.2299075414572
+    median: 649.9362458819372
+    std: 405.83378069799375
+  - len: 28769
+    mean: 624.2299075414572
+    median: 649.9362458819372
+    std: 405.83378069799375
+  - len: 28769
+    mean: 624.2299075414572
+    median: 649.9362458819372
+    std: 405.83378069799375
+  exptime: 27586.279310344824
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 3.8233309494069245
+    median: 1.608793892428526
+    std: 7.720156652043521
+  - len: 20600
+    mean: 2.9657059886004147
+    median: 2.406147852089366
+    std: 2.4435517461421914
+  - len: 20600
+    mean: 9.467271847746504
+    median: 3.708894824290982
+    std: 9.392237536469835
+  - len: 20600
+    mean: 15.713044719667709
+    median: 8.978957422764708
+    std: 17.54708824855909
+  - len: 850
+    mean: 41.934567043475994
+    median: 33.473496677909615
+    std: 52.1948503094946
+  - len: 850
+    mean: 41.934567043475994
+    median: 33.473496677909615
+    std: 52.1948503094946
+  - len: 850
+    mean: 41.934567043475994
+    median: 33.473496677909615
+    std: 52.1948503094946
+  - len: 850
+    mean: 41.934567043475994
+    median: 33.473496677909615
+    std: 52.1948503094946
+  - len: 850
+    mean: 41.934567043475994
+    median: 33.473496677909615
+    std: 52.1948503094946
+  - len: 28769
+    mean: 662.0956676246228
+    median: 689.3613513736736
+    std: 430.45164086121207
+  - len: 28769
+    mean: 662.0956676246228
+    median: 689.3613513736736
+    std: 430.45164086121207
+  - len: 28769
+    mean: 662.0956676246228
+    median: 689.3613513736736
+    std: 430.45164086121207
+  exptime: 31034.551724137928
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 4.030144033613596
+    median: 1.6958173887328702
+    std: 8.137758326838487
+  - len: 20600
+    mean: 3.1261280944732497
+    median: 2.5363021246157995
+    std: 2.57572928445251
+  - len: 20600
+    mean: 9.979379147837584
+    median: 3.909517785724326
+    std: 9.900286051814891
+  - len: 20600
+    mean: 16.56300076159913
+    median: 9.464650631679934
+    std: 18.496252076528013
+  - len: 850
+    mean: 44.20290772857362
+    median: 35.28415789943272
+    std: 55.01819417249096
+  - len: 850
+    mean: 44.20290772857362
+    median: 35.28415789943272
+    std: 55.01819417249096
+  - len: 850
+    mean: 44.20290772857362
+    median: 35.28415789943272
+    std: 55.01819417249096
+  - len: 850
+    mean: 44.20290772857362
+    median: 35.28415789943272
+    std: 55.01819417249096
+  - len: 850
+    mean: 44.20290772857362
+    median: 35.28415789943272
+    std: 55.01819417249096
+  - len: 28769
+    mean: 697.9100004337049
+    median: 726.6505500062386
+    std: 453.7357961243443
+  - len: 28769
+    mean: 697.9100004337049
+    median: 726.6505500062386
+    std: 453.7357961243443
+  - len: 28769
+    mean: 697.9100004337049
+    median: 726.6505500062386
+    std: 453.7357961243443
+  exptime: 34482.82413793103
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 4.226850164679329
+    median: 1.7785880477339924
+    std: 8.53495181239862
+  - len: 20600
+    mean: 3.2787103738039356
+    median: 2.6600957592814156
+    std: 2.7014473079254997
+  - len: 20600
+    mean: 10.466459769829415
+    median: 4.100336305248296
+    std: 10.383506241826412
+  - len: 20600
+    mean: 17.371419461149095
+    median: 9.926608018839936
+    std: 19.39903027870757
+  - len: 850
+    mean: 46.36039462944427
+    median: 37.00633212705867
+    std: 57.70356125208641
+  - len: 850
+    mean: 46.36039462944427
+    median: 37.00633212705867
+    std: 57.70356125208641
+  - len: 850
+    mean: 46.36039462944427
+    median: 37.00633212705867
+    std: 57.70356125208641
+  - len: 850
+    mean: 46.36039462944427
+    median: 37.00633212705867
+    std: 57.70356125208641
+  - len: 850
+    mean: 46.36039462944427
+    median: 37.00633212705867
+    std: 57.70356125208641
+  - len: 28769
+    mean: 731.9740871939747
+    median: 762.1174259134878
+    std: 475.8820549769398
+  - len: 28769
+    mean: 731.9740871939747
+    median: 762.1174259134878
+    std: 475.8820549769398
+  - len: 28769
+    mean: 731.9740871939747
+    median: 762.1174259134878
+    std: 475.8820549769398
+  exptime: 37931.096551724135
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 4.414800527501562
+    median: 1.8576744254997042
+    std: 8.914465451944038
+  - len: 20600
+    mean: 3.424500922400829
+    median: 2.7783791011601204
+    std: 2.8215693803643425
+  - len: 20600
+    mean: 10.931859496472669
+    median: 4.282661125442877
+    std: 10.845217371742049
+  - len: 20600
+    mean: 18.14385388944823
+    median: 10.368002794156418
+    std: 20.261624086680698
+  - len: 850
+    mean: 48.4218476385899
+    median: 38.651849067337636
+    std: 60.26939747786315
+  - len: 850
+    mean: 48.4218476385899
+    median: 38.651849067337636
+    std: 60.26939747786315
+  - len: 850
+    mean: 48.4218476385899
+    median: 38.651849067337636
+    std: 60.26939747786315
+  - len: 850
+    mean: 48.4218476385899
+    median: 38.651849067337636
+    std: 60.26939747786315
+  - len: 850
+    mean: 48.4218476385899
+    median: 38.651849067337636
+    std: 60.26939747786315
+  - len: 28769
+    mean: 764.521915932782
+    median: 796.0056029561802
+    std: 497.0425412513075
+  - len: 28769
+    mean: 764.521915932782
+    median: 796.0056029561802
+    std: 497.0425412513075
+  - len: 28769
+    mean: 764.521915932782
+    median: 796.0056029561802
+    std: 497.0425412513075
+  exptime: 41379.368965517235
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 4.5950696491572876
+    median: 1.9335286651014771
+    std: 9.278468954943005
+  - len: 20600
+    mean: 3.564333236351327
+    median: 2.8918283854647515
+    std: 2.9367822491497915
+  - len: 20600
+    mean: 11.378239054782673
+    median: 4.457534611713301
+    std: 11.28805908057816
+  - len: 20600
+    mean: 18.884720115164583
+    median: 10.791358446440986
+    std: 21.088965017413866
+  - len: 850
+    mean: 50.399052245769724
+    median: 40.2301162706538
+    std: 62.730371938288606
+  - len: 850
+    mean: 50.399052245769724
+    median: 40.2301162706538
+    std: 62.730371938288606
+  - len: 850
+    mean: 50.399052245769724
+    median: 40.2301162706538
+    std: 62.730371938288606
+  - len: 850
+    mean: 50.399052245769724
+    median: 40.2301162706538
+    std: 62.730371938288606
+  - len: 850
+    mean: 50.399052245769724
+    median: 40.2301162706538
+    std: 62.730371938288606
+  - len: 28769
+    mean: 795.7395651591107
+    median: 828.5088225204748
+    std: 517.3382311196808
+  - len: 28769
+    mean: 795.7395651591107
+    median: 828.5088225204748
+    std: 517.3382311196808
+  - len: 28769
+    mean: 795.7395651591107
+    median: 828.5088225204748
+    std: 517.3382311196808
+  exptime: 44827.64137931034
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 4.768528752517372
+    median: 2.0065173625918473
+    std: 9.628721514395277
+  - len: 20600
+    mean: 3.6988831114261105
+    median: 3.000991901387943
+    std: 3.0476427267041974
+  - len: 20600
+    mean: 11.807755753103288
+    median: 4.6258019103572146
+    std: 11.714171578601304
+  - len: 20600
+    mean: 19.597598671637243
+    median: 11.198721011772333
+    std: 21.88505152795972
+  - len: 850
+    mean: 52.301564085683296
+    median: 41.748761346612405
+    std: 65.0983782800109
+  - len: 850
+    mean: 52.301564085683296
+    median: 41.748761346612405
+    std: 65.0983782800109
+  - len: 850
+    mean: 52.301564085683296
+    median: 41.748761346612405
+    std: 65.0983782800109
+  - len: 850
+    mean: 52.301564085683296
+    median: 41.748761346612405
+    std: 65.0983782800109
+  - len: 850
+    mean: 52.301564085683296
+    median: 41.748761346612405
+    std: 65.0983782800109
+  - len: 28769
+    mean: 825.7779066902244
+    median: 859.7841694581815
+    std: 536.8672116478366
+  - len: 28769
+    mean: 825.7779066902244
+    median: 859.7841694581815
+    std: 536.8672116478366
+  - len: 28769
+    mean: 825.7779066902244
+    median: 859.7841694581815
+    std: 536.8672116478366
+  exptime: 48275.91379310344
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 4.935895850457472
+    median: 2.076942645812827
+    std: 9.966672958200034
+  - len: 20600
+    mean: 3.8287075004794895
+    median: 3.1063215180358217
+    std: 3.154609706500106
+  - len: 20600
+    mean: 12.222187523602551
+    median: 4.788159543405677
+    std: 12.12531870670615
+  - len: 20600
+    mean: 20.285440433005498
+    median: 11.59177671797767
+    std: 22.6531789216701
+  - len: 850
+    mean: 54.13725837485537
+    median: 43.21407054192503
+    std: 67.38321857746753
+  - len: 850
+    mean: 54.13725837485537
+    median: 43.21407054192503
+    std: 67.38321857746753
+  - len: 850
+    mean: 54.13725837485537
+    median: 43.21407054192503
+    std: 67.38321857746753
+  - len: 850
+    mean: 54.13725837485537
+    median: 43.21407054192503
+    std: 67.38321857746753
+  - len: 850
+    mean: 54.13725837485537
+    median: 43.21407054192503
+    std: 67.38321857746753
+  - len: 28769
+    mean: 854.761280589948
+    median: 889.9611042666564
+    std: 555.7103206770641
+  - len: 28769
+    mean: 854.761280589948
+    median: 889.9611042666564
+    std: 555.7103206770641
+  - len: 28769
+    mean: 854.761280589948
+    median: 889.9611042666564
+    std: 555.7103206770641
+  exptime: 51724.18620689655
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 5.097771005992884
+    median: 2.145057011272528
+    std: 10.293534947220666
+  - len: 20600
+    mean: 3.9542718642580064
+    median: 3.2081948747899847
+    std: 3.2580666983744173
+  - len: 20600
+    mean: 12.62302023286297
+    median: 4.945189613386859
+    std: 12.522974555012306
+  - len: 20600
+    mean: 20.950711525565676
+    median: 11.971934791811517
+    std: 23.396101173762794
+  - len: 850
+    mean: 55.91271664731432
+    median: 44.63129744505023
+    std: 69.59308469259093
+  - len: 850
+    mean: 55.91271664731432
+    median: 44.63129744505023
+    std: 69.59308469259093
+  - len: 850
+    mean: 55.91271664731432
+    median: 44.63129744505023
+    std: 69.59308469259093
+  - len: 850
+    mean: 55.91271664731432
+    median: 44.63129744505023
+    std: 69.59308469259093
+  - len: 850
+    mean: 55.91271664731432
+    median: 44.63129744505023
+    std: 69.59308469259093
+  - len: 28769
+    mean: 882.7936012533434
+    median: 919.1478206274321
+    std: 573.9351166042101
+  - len: 28769
+    mean: 882.7936012533434
+    median: 919.1478206274321
+    std: 573.9351166042101
+  - len: 28769
+    mean: 882.7936012533434
+    median: 919.1478206274321
+    std: 573.9351166042101
+  exptime: 55172.45862068965
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 5.254661798110332
+    median: 2.211074039742422
+    std: 10.610332396470454
+  - len: 20600
+    mean: 4.075969924900953
+    median: 3.3069314077925895
+    std: 3.358338104147357
+  - len: 20600
+    mean: 13.011510739972893
+    median: 5.097384506939973
+    std: 12.908386021179146
+  - len: 20600
+    mean: 21.5954979867084
+    median: 12.34038726456042
+    std: 24.116147806162807
+  - len: 850
+    mean: 57.633506065654814
+    median: 46.00488594111088
+    std: 71.73490592592636
+  - len: 850
+    mean: 57.633506065654814
+    median: 46.00488594111088
+    std: 71.73490592592636
+  - len: 850
+    mean: 57.633506065654814
+    median: 46.00488594111088
+    std: 71.73490592592636
+  - len: 850
+    mean: 57.633506065654814
+    median: 46.00488594111088
+    std: 71.73490592592636
+  - len: 850
+    mean: 57.633506065654814
+    median: 46.00488594111088
+    std: 71.73490592592636
+  - len: 28769
+    mean: 909.9627673877244
+    median: 947.4358369941416
+    std: 591.5987454651765
+  - len: 28769
+    mean: 909.9627673877244
+    median: 947.4358369941416
+    std: 591.5987454651765
+  - len: 28769
+    mean: 909.9627673877244
+    median: 947.4358369941416
+    std: 591.5987454651765
+  exptime: 58620.73103448275
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 5.407002126455889
+    median: 2.2751763089563664
+    std: 10.917941445965344
+  - len: 20600
+    mean: 4.19413825248187
+    median: 3.402804184354637
+    std: 3.4557012359982386
+  - len: 20600
+    mean: 13.388733460398411
+    median: 5.245165136660052
+    std: 13.282619005228627
+  - len: 20600
+    mean: 22.22158304802749
+    median: 12.698153134186994
+    std: 24.8153101911791
+  - len: 850
+    mean: 59.30438567219866
+    median: 47.33863484808889
+    std: 73.81460573201535
+  - len: 850
+    mean: 59.30438567219866
+    median: 47.33863484808889
+    std: 73.81460573201535
+  - len: 850
+    mean: 59.30438567219866
+    median: 47.33863484808889
+    std: 73.81460573201535
+  - len: 850
+    mean: 59.30438567219866
+    median: 47.33863484808889
+    std: 73.81460573201535
+  - len: 850
+    mean: 59.30438567219866
+    median: 47.33863484808889
+    std: 73.81460573201535
+  - len: 28769
+    mean: 936.3439184669298
+    median: 974.9033871504505
+    std: 608.7500580701849
+  - len: 28769
+    mean: 936.3439184669298
+    median: 974.9033871504505
+    std: 608.7500580701849
+  - len: 28769
+    mean: 936.3439184669298
+    median: 974.9033871504505
+    std: 608.7500580701849
+  exptime: 62069.00344827586
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 5.555166368208689
+    median: 2.3375213505869326
+    std: 11.217118046604714
+  - len: 20600
+    mean: 4.309067246303573
+    median: 3.4960488123419813
+    std: 3.5503953643490807
+  - len: 20600
+    mean: 13.755615421010942
+    median: 5.388894674242249
+    std: 13.646593186738887
+  - len: 20600
+    mean: 22.830505316940293
+    median: 13.0461116122468
+    std: 25.495306524146436
+  - len: 850
+    mean: 60.92946166259712
+    median: 48.63582186112177
+    std: 75.8372949843561
+  - len: 850
+    mean: 60.92946166259712
+    median: 48.63582186112177
+    std: 75.8372949843561
+  - len: 850
+    mean: 60.92946166259712
+    median: 48.63582186112177
+    std: 75.8372949843561
+  - len: 850
+    mean: 60.92946166259712
+    median: 48.63582186112177
+    std: 75.8372949843561
+  - len: 850
+    mean: 60.92946166259712
+    median: 48.63582186112177
+    std: 75.8372949843561
+  - len: 28769
+    mean: 962.0018863121234
+    median: 1001.6179727491178
+    std: 625.4312038625319
+  - len: 28769
+    mean: 962.0018863121234
+    median: 1001.6179727491178
+    std: 625.4312038625319
+  - len: 28769
+    mean: 962.0018863121234
+    median: 1001.6179727491178
+    std: 625.4312038625319
+  exptime: 65517.27586206896
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 5.699480218533557
+    median: 2.3982462117270615
+    std: 11.508519849459464
+  - len: 20600
+    mean: 4.421009543690315
+    median: 3.5868702624285325
+    std: 3.6426286461706647
+  - len: 20600
+    mean: 14.112963103045233
+    median: 5.5288890664688575
+    std: 14.001108655054276
+  - len: 20600
+    mean: 23.42360332855078
+    median: 13.385027582307735
+    std: 26.157631575429953
+  - len: 850
+    mean: 62.512306284690084
+    median: 49.899298461329536
+    std: 77.80741996567944
+  - len: 850
+    mean: 62.512306284690084
+    median: 49.899298461329536
+    std: 77.80741996567944
+  - len: 850
+    mean: 62.512306284690084
+    median: 49.899298461329536
+    std: 77.80741996567944
+  - len: 850
+    mean: 62.512306284690084
+    median: 49.899298461329536
+    std: 77.80741996567944
+  - len: 850
+    mean: 62.512306284690084
+    median: 49.899298461329536
+    std: 77.80741996567944
+  - len: 28769
+    mean: 986.993072359762
+    median: 1027.6383178875165
+    std: 641.678851396412
+  - len: 28769
+    mean: 986.993072359762
+    median: 1027.6383178875165
+    std: 641.678851396412
+  - len: 28769
+    mean: 986.993072359762
+    median: 1027.6383178875165
+    std: 641.678851396412
+  exptime: 68965.54827586206
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 5.840229117460523
+    median: 2.457471000780405
+    std: 11.79272322151842
+  - len: 20600
+    mean: 4.530186556603981
+    median: 3.6754481714085543
+    std: 3.7325835107355365
+  - len: 20600
+    mean: 14.461483308605594
+    median: 5.665425209863888
+    std: 14.346866610410906
+  - len: 20600
+    mean: 24.002050178260838
+    median: 13.715571390178274
+    std: 26.803595365392244
+  - len: 850
+    mean: 64.05605026512262
+    median: 51.13156369366107
+    std: 79.72887740892246
+  - len: 850
+    mean: 64.05605026512262
+    median: 51.13156369366107
+    std: 79.72887740892246
+  - len: 850
+    mean: 64.05605026512262
+    median: 51.13156369366107
+    std: 79.72887740892246
+  - len: 850
+    mean: 64.05605026512262
+    median: 51.13156369366107
+    std: 79.72887740892246
+  - len: 850
+    mean: 64.05605026512262
+    median: 51.13156369366107
+    std: 79.72887740892246
+  - len: 28769
+    mean: 1011.3669069651435
+    median: 1053.0158885065864
+    std: 657.5251370813904
+  - len: 28769
+    mean: 1011.3669069651435
+    median: 1053.0158885065864
+    std: 657.5251370813904
+  - len: 28769
+    mean: 1011.3669069651435
+    median: 1053.0158885065864
+    std: 657.5251370813904
+  exptime: 72413.82068965517
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 5.977664889186423
+    median: 2.5153016811686997
+    std: 12.070236651916863
+  - len: 20600
+    mean: 4.636793621660342
+    median: 3.761941020527413
+    std: 3.8204209029014735
+  - len: 20600
+    mean: 14.801799600799907
+    median: 5.7987473912737135
+    std: 14.684485673771855
+  - len: 20600
+    mean: 24.56688080783166
+    median: 14.038334436072349
+    std: 27.434353635313208
+  - len: 850
+    mean: 65.56345562967931
+    median: 52.334822294386306
+    std: 81.60510513477914
+  - len: 850
+    mean: 65.56345562967931
+    median: 52.334822294386306
+    std: 81.60510513477914
+  - len: 850
+    mean: 65.56345562967931
+    median: 52.334822294386306
+    std: 81.60510513477914
+  - len: 850
+    mean: 65.56345562967931
+    median: 52.334822294386306
+    std: 81.60510513477914
+  - len: 850
+    mean: 65.56345562967931
+    median: 52.334822294386306
+    std: 81.60510513477914
+  - len: 28769
+    mean: 1035.166999146669
+    median: 1077.7960894825826
+    std: 672.9984126715188
+  - len: 28769
+    mean: 1035.166999146669
+    median: 1077.7960894825826
+    std: 672.9984126715188
+  - len: 28769
+    mean: 1035.166999146669
+    median: 1077.7960894825826
+    std: 672.9984126715188
+  exptime: 75862.09310344828
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 6.112011036507586
+    median: 2.5718322991407376
+    std: 12.341511442575197
+  - len: 20600
+    mean: 4.7410041069487185
+    median: 3.846489467442123
+    std: 3.9062836668678074
+  - len: 20600
+    mean: 15.134465413730421
+    median: 5.929072423832086
+    std: 15.014514892912738
+  - len: 20600
+    mean: 25.11901376433127
+    median: 14.35384160839713
+    std: 28.05093214606547
+  - len: 850
+    mean: 67.03697377300037
+    median: 53.511031044178814
+    std: 83.43915432954559
+  - len: 850
+    mean: 67.03697377300037
+    median: 53.511031044178814
+    std: 83.43915432954559
+  - len: 850
+    mean: 67.03697377300037
+    median: 53.511031044178814
+    std: 83.43915432954559
+  - len: 850
+    mean: 67.03697377300037
+    median: 53.511031044178814
+    std: 83.43915432954559
+  - len: 850
+    mean: 67.03697377300037
+    median: 53.511031044178814
+    std: 83.43915432954559
+  - len: 28769
+    mean: 1058.4320534358355
+    median: 1102.0192192337568
+    std: 688.1238413417069
+  - len: 28769
+    mean: 1058.4320534358355
+    median: 1102.0192192337568
+    std: 688.1238413417069
+  - len: 28769
+    mean: 1058.4320534358355
+    median: 1102.0192192337568
+    std: 688.1238413417069
+  exptime: 79310.36551724139
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 6.243467009071878
+    median: 2.6271467797816275
+    std: 12.606950326750393
+  - len: 20600
+    mean: 4.842972722857233
+    median: 3.9292190323726595
+    std: 3.9902992740833225
+  - len: 20600
+    mean: 15.459974621472195
+    median: 6.056593787459127
+    std: 15.337444227634075
+  - len: 20600
+    mean: 25.659268741706573
+    median: 14.662561307591885
+    std: 28.654246267157607
+  - len: 850
+    mean: 68.47879227307494
+    median: 54.661936136923856
+    std: 85.23374781388586
+  - len: 850
+    mean: 68.47879227307494
+    median: 54.661936136923856
+    std: 85.23374781388586
+  - len: 850
+    mean: 68.47879227307494
+    median: 54.661936136923856
+    std: 85.23374781388586
+  - len: 850
+    mean: 68.47879227307494
+    median: 54.661936136923856
+    std: 85.23374781388586
+  - len: 850
+    mean: 68.47879227307494
+    median: 54.661936136923856
+    std: 85.23374781388586
+  - len: 28769
+    mean: 1081.1966090209855
+    median: 1125.7212393027016
+    std: 702.9238782310281
+  - len: 28769
+    mean: 1081.1966090209855
+    median: 1125.7212393027016
+    std: 702.9238782310281
+  - len: 28769
+    mean: 1081.1966090209855
+    median: 1125.7212393027016
+    std: 702.9238782310281
+  exptime: 82758.63793103448
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 6.372211678557717
+    median: 2.681320389310165
+    std: 12.866914486196336
+  - len: 20600
+    mean: 4.942838217722061
+    median: 4.010242285146358
+    std: 4.072582044288559
+  - len: 20600
+    mean: 15.778770143256619
+    median: 6.181485000024743
+    std: 15.65371308674314
+  - len: 20600
+    mean: 26.1883808630006
+    median: 14.96491360746291
+    std: 29.24511692598718
+  - len: 850
+    mean: 69.89087300725296
+    median: 55.78910360512362
+    std: 86.99132748482727
+  - len: 850
+    mean: 69.89087300725296
+    median: 55.78910360512362
+    std: 86.99132748482727
+  - len: 850
+    mean: 69.89087300725296
+    median: 55.78910360512362
+    std: 86.99132748482727
+  - len: 850
+    mean: 69.89087300725296
+    median: 55.78910360512362
+    std: 86.99132748482727
+  - len: 850
+    mean: 69.89087300725296
+    median: 55.78910360512362
+    std: 86.99132748482727
+  - len: 28769
+    mean: 1103.4916415526475
+    median: 1148.934400944563
+    std: 717.4186616974998
+  - len: 28769
+    mean: 1103.4916415526475
+    median: 1148.934400944563
+    std: 717.4186616974998
+  - len: 28769
+    mean: 1103.4916415526475
+    median: 1148.934400944563
+    std: 717.4186616974998
+  exptime: 86206.91034482759
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 6.498406193777498
+    median: 2.734420936458734
+    std: 13.121729316253498
+  - len: 20600
+    mean: 5.0407255924924526
+    median: 4.0896606420083605
+    std: 4.153234970257915
+  - len: 20600
+    mean: 16.09125101323351
+    median: 6.303902386995955
+    std: 15.963717341783552
+  - len: 20600
+    mean: 26.707012414196246
+    median: 15.261276960292886
+    std: 29.82428371127139
+  - len: 850
+    mean: 71.27498346722342
+    median: 56.89394431650254
+    std: 88.71409329268847
+  - len: 850
+    mean: 71.27498346722342
+    median: 56.89394431650254
+    std: 88.71409329268847
+  - len: 850
+    mean: 71.27498346722342
+    median: 56.89394431650254
+    std: 88.71409329268847
+  - len: 850
+    mean: 71.27498346722342
+    median: 56.89394431650254
+    std: 88.71409329268847
+  - len: 850
+    mean: 71.27498346722342
+    median: 56.89394431650254
+    std: 88.71409329268847
+  - len: 28769
+    mean: 1125.3450575688487
+    median: 1171.687759913226
+    std: 731.6263347613415
+  - len: 28769
+    mean: 1125.3450575688487
+    median: 1171.687759913226
+    std: 731.6263347613415
+  - len: 28769
+    mean: 1125.3450575688487
+    median: 1171.687759913226
+    std: 731.6263347613415
+  exptime: 89655.1827586207
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 6.622196345798285
+    median: 2.7865097676766366
+    std: 13.371689201554297
+  - len: 20600
+    mean: 5.136747935322792
+    median: 4.167565854069805
+    std: 4.232351229385973
+  - len: 20600
+    mean: 16.397778236945715
+    median: 6.423987375767149
+    std: 16.2678151370935
+  - len: 20600
+    mean: 27.21576256433922
+    median: 15.5519937512431
+    std: 30.392415727713292
+  - len: 850
+    mean: 72.63272269982711
+    median: 57.97773468078385
+    std: 90.40403552892538
+  - len: 850
+    mean: 72.63272269982711
+    median: 57.97773468078385
+    std: 90.40403552892538
+  - len: 850
+    mean: 72.63272269982711
+    median: 57.97773468078385
+    std: 90.40403552892538
+  - len: 850
+    mean: 72.63272269982711
+    median: 57.97773468078385
+    std: 90.40403552892538
+  - len: 850
+    mean: 72.63272269982711
+    median: 57.97773468078385
+    std: 90.40403552892538
+  - len: 28769
+    mean: 1146.782104068909
+    median: 1194.0076029017173
+    std: 745.5633113832768
+  - len: 28769
+    mean: 1146.782104068909
+    median: 1194.0076029017173
+    std: 745.5633113832768
+  - len: 28769
+    mean: 1146.782104068909
+    median: 1194.0076029017173
+    std: 745.5633113832768
+  exptime: 93103.45517241379
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 6.7437145420964075
+    median: 2.8376425978214286
+    std: 13.617061502280922
+  - len: 20600
+    mean: 5.231007952897564
+    median: 4.244041249708223
+    std: 4.310015445401169
+  - len: 20600
+    mean: 16.698679679699605
+    median: 6.541868410726258
+    std: 16.56633173943272
+  - len: 20600
+    mean: 27.715175478876994
+    median: 15.837374934585668
+    std: 30.950120656338335
+  - len: 850
+    mean: 73.96554295972545
+    median: 59.04163393353406
+    std: 92.06296177663725
+  - len: 850
+    mean: 73.96554295972545
+    median: 59.04163393353406
+    std: 92.06296177663725
+  - len: 850
+    mean: 73.96554295972545
+    median: 59.04163393353406
+    std: 92.06296177663725
+  - len: 850
+    mean: 73.96554295972545
+    median: 59.04163393353406
+    std: 92.06296177663725
+  - len: 850
+    mean: 73.96554295972545
+    median: 59.04163393353406
+    std: 92.06296177663725
+  - len: 28769
+    mean: 1167.8257103826722
+    median: 1215.9178034899137
+    std: 759.2444987257264
+  - len: 28769
+    mean: 1167.8257103826722
+    median: 1215.9178034899137
+    std: 759.2444987257264
+  - len: 28769
+    mean: 1167.8257103826722
+    median: 1215.9178034899137
+    std: 759.2444987257264
+  exptime: 96551.7275862069
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
+- expected:
+  - len: 20600
+    mean: 6.863081465949605
+    median: 2.887870208403451
+    std: 13.858089904847585
+  - len: 20600
+    mean: 5.323599257599332
+    median: 4.319162778877556
+    std: 4.386304748909763
+  - len: 20600
+    mean: 16.994254175525754
+    median: 6.657662562979631
+    std: 16.85956361437696
+  - len: 20600
+    mean: 28.20574713939343
+    median: 16.117703930727238
+    std: 31.49795237023587
+  - len: 850
+    mean: 75.27476790973189
+    median: 60.086698664242775
+    std: 93.69251956403959
+  - len: 850
+    mean: 75.27476790973189
+    median: 60.086698664242775
+    std: 93.69251956403959
+  - len: 850
+    mean: 75.27476790973189
+    median: 60.086698664242775
+    std: 93.69251956403959
+  - len: 850
+    mean: 75.27476790973189
+    median: 60.086698664242775
+    std: 93.69251956403959
+  - len: 850
+    mean: 75.27476790973189
+    median: 60.086698664242775
+    std: 93.69251956403959
+  - len: 28769
+    mean: 1188.4967755315417
+    median: 1237.4401213393592
+    std: 772.6834839763059
+  - len: 28769
+    mean: 1188.4967755315417
+    median: 1237.4401213393592
+    std: 772.6834839763059
+  - len: 28769
+    mean: 1188.4967755315417
+    median: 1237.4401213393592
+    std: 772.6834839763059
+  exptime: 100000.0
+  extinction: 0
+  instrument: uvi
+  magnitude: 20
+  redshift: 0
+  sed: G2V Star
+  snr: 10
+  target: snr
+  telescope: EAC3
