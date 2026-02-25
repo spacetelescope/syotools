@@ -173,14 +173,14 @@ class SourceExposure(PersistentModel):
         return np.array(output_mags)
 
     @property
-    def magnitude(self):
+    def magnitude(self, source):
         if self.unknown == "magnitude":
             return self._magnitude
         #If magnitude is not unknown, it should be interpolated from the SED
         #at the camera bandpasses.
         if self.verbose:
-            print('magnitude fcn line 174', self.interpolated_source(self.source))
-        return self.interpolated_source(self.source)
+            print('magnitude fcn line 174', self.interpolated_source(source))
+        return self.interpolated_source(source)
 
     @magnitude.setter
     def magnitude(self, new_magnitude):
@@ -230,12 +230,11 @@ class SourcePhotometricExposure(SourceExposure):
         # multiply the telescope efficiency by the instrumental efficiency
         return tel_eff * inst_eff
 
-    @property
-    def _fsource(self):
+    def _fsource(source, self):
         """
         Calculate the stellar flux as per Eq 2 in the SNR equation paper.
         """
-        mag = self.recover('magnitude')
+        mag = self.interpolated_source(source)
         (f0, c_ap, D, dlam, int_eff, pivotwave) = self.recover('camera.ab_zeropoint',
                                            'camera.ap_corr',
                                            'telescope.effective_aperture',
