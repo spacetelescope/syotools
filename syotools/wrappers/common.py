@@ -69,9 +69,13 @@ def compute_observation(telescope, instrument="hri", sed="G2V Star", magnitude=2
         print("bandpass", bandpass)
         print("target", target)
     # create the source
-    source = Source()
-	
-    source.set_sed(sed, magnitude, redshift, extinction, bandpass=bandpass)   
+    if isinstance(sed, str):
+        source = Source()
+        source.set_sed(sed, magnitude, redshift, extinction, bandpass=bandpass)   
+    elif isinstance(sed, dict):
+        syn_spectra_library[source["name"]] = source
+        source = Source()
+        source.set_sed(sed["name"], magnitude, redshift, extinction, bandpass=bandpass) 
 
     # create the source
     source2 = Source()

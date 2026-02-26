@@ -109,8 +109,6 @@ class SourceExposure(PersistentModel):
         Ensure that the given Quantity is an array, propagating if necessary.
         """
         q = quant
-        if len(q) < 2:
-            import pdb; pdb.set_trace()
         #val = q[1]['value']
         val = q # not sure about this. - it should be stripping out the JSON but leaving the intent intact.
         if not isinstance(val, list):
@@ -155,6 +153,17 @@ class SourceExposure(PersistentModel):
             return self.sed
         sed = self.recover('sed')
         return self.camera.interpolate_at_bands(sed)
+
+    @property
+    def _internal_efficiency(self):
+        # right now there is no indication from the SEI database as to what the filters are, or which detector they're on.
+        # until then, we hardcode one of the detectors.
+        self.mode = "nir"
+        (tel_eff, inst_eff) = self.recover('telescope.telescope_efficiency', f"camera.instrument_efficiency_{self.mode}")
+
+        # multiply the telescope efficiency by the instrumental efficiency
+        return tel_eff * inst_eff
+
 
     def interpolated_source(self, source):
         """
@@ -220,17 +229,7 @@ class SourcePhotometricExposure(SourceExposure):
                   'snr': self._update_snr}[self.unknown](self.source)
         return status
 
-    @property
-    def _internal_efficiency(self):
-        # right now there is no indication from the SEI database as to what the filters are, or which detector they're on.
-        # until then, we hardcode one of the detectors.
-        self.mode = "nir"
-        (tel_eff, inst_eff) = self.recover('telescope.telescope_efficiency', f"camera.instrument_efficiency_{self.mode}")
-
-        # multiply the telescope efficiency by the instrumental efficiency
-        return tel_eff * inst_eff
-
-    def _fsource(source, self):
+    def _fsource(self, source):
         """
         Calculate the stellar flux as per Eq 2 in the SNR equation paper.
         """
@@ -434,7 +433,7 @@ class SourceSpectrographicExposure(SourceExposure):
         # multiply the telescope efficiency by the instrumental efficiency
         return tel_eff * inst_eff
 
-    def _update_snr(self):
+    def _update_snr(self, source):
         """
         Calculate the SNR based on the current SED and spectrograph parameters.
         """
@@ -487,9 +486,6 @@ class SourceSpectrographicExposure(SourceExposure):
             print("SNR: {}".format(snr))
 
         self._snr = snr
-
-        print(self.spectrograph.mode, self._snr)
-
 
         return True
 
@@ -566,21 +562,6 @@ class SourceIFSExposure(SourceSpectrographicExposure):
         # need this before so super().__init__ has somewhere to put the default source
         self.sources = []
 
-        self.telescope = None
-        self.camera = None
-        self.spectrograph = None
-        self.spectropolarimeter = None
-
-        self.exp_id = ''
-        self.n_exp = 0
-        self._exptime = np.zeros(1, dtype=float) * u.h
-        self._snr = np.zeros(1, dtype=float) * u.dimensionless_unscaled
-        self._magnitude = np.zeros(1, dtype=float) * u.ABmag
-        self._unknown = '' # one of 'snr', 'magnitude', 'exptime'
-        self._interp_flux = np.zeros(1, dtype=float) * u.dimensionless_unscaled # the source SED interpolated to the Spectrograph wavelength grid
-
-        self.verbose = False # set this to True for debugging purposes
-        self._disable = False #set this to disable recalculating (when updating several attributes at the same time)
         super().__init__(default_model, **kw)
         # Do this after, because by default super().__init__ loads a default source
         self.sources = []

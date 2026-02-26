@@ -123,6 +123,25 @@ class IFS(Spectrograph):
 
         self.CMOS = uvi['CMOS']
 
+        self.imager_mirrors = {}
+        for mirror in range(1, self.fuv_imager["N_refl_optics"][0] + 1):
+            self.imager_mirrors[f"mirror{mirror}"] = set_coating(self.fuv_imager)
+        self.instrument_efficiency_imager = mirror_efficiency(self.imager_mirrors)
+
+        for disperser in self.fuv_mos:
+            fuvmos_mirrors = {}
+            if isinstance(self.fuv_mos[disperser], dict):
+                for mirror in range(1, self.fuv_mos[disperser]["N_refl_optics"][0] + 1):
+                    fuvmos_mirrors[f"mirror{mirror}"] = set_coating(self.fuv_mos[disperser])
+            setattr(self, f"instrument_efficiency_{disperser}", mirror_efficiency(fuvmos_mirrors))
+
+        for disperser in self.nuv_mos:
+            nuvmos_mirrors = {}
+            if isinstance(self.nuv_mos[disperser], dict):
+                for mirror in range(1, self.nuv_mos[disperser]["N_refl_optics"][0] + 1):
+                    nuvmos_mirrors[f"mirror{mirror}"] = set_coating(self.nuv_mos[disperser])
+            setattr(self, f"instrument_efficiency_{disperser}", mirror_efficiency(nuvmos_mirrors))
+
         # Get a handy list of available dispersers
         self.modes = list(self.FUV_MOS.keys())
         self.modes.extend(list(self.NUV_MOS.keys()))
