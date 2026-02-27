@@ -12,6 +12,7 @@ from astropy.table import QTable
 from syotools.models.base import PersistentModel
 from syotools.models.source_exposure import SourceSpectrographicExposure
 from syotools.models.spectrograph import Spectrograph
+from syotools.spectra.utils import mirror_efficiency, set_coating
 from syotools.defaults import default_ifs
 from hwo_sci_eng.utils import read_yaml 
 
@@ -104,24 +105,24 @@ class IFS(Spectrograph):
 
     def set_from_sei(self, name): 
 
-        if ('UVI' in name): uvi = read_yaml.uvi()
+        if ("ifs" in name.lower()): uvi = read_yaml.uvi()
         
         # the "uvi" dictionary returned by read_yaml is nested, and therefore awkward  
         # when summoning individual entries. And often, we do not need the individual 
         # components. So, we are going to break this dictionary up and carry the 
         # pieces separately:  
 
-        self.FUV_Imager = uvi['FUV_Imager']  
+        self.fuv_imager = uvi['FUV_Imager']  
 
-        self.FUV_MOS = uvi['FUV_MOS'] 
+        self.fuv_mos = uvi['FUV_MOS'] 
         
-        self.NUV_MOS = uvi['NUV_MOS']
+        self.nuv_mos = uvi['NUV_MOS']
 
-        self.MSA = uvi['MSA'] 
+        self.msa = uvi['MSA'] 
 
-        self.MCP = uvi['MCP']
+        self.mcp = uvi['MCP']
 
-        self.CMOS = uvi['CMOS']
+        self.cmos = uvi['CMOS']
 
         self.imager_mirrors = {}
         for mirror in range(1, self.fuv_imager["N_refl_optics"][0] + 1):
@@ -143,8 +144,8 @@ class IFS(Spectrograph):
             setattr(self, f"instrument_efficiency_{disperser}", mirror_efficiency(nuvmos_mirrors))
 
         # Get a handy list of available dispersers
-        self.modes = list(self.FUV_MOS.keys())
-        self.modes.extend(list(self.NUV_MOS.keys()))
+        self.modes = list(self.fuv_mos.keys())
+        self.modes.extend(list(self.nuv_mos.keys()))
         self.modes.remove("G165LL") # No data to support mode
         self.modes.remove("G700L") # No data to support mode
 
