@@ -561,22 +561,20 @@ class SourceIFSExposure(SourceSpectrographicExposure):
 
         # need this before so super().__init__ has somewhere to put the default source
         self.sources = []
+        self._snrs = []
+        self._exptimes = []
+        self._wavelength = []
 
         super().__init__(default_model, **kw)
         # Do this after, because by default super().__init__ loads a default source
         self.sources = []
-        self._snrs = []
-        self._exptimes = []
-        self._wavelength = []
+
 
     def add_source(self, source):
         # and now the magic: create a master wavelength array from all of the sources.
         self.sources.append(source)
         for source in self.sources:
-            if isinstance(source.sed.model, Empirical1D):
-                self._wavelength = syn.utils.merge_wavelengths(self._wavelength, source.sed.waveset)
-            else:
-                self._wavelength = syn.utils.merge_wavelengths(self._wavelength, syn.models.get_waveset(source.sed.model))
+            self._wavelength = syn.utils.merge_wavelengths(self._wavelength, syn.models.get_waveset(source.sed.model))
 
     @property
     def num_sources(self):
