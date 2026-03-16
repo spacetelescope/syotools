@@ -58,12 +58,12 @@ def camera_snr(telescope, template, magnitude, exptime, silent=False):
 	return exp.snr, hri 
 
 
-def camera_exptime(telescope, template, magnitude, snr_goal, silent=False): 
+def camera_exptime(telescope, template, magnitude, snr, silent=False): 
 	''' 
 	Run a basic SNR calculation that takes in a telescope, spectral template,
 	normalization magnitude, and SNR goal to compute exposure time. 
 	
-	usage: exptime, hri = camera_exptime(telescope, template, mag, snr_goal) 
+	usage: exptime, hri = camera_exptime(telescope, template, mag, snr) 
 	
 	positional arguments:
 	
@@ -82,7 +82,7 @@ def camera_exptime(telescope, template, magnitude, snr_goal, silent=False):
 	
 	magnitude = V magnitude to normalize the template spectrum, a float.
 	
-	snr_goal = desired SNR, per pixel, for each band 
+	snr = desired SNR, per pixel, for each band 
 	
 	outputs are arrays with the exptime in each band for FUV, NUV, U, B, V, R, I, J, H, K 
 	'''
@@ -105,7 +105,7 @@ def camera_exptime(telescope, template, magnitude, snr_goal, silent=False):
 	exp = SourcePhotometricExposure() 
 	exp.source = source
 	
-	exp._snr = [snr_goal] * u.Unit('electron(1/2)')  
+	exp._snr = [snr] * u.Unit('electron(1/2)')  
 	exp.unknown = 'exptime' 
 	tel.add_camera(hri)
 	hri.add_exposure(exp)
@@ -121,7 +121,7 @@ def camera_magnitude(telescope, template, snr, exptime, silent=False):
 	Run a basic SNR calculation that takes in a telescope, spectral template, SNR goal,
 	and exposure time and computes the limiting magnitude. 
 	
-	usage: exptime, hri = camera_magnitude(telescope, template, mag, snr_goal) 
+	usage: exptime, hri = camera_magnitude(telescope, template, snr, exptime) 
 	
 	positional arguments:
 	
@@ -138,7 +138,7 @@ def camera_magnitude(telescope, template, snr, exptime, silent=False):
 	    1068', 'Galaxy with f_esc, HI=1, HeI=1', 'Galaxy with f_esc, HI=0.001, HeI=1',
 	    'Blackbody5000', 'Blackbody100000' 
 
-	snr_goal = desired SNR for each band 
+	snr = desired SNR for each band 
 
 	exptime = exposure time per band in hours
 
