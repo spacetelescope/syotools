@@ -99,7 +99,7 @@ class IFS(Spectrograph):
 
     def add_exposure(self, exposure):
         self.exposures.append(exposure)
-        exposure.spectrograph = self
+        exposure.ifs = self
         exposure.telescope = self.telescope
         exposure.calculate()
 

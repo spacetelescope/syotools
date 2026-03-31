@@ -3,7 +3,7 @@ def camera_snr(telescope, template, magnitude, exptime, silent=False):
 	Run a basic SNR calculation that takes in a telescope, spectral template,
 	normalization magnitude, and exptime to compute SNR.
 	
-	usage: snr, hri = camera_snr(telescope, template, mag, snr_goal) 
+	usage: snr, hri = camera_snr(telescope, template, mag, exptime) 
 	
 	positional arguments:
 	
