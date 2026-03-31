@@ -109,7 +109,7 @@ def compute_observation(telescope, instrument="hri", sed="G2V Star", magnitude=2
 
     elif instrument.lower() in ["ifs", "ifu"]:
         inst = IFS()
-        inst.set_from_sei('UVI')
+        inst.set_from_sei('IFS')
         inst.bandnames = inst.modes
         exp = SourceIFSExposure() 
         exp.source = source
@@ -151,7 +151,7 @@ def check_relative_diff(actual, expected, rel_tol=0.1):
                 # Can't calculate relative difference if expected is zero
                 if act != 0:
                     all_within_tolerance = False
-                    differences.append((i, a, e, "inf"))
+                    differences.append((i, key, a, e, "inf"))
             else:
                 rel_diff = abs(act - exp) / abs(exp)
                 pct_diff = 100 * rel_diff

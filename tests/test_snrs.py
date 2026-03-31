@@ -12,7 +12,7 @@ from syotools.models import Camera, Spectrograph, Telescope, Source, SourcePhoto
 from syotools.wrappers.common import compute_observation, check_relative_diff
 
 telescopes = ["EAC1", "EAC2", "EAC3"]
-instruments = ["hri", "uvi"]
+instruments = ["hri", "uvi", "ifs"]
 seds = syn_spectra_library
 redshifts = np.logspace(0,5,20)
 extinctions = np.linspace(0,6,10)
@@ -42,7 +42,8 @@ def create_comparisons(reset):
                     result = []
                     if actual is not None:
                         for band in actual:
-                            result.append({"mean": np.nanmean(band).value, "median": np.nanmedian(band).value, "std": np.nanstd(band).value, "len": len(band)})
+                            print(band)
+                            result.append({"mean": np.nanmean(band.value), "median": np.nanmedian(band.value), "std": np.nanstd(band.value), "len": len(band)})
                     saved.append({"telescope": telescope, "instrument": instrument, "sed": sed, "magnitude": magnitude, "snr": snr, "exptime": exptimes[0], "redshift": redshift, "extinction": extinction, "target": target, "expected": result})
                 except Exception as err:
                     print(f" Error in calculation: {err}")
@@ -66,7 +67,7 @@ def test_etc_snrs(inputs):
     result = []
     if actual is not None:
         for band in actual:
-            result.append({"mean": np.nanmean(band).value, "median": np.nanmedian(band).value, "std": np.nanstd(band).value, "len": len(band)})
+            result.append({"mean": np.nanmean(band.value), "median": np.nanmedian(band.value), "std": np.nanstd(band.value), "len": len(band)})
     assert check_relative_diff(result, inputs["expected"], 0.0005) #1e-3)
 
 

@@ -1,8 +1,8 @@
 - expected:
   - len: 10
-    mean: 3.4241134292142603
-    median: 1.3188976261736018
-    std: 6.164463809669466
+    mean: 9.950303531593388
+    median: 3.2862168486608807
+    std: 11.10318084544529
   exptime: 1
   extinction: 0
   instrument: hri
@@ -14,9 +14,9 @@
   telescope: EAC1
 - expected:
   - len: 10
-    mean: 33.76592164574939
-    median: 0.6293345595543245
-    std: 85.26235335047555
+    mean: 242.67183512644888
+    median: 2.910227772661215
+    std: 649.1715903250313
   exptime: 1
   extinction: 0
   instrument: hri
@@ -28,9 +28,9 @@
   telescope: EAC1
 - expected:
   - len: 10
-    mean: 1.7864819645519763
-    median: 1.2738496028781605
-    std: 1.8661998394933803
+    mean: 6.563423191256125
+    median: 5.240615101437721
+    std: 5.004220263311553
   exptime: 1
   extinction: 0
   instrument: hri
@@ -43,7 +43,7 @@
 - expected:
   - len: 10
     mean: .inf
-    median: 0.2862001652576885
+    median: 1.5671051047049978
     std: .nan
   exptime: 1
   extinction: 0
@@ -56,9 +56,9 @@
   telescope: EAC1
 - expected:
   - len: 10
-    mean: 2.7853388903960488
-    median: 0.9486868352127504
-    std: 5.220253537300817
+    mean: 7.431108698413728
+    median: 2.283381968186709
+    std: 9.495393804183209
   exptime: 1
   extinction: 0
   instrument: hri
@@ -70,9 +70,9 @@
   telescope: EAC1
 - expected:
   - len: 10
-    mean: 1.1821869867830637e+61
-    median: 1.0478828023787141
-    std: 3.5141269540408394e+61
+    mean: 2.1669831589536238e+61
+    median: 6.114585489621291
+    std: 6.021293504709737e+61
   exptime: 1
   extinction: 0
   instrument: hri
@@ -84,9 +84,9 @@
   telescope: EAC1
 - expected:
   - len: 10
-    mean: 1.1821869867830637e+61
-    median: 1.0284597346418873
-    std: 3.5141269540408394e+61
+    mean: 2.1669831589536238e+61
+    median: 5.987420647869989
+    std: 6.021293504709737e+61
   exptime: 1
   extinction: 0
   instrument: hri
@@ -98,9 +98,9 @@
   telescope: EAC1
 - expected:
   - len: 10
-    mean: 1.1844669775763834e+61
-    median: 9.877095308462291e+58
-    std: 3.513366517095364e+61
+    mean: 2.2117174051065715e+61
+    median: 1.5882919003503568e+59
+    std: 6.006672051043379e+61
   exptime: 1
   extinction: 0
   instrument: hri
@@ -112,9 +112,9 @@
   telescope: EAC1
 - expected:
   - len: 10
-    mean: 1.177485681681977e+61
-    median: 6.910473926918982
-    std: 3.5156735866079725e+61
+    mean: 2.0266290939572144e+61
+    median: 32.23614955942433
+    std: 6.053723925069948e+61
   exptime: 1
   extinction: 0
   instrument: hri
@@ -126,9 +126,9 @@
   telescope: EAC1
 - expected:
   - len: 10
-    mean: 1.1844669775763834e+61
-    median: 9.877095308462291e+58
-    std: 3.513366517095364e+61
+    mean: 2.2117174051065715e+61
+    median: 1.5882919003503568e+59
+    std: 6.006672051043379e+61
   exptime: 1
   extinction: 0
   instrument: hri
@@ -140,9 +140,9 @@
   telescope: EAC1
 - expected:
   - len: 10
-    mean: 1.177485681681977e+61
-    median: 1.402986292333511
-    std: 3.5156735866079725e+61
+    mean: 2.0266290939572144e+61
+    median: 8.045455274011807
+    std: 6.053723925069948e+61
   exptime: 1
   extinction: 0
   instrument: hri
@@ -154,9 +154,9 @@
   telescope: EAC1
 - expected:
   - len: 10
-    mean: 1.177485681681977e+61
-    median: 1.8161967376494712
-    std: 3.5156735866079725e+61
+    mean: 2.0266290939572144e+61
+    median: 10.126009222416517
+    std: 6.053723925069948e+61
   exptime: 1
   extinction: 0
   instrument: hri
@@ -168,9 +168,9 @@
   telescope: EAC1
 - expected:
   - len: 10
-    mean: 1.177485681681977e+61
-    median: 3.6210645901746332
-    std: 3.5156735866079725e+61
+    mean: 2.0266290939572144e+61
+    median: 16.7704040890926
+    std: 6.053723925069948e+61
   exptime: 1
   extinction: 0
   instrument: hri
@@ -182,9 +182,9 @@
   telescope: EAC1
 - expected:
   - len: 10
-    mean: 1.177485681681977e+61
-    median: 36.5396766134621
-    std: 3.5156735866079725e+61
+    mean: 2.0266290939572144e+61
+    median: 239.45701700947023
+    std: 6.053723925069948e+61
   exptime: 1
   extinction: 0
   instrument: hri
@@ -196,9 +196,9 @@
   telescope: EAC1
 - expected:
   - len: 10
-    mean: 1.1844669775763834e+61
-    median: 9.877095308462291e+58
-    std: 3.513366517095364e+61
+    mean: 2.2117174051065715e+61
+    median: 1.5882919003503568e+59
+    std: 6.006672051043379e+61
   exptime: 1
   extinction: 0
   instrument: hri
@@ -210,9 +210,9 @@
   telescope: EAC1
 - expected:
   - len: 10
-    mean: 1.177485681681977e+61
-    median: 7.189888487245398
-    std: 3.5156735866079725e+61
+    mean: 2.0266290939572144e+61
+    median: 33.65715520424418
+    std: 6.053723925069948e+61
   exptime: 1
   extinction: 0
   instrument: hri
@@ -224,9 +224,9 @@
   telescope: EAC1
 - expected:
   - len: 10
-    mean: 0.6652497890360951
-    median: 0.5921247695880335
-    std: 0.29438871561459273
+    mean: 3.436619136327014
+    median: 2.346239415995231
+    std: 2.910984185004459
   exptime: 1
   extinction: 0
   instrument: hri
@@ -238,9 +238,9 @@
   telescope: EAC1
 - expected:
   - len: 10
-    mean: 1.3978742726301028
-    median: 0.46984996358424164
-    std: 1.9987230416382145
+    mean: 8.113990217520925
+    median: 2.4367812861940523
+    std: 13.444970481393002
   exptime: 1
   extinction: 0
   instrument: hri
@@ -252,53 +252,53 @@
   telescope: EAC1
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 95258.6990524446
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 121406.79147935346
+    median: 88128.80020263742
+    std: 70755.18746108623
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 126456.54566166429
+    median: 98674.70184568124
+    std: 87593.3930346077
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 24405.874017680202
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 2724.4214297765498
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 2724.420697754403
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 2724.420688623451
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 2724.420688509555
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 2724.420688508135
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 10570.145320067011
+    median: 2193.18843590256
+    std: 20499.94243482948
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 10570.066247168957
+    median: 2193.185786722462
+    std: 20499.731426555336
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 10570.061200098162
+    median: 2193.185270116617
+    std: 20499.719621797896
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -310,53 +310,53 @@
   telescope: EAC1
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 30183075625.0929
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 25190027662.691666
+    median: 4834237652.460098
+    std: 81982393057.275
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 1610203334.0036893
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 643672314.4809383
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 64123768.43574778
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 63715567.29775555
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 63710370.978896886
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 63710304.83079691
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 63710303.98874484
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 50138.6759276145
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 50137.631054946054
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 50137.468528687255
+    std: .nan
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -368,53 +368,53 @@
   telescope: EAC1
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 108702.21326633534
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 149038.9376304899
+    median: 118763.82457583005
+    std: 76213.65069290035
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 189653.23741810795
+    median: 76756.07337860102
+    std: 132643.49597118245
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 33665.54015057366
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 3982.4124117959304
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 3982.4059336167174
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 3982.4055834378814
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 3982.405564508918
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 3982.40556348571
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 10690.979230894003
+    median: 5818.201561802109
+    std: 14154.829730309139
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 10690.928068945077
+    median: 5818.187605804073
+    std: 14154.70015647073
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 10690.923896046166
+    median: 5818.185371253992
+    std: 14154.693968425947
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -426,53 +426,53 @@
   telescope: EAC1
 - expected:
   - len: 20600
-    mean: .nan
-    median: .nan
+    mean: .inf
+    median: .inf
     std: .nan
   - len: 20600
-    mean: .nan
-    median: .nan
+    mean: .inf
+    median: .inf
     std: .nan
   - len: 20600
-    mean: .nan
-    median: .nan
+    mean: .inf
+    median: .inf
     std: .nan
   - len: 20600
-    mean: .nan
-    median: .nan
+    mean: .inf
+    median: .inf
     std: .nan
   - len: 850
-    mean: .nan
-    median: .nan
+    mean: .inf
+    median: .inf
     std: .nan
   - len: 850
-    mean: .nan
-    median: .nan
+    mean: .inf
+    median: .inf
     std: .nan
   - len: 850
-    mean: .nan
-    median: .nan
+    mean: .inf
+    median: .inf
     std: .nan
   - len: 850
-    mean: .nan
-    median: .nan
+    mean: .inf
+    median: .inf
     std: .nan
   - len: 850
-    mean: .nan
-    median: .nan
+    mean: .inf
+    median: .inf
     std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 3286032.2523167245
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 3281647.183131315
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 3280950.3911682316
+    std: .nan
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -484,53 +484,53 @@
   telescope: EAC1
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 244361166.20339358
+    median: 4005.6342817265195
+    std: 8416550769.699137
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 11673.81435480349
+    median: 10243.950251532706
+    std: 5875.342393239795
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 18509.012769634366
+    median: 9547.95406969765
+    std: 11716.639853545732
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 22446375.73214169
+    median: 2444.633503710212
+    std: 790450838.019441
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 358513.96357095387
+    median: 325.1020897589017
+    std: 6201368.330208147
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 358512.8454652389
+    median: 325.1020814215918
+    std: 6201346.312070857
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 358512.84544683556
+    median: 325.10208133838324
+    std: 6201346.311996984
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 358512.845446211
+    median: 325.1020813375528
+    std: 6201346.311997021
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 358512.8454461708
+    median: 325.10208133754446
+    std: 6201346.311997023
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 2212.17776941838
+    median: 1684.9346295799558
+    std: 1550.2649831032913
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 2212.175855299542
+    median: 1684.9332156308822
+    std: 1550.2631047852797
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 2212.175588083801
+    median: 1684.9329666888568
+    std: 1550.263025932494
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -542,53 +542,53 @@
   telescope: EAC1
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 9959.953095882196
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 16855.843112858078
+    median: 14646.399664376579
+    std: 8426.029035700349
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 26028.893490527877
+    median: 13082.862450997462
+    std: 16727.62797294329
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 3768.524198772513
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 497.89966624093427
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 497.8996424224306
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 497.8996421326694
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 497.89964212914435
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 497.89964212910144
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 2765.1083988535797
+    median: 2038.0555235470924
+    std: 2142.3754037920653
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 2765.1054391777525
+    median: 2038.0534511462176
+    std: 2142.371933579982
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 2765.1050499509224
+    median: 2038.0530805133405
+    std: 2142.3717960246686
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -600,53 +600,53 @@
   telescope: EAC1
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 8230.673822875498
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 14595.162002207959
+    median: 12789.988908470783
+    std: 7287.355018757126
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 22835.33323111913
+    median: 11455.828153607414
+    std: 14606.723810756952
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 3289.642255089033
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 439.4102366303448
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 439.41018142160334
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 439.41017937006893
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 439.4101792938348
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 439.41017929100195
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 2512.940520826501
+    median: 1877.9651795525626
+    std: 1872.3135563546014
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 2512.9380683588583
+    median: 1877.9634325105421
+    std: 1872.3108721535023
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 2512.937737829524
+    median: 1877.9631190726295
+    std: 1872.3107644483966
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -658,53 +658,53 @@
   telescope: EAC1
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 423466648247.7603
+    median: 155500.78086072646
+    std: 21276627274798.54
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 282369.63951758255
+    median: 184100.04026758653
+    std: 224642.2463657319
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 285201.95310211036
+    median: 170873.41419285547
+    std: 219594.48978245546
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 1455701863.7135222
+    median: 40567.90872312346
+    std: 52224024888.23838
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 23387576.875348132
+    median: 5886.646778495975
+    std: 398134626.08042616
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 23382874.420668922
+    median: 5886.643311548554
+    std: 398044526.1776606
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 23382874.379373185
+    median: 5886.643267655282
+    std: 398044525.86638445
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 23382874.37913508
+    median: 5886.643267099571
+    std: 398044525.8663963
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 23382874.379119344
+    median: 5886.643267092535
+    std: 398044525.8663972
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 13581.506116171919
+    median: 6102.781022046761
+    std: 25240.550685804796
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 13581.388170427479
+    median: 6102.765809114814
+    std: 25240.053551215136
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 13581.380254982787
+    median: 6102.763430983333
+    std: 25240.02921350527
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -716,53 +716,53 @@
   telescope: EAC1
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 328191696107956.7
+    median: 2083007.4573592304
+    std: 1.7660726215225556e+16
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 3706264.8223559586
+    median: 2916848.0820388254
+    std: 2442698.4608460506
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 3607375.976262946
+    median: 1933958.2808687985
+    std: 3054589.171011922
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 66015952655.4431
+    median: 564532.157810478
+    std: 3771135400144.1333
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 445439835.4047931
+    median: 78829.32285956867
+    std: 8109053311.884829
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 443642825.7369836
+    median: 78828.82216205193
+    std: 8070531121.560223
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 443642813.0416661
+    median: 78828.81706201166
+    std: 8070530998.36964
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 443642813.02811253
+    median: 78828.8170100633
+    std: 8070530998.369685
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 443642813.027258
+    median: 78828.81700953418
+    std: 8070530998.369733
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 119273.96541585872
+    median: 31804.18015157666
+    std: 284112.4836007393
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 119261.2241344802
+    median: 31803.76447378386
+    std: 284045.00674305495
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 119260.49631459305
+    median: 31803.698793379666
+    std: 284041.68495333777
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -774,53 +774,53 @@
   telescope: EAC1
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 56006102.486412555
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 52895722.7589515
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 51419689.06692523
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 11982635.986393645
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 1416336.9997554088
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 1415423.9622453037
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 1415368.4403290488
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 1415365.06403492
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 1415364.8587220844
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 191393.4805102377
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 191378.37097430852
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 191375.99994271123
+    std: .nan
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -832,53 +832,53 @@
   telescope: EAC1
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 5387980236.393791
+    median: 17172.53630171954
+    std: 250094934959.07092
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 47534.791190001575
+    median: 41153.191495299616
+    std: 24922.49158280463
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 68003.9606613474
+    median: 32080.323728960007
+    std: 46730.22339258459
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 145279873.12434584
+    median: 8098.274842100287
+    std: 5217228344.571573
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 2295708.7527765743
+    median: 1274.2523973309835
+    std: 40137074.148334436
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 2295662.608408629
+    median: 1274.252261894451
+    std: 40136150.79146489
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 2295662.60798902
+    median: 1274.2522604682497
+    std: 40136150.788398854
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 2295662.607982575
+    median: 1274.2522604532312
+    std: 40136150.78839921
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 2295662.607982162
+    median: 1274.2522604530732
+    std: 40136150.788399234
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 5309.637569875958
+    median: 3508.4493383154177
+    std: 5050.4984768665
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 5309.626240320577
+    median: 3508.4458985161946
+    std: 5050.480388703885
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 5309.624908633681
+    median: 3508.445493193773
+    std: 5050.47959121049
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -890,53 +890,53 @@
   telescope: EAC1
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 230880.55695578942
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 223102.49949405837
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 337282.597348636
+    median: 161910.23077209605
+    std: 244963.49766143554
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 63959.18256992918
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 7724.852201254287
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 7724.844425130985
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 7724.84429627252
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 7724.8442941372
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 7724.8442941018175
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 16700.590170862226
+    median: 9324.5683810134
+    std: 22561.475495935243
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 16700.463224318268
+    median: 9324.532871490113
+    std: 22561.14515838989
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 16700.452986726414
+    median: 9324.527372531986
+    std: 22561.12935315304
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -948,53 +948,53 @@
   telescope: EAC1
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 1971045.959010806
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 1176207.535179025
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 1522219.941000584
+    median: 489321.87859618774
+    std: 1427069.0420706864
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 331968.19349334005
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 38560.585235232655
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 38560.46592632817
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 38560.464717766656
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 38560.464705524304
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 38560.4647054003
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 41772.69702653289
+    median: 16962.352527238145
+    std: 78097.19785675168
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 41771.587016107726
+    median: 16962.234986221578
+    std: 78093.03016576439
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 41771.5163202932
+    median: 16962.216593290606
+    std: 78092.82453148544
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -1006,53 +1006,53 @@
   telescope: EAC1
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 36179776.394027784
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 22140615.941935822
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 31183478.00832353
+    median: 18094608.95504286
+    std: 25859929.755833097
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 6077131.2990789935
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 799542.6874104112
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 799490.6668590107
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 799490.1312290808
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 799490.1257139639
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 799490.1256571774
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 778381.3514256247
+    median: 168942.06713137974
+    std: 1791545.4871688457
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 777845.9225907478
+    median: 168929.81323695113
+    std: 1789196.5940393333
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 777813.3408449807
+    median: 168927.8322783213
+    std: 1789075.315845578
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -1064,53 +1064,53 @@
   telescope: EAC1
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 2249539.7817506073
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 837067.9957845577
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 1178198.774671709
+    median: 882774.0126169918
+    std: 879382.9097077511
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 234672.20429468004
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 29797.930020646538
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 29797.79115415319
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 29797.788383014617
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 29797.788327715392
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 29797.788326611877
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 47936.92394891326
+    median: 7481.8352641818
+    std: 166745.2411537982
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 47933.098031685084
+    median: 7481.810373020016
+    std: 166701.0311741216
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 47932.89819079947
+    median: 7481.806258256833
+    std: 166698.88809084677
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -1122,53 +1122,53 @@
   telescope: EAC1
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 84911801706851.16
+    median: 1396667.1960287322
+    std: 4330111697975686.0
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 2743629.3158899485
+    median: 2276276.002563537
+    std: 1934938.8774519057
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 2726374.6312607867
+    median: 895394.1748210242
+    std: 2385682.5714891567
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 28012341179.042553
+    median: 416590.47860953165
+    std: 1274204562094.045
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 322999394.65458125
+    median: 60145.39988268307
+    std: 5594774747.124434
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 322096715.29513127
+    median: 60143.926235780986
+    std: 5577007785.390677
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 322096708.65375775
+    median: 60143.846862572864
+    std: 5577007725.476885
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 322096708.64656425
+    median: 60143.84258739258
+    std: 5577007725.476933
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 322096708.6461169
+    median: 60143.842357123875
+    std: 5577007725.476958
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 92339.4094299088
+    median: 30240.998833061745
+    std: 179448.37374344442
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 92333.69909473494
+    median: 30240.62883111017
+    std: 179428.93042124054
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 92333.34749710001
+    median: 30240.56968365902
+    std: 179427.95655490196
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -1180,53 +1180,53 @@
   telescope: EAC1
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 19852562511.22483
+    median: 40234.57994360974
+    std: 960693202586.525
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 95110.5636059593
+    median: 77142.00416800957
+    std: 50935.2852102374
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 123001.31524121687
+    median: 47713.54625775812
+    std: 86597.00410715959
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 294251545.1877077
+    median: 14876.493167396518
+    std: 10484719745.668024
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 4726215.277276583
+    median: 2443.7081395239024
+    std: 81682072.88795097
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 4726021.31972822
+    median: 2443.707572584778
+    std: 81678263.47658584
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 4726021.318015131
+    median: 2443.70756577671
+    std: 81678263.4637315
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 4726021.317996293
+    median: 2443.7075656949555
+    std: 81678263.4637325
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 4726021.317995088
+    median: 2443.7075656939746
+    std: 81678263.46373257
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 7225.656738835143
+    median: 4278.98555985088
+    std: 8828.238057994198
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 7225.634481785609
+    median: 4278.975529354004
+    std: 8828.185903576501
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 7225.632485971991
+    median: 4278.973502509396
+    std: 8828.183504415429
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -1238,53 +1238,53 @@
   telescope: EAC1
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 16381552962720.04
+    median: 756891.5494890758
+    std: 834596702936155.2
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 1329311.405991569
+    median: 973127.5788540497
+    std: 784854.9126466387
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 1291050.451298787
+    median: 343113.78718049894
+    std: 1029635.5167515024
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 10313587194.509542
+    median: 222738.36434997738
+    std: 417583423483.69324
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 141414855.40705597
+    median: 30659.36271956011
+    std: 2449385662.236599
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 141241305.57861206
+    median: 30659.223746019106
+    std: 2445967747.024836
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 141241304.30436665
+    median: 30659.22112765148
+    std: 2445967735.5046616
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 141241304.30311164
+    median: 30659.22107831944
+    std: 2445967735.5046644
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 141241304.30303487
+    median: 30659.221077389986
+    std: 2445967735.5046687
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 36548.05233714008
+    median: 13538.882549292652
+    std: 67910.45641079036
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 36547.21095271443
+    median: 13538.80787486233
+    std: 67907.62610741853
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 36547.157857351274
+    median: 13538.79600901924
+    std: 67907.48505812709
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -1296,9 +1296,9 @@
   telescope: EAC1
 - expected:
   - len: 10
-    mean: 4.4609405130302076
-    median: 1.567454455891299
-    std: 8.489834517036858
+    mean: 12.51636572003992
+    median: 3.906230502242913
+    std: 14.856235895455104
   exptime: 1
   extinction: 0
   instrument: hri
@@ -1310,9 +1310,9 @@
   telescope: EAC2
 - expected:
   - len: 10
-    mean: 40.21937543809584
-    median: 0.7571707344940881
-    std: 101.5881024283737
+    mean: 292.8750831663264
+    median: 3.45830988436515
+    std: 784.7180898881518
   exptime: 1
   extinction: 0
   instrument: hri
@@ -1324,9 +1324,9 @@
   telescope: EAC2
 - expected:
   - len: 10
-    mean: 2.219952746169551
-    median: 1.5137285702627494
-    std: 2.4994373350453865
+    mean: 7.975036118702268
+    median: 6.227674071541214
+    std: 6.130555486232624
   exptime: 1
   extinction: 0
   instrument: hri
@@ -1339,7 +1339,7 @@
 - expected:
   - len: 10
     mean: .inf
-    median: 0.3400900489977148
+    median: 1.8622034764648625
     std: .nan
   exptime: 1
   extinction: 0
@@ -1352,9 +1352,9 @@
   telescope: EAC2
 - expected:
   - len: 10
-    mean: 3.628924687197915
-    median: 1.1275129212475863
-    std: 7.14936049408488
+    mean: 9.395624146906755
+    median: 2.713677614658652
+    std: 12.657769512478502
   exptime: 1
   extinction: 0
   instrument: hri
@@ -1366,9 +1366,9 @@
   telescope: EAC2
 - expected:
   - len: 10
-    mean: 1.669276114319691e+61
-    median: 1.2452240375374686
-    std: 4.9620307554136765e+61
+    mean: 3.059831708364173e+61
+    median: 7.266577309137386
+    std: 8.50220949570028e+61
   exptime: 1
   extinction: 0
   instrument: hri
@@ -1380,9 +1380,9 @@
   telescope: EAC2
 - expected:
   - len: 10
-    mean: 1.669276114319691e+61
-    median: 1.222142172357961
-    std: 4.9620307554136765e+61
+    mean: 3.059831708364173e+61
+    median: 7.115436326986995
+    std: 8.50220949570028e+61
   exptime: 1
   extinction: 0
   instrument: hri
@@ -1394,9 +1394,9 @@
   telescope: EAC2
 - expected:
   - len: 10
-    mean: 1.6724955154928623e+61
-    median: 1.3946693257164682e+59
-    std: 4.9609570003785435e+61
+    mean: 3.1229975268261174e+61
+    median: 2.2427059014047544e+59
+    std: 8.481563655714933e+61
   exptime: 1
   extinction: 0
   instrument: hri
@@ -1408,9 +1408,9 @@
   telescope: EAC2
 - expected:
   - len: 10
-    mean: 1.6626377598130758e+61
-    median: 8.21227490472625
-    std: 4.964214637346745e+61
+    mean: 2.861648433750634e+61
+    median: 38.3198466173707
+    std: 8.548002019801699e+61
   exptime: 1
   extinction: 0
   instrument: hri
@@ -1422,9 +1422,9 @@
   telescope: EAC2
 - expected:
   - len: 10
-    mean: 1.6724955154928623e+61
-    median: 1.3946693257164682e+59
-    std: 4.9609570003785435e+61
+    mean: 3.1229975268261174e+61
+    median: 2.2427059014047544e+59
+    std: 8.481563655714933e+61
   exptime: 1
   extinction: 0
   instrument: hri
@@ -1436,9 +1436,9 @@
   telescope: EAC2
 - expected:
   - len: 10
-    mean: 1.6626377598130758e+61
-    median: 1.6672129518090386
-    std: 4.964214637346745e+61
+    mean: 2.861648433750634e+61
+    median: 9.56131995652148
+    std: 8.548002019801699e+61
   exptime: 1
   extinction: 0
   instrument: hri
@@ -1450,9 +1450,9 @@
   telescope: EAC2
 - expected:
   - len: 10
-    mean: 1.6626377598130758e+61
-    median: 2.1582035268618585
-    std: 4.964214637346745e+61
+    mean: 2.861648433750634e+61
+    median: 12.03377155633223
+    std: 8.548002019801699e+61
   exptime: 1
   extinction: 0
   instrument: hri
@@ -1464,9 +1464,9 @@
   telescope: EAC2
 - expected:
   - len: 10
-    mean: 1.6626377598130758e+61
-    median: 4.303034254222411
-    std: 4.964214637346745e+61
+    mean: 2.861648433750634e+61
+    median: 19.93165990002484
+    std: 8.548002019801699e+61
   exptime: 1
   extinction: 0
   instrument: hri
@@ -1478,9 +1478,9 @@
   telescope: EAC2
 - expected:
   - len: 10
-    mean: 1.6626377598130758e+61
-    median: 43.44419245535174
-    std: 4.964214637346745e+61
+    mean: 2.861648433750634e+61
+    median: 285.5554972876727
+    std: 8.548002019801699e+61
   exptime: 1
   extinction: 0
   instrument: hri
@@ -1492,9 +1492,9 @@
   telescope: EAC2
 - expected:
   - len: 10
-    mean: 1.6724955154928623e+61
-    median: 1.3946693257164682e+59
-    std: 4.9609570003785435e+61
+    mean: 3.1229975268261174e+61
+    median: 2.2427059014047544e+59
+    std: 8.481563655714933e+61
   exptime: 1
   extinction: 0
   instrument: hri
@@ -1506,9 +1506,9 @@
   telescope: EAC2
 - expected:
   - len: 10
-    mean: 1.6626377598130758e+61
-    median: 8.544369392286937
-    std: 4.964214637346745e+61
+    mean: 2.861648433750634e+61
+    median: 40.010123975415716
+    std: 8.548002019801699e+61
   exptime: 1
   extinction: 0
   instrument: hri
@@ -1520,9 +1520,9 @@
   telescope: EAC2
 - expected:
   - len: 10
-    mean: 0.7915189576148876
-    median: 0.7036211738433085
-    std: 0.3491682217135795
+    mean: 4.085699001975716
+    median: 2.78807602207354
+    std: 3.4576996998419354
   exptime: 1
   extinction: 0
   instrument: hri
@@ -1534,9 +1534,9 @@
   telescope: EAC2
 - expected:
   - len: 10
-    mean: 1.6611470797163008
-    median: 0.5583222881430412
-    std: 2.375187349811681
+    mean: 9.644315533875567
+    median: 2.895675567051126
+    std: 15.982574940869101
   exptime: 1
   extinction: 0
   instrument: hri
@@ -1548,53 +1548,53 @@
   telescope: EAC2
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 113194.58416954201
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 144265.99789377494
+    median: 104722.22475772089
+    std: 84077.40292659512
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 150266.5503946062
+    median: 117253.77266937165
+    std: 104086.00788357321
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 29001.159875221325
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 3237.392006333847
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 3237.3911364821342
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 3237.3911256319516
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 3237.3911254966106
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 3237.3911254949226
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 12560.35633509852
+    median: 2606.1352451471207
+    std: 24359.795824342847
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 12560.262373876047
+    median: 2606.13209716334
+    std: 24359.545086152157
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 12560.256376512176
+    median: 2606.131483287816
+    std: 24359.53105872345
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -1606,53 +1606,53 @@
   telescope: EAC2
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 35866128010.62132
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 29932958720.41903
+    median: 5744457212.728658
+    std: 97418534828.33223
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 1913382175.4232779
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 764866838.4501386
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 76197380.1413384
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 75712320.4194213
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 75706145.70615867
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 75706067.1032936
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 75706066.10269485
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 59579.08966731896
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 59577.84805969266
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 59577.65493200497
+    std: .nan
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -1664,53 +1664,53 @@
   telescope: EAC2
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 129169.32470616119
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 177100.8919706706
+    median: 141125.39716550452
+    std: 90563.61869351176
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 225362.29824145636
+    median: 91208.17200951085
+    std: 157618.4172007859
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 40004.292060394364
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 4732.245153764724
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 4732.237455834672
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 4732.237039722042
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 4732.237017229019
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 4732.237016013155
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 12703.941586899098
+    median: 6913.687809658037
+    std: 16819.986848979494
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 12703.880791868394
+    median: 6913.671225940118
+    std: 16819.832878193585
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 12703.875833270788
+    median: 6913.668570655406
+    std: 16819.825525026226
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -1722,53 +1722,53 @@
   telescope: EAC2
 - expected:
   - len: 20600
-    mean: .nan
-    median: .nan
+    mean: .inf
+    median: .inf
     std: .nan
   - len: 20600
-    mean: .nan
-    median: .nan
+    mean: .inf
+    median: .inf
     std: .nan
   - len: 20600
-    mean: .nan
-    median: .nan
+    mean: .inf
+    median: .inf
     std: .nan
   - len: 20600
-    mean: .nan
-    median: .nan
+    mean: .inf
+    median: .inf
     std: .nan
   - len: 850
-    mean: .nan
-    median: .nan
+    mean: .inf
+    median: .inf
     std: .nan
   - len: 850
-    mean: .nan
-    median: .nan
+    mean: .inf
+    median: .inf
     std: .nan
   - len: 850
-    mean: .nan
-    median: .nan
+    mean: .inf
+    median: .inf
     std: .nan
   - len: 850
-    mean: .nan
-    median: .nan
+    mean: .inf
+    median: .inf
     std: .nan
   - len: 850
-    mean: .nan
-    median: .nan
+    mean: .inf
+    median: .inf
     std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 3904746.317855048
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 3899535.6012702677
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 3898707.6130938767
+    std: .nan
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -1780,53 +1780,53 @@
   telescope: EAC2
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 290370967.38376725
+    median: 4759.839378088374
+    std: 10001269952.19009
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 13871.830863834377
+    median: 12172.743282346582
+    std: 6981.58746310732
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 21994.001856922678
+    median: 11345.700721718771
+    std: 13922.719806998637
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 26672715.37809096
+    median: 2904.92391405703
+    std: 939281711.8656679
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 426017.1451958017
+    median: 386.31428130934165
+    std: 7368999.539177142
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 426015.8165663669
+    median: 386.3142714022325
+    std: 7368973.375331535
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 426015.8165444985
+    median: 386.314271303357
+    std: 7368973.375243752
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 426015.8165437563
+    median: 386.3142713023701
+    std: 7368973.375243795
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 426015.81654370856
+    median: 386.3142713023602
+    std: 7368973.375243799
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 2628.700005451023
+    median: 2002.1843321958518
+    std: 1842.1582685941144
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 2628.697730930291
+    median: 2002.1826520198779
+    std: 1842.156036615005
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 2628.6974134015513
+    median: 2002.1823562055395
+    std: 1842.155942915339
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -1838,53 +1838,53 @@
   telescope: EAC2
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 11835.27342123192
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 20029.563399102964
+    median: 17404.112549104568
+    std: 10012.532843551484
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 30929.771289774828
+    median: 15546.183074289725
+    std: 19877.207135672328
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 4478.0847718491295
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 591.6472326298265
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 591.6472043266305
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 591.6472039823112
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 591.6472039781224
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 591.6472039780715
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 3285.739764508224
+    median: 2421.7929679612935
+    std: 2545.754827428269
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 3285.7362475666955
+    median: 2421.790505356223
+    std: 2545.7507038236254
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 3285.73578505388
+    median: 2421.790064938342
+    std: 2545.750540368564
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -1896,53 +1896,53 @@
   telescope: EAC2
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 9780.394967420223
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 17343.227549407027
+    median: 15198.165526387713
+    std: 8659.462382431822
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 27134.908152024782
+    median: 13612.80089969952
+    std: 17356.966285333187
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 3909.0360338256323
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 522.1450587712545
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 522.1449931674767
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 522.144990729667
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 522.144990639079
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 522.1449906357128
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 2986.0921902906075
+    median: 2231.5598438657908
+    std: 2224.8440988037682
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 2986.089276057496
+    median: 2231.557767880112
+    std: 2224.8409092050197
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 2986.088883294095
+    median: 2231.55739542621
+    std: 2224.840781220545
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -1954,53 +1954,53 @@
   telescope: EAC2
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 503199514951.2262
+    median: 184779.41020250894
+    std: 25282719592624.45
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 335535.9063816229
+    median: 218763.5114795388
+    std: 266939.2498241165
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 338901.50513142167
+    median: 203046.49609524372
+    std: 260941.07104237104
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 1729790232.0412893
+    median: 48206.28041554229
+    std: 62057080767.284035
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 27791131.576138087
+    median: 6995.0203065231335
+    std: 473097826.14035624
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 27785543.714795403
+    median: 6995.016186797842
+    std: 472990761.68190014
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 27785543.66572427
+    median: 6995.016134640079
+    std: 472990761.31201524
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 27785543.665441327
+    median: 6995.016133979736
+    std: 472990761.31202924
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 27785543.665422626
+    median: 6995.016133971376
+    std: 472990761.3120304
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 16138.714390480849
+    median: 7251.849615204546
+    std: 29992.994524489066
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 16138.574237196905
+    median: 7251.831537889581
+    std: 29992.403786386272
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 16138.56483138432
+    median: 7251.828711989095
+    std: 29992.374866224905
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -2012,53 +2012,53 @@
   telescope: EAC2
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 389985617464544.94
+    median: 2475208.724276423
+    std: 2.0985994769506404e+16
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 4404102.822754412
+    median: 3466049.914772985
+    std: 2902624.5295962105
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 4286594.585461125
+    median: 2298095.665611214
+    std: 3629725.7306770594
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 78445836272.39122
+    median: 670825.693499238
+    std: 4481187626038.654
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 529309946.9418046
+    median: 93671.78546646821
+    std: 9635875009.610418
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 527174585.4040164
+    median: 93671.19049458885
+    std: 9590099627.850342
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 527174570.3183475
+    median: 93671.18443428208
+    std: 9590099481.464693
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 527174570.30224216
+    median: 93671.18437255258
+    std: 9590099481.464746
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 527174570.3012267
+    median: 93671.18437192381
+    std: 9590099481.464802
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 141731.59041430335
+    median: 37792.46392110511
+    std: 337606.9037102412
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 141716.45012725578
+    median: 37791.9699769785
+    std: 337526.7219008882
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 141715.58526902978
+    median: 37791.8919298698
+    std: 337522.7746644733
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -2070,53 +2070,53 @@
   telescope: EAC2
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 66551270.854706585
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 62855249.9835262
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 61101299.72332831
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 14238799.30365279
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 1683013.512949461
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 1681928.5632040245
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 1681862.5872849189
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 1681858.5752816715
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 1681858.3313112913
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 227430.20484869546
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 227412.25039777905
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 227409.43293398438
+    std: .nan
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -2128,53 +2128,53 @@
   telescope: EAC2
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 6402461805.997702
+    median: 20405.885500696684
+    std: 297184324866.9077
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 56484.92973199128
+    median: 48901.76377482689
+    std: 29615.04932616528
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 80808.15847280428
+    median: 38120.60148464447
+    std: 55528.87303406513
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 172634048.0197029
+    median: 9623.067104218248
+    std: 6199559713.241454
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 2727958.7085464564
+    median: 1514.176360560124
+    std: 47694325.696191624
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 2727903.875837284
+    median: 1514.1761996227806
+    std: 47693228.48409518
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 2727903.875338668
+    median: 1514.1761979280457
+    std: 47693228.48045189
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 2727903.8753310097
+    median: 1514.1761979101998
+    std: 47693228.4804523
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 2727903.875330519
+    median: 1514.1761979100115
+    std: 47693228.48045233
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 6309.3683074780865
+    median: 4169.041440633939
+    std: 6001.436935676245
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 6309.35484472536
+    median: 4169.037353168474
+    std: 6001.4154417647605
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 6309.353262300387
+    median: 4169.03687152949
+    std: 6001.414494114477
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -2186,53 +2186,53 @@
   telescope: EAC2
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 274352.1473356943
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 265109.590080711
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 400788.20868089696
+    median: 192395.6701839051
+    std: 291086.70945880597
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 76001.8050513273
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 9179.334185644755
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 9179.324945385835
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 9179.324792265115
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 9179.324789727747
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 9179.3247896857
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 19845.07849236869
+    median: 11080.25462187104
+    std: 26809.486822906205
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 19844.927643560153
+    median: 11080.212426399527
+    std: 26809.094287405995
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 19844.915478372466
+    median: 11080.205892064238
+    std: 26809.075506263376
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -2244,53 +2244,53 @@
   telescope: EAC2
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 2342166.436541931
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 1397671.0176187837
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 1808832.7360137724
+    median: 581454.3671466734
+    std: 1695766.2492271096
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 394473.17666289676
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 45821.00589714413
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 45820.8641240361
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 45820.862687919296
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 45820.86267337189
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 45820.86267322453
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 49637.91356163089
+    median: 20156.127051460382
+    std: 92801.81153150644
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 49636.594551716305
+    median: 20155.98737910893
+    std: 92796.85912240422
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 49636.51054486541
+    median: 20155.965523045455
+    std: 92796.6147700571
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -2302,53 +2302,53 @@
   telescope: EAC2
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 42991923.939820886
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 26309385.281707168
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 37054892.21691881
+    median: 21501571.580868497
+    std: 30728994.039206058
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 7221370.406961295
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 950085.4297557934
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 950023.6144597353
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 950022.9779781563
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 950022.9714246197
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 950022.9713571412
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 924939.7091959197
+    median: 200751.5033052367
+    std: 2128868.5281041833
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 924303.4665753599
+    median: 200736.94217330756
+    std: 2126077.371142156
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 924264.7501410568
+    median: 200734.58822778246
+    std: 2125933.257955145
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -2360,53 +2360,53 @@
   telescope: EAC2
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 2673096.763875736
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 994676.2305907574
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 1400037.1797498893
+    median: 1048988.0532469237
+    std: 1044958.4529321399
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 278857.7090126071
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 35408.46485782065
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 35408.299844702415
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 35408.29655179709
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 35408.29648608579
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 35408.29648477449
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 56962.77848364071
+    median: 8890.560546998575
+    std: 198141.04562002013
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 56958.232199532074
+    median: 8890.530969178013
+    std: 198088.51151746133
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 56957.994731393504
+    median: 8890.526079662282
+    std: 198085.96492148063
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -2418,53 +2418,53 @@
   telescope: EAC2
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 100899510290414.45
+    median: 1659640.1593798106
+    std: 5145411368574100.0
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 3260216.469642809
+    median: 2704867.0423625177
+    std: 2299260.8948613196
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 3239712.968429768
+    median: 1063984.416067826
+    std: 2834873.343079827
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 33286674528.605045
+    median: 495028.65842451656
+    std: 1514119518614.8975
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 383815678.0286287
+    median: 71469.94024853225
+    std: 6648192840.365615
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 382743036.72922236
+    median: 71468.18913446125
+    std: 6627080607.410369
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 382743028.83737093
+    median: 71468.09481638452
+    std: 6627080536.215646
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 382743028.82882303
+    median: 71468.08973624739
+    std: 6627080536.215704
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 382743028.8282915
+    median: 71468.08946262229
+    std: 6627080536.215735
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 109725.63300623177
+    median: 35934.95735119619
+    std: 213236.00099353318
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 109718.84749454724
+    median: 35934.517683034996
+    std: 213212.89676479984
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 109718.42969597892
+    median: 35934.44739894332
+    std: 213211.7395330055
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -2476,53 +2476,53 @@
   telescope: EAC2
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 23590523285.655396
+    median: 47810.190473478055
+    std: 1141578340487.4937
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 113018.55688350444
+    median: 91666.76818665658
+    std: 60525.68937305767
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 146160.74825219848
+    median: 56697.34188714532
+    std: 102902.01281083417
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 349655009.25464314
+    median: 17677.52945121989
+    std: 12458846315.88008
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 5616095.730139307
+    median: 2903.8243166940947
+    std: 97061668.55761352
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 5615865.253088374
+    median: 2903.823643008236
+    std: 97057141.88719186
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 5615865.251052734
+    median: 2903.8236349183044
+    std: 97057141.87191719
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 5615865.251030349
+    median: 2903.8236348211567
+    std: 97057141.8719184
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 5615865.251028918
+    median: 2903.82363481999
+    std: 97057141.87191848
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 8586.147176479873
+    median: 5084.658891343166
+    std: 10490.472217914816
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 8586.120728738177
+    median: 5084.646972243554
+    std: 10490.410243547301
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 8586.118357140675
+    median: 5084.64456377236
+    std: 10490.407392657648
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -2534,53 +2534,53 @@
   telescope: EAC2
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 19465971025339.523
+    median: 899403.6771244103
+    std: 991739627749037.0
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 1579602.21302417
+    median: 1156353.936469916
+    std: 932632.1517528491
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 1534137.253923745
+    median: 407717.33027081075
+    std: 1223501.5313479328
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 12255491890.940975
+    median: 264676.8933650749
+    std: 496208560976.7457
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 168041301.3449276
+    median: 36432.093325493544
+    std: 2910570837.788436
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 167835074.50308728
+    median: 36431.928185172066
+    std: 2906509376.7883315
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 167835072.9889192
+    median: 36431.925073802326
+    std: 2906509363.0990686
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 167835072.98742795
+    median: 36431.92501518175
+    std: 2906509363.0990715
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 167835072.98733672
+    median: 36431.92501407728
+    std: 2906509363.0990763
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 43429.541109222846
+    median: 16088.065400134412
+    std: 80697.04867532465
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 43428.54130383881
+    median: 16087.976665549832
+    std: 80693.6854652826
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 43428.47821135893
+    median: 16087.962565533897
+    std: 80693.51785837578
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -2592,9 +2592,9 @@
   telescope: EAC2
 - expected:
   - len: 10
-    mean: 4.4609405130302076
-    median: 1.567454455891299
-    std: 8.489834517036858
+    mean: 12.51636572003992
+    median: 3.906230502242913
+    std: 14.856235895455104
   exptime: 1
   extinction: 0
   instrument: hri
@@ -2606,9 +2606,9 @@
   telescope: EAC3
 - expected:
   - len: 10
-    mean: 40.21937543809584
-    median: 0.7571707344940881
-    std: 101.5881024283737
+    mean: 292.8750831663264
+    median: 3.45830988436515
+    std: 784.7180898881518
   exptime: 1
   extinction: 0
   instrument: hri
@@ -2620,9 +2620,9 @@
   telescope: EAC3
 - expected:
   - len: 10
-    mean: 2.219952746169551
-    median: 1.5137285702627494
-    std: 2.4994373350453865
+    mean: 7.975036118702268
+    median: 6.227674071541214
+    std: 6.130555486232624
   exptime: 1
   extinction: 0
   instrument: hri
@@ -2635,7 +2635,7 @@
 - expected:
   - len: 10
     mean: .inf
-    median: 0.3400900489977148
+    median: 1.8622034764648625
     std: .nan
   exptime: 1
   extinction: 0
@@ -2648,9 +2648,9 @@
   telescope: EAC3
 - expected:
   - len: 10
-    mean: 3.628924687197915
-    median: 1.1275129212475863
-    std: 7.14936049408488
+    mean: 9.395624146906755
+    median: 2.713677614658652
+    std: 12.657769512478502
   exptime: 1
   extinction: 0
   instrument: hri
@@ -2662,9 +2662,9 @@
   telescope: EAC3
 - expected:
   - len: 10
-    mean: 1.669276114319691e+61
-    median: 1.2452240375374686
-    std: 4.9620307554136765e+61
+    mean: 3.059831708364173e+61
+    median: 7.266577309137386
+    std: 8.50220949570028e+61
   exptime: 1
   extinction: 0
   instrument: hri
@@ -2676,9 +2676,9 @@
   telescope: EAC3
 - expected:
   - len: 10
-    mean: 1.669276114319691e+61
-    median: 1.222142172357961
-    std: 4.9620307554136765e+61
+    mean: 3.059831708364173e+61
+    median: 7.115436326986995
+    std: 8.50220949570028e+61
   exptime: 1
   extinction: 0
   instrument: hri
@@ -2690,9 +2690,9 @@
   telescope: EAC3
 - expected:
   - len: 10
-    mean: 1.6724955154928623e+61
-    median: 1.3946693257164682e+59
-    std: 4.9609570003785435e+61
+    mean: 3.1229975268261174e+61
+    median: 2.2427059014047544e+59
+    std: 8.481563655714933e+61
   exptime: 1
   extinction: 0
   instrument: hri
@@ -2704,9 +2704,9 @@
   telescope: EAC3
 - expected:
   - len: 10
-    mean: 1.6626377598130758e+61
-    median: 8.21227490472625
-    std: 4.964214637346745e+61
+    mean: 2.861648433750634e+61
+    median: 38.3198466173707
+    std: 8.548002019801699e+61
   exptime: 1
   extinction: 0
   instrument: hri
@@ -2718,9 +2718,9 @@
   telescope: EAC3
 - expected:
   - len: 10
-    mean: 1.6724955154928623e+61
-    median: 1.3946693257164682e+59
-    std: 4.9609570003785435e+61
+    mean: 3.1229975268261174e+61
+    median: 2.2427059014047544e+59
+    std: 8.481563655714933e+61
   exptime: 1
   extinction: 0
   instrument: hri
@@ -2732,9 +2732,9 @@
   telescope: EAC3
 - expected:
   - len: 10
-    mean: 1.6626377598130758e+61
-    median: 1.6672129518090386
-    std: 4.964214637346745e+61
+    mean: 2.861648433750634e+61
+    median: 9.56131995652148
+    std: 8.548002019801699e+61
   exptime: 1
   extinction: 0
   instrument: hri
@@ -2746,9 +2746,9 @@
   telescope: EAC3
 - expected:
   - len: 10
-    mean: 1.6626377598130758e+61
-    median: 2.1582035268618585
-    std: 4.964214637346745e+61
+    mean: 2.861648433750634e+61
+    median: 12.03377155633223
+    std: 8.548002019801699e+61
   exptime: 1
   extinction: 0
   instrument: hri
@@ -2760,9 +2760,9 @@
   telescope: EAC3
 - expected:
   - len: 10
-    mean: 1.6626377598130758e+61
-    median: 4.303034254222411
-    std: 4.964214637346745e+61
+    mean: 2.861648433750634e+61
+    median: 19.93165990002484
+    std: 8.548002019801699e+61
   exptime: 1
   extinction: 0
   instrument: hri
@@ -2774,9 +2774,9 @@
   telescope: EAC3
 - expected:
   - len: 10
-    mean: 1.6626377598130758e+61
-    median: 43.44419245535174
-    std: 4.964214637346745e+61
+    mean: 2.861648433750634e+61
+    median: 285.5554972876727
+    std: 8.548002019801699e+61
   exptime: 1
   extinction: 0
   instrument: hri
@@ -2788,9 +2788,9 @@
   telescope: EAC3
 - expected:
   - len: 10
-    mean: 1.6724955154928623e+61
-    median: 1.3946693257164682e+59
-    std: 4.9609570003785435e+61
+    mean: 3.1229975268261174e+61
+    median: 2.2427059014047544e+59
+    std: 8.481563655714933e+61
   exptime: 1
   extinction: 0
   instrument: hri
@@ -2802,9 +2802,9 @@
   telescope: EAC3
 - expected:
   - len: 10
-    mean: 1.6626377598130758e+61
-    median: 8.544369392286937
-    std: 4.964214637346745e+61
+    mean: 2.861648433750634e+61
+    median: 40.010123975415716
+    std: 8.548002019801699e+61
   exptime: 1
   extinction: 0
   instrument: hri
@@ -2816,9 +2816,9 @@
   telescope: EAC3
 - expected:
   - len: 10
-    mean: 0.7915189576148876
-    median: 0.7036211738433085
-    std: 0.3491682217135795
+    mean: 4.085699001975716
+    median: 2.78807602207354
+    std: 3.4576996998419354
   exptime: 1
   extinction: 0
   instrument: hri
@@ -2830,9 +2830,9 @@
   telescope: EAC3
 - expected:
   - len: 10
-    mean: 1.6611470797163008
-    median: 0.5583222881430412
-    std: 2.375187349811681
+    mean: 9.644315533875567
+    median: 2.895675567051126
+    std: 15.982574940869101
   exptime: 1
   extinction: 0
   instrument: hri
@@ -2844,53 +2844,53 @@
   telescope: EAC3
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 113194.58416954201
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 144265.99789377494
+    median: 104722.22475772089
+    std: 84077.40292659512
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 150266.5503946062
+    median: 117253.77266937165
+    std: 104086.00788357321
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 29001.159875221325
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 3237.392006333847
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 3237.3911364821342
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 3237.3911256319516
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 3237.3911254966106
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 3237.3911254949226
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 12560.35633509852
+    median: 2606.1352451471207
+    std: 24359.795824342847
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 12560.262373876047
+    median: 2606.13209716334
+    std: 24359.545086152157
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 12560.256376512176
+    median: 2606.131483287816
+    std: 24359.53105872345
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -2902,53 +2902,53 @@
   telescope: EAC3
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 35866128010.62132
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 29932958720.41903
+    median: 5744457212.728658
+    std: 97418534828.33223
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 1913382175.4232779
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 764866838.4501386
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 76197380.1413384
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 75712320.4194213
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 75706145.70615867
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 75706067.1032936
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 75706066.10269485
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 59579.08966731896
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 59577.84805969266
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 59577.65493200497
+    std: .nan
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -2960,53 +2960,53 @@
   telescope: EAC3
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 129169.32470616119
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 177100.8919706706
+    median: 141125.39716550452
+    std: 90563.61869351176
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 225362.29824145636
+    median: 91208.17200951085
+    std: 157618.4172007859
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 40004.292060394364
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 4732.245153764724
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 4732.237455834672
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 4732.237039722042
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 4732.237017229019
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 4732.237016013155
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 12703.941586899098
+    median: 6913.687809658037
+    std: 16819.986848979494
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 12703.880791868394
+    median: 6913.671225940118
+    std: 16819.832878193585
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 12703.875833270788
+    median: 6913.668570655406
+    std: 16819.825525026226
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -3018,53 +3018,53 @@
   telescope: EAC3
 - expected:
   - len: 20600
-    mean: .nan
-    median: .nan
+    mean: .inf
+    median: .inf
     std: .nan
   - len: 20600
-    mean: .nan
-    median: .nan
+    mean: .inf
+    median: .inf
     std: .nan
   - len: 20600
-    mean: .nan
-    median: .nan
+    mean: .inf
+    median: .inf
     std: .nan
   - len: 20600
-    mean: .nan
-    median: .nan
+    mean: .inf
+    median: .inf
     std: .nan
   - len: 850
-    mean: .nan
-    median: .nan
+    mean: .inf
+    median: .inf
     std: .nan
   - len: 850
-    mean: .nan
-    median: .nan
+    mean: .inf
+    median: .inf
     std: .nan
   - len: 850
-    mean: .nan
-    median: .nan
+    mean: .inf
+    median: .inf
     std: .nan
   - len: 850
-    mean: .nan
-    median: .nan
+    mean: .inf
+    median: .inf
     std: .nan
   - len: 850
-    mean: .nan
-    median: .nan
+    mean: .inf
+    median: .inf
     std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 3904746.317855048
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 3899535.6012702677
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 3898707.6130938767
+    std: .nan
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -3076,53 +3076,53 @@
   telescope: EAC3
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 290370967.38376725
+    median: 4759.839378088374
+    std: 10001269952.19009
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 13871.830863834377
+    median: 12172.743282346582
+    std: 6981.58746310732
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 21994.001856922678
+    median: 11345.700721718771
+    std: 13922.719806998637
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 26672715.37809096
+    median: 2904.92391405703
+    std: 939281711.8656679
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 426017.1451958017
+    median: 386.31428130934165
+    std: 7368999.539177142
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 426015.8165663669
+    median: 386.3142714022325
+    std: 7368973.375331535
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 426015.8165444985
+    median: 386.314271303357
+    std: 7368973.375243752
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 426015.8165437563
+    median: 386.3142713023701
+    std: 7368973.375243795
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 426015.81654370856
+    median: 386.3142713023602
+    std: 7368973.375243799
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 2628.700005451023
+    median: 2002.1843321958518
+    std: 1842.1582685941144
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 2628.697730930291
+    median: 2002.1826520198779
+    std: 1842.156036615005
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 2628.6974134015513
+    median: 2002.1823562055395
+    std: 1842.155942915339
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -3134,53 +3134,53 @@
   telescope: EAC3
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 11835.27342123192
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 20029.563399102964
+    median: 17404.112549104568
+    std: 10012.532843551484
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 30929.771289774828
+    median: 15546.183074289725
+    std: 19877.207135672328
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 4478.0847718491295
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 591.6472326298265
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 591.6472043266305
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 591.6472039823112
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 591.6472039781224
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 591.6472039780715
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 3285.739764508224
+    median: 2421.7929679612935
+    std: 2545.754827428269
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 3285.7362475666955
+    median: 2421.790505356223
+    std: 2545.7507038236254
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 3285.73578505388
+    median: 2421.790064938342
+    std: 2545.750540368564
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -3192,53 +3192,53 @@
   telescope: EAC3
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 9780.394967420223
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 17343.227549407027
+    median: 15198.165526387713
+    std: 8659.462382431822
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 27134.908152024782
+    median: 13612.80089969952
+    std: 17356.966285333187
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 3909.0360338256323
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 522.1450587712545
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 522.1449931674767
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 522.144990729667
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 522.144990639079
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 522.1449906357128
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 2986.0921902906075
+    median: 2231.5598438657908
+    std: 2224.8440988037682
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 2986.089276057496
+    median: 2231.557767880112
+    std: 2224.8409092050197
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 2986.088883294095
+    median: 2231.55739542621
+    std: 2224.840781220545
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -3250,53 +3250,53 @@
   telescope: EAC3
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 503199514951.2262
+    median: 184779.41020250894
+    std: 25282719592624.45
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 335535.9063816229
+    median: 218763.5114795388
+    std: 266939.2498241165
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 338901.50513142167
+    median: 203046.49609524372
+    std: 260941.07104237104
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 1729790232.0412893
+    median: 48206.28041554229
+    std: 62057080767.284035
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 27791131.576138087
+    median: 6995.0203065231335
+    std: 473097826.14035624
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 27785543.714795403
+    median: 6995.016186797842
+    std: 472990761.68190014
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 27785543.66572427
+    median: 6995.016134640079
+    std: 472990761.31201524
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 27785543.665441327
+    median: 6995.016133979736
+    std: 472990761.31202924
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 27785543.665422626
+    median: 6995.016133971376
+    std: 472990761.3120304
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 16138.714390480849
+    median: 7251.849615204546
+    std: 29992.994524489066
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 16138.574237196905
+    median: 7251.831537889581
+    std: 29992.403786386272
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 16138.56483138432
+    median: 7251.828711989095
+    std: 29992.374866224905
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -3308,53 +3308,53 @@
   telescope: EAC3
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 389985617464544.94
+    median: 2475208.724276423
+    std: 2.0985994769506404e+16
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 4404102.822754412
+    median: 3466049.914772985
+    std: 2902624.5295962105
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 4286594.585461125
+    median: 2298095.665611214
+    std: 3629725.7306770594
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 78445836272.39122
+    median: 670825.693499238
+    std: 4481187626038.654
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 529309946.9418046
+    median: 93671.78546646821
+    std: 9635875009.610418
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 527174585.4040164
+    median: 93671.19049458885
+    std: 9590099627.850342
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 527174570.3183475
+    median: 93671.18443428208
+    std: 9590099481.464693
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 527174570.30224216
+    median: 93671.18437255258
+    std: 9590099481.464746
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 527174570.3012267
+    median: 93671.18437192381
+    std: 9590099481.464802
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 141731.59041430335
+    median: 37792.46392110511
+    std: 337606.9037102412
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 141716.45012725578
+    median: 37791.9699769785
+    std: 337526.7219008882
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 141715.58526902978
+    median: 37791.8919298698
+    std: 337522.7746644733
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -3366,53 +3366,53 @@
   telescope: EAC3
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 66551270.854706585
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 62855249.9835262
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 61101299.72332831
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 14238799.30365279
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 1683013.512949461
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 1681928.5632040245
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 1681862.5872849189
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 1681858.5752816715
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 1681858.3313112913
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 227430.20484869546
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 227412.25039777905
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 227409.43293398438
+    std: .nan
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -3424,53 +3424,53 @@
   telescope: EAC3
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 6402461805.997702
+    median: 20405.885500696684
+    std: 297184324866.9077
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 56484.92973199128
+    median: 48901.76377482689
+    std: 29615.04932616528
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 80808.15847280428
+    median: 38120.60148464447
+    std: 55528.87303406513
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 172634048.0197029
+    median: 9623.067104218248
+    std: 6199559713.241454
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 2727958.7085464564
+    median: 1514.176360560124
+    std: 47694325.696191624
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 2727903.875837284
+    median: 1514.1761996227806
+    std: 47693228.48409518
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 2727903.875338668
+    median: 1514.1761979280457
+    std: 47693228.48045189
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 2727903.8753310097
+    median: 1514.1761979101998
+    std: 47693228.4804523
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 2727903.875330519
+    median: 1514.1761979100115
+    std: 47693228.48045233
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 6309.3683074780865
+    median: 4169.041440633939
+    std: 6001.436935676245
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 6309.35484472536
+    median: 4169.037353168474
+    std: 6001.4154417647605
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 6309.353262300387
+    median: 4169.03687152949
+    std: 6001.414494114477
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -3482,53 +3482,53 @@
   telescope: EAC3
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 274352.1473356943
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 265109.590080711
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 400788.20868089696
+    median: 192395.6701839051
+    std: 291086.70945880597
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 76001.8050513273
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 9179.334185644755
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 9179.324945385835
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 9179.324792265115
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 9179.324789727747
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 9179.3247896857
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 19845.07849236869
+    median: 11080.25462187104
+    std: 26809.486822906205
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 19844.927643560153
+    median: 11080.212426399527
+    std: 26809.094287405995
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 19844.915478372466
+    median: 11080.205892064238
+    std: 26809.075506263376
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -3540,53 +3540,53 @@
   telescope: EAC3
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 2342166.436541931
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 1397671.0176187837
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 1808832.7360137724
+    median: 581454.3671466734
+    std: 1695766.2492271096
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 394473.17666289676
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 45821.00589714413
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 45820.8641240361
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 45820.862687919296
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 45820.86267337189
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 45820.86267322453
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 49637.91356163089
+    median: 20156.127051460382
+    std: 92801.81153150644
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 49636.594551716305
+    median: 20155.98737910893
+    std: 92796.85912240422
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 49636.51054486541
+    median: 20155.965523045455
+    std: 92796.6147700571
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -3598,53 +3598,53 @@
   telescope: EAC3
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 42991923.939820886
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 26309385.281707168
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 37054892.21691881
+    median: 21501571.580868497
+    std: 30728994.039206058
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 7221370.406961295
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 950085.4297557934
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 950023.6144597353
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 950022.9779781563
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 950022.9714246197
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 950022.9713571412
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 924939.7091959197
+    median: 200751.5033052367
+    std: 2128868.5281041833
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 924303.4665753599
+    median: 200736.94217330756
+    std: 2126077.371142156
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 924264.7501410568
+    median: 200734.58822778246
+    std: 2125933.257955145
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -3656,53 +3656,53 @@
   telescope: EAC3
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 2673096.763875736
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 994676.2305907574
+    std: .nan
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 1400037.1797498893
+    median: 1048988.0532469237
+    std: 1044958.4529321399
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 278857.7090126071
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 35408.46485782065
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 35408.299844702415
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 35408.29655179709
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 35408.29648608579
+    std: .nan
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: .inf
+    median: 35408.29648477449
+    std: .nan
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 56962.77848364071
+    median: 8890.560546998575
+    std: 198141.04562002013
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 56958.232199532074
+    median: 8890.530969178013
+    std: 198088.51151746133
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 56957.994731393504
+    median: 8890.526079662282
+    std: 198085.96492148063
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -3714,53 +3714,53 @@
   telescope: EAC3
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 100899510290414.45
+    median: 1659640.1593798106
+    std: 5145411368574100.0
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 3260216.469642809
+    median: 2704867.0423625177
+    std: 2299260.8948613196
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 3239712.968429768
+    median: 1063984.416067826
+    std: 2834873.343079827
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 33286674528.605045
+    median: 495028.65842451656
+    std: 1514119518614.8975
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 383815678.0286287
+    median: 71469.94024853225
+    std: 6648192840.365615
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 382743036.72922236
+    median: 71468.18913446125
+    std: 6627080607.410369
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 382743028.83737093
+    median: 71468.09481638452
+    std: 6627080536.215646
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 382743028.82882303
+    median: 71468.08973624739
+    std: 6627080536.215704
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 382743028.8282915
+    median: 71468.08946262229
+    std: 6627080536.215735
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 109725.63300623177
+    median: 35934.95735119619
+    std: 213236.00099353318
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 109718.84749454724
+    median: 35934.517683034996
+    std: 213212.89676479984
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 109718.42969597892
+    median: 35934.44739894332
+    std: 213211.7395330055
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -3772,53 +3772,53 @@
   telescope: EAC3
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 23590523285.655396
+    median: 47810.190473478055
+    std: 1141578340487.4937
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 113018.55688350444
+    median: 91666.76818665658
+    std: 60525.68937305767
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 146160.74825219848
+    median: 56697.34188714532
+    std: 102902.01281083417
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 349655009.25464314
+    median: 17677.52945121989
+    std: 12458846315.88008
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 5616095.730139307
+    median: 2903.8243166940947
+    std: 97061668.55761352
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 5615865.253088374
+    median: 2903.823643008236
+    std: 97057141.88719186
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 5615865.251052734
+    median: 2903.8236349183044
+    std: 97057141.87191719
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 5615865.251030349
+    median: 2903.8236348211567
+    std: 97057141.8719184
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 5615865.251028918
+    median: 2903.82363481999
+    std: 97057141.87191848
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 8586.147176479873
+    median: 5084.658891343166
+    std: 10490.472217914816
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 8586.120728738177
+    median: 5084.646972243554
+    std: 10490.410243547301
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 8586.118357140675
+    median: 5084.64456377236
+    std: 10490.407392657648
   exptime: 1
   extinction: 0
   instrument: uvi
@@ -3830,53 +3830,53 @@
   telescope: EAC3
 - expected:
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 19465971025339.523
+    median: 899403.6771244103
+    std: 991739627749037.0
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 1579602.21302417
+    median: 1156353.936469916
+    std: 932632.1517528491
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 1534137.253923745
+    median: 407717.33027081075
+    std: 1223501.5313479328
   - len: 20600
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 12255491890.940975
+    median: 264676.8933650749
+    std: 496208560976.7457
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 168041301.3449276
+    median: 36432.093325493544
+    std: 2910570837.788436
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 167835074.50308728
+    median: 36431.928185172066
+    std: 2906509376.7883315
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 167835072.9889192
+    median: 36431.925073802326
+    std: 2906509363.0990686
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 167835072.98742795
+    median: 36431.92501518175
+    std: 2906509363.0990715
   - len: 850
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 167835072.98733672
+    median: 36431.92501407728
+    std: 2906509363.0990763
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 43429.541109222846
+    median: 16088.065400134412
+    std: 80697.04867532465
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 43428.54130383881
+    median: 16087.976665549832
+    std: 80693.6854652826
   - len: 28769
-    mean: 0.0
-    median: 0.0
-    std: 0.0
+    mean: 43428.47821135893
+    median: 16087.962565533897
+    std: 80693.51785837578
   exptime: 1
   extinction: 0
   instrument: uvi
