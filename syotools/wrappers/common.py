@@ -7,7 +7,8 @@ import numpy as np
 import astropy.units as u
 
 from syotools.spectra.spec_defaults import syn_spectra_library
-from syotools.models import Camera, Spectrograph, IFS, Telescope, Source, SourcePhotometricExposure, SourceSpectrographicExposure, SourceIFSExposure
+from syotools.models import Camera, Spectrograph, Telescope, Source, SourcePhotometricExposure, SourceSpectrographicExposure
+from syotools.utils.yaml_utils import read_yaml, write_yaml
 
 def _do_calculation(tel, inst, exp, mode=None, source=None, snr=10.0, exptime=100, bandpass=None, target="magnitude", verbose=False):
 
@@ -170,3 +171,19 @@ def check_relative_diff(actual, expected, rel_tol=0.1):
 
     return all_within_tolerance
 
+def generate_test(test_setup, filename, reset):
+
+    write = False
+
+    if reset: # if we're asking to reset, definitely write a fresh file
+        write = True
+    else:
+        try: # if we can read an existing file, don't replace it
+            read_yaml(filename)
+            write = False
+        except FileNotFoundError: # if we can't read an existing file, replace it.
+            write = True
+
+    if write:
+        print(test_setup)
+        write_yaml(test_setup, filename)

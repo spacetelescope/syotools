@@ -1,0 +1,14 @@
+expected:
+- len: 10
+  mean: 208350.15759076297
+  median: 195405.12796536525
+  std: 160627.64670513046
+exptime: 62069.00344827586
+extinction: 0
+instrument: hri
+magnitude: 20
+redshift: 0
+sed: G2V Star
+snr: 10
+target: snr
+telescope: EAC1
