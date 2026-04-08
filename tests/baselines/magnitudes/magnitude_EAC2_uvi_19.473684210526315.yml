@@ -1,0 +1,58 @@
+expected:
+- len: 20600
+  mean: 0.0
+  median: 0.0
+  std: 0.0
+- len: 20600
+  mean: 0.0
+  median: 0.0
+  std: 0.0
+- len: 20600
+  mean: 0.0
+  median: 0.0
+  std: 0.0
+- len: 20600
+  mean: 0.0
+  median: 0.0
+  std: 0.0
+- len: 850
+  mean: 0.0
+  median: 0.0
+  std: 0.0
+- len: 850
+  mean: 0.0
+  median: 0.0
+  std: 0.0
+- len: 850
+  mean: 0.0
+  median: 0.0
+  std: 0.0
+- len: 850
+  mean: 0.0
+  median: 0.0
+  std: 0.0
+- len: 850
+  mean: 0.0
+  median: 0.0
+  std: 0.0
+- len: 28769
+  mean: 0.0
+  median: 0.0
+  std: 0.0
+- len: 28769
+  mean: 0.0
+  median: 0.0
+  std: 0.0
+- len: 28769
+  mean: 0.0
+  median: 0.0
+  std: 0.0
+exptime: 10000
+extinction: 0
+instrument: uvi
+magnitude: 19.473684210526315
+redshift: 0
+sed: G2V Star
+snr: 10
+target: exptime
+telescope: EAC2
