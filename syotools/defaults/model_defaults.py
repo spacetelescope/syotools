@@ -29,6 +29,8 @@ default_camera = all_defaults['Camera']
 default_exposure = all_defaults['Exposure']
 default_spectrograph = OrderedDict([("_lumos_default_file", spec_default_path)])
 default_spectrograph.update(all_defaults['Spectrograph'])
+default_ifs = OrderedDict([("_ifs_default_file", spec_default_path)])
+default_ifs.update(all_defaults['IFS'])
 default_spectropolarimeter = OrderedDict([("_lumos_default_file", pol_default_path)])
 default_spectropolarimeter.update(all_defaults['Spectropolarimeter'])
 default_coronagraph = all_defaults['Coronagraph'] #placeholder
