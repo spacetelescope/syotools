@@ -7,7 +7,7 @@ import numpy as np
 import astropy.units as u
 
 from syotools.spectra.spec_defaults import syn_spectra_library
-from syotools.models import Camera, Spectrograph, Telescope, Source, SourcePhotometricExposure, SourceSpectrographicExposure
+from syotools.models import Camera, Spectrograph, IFS, Telescope, Source, SourcePhotometricExposure, SourceSpectrographicExposure, SourceIFSExposure
 from syotools.utils.yaml_utils import read_yaml, write_yaml
 
 def _do_calculation(tel, inst, exp, mode=None, source=None, snr=10.0, exptime=100, bandpass=None, target="magnitude", verbose=False):
@@ -161,13 +161,15 @@ def check_relative_diff(actual, expected, rel_tol=0.1):
                     all_within_tolerance = False
                     differences.append((i, key, act, exp, pct_diff))
 
+    """
     if not all_within_tolerance:
         print("\nValues exceeding relative tolerance:")
         for i, j, act, exp, pct in differences:
             if pct == "inf":
                 print(f"  Index {i},{key}: actual={act}, expected={exp}, difference=infinite (division by zero)")
             else:
-                print(f"  Index {i},{key}: actual={act:.6g}, expected={exp:.6g}, difference={pct:.2f}%")
+                print(f"  Index {i},{key}: actual={act:.6g}, expected={exp:.6g}, difference={pct:.2f}%") 
+    """
 
     return all_within_tolerance
 

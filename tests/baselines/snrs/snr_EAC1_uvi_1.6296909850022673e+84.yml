@@ -7,5 +7,4 @@ sed: G2V Star
 snr: 1.6296909850022673e+84
 target: magnitude
 telescope: EAC1
-xfail: !!python/object/apply:builtins.NotImplementedError
-- Spectrographs cannot currently solve for limiting magnitude
+xfail: Spectrographs cannot currently solve for limiting magnitude

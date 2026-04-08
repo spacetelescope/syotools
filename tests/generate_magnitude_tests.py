@@ -21,7 +21,6 @@ targets = ["exptime", "snr", "magnitude"]
 
 def create_comparisons(reset):
     os.makedirs(f"{os.path.dirname(__file__)}/baselines/magnitudes", exist_ok=True)
-    saved = []
 
     redshift = 0
     extinction = 0
@@ -33,7 +32,6 @@ def create_comparisons(reset):
     for telescope in telescopes:
         for instrument in instruments:
             for magnitude in magnitudes:
-                write = False
                 test_setup = {"telescope": telescope, "instrument": instrument, "sed": sed, "magnitude": magnitude, "snr": snr, "exptime": exptime, "redshift": redshift, "extinction": extinction, "target": target}
                 filename = f"{os.path.dirname(__file__)}/baselines/magnitudes/magnitude_{telescope}_{instrument}_{magnitude}.yml"
 

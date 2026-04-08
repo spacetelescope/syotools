@@ -1,0 +1,58 @@
+expected:
+- len: 20600
+  mean: .inf
+  median: 11835.27342123192
+  std: .nan
+- len: 20600
+  mean: 20029.563399102964
+  median: 17404.112549104568
+  std: 10012.532843551484
+- len: 20600
+  mean: 30929.771289774828
+  median: 15546.183074289725
+  std: 19877.207135672328
+- len: 20600
+  mean: .inf
+  median: 4478.0847718491295
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 591.6472326298265
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 591.6472043266305
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 591.6472039823112
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 591.6472039781224
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 591.6472039780715
+  std: .nan
+- len: 28769
+  mean: 3285.739764508224
+  median: 2421.7929679612935
+  std: 2545.754827428269
+- len: 28769
+  mean: 3285.7362475666955
+  median: 2421.790505356223
+  std: 2545.7507038236254
+- len: 28769
+  mean: 3285.73578505388
+  median: 2421.790064938342
+  std: 2545.750540368564
+exptime: 1
+extinction: 0
+instrument: uvi
+magnitude: 20
+redshift: 0
+sed: GD71 (WD)
+snr: 10
+target: exptime
+telescope: EAC3

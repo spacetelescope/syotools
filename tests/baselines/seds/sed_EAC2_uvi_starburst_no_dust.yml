@@ -1,0 +1,58 @@
+expected:
+- len: 20600
+  mean: .inf
+  median: 274352.1473356943
+  std: .nan
+- len: 20600
+  mean: .inf
+  median: 265109.590080711
+  std: .nan
+- len: 20600
+  mean: 400788.20868089696
+  median: 192395.6701839051
+  std: 291086.70945880597
+- len: 20600
+  mean: .inf
+  median: 76001.8050513273
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 9179.334185644755
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 9179.324945385835
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 9179.324792265115
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 9179.324789727747
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 9179.3247896857
+  std: .nan
+- len: 28769
+  mean: 19845.07849236869
+  median: 11080.25462187104
+  std: 26809.486822906205
+- len: 28769
+  mean: 19844.927643560153
+  median: 11080.212426399527
+  std: 26809.094287405995
+- len: 28769
+  mean: 19844.915478372466
+  median: 11080.205892064238
+  std: 26809.075506263376
+exptime: 1
+extinction: 0
+instrument: uvi
+magnitude: 20
+redshift: 0
+sed: Starburst, No Dust
+snr: 10
+target: exptime
+telescope: EAC2

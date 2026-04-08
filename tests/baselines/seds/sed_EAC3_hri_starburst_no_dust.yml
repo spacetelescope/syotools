@@ -1,0 +1,14 @@
+expected:
+- len: 10
+  mean: 2.861648433750634e+61
+  median: 12.03377155633223
+  std: 8.548002019801699e+61
+exptime: 1
+extinction: 0
+instrument: hri
+magnitude: 20
+redshift: 0
+sed: Starburst, No Dust
+snr: 10
+target: exptime
+telescope: EAC3
