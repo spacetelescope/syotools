@@ -1,0 +1,14 @@
+expected:
+- len: 10
+  mean: 2.1669831589536238e+61
+  median: 5.987420647869989
+  std: 6.021293504709737e+61
+exptime: 1
+extinction: 0
+instrument: hri
+magnitude: 20
+redshift: 0
+sed: GD153 (WD)
+snr: 10
+target: exptime
+telescope: EAC1

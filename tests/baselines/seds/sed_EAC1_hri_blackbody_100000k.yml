@@ -1,0 +1,10 @@
+exptime: 1
+extinction: 0
+instrument: hri
+magnitude: 20
+redshift: 0
+sed: Blackbody (100,000K)
+snr: 10
+target: exptime
+telescope: EAC1
+xfail: Spectrum and renormalization band are disjoint.

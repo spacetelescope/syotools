@@ -1,0 +1,58 @@
+expected:
+- len: 20600
+  mean: .inf
+  median: 8230.673822875498
+  std: .nan
+- len: 20600
+  mean: 14595.162002207959
+  median: 12789.988908470783
+  std: 7287.355018757126
+- len: 20600
+  mean: 22835.33323111913
+  median: 11455.828153607414
+  std: 14606.723810756952
+- len: 20600
+  mean: .inf
+  median: 3289.642255089033
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 439.4102366303448
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 439.41018142160334
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 439.41017937006893
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 439.4101792938348
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 439.41017929100195
+  std: .nan
+- len: 28769
+  mean: 2512.940520826501
+  median: 1877.9651795525626
+  std: 1872.3135563546014
+- len: 28769
+  mean: 2512.9380683588583
+  median: 1877.9634325105421
+  std: 1872.3108721535023
+- len: 28769
+  mean: 2512.937737829524
+  median: 1877.9631190726295
+  std: 1872.3107644483966
+exptime: 1
+extinction: 0
+instrument: ifs
+magnitude: 20
+redshift: 0
+sed: GD153 (WD)
+snr: 10
+target: exptime
+telescope: EAC1

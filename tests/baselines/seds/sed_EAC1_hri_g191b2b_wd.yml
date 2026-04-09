@@ -1,0 +1,14 @@
+expected:
+- len: 10
+  mean: 7.431108698413728
+  median: 2.283381968186709
+  std: 9.495393804183209
+exptime: 1
+extinction: 0
+instrument: hri
+magnitude: 20
+redshift: 0
+sed: G191B2B (WD)
+snr: 10
+target: exptime
+telescope: EAC1

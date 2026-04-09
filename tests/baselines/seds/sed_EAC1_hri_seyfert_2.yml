@@ -1,0 +1,14 @@
+expected:
+- len: 10
+  mean: 2.0266290939572144e+61
+  median: 32.23614955942433
+  std: 6.053723925069948e+61
+exptime: 1
+extinction: 0
+instrument: hri
+magnitude: 20
+redshift: 0
+sed: Seyfert 2
+snr: 10
+target: exptime
+telescope: EAC1

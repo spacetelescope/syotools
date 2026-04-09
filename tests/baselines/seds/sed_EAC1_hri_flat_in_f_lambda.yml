@@ -1,0 +1,14 @@
+expected:
+- len: 10
+  mean: 8.113990217520925
+  median: 2.4367812861940523
+  std: 13.444970481393002
+exptime: 1
+extinction: 0
+instrument: hri
+magnitude: 20
+redshift: 0
+sed: Flat in F_lambda
+snr: 10
+target: exptime
+telescope: EAC1
