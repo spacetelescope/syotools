@@ -68,11 +68,10 @@ include-package-data = true
 [project.optional-dependencies]
 dev = [
     "pytest>=8.3.4",
-    "pytest-env>=1.1.5",  # Required for environment variable support
+    "pytest-cov>=6.0",
+    "pytest-env>=1.1.5",
 ]
 
-[tool.setuptools.dynamic]
-version = {file = "VERSION"}
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
