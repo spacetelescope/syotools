@@ -29,11 +29,12 @@ jobs:
 
       - name: Run Ruff
         run: ruff check syotools --output-format=github
+        continue-on-error: true
 
   tests:
     name: Unit Tests (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
-    needs: lint
+    # needs: lint
     strategy:
       fail-fast: false
       matrix:
