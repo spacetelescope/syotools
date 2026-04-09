@@ -35,7 +35,7 @@ jobs:
           pip install build ".[dev]"
 
       - name: Run tests
-        run: pytest --pyargs syotools
+        run: pytest
 
       - name: Clean build artifacts
         run: rm -rf dist
