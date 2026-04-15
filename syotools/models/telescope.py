@@ -45,6 +45,7 @@ class Telescope(PersistentModel):
         self.cameras = []
         self.spectrographs = []
         self.coronagraphs = []
+        self.ifses = []
 
         self.name = ''
         self.aperture = 0. * u.m
@@ -90,6 +91,10 @@ class Telescope(PersistentModel):
     def add_spectrograph(self, spectrograph):
         self.spectrographs.append(spectrograph)
         spectrograph.telescope = self
+
+    def add_ifs(self, ifs):
+        self.ifses.append(ifs)
+        ifs.telescope = self
 
     def add_coronagraph(self, coronagraph):
         self.coronagraphs.append(coronagraph)

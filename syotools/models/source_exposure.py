@@ -43,6 +43,7 @@ class SourceExposure(PersistentModel):
         camera       - the Camera model instance associated with this exposure
         spectrograph - the Spectrograph model instance (if applicable) associated
                        with this exposure
+        ifs          - the IFS model instance (if applicable) associated with this exposure
 
         exp_id       - a unique exposure ID, used for save/load purposes (string)
                         NOTE: THIS HAS NO DEFAULT, A NEW EXP_ID IS CREATED
@@ -71,6 +72,7 @@ class SourceExposure(PersistentModel):
         self.camera = None
         self.spectrograph = None
         self.spectropolarimeter = None
+        self.ifs = None
 
         self.exp_id = ''
         self.n_exp = 0
@@ -182,13 +184,13 @@ class SourceExposure(PersistentModel):
         return np.array(output_mags)
 
     @property
-    def magnitude(self, source):
+    def magnitude(self, source=None):
         if self.unknown == "magnitude":
             return self._magnitude
         #If magnitude is not unknown, it should be interpolated from the SED
         #at the camera bandpasses.
         if self.verbose:
-            print('magnitude fcn line 174', self.interpolated_source(source))
+            print('magnitude fcn line 191', self.interpolated_source(source))
         return self.interpolated_source(source)
 
     @magnitude.setter
@@ -197,7 +199,7 @@ class SourceExposure(PersistentModel):
             return
         self._magnitude = self._ensure_array(new_magnitude)
         if self.verbose:
-            print('magnitude fcn line 182', new_magnitude)
+            print('magnitude fcn line 200', new_magnitude)
 
         self.calculate()
 
@@ -472,6 +474,7 @@ class SourceSpectrographicExposure(SourceExposure):
 
         #print('_update_snr phot_energy: ', phot_energy)
 
+        # This is the aperture efficiency (throughput) scaled from 15m radius to the requested aperture size
         scaled_aeff = aeff * (aper / (15 * u.m))**2
         source_counts = iflux / phot_energy * scaled_aeff * exptime * delta_lambda
         #print('_update_snr source_counts: ', source_counts)
@@ -500,7 +503,7 @@ class SourceSpectrographicExposure(SourceExposure):
             msg2 = " with {} in mode {}".format(self.spectrograph.name, self.spectrograph.mode)
             print(msg1 + msg2)
 
-        _snr_goal, _exptime = self.recover('_snr_goal', '_exptime')
+        _snr, _exptime = self.recover('_snr', '_exptime')
         _wave, aeff, bef, aper, R, wrange, int_eff = self.recover('spectrograph.wave',
                                                          'spectrograph.aeff',
                                                          'spectrograph.bef',
@@ -552,7 +555,7 @@ class SourceSpectrographicExposure(SourceExposure):
 
         return True
 
-class SourceIFSExposure(SourceSpectrographicExposure):
+class SourceIFSExposure(SourceExposure):
     """ 
     This is currently a subclass of Spectrographic exposure that accepts multiple
     sources and produces multiple returns. 
@@ -569,12 +572,148 @@ class SourceIFSExposure(SourceSpectrographicExposure):
         # Do this after, because by default super().__init__ loads a default source
         self.sources = []
 
+    def calculate(self):
+        """
+        Wrapper to calculate the exposure time, SNR, or limiting magnitude,
+        based on the other two. The "unknown" attribute controls which of these
+        parameters is calculated.
+        """
+        if self._disable:
+            return False
+        if self.ifs is None or self.telescope is None:
+            return False
+
+        if self.unknown == "snr":
+            self._update_snrs(self.source)
+        if self.unknown == "exptime":
+            self._update_exptimes(self.source)
 
     def add_source(self, source):
         # and now the magic: create a master wavelength array from all of the sources.
         self.sources.append(source)
         for source in self.sources:
             self._wavelength = syn.utils.merge_wavelengths(self._wavelength, syn.models.get_waveset(source.sed.model))
+
+    def _update_snr(self, source):
+        """
+        Calculate the SNR based on the current SED and IFS parameters.
+        """
+
+        if self.verbose:
+            msg1 = "Creating exposure for {} ({})".format(self.telescope.name,
+                                                           self.telescope.recover('aperture'))
+            msg2 = " with {} in mode {}".format(self.ifs.name, self.ifs.mode)
+            print(msg1 + msg2)
+
+        _exptime = self.recover('exptime')
+        _wave, aeff, bef, aper, R, wrange, int_eff = self.recover('ifs.wave',
+                                                         'ifs.aeff',
+                                                         'ifs.bef',
+                                                         'telescope.effective_aperture',
+                                                         'ifs.R',
+                                                         'ifs.wrange',
+                                                         "_internal_efficiency")
+
+        exptime = ( self._exptime[0][0] * u.Unit(self._exptime[1])).to(u.s)
+
+        wave = _wave.to(u.AA)
+        internal_efficiency = int_eff(wave)
+
+        swave = source.sed.waveset.to(u.AA)
+
+        sflux = syn.units.convert_flux(swave, source.sed(swave), (u.erg / u.s / u.cm**2 / u.AA))
+
+        delta_lambda = self.recover('ifs.delta_lambda').to(u.AA / u.pix)
+
+        iflux = np.interp(wave, swave, sflux, left=0., right=0.)
+        # telescope efficiency reduces counts at detector (HWOE-183)
+        iflux *= internal_efficiency
+        self._interp_flux = iflux
+        phot_energy = const.h.to(u.erg * u.s) * const.c.to(u.cm / u.s) / wave.to(u.cm) / u.pix
+
+        #print('_update_snr phot_energy: ', phot_energy)
+
+        # This is the aperture efficiency (throughput) scaled from 15m radius to the requested aperture size
+        scaled_aeff = aeff * (aper / (15 * u.m))**2
+        source_counts = iflux / phot_energy * scaled_aeff * exptime * delta_lambda
+        #print('_update_snr source_counts: ', source_counts)
+
+        # telescope efficiency reduces counts at detector (HWOE-183)
+        bef *= internal_efficiency
+        bg_counts = bef / phot_energy * scaled_aeff * exptime
+
+        snr = source_counts / np.sqrt(source_counts + bg_counts)
+
+        if self.verbose:
+            print("SNR: {}".format(snr))
+
+        self._snr = snr
+
+        return True
+
+    def _update_exptime(self, source):
+        """
+        Calculate the exptime based on the current SED and IFS parameters.
+        """
+
+        if self.verbose:
+            msg1 = "Creating exposure for {} ({})".format(self.telescope.name,
+                                                           self.telescope.recover('aperture'))
+            msg2 = " with {} in mode {}".format(self.ifs.name, self.ifs.mode)
+            print(msg1 + msg2)
+
+        _snr, _exptime = self.recover('_snr', '_exptime')
+        _wave, aeff, bef, aper, R, wrange, int_eff = self.recover('ifs.wave',
+                                                         'ifs.aeff',
+                                                         'ifs.bef',
+                                                         'telescope.effective_aperture',
+                                                         'ifs.R',
+                                                         'ifs.wrange',
+                                                         "_internal_efficiency")
+
+        if self.verbose:
+            print("The requested SNR is {}\n".format(_snr))
+
+        wave = _wave.to(u.AA)
+        telescope_efficiency = int_eff(wave)
+
+        swave = source.sed.waveset.to(u.AA)
+
+        sflux = syn.units.convert_flux(swave, source.sed(swave), u.erg / u.s / u.cm**2 / u.AA)
+
+        delta_lambda = self.recover('ifs.delta_lambda').to(u.AA / u.pix)
+
+        iflux = np.interp(wave, swave, sflux, left=0., right=0.)
+        # telescope efficiency reduces flux at detector (HWOE-183)
+        iflux *= telescope_efficiency
+        bef *= telescope_efficiency
+
+        phot_energy = const.h.to(u.erg * u.s) * const.c.to(u.cm / u.s) / wave.to(u.cm) / u.ct
+
+        scaled_aeff = aeff * (aper / (15 * u.m))**2
+
+        if (self.verbose):
+            print('sflux  = ', sflux, '\n') #<--- this has the correct units, "erg / (Angstrom s cm2)"
+            print('wave = ', wave, '\n') #<---- 20,600 element array of wavelengths tied to IFS object (not Exposure)
+            print('delta_lambda = ', delta_lambda, '\n') #<--- this has the correct units, "Angstrom/pix"
+            print('iflux = ', iflux, '\n') #<--- this has the correct units, "erg / (Angstrom s cm2)"
+                                 #<--- becuase the units are carried through the interpolation
+            print('bef = ', bef)  #<--- this has the correct units, "erg / (pix s cm2)"
+            print('photE = ', phot_energy, '\n') #<--- this has the correct units, "erg / ct"
+            print('aeff = ', aeff) #<--- this has the correct units, "cm2"
+            print('aper = ', aper)#<--- this has the correct units, "m"
+            print('scaled_aeff = ', scaled_aeff, '\n') #<--- this has the correct units, "cm2"
+            print('SNR^2 :', (_snr)**2)
+
+        t_exp = (_snr)**2 * (iflux / phot_energy * scaled_aeff * delta_lambda + bef / phot_energy * scaled_aeff) / ((iflux/phot_energy)**2 * scaled_aeff**2 * delta_lambda**2)
+
+        if self.verbose:
+            print("Exptime: {}".format(t_exp))
+
+        self._exptime = t_exp
+
+        return True
+
 
     @property
     def num_sources(self):
@@ -588,7 +727,14 @@ class SourceIFSExposure(SourceSpectrographicExposure):
     def source(self, new_source):
         self.add_source(new_source)
 
-    def _update_exptime(self, source):
+    @property
+    def _internal_efficiency(self):
+        (tel_eff, inst_eff) = self.recover('telescope.telescope_efficiency', f"ifs.instrument_efficiency_{self.ifs.mode}")
+
+        # multiply the telescope efficiency by the instrumental efficiency
+        return tel_eff * inst_eff
+
+    def _update_exptimes(self, source):
         self._exptimes = []
         if self.sources == []:
             self._exptimes = [None]
@@ -596,7 +742,7 @@ class SourceIFSExposure(SourceSpectrographicExposure):
         else:
             # loop through by setting all the sources.
             for source in self.sources:
-                super()._update_exptime(source)
+                self._update_exptime(source)
                 self._exptimes.append(self._exptime)
             
             # and set the regular exposure time to the maximum
@@ -604,7 +750,7 @@ class SourceIFSExposure(SourceSpectrographicExposure):
             # spectrum, not any specific value.
             self._exptime = sorted(self._exptimes, key=(lambda a: np.nanmean(a)))[-1]
 
-    def _update_snr(self, source):
+    def _update_snrs(self, source):
         self._snrs = []
         if self.sources == []:
             self._snrs = [None]
@@ -612,7 +758,7 @@ class SourceIFSExposure(SourceSpectrographicExposure):
         else:
             # loop through by setting all the sources.
             for source in self.sources:
-                super()._update_snr(source)
+                self._update_snr(source)
                 self._snrs.append(self._snr)
             
             # and set the regular snr to the minimum

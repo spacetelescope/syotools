@@ -1,0 +1,10 @@
+exptime: 0.1
+extinction: 0
+instrument: uvi
+magnitude: 20
+redshift: 0
+sed: G2V Star
+snr: 1.0e+100
+target: magnitude
+telescope: EAC1
+xfail: Spectrographs cannot currently solve for limiting magnitude

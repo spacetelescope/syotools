@@ -1,0 +1,58 @@
+expected:
+- len: 20600
+  mean: .inf
+  median: 56006102.486412555
+  std: .nan
+- len: 20600
+  mean: .inf
+  median: 52895722.7589515
+  std: .nan
+- len: 20600
+  mean: .inf
+  median: 51419689.06692523
+  std: .nan
+- len: 20600
+  mean: .inf
+  median: 11982635.986393645
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 1416336.9997554088
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 1415423.9622453037
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 1415368.4403290488
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 1415365.06403492
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 1415364.8587220844
+  std: .nan
+- len: 28769
+  mean: .inf
+  median: 191393.4805102377
+  std: .nan
+- len: 28769
+  mean: .inf
+  median: 191378.37097430852
+  std: .nan
+- len: 28769
+  mean: .inf
+  median: 191375.99994271123
+  std: .nan
+exptime: 1
+extinction: 0
+instrument: ifs
+magnitude: 20
+redshift: 0
+sed: Liner
+snr: 10
+target: exptime
+telescope: EAC1

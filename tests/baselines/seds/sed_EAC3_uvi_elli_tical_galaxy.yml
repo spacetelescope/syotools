@@ -1,0 +1,58 @@
+expected:
+- len: 20600
+  mean: .inf
+  median: 42991923.939820886
+  std: .nan
+- len: 20600
+  mean: .inf
+  median: 26309385.281707168
+  std: .nan
+- len: 20600
+  mean: 37054892.21691881
+  median: 21501571.580868497
+  std: 30728994.039206058
+- len: 20600
+  mean: .inf
+  median: 7221370.406961295
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 950085.4297557934
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 950023.6144597353
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 950022.9779781563
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 950022.9714246197
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 950022.9713571412
+  std: .nan
+- len: 28769
+  mean: 924939.7091959197
+  median: 200751.5033052367
+  std: 2128868.5281041833
+- len: 28769
+  mean: 924303.4665753599
+  median: 200736.94217330756
+  std: 2126077.371142156
+- len: 28769
+  mean: 924264.7501410568
+  median: 200734.58822778246
+  std: 2125933.257955145
+exptime: 1
+extinction: 0
+instrument: uvi
+magnitude: 20
+redshift: 0
+sed: Elliptical Galaxy
+snr: 10
+target: exptime
+telescope: EAC3

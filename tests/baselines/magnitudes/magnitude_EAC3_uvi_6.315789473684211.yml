@@ -1,0 +1,58 @@
+expected:
+- len: 20600
+  mean: .inf
+  median: 20795.80472194252
+  std: .nan
+- len: 20600
+  mean: 28715.146606119928
+  median: 14116.396422448326
+  std: 40289.33129024527
+- len: 20600
+  mean: .inf
+  median: 4648.269820446283
+  std: .nan
+- len: 20600
+  mean: .inf
+  median: 2416.7115308771845
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 254.35863077723525
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 254.3586253016973
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 254.3586252319948
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 254.35862523110754
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 254.35862523109623
+  std: .nan
+- len: 28769
+  mean: .inf
+  median: 0.20016997498990802
+  std: .nan
+- len: 28769
+  mean: .inf
+  median: 0.20016997497589228
+  std: .nan
+- len: 28769
+  mean: .inf
+  median: 0.20016997497371217
+  std: .nan
+exptime: 10000
+extinction: 0
+instrument: uvi
+magnitude: 6.315789473684211
+redshift: 0
+sed: G2V Star
+snr: 10
+target: exptime
+telescope: EAC3

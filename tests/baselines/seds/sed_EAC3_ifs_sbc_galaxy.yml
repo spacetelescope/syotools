@@ -1,0 +1,58 @@
+expected:
+- len: 20600
+  mean: .inf
+  median: 2673096.763875736
+  std: .nan
+- len: 20600
+  mean: .inf
+  median: 994676.2305907574
+  std: .nan
+- len: 20600
+  mean: 1400037.1797498893
+  median: 1048988.0532469237
+  std: 1044958.4529321399
+- len: 20600
+  mean: .inf
+  median: 278857.7090126071
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 35408.46485782065
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 35408.299844702415
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 35408.29655179709
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 35408.29648608579
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 35408.29648477449
+  std: .nan
+- len: 28769
+  mean: 56962.77848364071
+  median: 8890.560546998575
+  std: 198141.04562002013
+- len: 28769
+  mean: 56958.232199532074
+  median: 8890.530969178013
+  std: 198088.51151746133
+- len: 28769
+  mean: 56957.994731393504
+  median: 8890.526079662282
+  std: 198085.96492148063
+exptime: 1
+extinction: 0
+instrument: ifs
+magnitude: 20
+redshift: 0
+sed: Sbc Galaxy
+snr: 10
+target: exptime
+telescope: EAC3

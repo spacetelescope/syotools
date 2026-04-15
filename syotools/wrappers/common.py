@@ -8,6 +8,7 @@ import astropy.units as u
 
 from syotools.spectra.spec_defaults import syn_spectra_library
 from syotools.models import Camera, Spectrograph, IFS, Telescope, Source, SourcePhotometricExposure, SourceSpectrographicExposure, SourceIFSExposure
+from syotools.utils.yaml_utils import read_yaml, write_yaml
 
 def _do_calculation(tel, inst, exp, mode=None, source=None, snr=10.0, exptime=100, bandpass=None, target="magnitude", verbose=False):
 
@@ -109,7 +110,7 @@ def compute_observation(telescope, instrument="hri", sed="G2V Star", magnitude=2
 
     elif instrument.lower() in ["ifs", "ifu"]:
         inst = IFS()
-        inst.set_from_sei('UVI')
+        inst.set_from_sei('IFS')
         inst.bandnames = inst.modes
         exp = SourceIFSExposure() 
         exp.source = source
@@ -151,7 +152,7 @@ def check_relative_diff(actual, expected, rel_tol=0.1):
                 # Can't calculate relative difference if expected is zero
                 if act != 0:
                     all_within_tolerance = False
-                    differences.append((i, a, e, "inf"))
+                    differences.append((i, key, a, e, "inf"))
             else:
                 rel_diff = abs(act - exp) / abs(exp)
                 pct_diff = 100 * rel_diff
@@ -160,13 +161,31 @@ def check_relative_diff(actual, expected, rel_tol=0.1):
                     all_within_tolerance = False
                     differences.append((i, key, act, exp, pct_diff))
 
+    """
     if not all_within_tolerance:
         print("\nValues exceeding relative tolerance:")
         for i, j, act, exp, pct in differences:
             if pct == "inf":
                 print(f"  Index {i},{key}: actual={act}, expected={exp}, difference=infinite (division by zero)")
             else:
-                print(f"  Index {i},{key}: actual={act:.6g}, expected={exp:.6g}, difference={pct:.2f}%")
+                print(f"  Index {i},{key}: actual={act:.6g}, expected={exp:.6g}, difference={pct:.2f}%") 
+    """
 
     return all_within_tolerance
 
+def generate_test(test_setup, filename, reset):
+
+    write = False
+
+    if reset: # if we're asking to reset, definitely write a fresh file
+        write = True
+    else:
+        try: # if we can read an existing file, don't replace it
+            read_yaml(filename)
+            write = False
+        except FileNotFoundError: # if we can't read an existing file, replace it.
+            write = True
+
+    if write:
+        print(test_setup)
+        write_yaml(test_setup, filename)

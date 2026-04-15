@@ -1,0 +1,10 @@
+exptime: 1
+extinction: 0
+instrument: uvi
+magnitude: 20
+redshift: 0
+sed: G Dwarf
+snr: 10
+target: exptime
+telescope: EAC3
+xfail: Spectrum and renormalization band are disjoint.

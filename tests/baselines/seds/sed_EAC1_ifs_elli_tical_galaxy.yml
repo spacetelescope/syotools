@@ -1,0 +1,58 @@
+expected:
+- len: 20600
+  mean: .inf
+  median: 36179776.394027784
+  std: .nan
+- len: 20600
+  mean: .inf
+  median: 22140615.941935822
+  std: .nan
+- len: 20600
+  mean: 31183478.00832353
+  median: 18094608.95504286
+  std: 25859929.755833097
+- len: 20600
+  mean: .inf
+  median: 6077131.2990789935
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 799542.6874104112
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 799490.6668590107
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 799490.1312290808
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 799490.1257139639
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 799490.1256571774
+  std: .nan
+- len: 28769
+  mean: 778381.3514256247
+  median: 168942.06713137974
+  std: 1791545.4871688457
+- len: 28769
+  mean: 777845.9225907478
+  median: 168929.81323695113
+  std: 1789196.5940393333
+- len: 28769
+  mean: 777813.3408449807
+  median: 168927.8322783213
+  std: 1789075.315845578
+exptime: 1
+extinction: 0
+instrument: ifs
+magnitude: 20
+redshift: 0
+sed: Elliptical Galaxy
+snr: 10
+target: exptime
+telescope: EAC1

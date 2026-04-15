@@ -1,0 +1,14 @@
+expected:
+- len: 10
+  mean: 3.1229975268261174e+61
+  median: 2.2427059014047544e+59
+  std: 8.481563655714933e+61
+exptime: 1
+extinction: 0
+instrument: hri
+magnitude: 20
+redshift: 0
+sed: Liner
+snr: 10
+target: exptime
+telescope: EAC2

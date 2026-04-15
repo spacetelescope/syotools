@@ -1,0 +1,58 @@
+expected:
+- len: 20600
+  mean: .inf
+  median: 113194.58416954201
+  std: .nan
+- len: 20600
+  mean: 144265.99789377494
+  median: 104722.22475772089
+  std: 84077.40292659512
+- len: 20600
+  mean: 150266.5503946062
+  median: 117253.77266937165
+  std: 104086.00788357321
+- len: 20600
+  mean: .inf
+  median: 29001.159875221325
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 3237.392006333847
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 3237.3911364821342
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 3237.3911256319516
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 3237.3911254966106
+  std: .nan
+- len: 850
+  mean: .inf
+  median: 3237.3911254949226
+  std: .nan
+- len: 28769
+  mean: 12560.35633509852
+  median: 2606.1352451471207
+  std: 24359.795824342847
+- len: 28769
+  mean: 12560.262373876047
+  median: 2606.13209716334
+  std: 24359.545086152157
+- len: 28769
+  mean: 12560.256376512176
+  median: 2606.131483287816
+  std: 24359.53105872345
+exptime: 1
+extinction: 0
+instrument: ifs
+magnitude: 20
+redshift: 0
+sed: O5V Star
+snr: 10
+target: exptime
+telescope: EAC2

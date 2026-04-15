@@ -1,0 +1,14 @@
+expected:
+- len: 10
+  mean: 7.975036118702268
+  median: 6.227674071541214
+  std: 6.130555486232624
+exptime: 1
+extinction: 0
+instrument: hri
+magnitude: 20
+redshift: 0
+sed: B5V Star
+snr: 10
+target: exptime
+telescope: EAC3
