@@ -13,7 +13,8 @@ from syotools.models.base import PersistentModel
 from syotools.models.source_exposure import SourceSpectrographicExposure
 from syotools.spectra.utils import mirror_efficiency, set_coating
 from syotools.defaults import default_spectrograph, default_spectropolarimeter
-from hwo_sci_eng.utils import read_yaml 
+from hwo_sci_eng.utils import read_yaml
+from hwome.core.navigator import DataModel
 
 class Spectrograph(PersistentModel):
     """
@@ -40,8 +41,8 @@ class Spectrograph(PersistentModel):
         _default_model - used by PersistentModel
     """
 
-    def __init__(self, default_model = default_spectrograph, **kw):
-        self.telescope = None
+    def __init__(self, telescope, default_model = default_spectrograph, **kw):
+        self.telescope = telescope
         self.exposures = []
 
         self._lumos_default_file = ''
@@ -55,7 +56,7 @@ class Spectrograph(PersistentModel):
         self.aeff = np.zeros(0, dtype=float) * u.cm**2
         self.wrange = np.zeros(2, dtype=float) * u.AA
         self._mode = ''
-        super().__init__(default_model, **kw)
+        #super().__init__(default_model, **kw)
 
 
     #Property wrapper for mode, so that we can use a custom setter to propagate
@@ -72,16 +73,15 @@ class Spectrograph(PersistentModel):
         """ 
 
         nmode = new_mode.upper()
-        if self._mode == nmode or nmode not in self.modes:
+        if self._mode == nmode or nmode not in self.channel_filters:
             return
         self._mode = nmode
-        table = QTable.read(self._lumos_default_file, nmode)
-                
-        self.R = table.meta['R'] * u.pix
-        self.wave = table['Wavelength'].copy()  # Copy to remove FITS file weakrefs
-        self.bef = table['BEF'].copy()          # Copy to remove FITS file weakrefs
-        self.aeff = table['A_Eff'].copy()       # Copy to remove FITS file weakrefs
-        wrange = np.array([table.meta['WAVE_LO'], table.meta['WAVE_HI']]) * u.AA
+
+        self.R = self.resolution[nmode]
+        self.wave = self.throughput_qe[nmode]["wavelength"]
+        self.bef = numpy.zeros_like(self.wave)
+        self.aeff = self.throughput_qe[nmode]["throughput"]
+        wrange = np.array(self.wavelength[nmode]["wmin"], self.wavelength[nmode]["wmax"])
         self.wrange = wrange
 
     @property
@@ -102,7 +102,59 @@ class Spectrograph(PersistentModel):
         exposure.telescope = self.telescope
         exposure.calculate()
 
-    def set_from_sei(self, name): 
+    def set_from_hwome(self, channelname):
+        instrument, channel = channelname.split(".")
+        if instrument not in self.telescope.hwo_data.Instrument.name:
+            raise KeyError(f"Unrecognized Instrument {instrument}.\n Legal values are {self.telescope.hwo_data.Instrument.name}")
+
+        instrument_data = getattr(self.telescope.hwo_data, instrument)
+        if not hasattr(instrument_data, channel):
+            raise KeyError(f"Unrecognized Channel {channel}.\n Legal values are {instrument_data.Channel.name}")
+        channel_data = getattr(instrument_data, channel)
+
+        # extract all the filters
+        self.channel_filters = []
+        for channel_filter in channel_data.Filter:
+            self.channel_filters.append(channel_filter.name.value)
+
+        self.throughput_qe = {}
+        self.resolution = {}
+        self.wavelength = {}
+        for channel_filter in self.channel_filters:
+            # this commands HWOME to walk down the entire optical path of the telescope down to the filter(grating) and collect all of the optics.
+            t_qe = hwo_data.OpticalPath.select(instrument=instrument, channel=channel, filter = channel_filter).throughput(include_detector=True)
+            # then we multiply all of them together
+            total_throughput = np.prod(t_qe.q, axis=0)
+            # and store for later retrieval
+            self.throughput_qe[channel_filter] = {"wavelength": t_qe.w, "throughput": total_throughput, "optics": len(t_qe.value.keys())}
+
+            # Also pull resolution
+
+            grating_resolution = channel_data[channel_filter].Grating.spectral_resolution.q
+            self.resolution[channel_filter] = grating_resolution
+
+            # And wave range information
+            wmin = np.min(t_qe.w)
+            wmax = np.max(t_qe.w)
+            self.wavelength[channel_filter] = {"wmin": wmin, "wmax": wmax, "center": (wmin+wmax)/2.0, "width": wmax-wmin}
+
+
+        self.diffraction_limit = channel_data.diffraction_limited.q
+        self.plate_scale = channel_data.plate_scale.q
+        self.fov_x = channel_data.fov_x.q
+        self.fov_y = channel_data.fov_y.q
+
+        self.readnoise = []
+        self.thermal = []
+        self.dark_current = []
+        self.detectors = channel_data.Detector.name
+
+        for detector in channel_data.Detector:
+            self.readnoise.append(detector.read_noise.q)
+            #self.thermal.append(detector.thermal.q)
+            self.dark_current.append(detector.dark_current.q)
+
+    def set_from_sei(self, name):
 
         if ('uvi' in name.lower()): uvi = read_yaml.uvi()
         

@@ -15,6 +15,10 @@ import astropy.units as u #for unit conversions
 import numpy as np
 import scipy as sc
 import synphot as syn
+from hwome.core.navigator import DataModel
+from syotools.models.camera import Camera
+from syotools.models.ifs import IFS
+from syotools.models.spectrograph import Spectrograph
 from hwo_sci_eng.utils import read_yaml, read_json
 
 class Telescope(PersistentModel):
@@ -104,11 +108,37 @@ class Telescope(PersistentModel):
         return 3. * 3.**0.5 / 2. * side**2
 
     def set_from_sei(self, name):
-        if name in ("EAC1", "EAC2", "EAC3"):
-            tel = self.set_from_yaml(name.lower())
+        if name in ("EAC1", "EAC2", "EAC3", "EAC5"):
+            tel = self.set_from_hwome(name.lower())
         else:
             print('We do not have SEI information for: ', name)
             raise NotImplementedError
+
+    def set_from_hwome(self,name):
+        self.hwo_data = DataModel()
+        self.hwo_data.load_hardware(f"{name}.yaml")
+        # get the instruments loaded into this revision of the hardware
+        instruments = hwo_data.Instrument.name
+        for instrument in hwo_data.Instrument:
+            print(instrument.name.value)
+            if "Coronagraph" not in instrument.name.value and "Astrometry" not in instrument.name.value:
+                print(". ", instrument.Channel.name.keys())
+                for modename in instrument.Channel.name.keys():
+                    print(modename)
+                    if "Imager" in modename or "IMG" in modename or "HRI" in modename:
+                        tel_camera = Camera()
+                        tel_camera.set_from_hwome(modename, hwo_data)
+                        self.cameras.append(tel_camera)
+                    elif "IFU" in modename:
+                        tel_ifu = IFS()
+                        tel_ifu.set_from_hwome(modename, hwo_data)
+                        self.ifses.append(tel_ifu)
+                    elif "MOS" in modename:
+                        tel_spec = Spectrograph()
+                        tel_spec.set_from_hwome(modename, hwo_data)
+                        self.spectrographs.append(tel_spec)
+
+        self.effective_aperture = hwo_data.OTA.circumscribing_diameter
 
     def set_from_json(self,name):
         if self.verbose:

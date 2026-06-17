@@ -156,28 +156,23 @@ class SourceExposure(PersistentModel):
         sed = self.recover('sed')
         return self.camera.interpolate_at_bands(sed)
 
-    @property
-    def _internal_efficiency(self):
-        # right now there is no indication from the SEI database as to what the filters are, or which detector they're on.
-        # until then, we hardcode one of the detectors.
-        self.mode = "nir"
-        (tel_eff, inst_eff) = self.recover('telescope.telescope_efficiency', f"camera.instrument_efficiency_{self.mode}")
-
-        # multiply the telescope efficiency by the instrumental efficiency
-        return tel_eff * inst_eff
-
-
     def interpolated_source(self, source):
         """
         The exposure's new Source SED interpolated at the camera bandpasses.
+
+        telescope efficiency reduces counts at detector (HWOE-183)
         """
+        thru_qe = self.recover('camera.throughput_qe')
         output_mags = [] # <--- create blank list of mags
-        for magwave in self.camera.pivotwave[0]:
-            magwave = magwave * u.Unit(self.camera.pivotwave[1])
-            this_mag = syn.units.convert_flux(magwave, source.sed(magwave), u.ABmag).value
-            #amazingly, the sample method on the synphot sed does not check wavelength limits! #TODO: Check this statement
-            if (magwave > np.max(source.sed.waveset)): this_mag = 99
-            if (magwave < np.min(source.sed.waveset)): this_mag = 99
+        for band in thru_qe:
+            # for each bandpass, get the bandpass
+            bandwave = thru_qe[band]["wavelength"]
+            bandthru = thru_qe[band]["throughput"]
+            bandpass = syn.spectrum.SpectralElement(Empirical1D, points=bandwave, lookup_table=bandpass)
+            # multiply the sed by the bandpass
+            sed = syn.observation.Observation(source.sed, bandpass)
+            # extract the magnitude in AB Magnitudes
+            this_mag = sed.effstim(u.ABmag)
             output_mags.append(this_mag)
             if self.verbose:
                 print('getting mags from interpolated _source: ', magwave * u.Unit(self.camera.pivotwave[1]))
@@ -236,20 +231,18 @@ class SourcePhotometricExposure(SourceExposure):
         Calculate the stellar flux as per Eq 2 in the SNR equation paper.
         """
         mag = self.interpolated_source(source)
-        (f0, c_ap, D, dlam, int_eff, pivotwave) = self.recover('camera.ab_zeropoint',
+        (f0, c_ap, D, dlam) = self.recover('camera.ab_zeropoint',
                                            'camera.ap_corr',
                                            'telescope.effective_aperture',
-                                           'camera.derived_bandpass',
-                                           "_internal_efficiency",
-                                           "camera.pivotwave")
+                                           'camera.derived_bandpass')
 
-        m = 10.**(-0.4*(mag))
+        interp.make_interp_spline()
+        m = 10.**(-0.4*(mag)) # magnitude to flux
         D = D.to(u.cm)
 
         fsource = f0 * c_ap[0] * np.pi / 4. * D**2 * (dlam * u.nm) * m
 
-        # telescope efficiency reduces counts at detector (HWOE-183)
-        fsource *= int_eff(pivotwave[0] * u.Unit(pivotwave[1]))
+
 
         return fsource
 

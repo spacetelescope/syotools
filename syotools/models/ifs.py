@@ -41,8 +41,8 @@ class IFS(Spectrograph):
         _default_model - used by PersistentModel
     """
 
-    def __init__(self, default_model = default_ifs, **kw):
-        self.telescope = None
+    def __init__(self, telescope, default_model = default_ifs, **kw):
+        self.telescope = telescope
         self.exposures = []
 
         self._ifs_default_file = ''
@@ -56,7 +56,7 @@ class IFS(Spectrograph):
         self.aeff = np.zeros(0, dtype=float) * u.cm**2
         self.wrange = np.zeros(2, dtype=float) * u.AA
         self._mode = ''
-        super().__init__(default_model, **kw)
+        #super().__init__(default_model, **kw)
 
 
     #Property wrapper for mode, so that we can use a custom setter to propagate
@@ -102,6 +102,53 @@ class IFS(Spectrograph):
         exposure.ifs = self
         exposure.telescope = self.telescope
         exposure.calculate()
+
+    def set_from_hwome(self, channelname):
+        instrument, channel = channelname.split(".")
+
+        instrument_data = getattr(self.telescope.hwo_data, instrument)
+        channel_data = getattr(instrument_data, channel)
+
+        # extract all the filters
+        channel_filters = []
+        for channel_filter in channel_data.Filter:
+            channel_filters.append(channel_filter.name.value)
+
+        self.throughput_qe = {}
+        self.resolution = {}
+        self.wavelength = {}
+        for channel_filter in channel_filters:
+            # this commands HWOME to walk down the entire optical path of the telescope down to the filter(grating) and collect all of the optics.
+            t_qe = hwo_data.OpticalPath.select(instrument=instrument, channel=channel, filter = channel_filter).throughput(include_detector=True)
+            # then we multiply all of them together
+            total_throughput = np.prod(t_qe.q, axis=0)
+            # and store for later retrieval
+            self.throughput_qe[channel_filter] = {"wavelength": t_qe.w, "throughput": total_throughput, "optics": len(t_qe.value.keys())}
+
+            # Also pull resolution
+            grating_resolution= channel_data.Grating.spectral_resolution.q
+            self.resolution[channel_filter] = grating_resolution
+
+            # And wave range information
+            wmin = np.min(t_qe.w)
+            wmax = np.max(t_qe.w)
+            self.wavelength[channel_filter] = {"wmin": wmin, "wmax": wmax, "center": (wmin+wmax)/2.0, "width": wmax-wmin}
+
+
+        self.diffraction_limit = channel_data.diffraction_limited.q
+        self.plate_scale = channel_data.plate_scale.q
+        self.fov_x = channel_data.fov_x.q
+        self.fov_y = channel_data.fov_y.q
+
+        self.readnoise = []
+        self.thermal = []
+        self.dark = []
+
+        for detector in channel_data.Detector:
+            self.readnoise.append(detector.read_noise.q)
+            #self.thermal.append(detector.thermal.q)
+            self.dark.append(detector.dark_current.q)
+
 
     def set_from_sei(self, name): 
 

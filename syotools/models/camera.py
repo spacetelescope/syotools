@@ -54,9 +54,9 @@ class Camera(PersistentModel):
         R_effective - this doesn't seem to be used anywhere
     """
 
-    def __init__(self, **kw):
+    def __init__(self, telescope, **kw):
 
-        self.telescope = None
+        self.telescope = telescope
         self.exposures = []
         self.name = ''
         self.pivotwave = np.zeros(1, dtype=float) * u.nm
@@ -69,7 +69,7 @@ class Camera(PersistentModel):
         self.dark_current = np.zeros(1, dtype=float) * (u.electron / u.s / u.pixel)
         self.detector_rn = np.zeros(1, dtype=float) * (u.electron / u.pixel)**0.5
         self.sky_sigma = np.zeros(1, dtype=float) * u.dimensionless_unscaled
-        super().__init__(default_camera, **kw)
+        #super().__init__(default_camera, **kw)
 
     @property
     def pixel_size(self):
@@ -103,7 +103,13 @@ class Camera(PersistentModel):
         """
         Calculate the bandpasses.
         """
-
+        bandpass = []
+        for band in self.throughput_qe:
+            bandwave = self.throughput_qe[band]["wavelength"]
+            bandthru = self.throughput_qe[band]["throughput"]
+            good = numpy.where(bandthru > 0.05)
+            bandwave = bandwave[good]
+            bandpass.append(bandwave[-1]-bandwave[0])
         #Convert to Quantity for calculations.
         pivotwave, bandpass_r = self.recover('pivotwave','bandpass_r')
 
@@ -127,7 +133,7 @@ class Camera(PersistentModel):
         """
         #Convert to Quantity for calculations.
         pivotwave, effective_aperture = self.recover('pivotwave', 'telescope.effective_aperture')
-        diff_limit, diff_fwhm = self.recover('telescope.diff_limit_wavelength',
+        diff_limit, diff_fwhm = self.recover('diff_limit_wavelength',
                                              'telescope.diff_limit_fwhm')
 
         #fwhm = (1.22 * u.rad * pivotwave / aperture).to(u.arcsec)
@@ -257,7 +263,52 @@ class Camera(PersistentModel):
         exposure.camera = self
         exposure.telescope = self.telescope
         exposure.calculate()
-            
+
+    def set_from_hwome(self, channelname):
+        instrument, channel = channelname.split(".")
+        if instrument not in self.telescope.hwo_data.Instrument.name:
+            raise KeyError(f"Unrecognized Instrument {instrument}.\n Legal values are {self.telescope.hwo_data.Instrument.name}")
+
+        instrument_data = getattr(self.telescope.hwo_data, instrument)
+        channel_data = getattr(instrument_data, channel)
+
+        # extract all the filters
+        self.channel_filters = []
+        for channel_filter in channel_data.Filter:
+            self.channel_filters.append(channel_filter.name.value)
+
+        self.throughput_qe = {}
+        self.wavelength = {}
+        for channel_filter in self.channel_filters:
+            # this commands HWOME to walk down the entire optical path of the telescope down to the filter(grating) and collect all of the optics.
+            t_qe = hwo_data.OpticalPath.select(instrument=instrument, channel=channel, filter = channel_filter).throughput(include_detector=True)
+            # then we multiply all of them together
+            total_throughput = np.prod(t_qe.q, axis=0)
+            # and store for later retrieval
+            self.throughput_qe[channel_filter] = {"wavelength": t_qe.w, "throughput": total_throughput, "optics": len(t_qe.value.keys())}
+
+            # And wave range information
+            wmin = np.min(t_qe.w)
+            wmax = np.max(t_qe.w)
+            self.wavelength[channel_filter] = {"wmin": wmin, "wmax": wmax, "center": (wmin+wmax)/2.0, "width": wmax-wmin}
+
+
+        self.diffraction_limit = channel_data.diffraction_limited.q
+        self.plate_scale = channel_data.plate_scale.q
+        self.fov_x = channel_data.fov_x.q
+        self.fov_y = channel_data.fov_y.q
+
+        self.readnoise = []
+        self.thermal = []
+        self.dark = []
+
+        for detector in channel_data.Detector:
+            print(detector.name)
+            self.readnoise.append(detector.read_noise.q)
+            #self.thermal.append(detector.thermal.q)
+            self.dark.append(detector.dark_current.q)
+
+
     def set_from_sei(self, name): 
 
         if ('HRI' in name): hri = read_yaml.hri()
