@@ -6,6 +6,8 @@ Created on Fri Oct 14 21:31:18 2016
 import numpy as np
 import astropy.constants as const
 import astropy.units as u
+import synphot as syn
+from synphot.models import Empirical1D
 
 from syotools.models.base import PersistentModel
 from syotools.models.source_exposure import SourcePhotometricExposure
@@ -92,11 +94,11 @@ class Camera(PersistentModel):
 
     @property
     def n_bands(self):
-        return len(self.bandnames)
+        return len(self.channel_filters)
 
     @property
     def n_channels(self):
-        return len(self.channels)
+        return len(self.channel_filters)
 
     @property
     def derived_bandpass(self):
@@ -104,26 +106,25 @@ class Camera(PersistentModel):
         Calculate the bandpasses.
         """
         bandpass = []
-        for band in self.throughput_qe:
-            bandwave = self.throughput_qe[band]["wavelength"]
-            bandthru = self.throughput_qe[band]["throughput"]
-            good = numpy.where(bandthru > 0.05)
-            bandwave = bandwave[good]
-            bandpass.append(bandwave[-1]-bandwave[0])
-        #Convert to Quantity for calculations.
-        pivotwave, bandpass_r = self.recover('pivotwave','bandpass_r')
+        pivotwave = []
+        for band in self.throughput:
+            pivot = self.throughput[band]["bandpass"].pivot()
+            width = self.throughput[band]["bandpass"].equivwidth()
+            bandpass.append(pivot / width)
 
-        return np.array(pivotwave[0]) / np.array(bandpass_r[0])
+        return np.array(bandpass)
 
     @property
     def ab_zeropoint(self):
         """
         AB-magnitude zero points as per Marc Postman's equation.
         """
-        pivotwave = self.pivotwave[0] * u.nm
-        abzp = 5509900. * (u.photon / u.s / u.cm**2) / pivotwave
+        abzp = []
+        for band in self.throughput:
+            pivotwave = self.throughput[band]["bandpass"].pivot()
+            abzp = 5509900. * (u.photon / u.s / u.cm**2) / pivotwave
 
-        return abzp
+        return np.asarray(abzp)
 
 
     @property
@@ -265,11 +266,20 @@ class Camera(PersistentModel):
         exposure.calculate()
 
     def set_from_hwome(self, channelname):
-        instrument, channel = channelname.split(".")
-        if instrument not in self.telescope.hwo_data.Instrument.name:
+        try:
+            instrument, channel = channelname.split(".")
+            instrument_data = getattr(self.telescope.hwo_data, instrument)
+        except ValueError:
+            raise ValueError("Need a name + channel (e.g. 'HRI-S.NIR')")
+        except KeyError:
             raise KeyError(f"Unrecognized Instrument {instrument}.\n Legal values are {self.telescope.hwo_data.Instrument.name}")
 
         instrument_data = getattr(self.telescope.hwo_data, instrument)
+
+        try:
+            channel_data = getattr(instrument_data, channel)
+        except KeyError:
+            raise KeyError(f"Unrecognized Channel {channel}.\n Legal values are {instrument_data.Channel.name.keys()}")
         channel_data = getattr(instrument_data, channel)
 
         # extract all the filters
@@ -277,20 +287,15 @@ class Camera(PersistentModel):
         for channel_filter in channel_data.Filter:
             self.channel_filters.append(channel_filter.name.value)
 
-        self.throughput_qe = {}
-        self.wavelength = {}
+        self.throughput = {}
         for channel_filter in self.channel_filters:
             # this commands HWOME to walk down the entire optical path of the telescope down to the filter(grating) and collect all of the optics.
-            t_qe = hwo_data.OpticalPath.select(instrument=instrument, channel=channel, filter = channel_filter).throughput(include_detector=True)
+            thru = self.telescope.hwo_data.OpticalPath.select(instrument=instrument, channel=channel, filter = channel_filter).throughput(include_detector=False)
             # then we multiply all of them together
-            total_throughput = np.prod(t_qe.q, axis=0)
+            total_throughput = np.prod(thru.q, axis=0)
             # and store for later retrieval
-            self.throughput_qe[channel_filter] = {"wavelength": t_qe.w, "throughput": total_throughput, "optics": len(t_qe.value.keys())}
-
-            # And wave range information
-            wmin = np.min(t_qe.w)
-            wmax = np.max(t_qe.w)
-            self.wavelength[channel_filter] = {"wmin": wmin, "wmax": wmax, "center": (wmin+wmax)/2.0, "width": wmax-wmin}
+            band = syn.spectrum.SpectralElement(Empirical1D, points=thru.w, lookup_table=total_throughput)
+            self.throughput[channel_filter] = {"name": channel_filter, "bandpass": band, "optics": len(thru.value.keys())}
 
 
         self.diffraction_limit = channel_data.diffraction_limited.q
@@ -298,16 +303,15 @@ class Camera(PersistentModel):
         self.fov_x = channel_data.fov_x.q
         self.fov_y = channel_data.fov_y.q
 
-        self.readnoise = []
-        self.thermal = []
-        self.dark = []
 
         for detector in channel_data.Detector:
-            print(detector.name)
-            self.readnoise.append(detector.read_noise.q)
-            #self.thermal.append(detector.thermal.q)
-            self.dark.append(detector.dark_current.q)
-
+            self.detector = detector.name
+            self.readnoise = detector.read_noise.q
+            #self.thermal = detector.thermal.q
+            self.dark = detector.dark_current.q
+            w = detector.qe.w
+            t = detector.qe.q
+            self.total_qe = syn.spectrum.SpectralElement(Empirical1D, points=w, lookup_table=t)
 
     def set_from_sei(self, name): 
 

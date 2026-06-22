@@ -118,27 +118,9 @@ class Telescope(PersistentModel):
         self.hwo_data = DataModel()
         self.hwo_data.load_hardware(f"{name}.yaml")
         # get the instruments loaded into this revision of the hardware
-        instruments = hwo_data.Instrument.name
-        for instrument in hwo_data.Instrument:
-            print(instrument.name.value)
-            if "Coronagraph" not in instrument.name.value and "Astrometry" not in instrument.name.value:
-                print(". ", instrument.Channel.name.keys())
-                for modename in instrument.Channel.name.keys():
-                    print(modename)
-                    if "Imager" in modename or "IMG" in modename or "HRI" in modename:
-                        tel_camera = Camera()
-                        tel_camera.set_from_hwome(modename, hwo_data)
-                        self.cameras.append(tel_camera)
-                    elif "IFU" in modename:
-                        tel_ifu = IFS()
-                        tel_ifu.set_from_hwome(modename, hwo_data)
-                        self.ifses.append(tel_ifu)
-                    elif "MOS" in modename:
-                        tel_spec = Spectrograph()
-                        tel_spec.set_from_hwome(modename, hwo_data)
-                        self.spectrographs.append(tel_spec)
+        instruments = self.hwo_data.Instrument.name
 
-        self.effective_aperture = hwo_data.OTA.circumscribing_diameter
+        self.effective_aperture = self.hwo_data.OTA.circumscribing_diameter
 
     def set_from_json(self,name):
         if self.verbose:

@@ -162,18 +162,15 @@ class SourceExposure(PersistentModel):
 
         telescope efficiency reduces counts at detector (HWOE-183)
         """
-        thru_qe = self.recover('camera.throughput_qe')
+        thru, qe = self.recover("camera.throughput", "camera.total_qe")
         output_mags = [] # <--- create blank list of mags
-        for band in thru_qe:
-            # for each bandpass, get the bandpass
-            bandwave = thru_qe[band]["wavelength"]
-            bandthru = thru_qe[band]["throughput"]
-            bandpass = syn.spectrum.SpectralElement(Empirical1D, points=bandwave, lookup_table=bandpass)
+        for band in thru:
             # multiply the sed by the bandpass
+            bandpass = thru[band]["bandpass"] * qe
             sed = syn.observation.Observation(source.sed, bandpass)
             # extract the magnitude in AB Magnitudes
             this_mag = sed.effstim(u.ABmag)
-            output_mags.append(this_mag)
+            output_mags.append(this_mag.value)
             if self.verbose:
                 print('getting mags from interpolated _source: ', magwave * u.Unit(self.camera.pivotwave[1]))
         return np.array(output_mags)
@@ -236,13 +233,10 @@ class SourcePhotometricExposure(SourceExposure):
                                            'telescope.effective_aperture',
                                            'camera.derived_bandpass')
 
-        interp.make_interp_spline()
         m = 10.**(-0.4*(mag)) # magnitude to flux
         D = D.to(u.cm)
 
         fsource = f0 * c_ap[0] * np.pi / 4. * D**2 * (dlam * u.nm) * m
-
-
 
         return fsource
 
@@ -288,7 +282,7 @@ class SourcePhotometricExposure(SourceExposure):
         dark_rate = _dark_current[0] * u.Unit(_dark_current[1]) #<<-'electron / (pix s)'
         rn = _detector_rn[0] * u.Unit(_detector_rn[1])
 
-        QE = _total_qe[0] * u.Unit(_total_qe[1])
+        QE = _total_qe.efficiency()
         a = (QE * fstar)**2
         b = snr2 * (QE * (fstar + fsky) + thermal + dark_rate * Npix)
         c = snr2 * rn**2 * Npix * _nexp
@@ -326,7 +320,7 @@ class SourcePhotometricExposure(SourceExposure):
         Npix = self.camera._sn_box(self.verbose)
         c_t = self.camera.c_thermal(verbose=self.verbose)
 
-        QE = _total_qe[0] * u.Unit(_total_qe[1])
+        QE = _total_qe.efficiency()
         rn = _detector_rn[0] * u.Unit(_detector_rn[1])
         dark_rate = _dark_current[0] * u.Unit(_dark_current[1]) #<<-'electron / (pix s)'
 
@@ -362,7 +356,7 @@ class SourcePhotometricExposure(SourceExposure):
         desired_exp_time = (np.full(n_bands, _exptime[0]) * u.Unit(_exptime[1])).to(u.second)
         time_per_exposure = desired_exp_time / number_of_exposures
 
-        QE = _total_qe[0] * u.Unit(_total_qe[1])
+        QE = _total_qe.efficiency()
 
         signal_counts = QE * self._fsource(source) * desired_exp_time
         shot_noise_in_signal = np.sqrt(signal_counts)
