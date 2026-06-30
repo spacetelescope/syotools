@@ -61,7 +61,7 @@ class Camera(PersistentModel):
         self.telescope = telescope
         self.exposures = []
         self.name = ''
-        self.pivotwave = np.zeros(1, dtype=float) * u.nm
+        #self.pivotwave = np.zeros(1, dtype=float) * u.nm
         self.bandnames = ['']
         self.channels = [([],0)]
         self.fiducials = np.zeros(1, dtype=float) * u.nm
@@ -69,28 +69,21 @@ class Camera(PersistentModel):
         self.ap_corr = np.zeros(1, dtype=float) * u.dimensionless_unscaled
         self.bandpass_r = np.zeros(1, dtype=float) * u.dimensionless_unscaled
         self.dark_current = np.zeros(1, dtype=float) * (u.electron / u.s / u.pixel)
-        self.detector_rn = np.zeros(1, dtype=float) * (u.electron / u.pixel)**0.5
+        #self.detector_rn = np.zeros(1, dtype=float) * (u.electron / u.pixel)**0.5
         self.sky_sigma = np.zeros(1, dtype=float) * u.dimensionless_unscaled
         #super().__init__(default_camera, **kw)
 
     @property
     def pixel_size(self):
         """
-        Compute the pixel size as a function of pivot wavelength.
+        Return the pixel size. Originally, this was a function of pivot wavelength.
+        Now it's read out of the HWOME properties.
 
         Use the reference band for each channel as the fiducial: U-band for UV
         and optical, J-band for IR.
         """
 
-        pixsize = np.zeros(self.n_bands, dtype=float)
-        
-        fiducials, effective_aperture = self.recover('fiducials', 'telescope.effective_aperture')
-        
-        for ref, bands in enumerate(self.channels):
-            pxs = (0.5 * fiducials[0][ref] * u.Unit(fiducials[1])* u.rad / effective_aperture).to(u.arcsec).value
-            pixsize[bands] = pxs
-
-        return pixsize * u.arcsec / u.pix
+        return self.plate_scale
 
     @property
     def n_bands(self):
@@ -101,18 +94,31 @@ class Camera(PersistentModel):
         return len(self.channel_filters)
 
     @property
+    def pivotwave(self):
+        pivot = []
+        for band in self.throughput:
+            pivotval = self.throughput[band]["bandpass"].pivot()
+            pivotunit = pivotval.unit
+            pivot.append(pivotval.value)
+
+        print(pivot)
+        return np.asarray(pivot) << pivotunit
+
+
+    @property
     def derived_bandpass(self):
         """
         Calculate the bandpasses.
         """
-        bandpass = []
-        pivotwave = []
+        pivotwave = self.recover('pivotwave')
+        width = []
         for band in self.throughput:
-            pivot = self.throughput[band]["bandpass"].pivot()
-            width = self.throughput[band]["bandpass"].equivwidth()
-            bandpass.append(pivot / width)
+            widthval = self.throughput[band]["bandpass"].equivwidth()
+            widthunit = widthval.unit
+            width.append(widthval.value)
+        width = width << widthunit
 
-        return np.array(bandpass)
+        return np.array(pivotwave/width)
 
     @property
     def ab_zeropoint(self):
@@ -134,15 +140,14 @@ class Camera(PersistentModel):
         """
         #Convert to Quantity for calculations.
         pivotwave, effective_aperture = self.recover('pivotwave', 'telescope.effective_aperture')
-        diff_limit, diff_fwhm = self.recover('diff_limit_wavelength',
+        diff_limit, diff_fwhm = self.recover('diffraction_limit',
                                              'telescope.diff_limit_fwhm')
 
         #fwhm = (1.22 * u.rad * pivotwave / aperture).to(u.arcsec)
-        pivots = pivotwave[0] * u.Unit(pivotwave[1]) 
-        fwhm = (1.03 * u.rad * pivots / effective_aperture).to(u.arcsec)
+        fwhm = (1.03 * u.rad * pivotwave / effective_aperture).to(u.arcsec)
         
         #only use these values where the wavelength is greater than the diffraction limit
-        fwhm = np.where(pivots.value > diff_limit[0], fwhm.value, diff_fwhm.value) * u.arcsec
+        fwhm = np.where(pivotwave > diff_limit, fwhm.value, diff_fwhm.value) * u.arcsec
 
         return fwhm
 
@@ -193,7 +198,7 @@ class Camera(PersistentModel):
         h = const.h.to(u.erg * u.s) # Planck's constant erg s
         c = const.c.to(u.cm / u.s) # speed of light [cm / s]
 
-        pivots = pivotwave[0] * u.Unit(pivotwave[1])
+        pivots = pivotwave
         energy_per_photon = h * c / pivots.to(u.cm) / u.ph
 
         D = aperture.to(u.cm) # telescope diameter in cm
@@ -201,7 +206,7 @@ class Camera(PersistentModel):
         Omega = (pixel_size**2 * box * u.pix).to(u.sr)
 
         planck = self.planck
-        QE = total_qe[0] * u.Unit(total_qe[1])
+        QE = total_qe
         qepephot = QE * planck / energy_per_photon
 
         if verbose:
@@ -223,7 +228,7 @@ class Camera(PersistentModel):
         #Convert to Quantities for calculation
         pivotwave, temperature = self.recover('pivotwave', 'telescope.temperature')
 
-        pivots = pivotwave[0] * u.Unit(pivotwave[1])
+        pivots = pivotwave
         wave = pivots.to('cm')
         if isinstance(temperature, u.Quantity):
             temp = temperature
@@ -274,13 +279,17 @@ class Camera(PersistentModel):
         except KeyError:
             raise KeyError(f"Unrecognized Instrument {instrument}.\n Legal values are {self.telescope.hwo_data.Instrument.name}")
 
-        instrument_data = getattr(self.telescope.hwo_data, instrument)
+        print(self.telescope.hwo_data[instrument])
+        instrument_data = self.telescope.hwo_data[instrument]
+        #instrument_data = getattr(self.telescope.hwo_data, instrument)
 
+        instrument_data.Channel
         try:
             channel_data = getattr(instrument_data, channel)
         except KeyError:
             raise KeyError(f"Unrecognized Channel {channel}.\n Legal values are {instrument_data.Channel.name.keys()}")
-        channel_data = getattr(instrument_data, channel)
+        channel_data = instrument_data[channel]
+        #channel_data = getattr(instrument_data, channel)
 
         # extract all the filters
         self.channel_filters = []
@@ -307,8 +316,8 @@ class Camera(PersistentModel):
         for detector in channel_data.Detector:
             self.detector = detector.name
             self.readnoise = detector.read_noise.q
-            #self.thermal = detector.thermal.q
-            self.dark = detector.dark_current.q
+            self.thermal = detector.temperature.q
+            self.dark_current = detector.dark_current.q
             w = detector.qe.w
             t = detector.qe.q
             self.total_qe = syn.spectrum.SpectralElement(Empirical1D, points=w, lookup_table=t)

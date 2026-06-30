@@ -46,10 +46,10 @@ class Telescope(PersistentModel):
 
     def __init__(self, **kw):
 
-        self.cameras = []
-        self.spectrographs = []
-        self.coronagraphs = []
-        self.ifses = []
+        self.camera = None
+        self.spectrograph = None
+        self.coronagraph = None
+        self.ifs = None
 
         self.name = ''
         self.aperture = 0. * u.m
@@ -76,11 +76,11 @@ class Telescope(PersistentModel):
         Diffraction-limited PSF FWHM.
         """
 
-        diff_limit_wavelength, effective_aperture = self.recover('diff_limit_wavelength',
+        diff_limit_wavelength, effective_aperture = self.recover('camera.diffraction_limit',
                                                        'effective_aperture')
 
         #result = (1.22 * u.rad * diff_limit_wavelength / aperture).to(u.arcsec)
-        result = (1.03 * u.rad * diff_limit_wavelength[0] * u.Unit(diff_limit_wavelength[1]) / effective_aperture).to(u.arcsec)
+        result = (1.03 * u.rad * diff_limit_wavelength / effective_aperture).to(u.arcsec)
         return result
 
     # @property
@@ -89,19 +89,19 @@ class Telescope(PersistentModel):
     #     return np.sqrt(unobscured) * aper
 
     def add_camera(self, camera):
-        self.cameras.append(camera)
+        self.camera = camera
         camera.telescope = self
 
     def add_spectrograph(self, spectrograph):
-        self.spectrographs.append(spectrograph)
+        self.spectrograph = spectrograph
         spectrograph.telescope = self
 
     def add_ifs(self, ifs):
-        self.ifses.append(ifs)
+        self.ifs = ifs
         ifs.telescope = self
 
     def add_coronagraph(self, coronagraph):
-        self.coronagraphs.append(coronagraph)
+        self.coronagraph = coronagraph
         coronagraph.telescope = self
 
     def hexagon_area(self, side):
@@ -120,7 +120,7 @@ class Telescope(PersistentModel):
         # get the instruments loaded into this revision of the hardware
         instruments = self.hwo_data.Instrument.name
 
-        self.effective_aperture = self.hwo_data.OTA.circumscribing_diameter
+        self.effective_aperture = self.hwo_data.OTA.circumscribing_diameter.q
 
     def set_from_json(self,name):
         if self.verbose:
