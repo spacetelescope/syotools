@@ -36,7 +36,7 @@ def camera_snr(telescope, template, magnitude, exptime, silent=False):
 	tel = Telescope()   # create a Telescope, Camera, and Exposure 
 	tel.set_from_hwome(telescope)
 	hri = Camera(tel)
-	hri.set_from_sei('HRI')
+	hri.set_from_hwome('HRI_S.HRI_S_NIR')
 	
 	source = Source() 
 	redshift = 0. # changes to these are not implemented yet 
@@ -47,7 +47,7 @@ def camera_snr(telescope, template, magnitude, exptime, silent=False):
 	exp = SourcePhotometricExposure() 
 	exp.source = source
 	    
-	exp.exptime = [[exptime, exptime, exptime, exptime, exptime, exptime, exptime, exptime, exptime, exptime], 'hr']
+	exp.exptime = [[exptime], "hr"]
 	exp.unknown = 'snr'
 	tel.add_camera(hri)
 	hri.add_exposure(exp)
@@ -95,7 +95,8 @@ def camera_exptime(telescope, template, magnitude, snr, silent=False):
 	# create a Telescope, Camera, and Exposure 
 	tel = Telescope()
 	tel.set_from_hwome(telescope)
-	#hri.set_from_sei('HRI')
+	hri = Camera(tel)
+	hri.set_from_hwome('HRI_S.HRI_S_UVIS')
 	
 	source = Source()
 	redshift = 0. # changes to these are not implemented yet 
@@ -108,8 +109,6 @@ def camera_exptime(telescope, template, magnitude, snr, silent=False):
 	
 	exp._snr = [snr] * u.Unit('electron(1/2)')  
 	exp.unknown = 'exptime'
-	print(tel.cameras)
-	hri = tel.cameras[0]
 
 	hri.add_exposure(exp)
 	
