@@ -166,7 +166,7 @@ class SourceExposure(PersistentModel):
         output_mags = [] # <--- create blank list of mags
         for band in thru:
             # multiply the sed by the bandpass
-            bandpass = thru[band]["bandpass"]
+            bandpass = thru[band]["bandpass"] * qe
             sed = syn.observation.Observation(source.sed, bandpass)
             # extract the magnitude in AB Magnitudes
             this_mag = sed.effstim(u.ABmag)
@@ -260,7 +260,7 @@ class SourcePhotometricExposure(SourceExposure):
         # telescope efficiency reduces counts at detector (HWOE-183)
 
         for bidx, band in enumerate(throughput):
-            bandpass = throughput[band]["bandpass"]
+            bandpass = throughput[band]["bandpass"] * qe
             fsky[bidx] *= bandpass(pivotwave[bidx])
 
         return fsky
@@ -359,13 +359,11 @@ class SourcePhotometricExposure(SourceExposure):
         desired_exp_time = (np.full(n_bands, _exptime[0]) * u.Unit(_exptime[1])).to(u.second)
         time_per_exposure = desired_exp_time / number_of_exposures
 
-        QE = _total_qe.efficiency()
-
-        signal_counts = QE * self._fsource(source) * desired_exp_time
+        signal_counts = self._fsource(source) * desired_exp_time
         shot_noise_in_signal = np.sqrt(signal_counts)
 
         # telescope efficiency reduces counts at detector (HWOE-183)
-        sky_counts = QE * self._fsky(verbose=self.verbose) * desired_exp_time
+        sky_counts = self._fsky(verbose=self.verbose) * desired_exp_time
         shot_noise_in_sky = np.sqrt(sky_counts)
 
         sn_box = self.camera._sn_box(self.verbose) #<-- units should be "pix"
