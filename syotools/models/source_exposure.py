@@ -175,22 +175,115 @@ class SourceExposure(PersistentModel):
                 print('getting mags from interpolated _source: ', magwave * u.Unit(self.camera.pivotwave[1]))
         return np.array(output_mags)
 
-    @property
+    def process_observation(self, source, band, verbose=True):
+        """
+        Process the entire observation, up through the point we compute SNR/Exptime/Mag
+        
+        The components of flux in the observation are: 
+        1. The source (assumed to be a point, but let's give it a size 
+           parameter) 
+        2. Sky background (assumed uniform across the aperture) 
+        3. Thermal self-emission (assumed uniform across the aperture).
+        At the moment we only model the heat of the detector itself
+
+        4. Dark current (assumed uniform across the aperture).
+        This is the additional current flowing regardless of photons hitting
+        the detector. It doesn't care about the detector QE or filter wheel.
+
+        5. Read noise (assumed uniform across the aperture)
+        The previous terms were all signal that accumulates with time. Read
+        noise is the uncertainty introduced by the detector readout process 
+        itself; a fixed value per exposure.
+
+        Once we've computed all of these values, we can proceed to the
+        exposure time/SNR/magnitude calculations.
+
+        At that point, the difference between imaging and spectroscopy matter.
+        
+        For imaging:
+        * All non-spatially-uniform components have (size * psf size) 
+        compared to (aperture size), light losses adjusted accordingly, and 
+        integrated over the bandpass + QE (source, sky) or QE (thermal) to be 
+        single value(s)
+        * All uniform components processed for the aperture size
+
+        For spectroscopy:
+        * All non-spatially-uniform components are convolved with a 
+        response function equal to the resolving power of the instrument
+        and then have their (size * psf size) compared to slit size 
+        (widwth * height, if applicable), light losses adjusted accordingly, 
+        and convolved with the bandpass+QE (source, sky) or QE (thermal), 
+        then convolved with a response function equal to the resolving power 
+        of the instrument.
+        * All uniform components processed for the height of the slit * 
+        resolving power.
+        """
+        wave = source.sed.waveset
+        # set up an appropriately sized aperture
+        Npix = self.instrument._sn_box(wave, False)
+        thru, qe, c_thermal, dark_current, readnoise = self.recover("instrument.throughput", "instrument.total_qe", "instrument.c_thermal", "instrument.dark_current", "instrument.readnoise")
+
+        # fsource is:
+        # shaped
+        # goes through the full optical path + QE
+        # accumulates over time
+        flux_source = syn.units.convert_flux(source.sed.waveset, source.sed(source.sed.waveset), syn.units.PHOTLAM)
+        if source.radius > 0:
+            radius = source.radius
+        else:
+            radius = instrument.fwhm_psf(wave)
+        if radius > np.sqrt(Npix)/2.:
+            fsource = fsource * (np.sqrt(Npix)/2)/radius
+
+        # fsky is:
+        # uniform
+        # goes through the full optical path QE
+        # accumulates over time
+        flux_sky = syn.units.convert_flux(sky.sed.waveset, sky.sed(sly.sed.waveset), syn.units.PHOTLAM)
+        flux_sky *= Npix
+        
+        # thermal is:
+        # uniform
+        # goes through the filter wheel and QE
+        # accumulates over time
+        thermal = c_thermal(wave)
+        Omega = (pixel_size**2 * box * u.pix).to(u.sr)
+        thermal *= Omega
+
+        # apply internal effects within telescope & instrument
+        fsource = syn.observation.Observation(flux_source, band["bandpass"] * qe)
+        fsky = syn.observation.Observation(flux_sky, band["bandpass"] * qe)
+        thermal = syn.observation.Observation(thermal, band["bandpass"] * qe)
+
+        # dark is:
+        # uniform
+        # only within detector
+        # accumulates over time
+        dark = dark_current
+
+        # readnoise is:
+        # uniform
+        # only within detector
+        # single event at read time
+        readnoise = readnoise
+
+        return fsource, fsky, thermal, dark, readnoise
+
+
+    @property 
     def magnitude(self, source=None):
         if self.unknown == "magnitude":
             return self._magnitude
-        #If magnitude is not unknown, it should be interpolated from the SED
-        #at the camera bandpasses.
-        if self.verbose:
+        #If magnitude is not unknown, it should be interpolated from the SED #at the
+        camera bandpasses. if self.verbose:
             print('magnitude fcn line 191', self.interpolated_source(source))
         return self.interpolated_source(source)
 
-    @magnitude.setter
+    @magnitude.setter 
     def magnitude(self, new_magnitude):
         if self.unknown == "magnitude":
             return
-        self._magnitude = self._ensure_array(new_magnitude)
-        if self.verbose:
+        self._magnitude = self._ensure_array(new_magnitude) if self.verbose:
             print('magnitude fcn line 200', new_magnitude)
 
         self.calculate()
@@ -257,11 +350,6 @@ class SourcePhotometricExposure(SourceExposure):
             print('Sky brightness: {}'.format(nice_print(Sigma[0])))
 
         fsky = f0 * np.pi / 4. * D**2 * (dlam*u.nm) * m * (Phi**2 * Npix) * u.pix
-        # telescope efficiency reduces counts at detector (HWOE-183)
-
-        for bidx, band in enumerate(throughput):
-            bandpass = throughput[band]["bandpass"] * qe
-            fsky[bidx] *= bandpass(pivotwave[bidx])
 
         return fsky
 
@@ -273,8 +361,12 @@ class SourcePhotometricExposure(SourceExposure):
         self.camera._print_initcon(self.verbose)
 
         (_snr, _nexp) = self.recover('_snr', 'n_exp')
-        (_total_qe, _detector_rn, _dark_current) = self.recover('camera.total_qe',
-                'camera.detector_rn', 'camera.dark_current')
+        (throughput, effective_diameter) = self.recover("instrument.throughput", "telescope.effective_aperture")
+        effective_aperture = (effective_diameter/2)**2 * np.pi
+        for band in throughput:
+            fsource, fsky, thermal, dark, readnoise = process_observation(source, band)
+            fsource = fsource.countrate(effective_aperture)
+            fsky = fsky.countrate(effective_aperture)
 
         snr2 = -(_snr**2)
         fstar = self._fsource(source)

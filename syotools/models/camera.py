@@ -132,19 +132,24 @@ class Camera(PersistentModel):
 
         return np.asarray(abzp)
 
+    def ee(self,wavelength):
+        effective_aperture = self.recover('telescope.effective_aperture')
+        a = effective_radius
+        k = 2 * np.pi / wavelength
+        q = np.arange()
+        x = 1 - [J0(np.pi * r)]**2 - [J1(np.pi * r)]**2
 
-    @property
-    def fwhm_psf(self):
+    def fwhm_psf(self, wave):
         """
         Calculate the FWHM of the camera's PSF.
         """
         #Convert to Quantity for calculations.
-        pivotwave, effective_aperture = self.recover('pivotwave', 'telescope.effective_aperture')
+        effective_aperture = self.recover('telescope.effective_aperture')
         diff_limit, diff_fwhm = self.recover('diffraction_limit',
                                              'telescope.diff_limit_fwhm')
 
-        #fwhm = (1.22 * u.rad * pivotwave / aperture).to(u.arcsec)
-        fwhm = (1.03 * u.rad * pivotwave / effective_aperture).to(u.arcsec)
+        #fwhm = (1.22 * u.rad * wave / aperture).to(u.arcsec)
+        fwhm = (1.03 * u.rad * wave / effective_aperture).to(u.arcsec)
         
         #only use these values where the wavelength is greater than the diffraction limit
         fwhm = np.where(pivotwave > diff_limit, fwhm.value, diff_fwhm.value) * u.arcsec
@@ -166,70 +171,64 @@ class Camera(PersistentModel):
             print('Detector read noise: {}'.format(nice_print(self.detector_rn[0] * u.Unit(self.detector_rn[1]))))
             print('Dark rate: {}'.format(nice_print(self.dark_current[0] * u.Unit(self.dark_current[1]))))
 
-    def _sn_box(self, verbose):
+    def _sn_box(self, wave, verbose):
         """
         Calculate the number of pixels in the SNR computation box.
         """
 
         (Phi, fwhm_psf) = self.recover('pixel_size', 'fwhm_psf')
-        sn_box = np.round(3. * fwhm_psf / Phi)
+        sn_box = np.round(3. * fwhm_psf(wave) / Phi)
 
         if verbose:
-            print('PSF width: {}'.format(nice_print(fwhm_psf)))
+            print('PSF width: {}'.format(nice_print(fwhm_psf(wave))))
             print('SN box width: {}'.format(nice_print(sn_box)))
 
         return sn_box**2 / u.pix #don't want pix**2 units
 
-    def c_thermal(self, verbose=True):
+    def c_thermal(self, wave, verbose=True):
         """
         Calculate the thermal emission counts for the telescope.
         """
 
         #Convert to Quantities for calculation.
-        (bandpass, pivotwave, aperture, ota_emissivity,
-         total_qe, pixel_size) = self.recover('derived_bandpass', 'pivotwave',
+        (bandpass, aperture, ota_emissivity,
+         total_qe, pixel_size) = self.recover(
                 'telescope.effective_aperture',  'telescope.ota_emissivity',
                 'total_qe', 'pixel_size')
 
         box = self._sn_box(verbose)
 
-        bandwidth = (bandpass * u.nm).to(u.cm)
-
         h = const.h.to(u.erg * u.s) # Planck's constant erg s
         c = const.c.to(u.cm / u.s) # speed of light [cm / s]
 
-        pivots = pivotwave
-        energy_per_photon = h * c / pivots.to(u.cm) / u.ph
+        energy_per_photon = h * c / wave.to(u.cm) / u.ph
 
         D = aperture.to(u.cm) # telescope diameter in cm
 
-        Omega = (pixel_size**2 * box * u.pix).to(u.sr)
+        
 
-        planck = self.planck
-        QE = total_qe
-        qepephot = QE * planck / energy_per_photon
+        pephot = self.planck(wave) / energy_per_photon
 
         if verbose:
             print('Planck spectrum: {}'.format(nice_print(planck)))
-            print('QE * Planck / E_phot: {}'.format(nice_print(qepephot)))
+            print('Planck / E_phot: {}'.format(nice_print(pephot)))
             print('E_phot: {}'.format(nice_print(energy_per_photon)))
             print('Omega: {}'.format(nice_print(Omega)))
 
         thermal = (ota_emissivity[0] * planck / energy_per_photon *
-    			(np.pi / 4. * D**2) * QE * Omega * bandwidth )
+    			(np.pi / 4. * D**2))
 
         return thermal
 
     @property
-    def planck(self):
+    def planck(self, wave):
         """
         Planck spectrum for the various wave bands.
         """
         #Convert to Quantities for calculation
-        pivotwave, temperature = self.recover('pivotwave', 'telescope.temperature')
+        temperature = self.recover('thermal')
 
-        pivots = pivotwave
-        wave = pivots.to('cm')
+        wave = wave.to('cm')
         if isinstance(temperature, u.Quantity):
             temp = temperature
         else:
