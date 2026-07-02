@@ -35,10 +35,10 @@ def uvspec_snr(telescope, mode, template, fuvmag, exptime, silent=False):
     import astropy.units as u
 
     # create the basic objects 
-    uvi, tel = Spectrograph(), Telescope() 
-    tel.set_from_sei(telescope)
-    uvi.set_from_sei("uvi")
-    tel.add_spectrograph(uvi)
+    tel = Telescope()
+    tel.set_from_hwome(telescope)
+    uvi = Spectrograph(tel)
+    uvi.set_from_hwome("UV_MOS.FUV_MOS")
     uvi.mode = mode
 
     source = Source()
@@ -49,9 +49,10 @@ def uvspec_snr(telescope, mode, template, fuvmag, exptime, silent=False):
     uvi_exp = SourceSpectrographicExposure()
     uvi_exp.source = source
     uvi_exp.verbose = not silent
+    tel.add_spectrograph(uvi)
     uvi.add_exposure(uvi_exp)
 
-    uvi_exp.exptime = [[exptime, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0], 'hr']
+    uvi_exp.exptime = [[exptime], 'hr']
 
     tel.verbose = True
     if (silent):
@@ -110,10 +111,10 @@ def uvspec_exptime(telescope, mode, template, fuvmag, snr, silent=False):
     import astropy.units as u
 
     # create the basic objects
-    uvi, tel = Spectrograph(), Telescope()
-    tel.set_from_sei(telescope)
-    uvi.set_from_sei("uvi")
-    tel.add_spectrograph(uvi)
+    tel = Telescope()
+    tel.set_from_hwome(telescope)
+    uvi = Spectrograph(tel)
+    uvi.set_from_hwome("UV_MOS.FUV_MOS")
     uvi.mode = mode
 
     source = Source()
@@ -124,6 +125,7 @@ def uvspec_exptime(telescope, mode, template, fuvmag, snr, silent=False):
     uvi_exp = SourceSpectrographicExposure()
     uvi_exp.source = source
     uvi_exp.verbose = not silent
+    tel.add_spectrograph(uvi)
     uvi.add_exposure(uvi_exp)
 
     if not silent:

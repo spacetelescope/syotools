@@ -13,7 +13,8 @@ from syotools.models.base import PersistentModel
 from syotools.models.source_exposure import SourcePhotometricExposure
 from syotools.defaults import default_camera
 from syotools.spectra.utils import mag_from_sed, mirror_efficiency, set_coating
-from hwo_sci_eng.utils import read_yaml 
+from hwo_sci_eng.utils import read_yaml
+from hwome.core.navigator import DataModel
 
 def nice_print(arr):
     """
@@ -66,11 +67,11 @@ class Camera(PersistentModel):
         self.channels = [([],0)]
         self.fiducials = np.zeros(1, dtype=float) * u.nm
         self.total_qe = np.zeros(1, dtype=float) * u.dimensionless_unscaled
-        self.ap_corr = np.zeros(1, dtype=float) * u.dimensionless_unscaled
+        self.ap_corr = np.ones(1, dtype=float) * u.dimensionless_unscaled
         self.bandpass_r = np.zeros(1, dtype=float) * u.dimensionless_unscaled
         self.dark_current = np.zeros(1, dtype=float) * (u.electron / u.s / u.pixel)
         #self.detector_rn = np.zeros(1, dtype=float) * (u.electron / u.pixel)**0.5
-        self.sky_sigma = np.zeros(1, dtype=float) * u.dimensionless_unscaled
+        self.sky_sigma = np.ones(1, dtype=float) * 22 * u.dimensionless_unscaled
         #super().__init__(default_camera, **kw)
 
     @property
@@ -97,7 +98,7 @@ class Camera(PersistentModel):
     def pivotwave(self):
         pivot = []
         for band in self.throughput:
-            pivotval = self.throughput[band]["bandpass"].pivot()
+            pivotval = band["bandpass"].pivot()
             pivotunit = pivotval.unit
             pivot.append(pivotval.value)
 
@@ -113,7 +114,7 @@ class Camera(PersistentModel):
         pivotwave = self.recover('pivotwave')
         width = []
         for band in self.throughput:
-            widthval = self.throughput[band]["bandpass"].equivwidth()
+            widthval = band["bandpass"].equivwidth()
             widthunit = widthval.unit
             width.append(widthval.value)
         width = width << widthunit
@@ -125,12 +126,13 @@ class Camera(PersistentModel):
         """
         AB-magnitude zero points as per Marc Postman's equation.
         """
-        abzp = []
-        for band in self.throughput:
-            pivotwave = self.throughput[band]["bandpass"].pivot()
-            abzp = 5509900. * (u.photon / u.s / u.cm**2) / pivotwave
+        pivotwave = self.recover('pivotwave')
+        pivot = pivotwave.to(u.nm)
+        abzp = 5509900. * (u.photon / u.s / u.cm**2) / pivot
 
-        return np.asarray(abzp)
+        print("AB Zero", abzp[0])
+
+        return abzp# << abunit
 
 
     @property
@@ -155,16 +157,16 @@ class Camera(PersistentModel):
         if verbose: #These are our initial conditions
             print('Telescope diffraction limit: {}'.format(self.telescope.diff_limit_wavelength))
             print('Telescope effective_aperture: {}'.format(self.telescope.effective_aperture))
-            print('Telescope temperature: {}'.format(self.telescope.temperature))
-            print('Pivot waves: {}'.format(nice_print(self.pivotwave[0] * u.Unit(self.pivotwave[1]))))
-            print('Pixel sizes: {}'.format(nice_print(self.pixel_size)))
+            print('Instrument temperature: {}'.format(self.thermal))
+            print('Pivot waves: {}'.format(nice_print(self.pivotwave)))
+            print('Pixel sizes: {}'.format(self.pixel_size))
             print('AB mag zero points: {}'.format(nice_print(self.ab_zeropoint)))
-            print('Quantum efficiency: {}'.format(nice_print(self.total_qe[0] * u.Unit(self.total_qe[1]))))
-            print('Aperture correction: {}'.format(nice_print(self.ap_corr[0] * u.Unit(self.ap_corr[1]))))
-            print('Bandpass resolution: {}'.format(nice_print(self.bandpass_r[0] * u.Unit(self.bandpass_r[1]))))
+            print('Quantum efficiency: {}'.format(nice_print(self.total_qe(self.pivotwave))))
+            print('Aperture correction: {}'.format(self.ap_corr))
+            #print('Bandpass resolution: {}'.format(nice_print(self.bandpass_r[0] * u.Unit(self.bandpass_r[1]))))
             print('Derived_bandpass: {}'.format(nice_print(self.derived_bandpass)))
-            print('Detector read noise: {}'.format(nice_print(self.detector_rn[0] * u.Unit(self.detector_rn[1]))))
-            print('Dark rate: {}'.format(nice_print(self.dark_current[0] * u.Unit(self.dark_current[1]))))
+            print('Detector read noise: {}'.format(self.readnoise))
+            print('Dark rate: {}'.format(self.dark_current))
 
     def _sn_box(self, verbose):
         """
@@ -206,7 +208,8 @@ class Camera(PersistentModel):
         Omega = (pixel_size**2 * box * u.pix).to(u.sr)
 
         planck = self.planck
-        QE = total_qe
+        QE = total_qe(pivots) * u.electron / u.photon
+
         qepephot = QE * planck / energy_per_photon
 
         if verbose:
@@ -226,7 +229,7 @@ class Camera(PersistentModel):
         Planck spectrum for the various wave bands.
         """
         #Convert to Quantities for calculation
-        pivotwave, temperature = self.recover('pivotwave', 'telescope.temperature')
+        pivotwave, temperature = self.recover('pivotwave', 'thermal')
 
         pivots = pivotwave
         wave = pivots.to('cm')
@@ -296,7 +299,7 @@ class Camera(PersistentModel):
         for channel_filter in channel_data.Filter:
             self.channel_filters.append(channel_filter.name.value)
 
-        self.throughput = {}
+        self.throughput = []
         for channel_filter in self.channel_filters:
             # this commands HWOME to walk down the entire optical path of the telescope down to the filter(grating) and collect all of the optics.
             thru = self.telescope.hwo_data.OpticalPath.select(instrument=instrument, channel=channel, filter = channel_filter).throughput(include_detector=False)
@@ -304,8 +307,9 @@ class Camera(PersistentModel):
             total_throughput = np.prod(thru.q, axis=0)
             # and store for later retrieval
             band = syn.spectrum.SpectralElement(Empirical1D, points=thru.w, lookup_table=total_throughput)
-            self.throughput[channel_filter] = {"name": channel_filter, "bandpass": band, "optics": len(thru.value.keys())}
+            self.throughput.append({"name": channel_filter, "bandpass": band, "effective_wavelength": band.avgwave(), "optics": len(thru.value.keys())})
 
+        self.throughput = sorted(self.throughput, key=lambda a: a["effective_wavelength"])
 
         self.diffraction_limit = channel_data.diffraction_limited.q
         self.plate_scale = channel_data.plate_scale.q
