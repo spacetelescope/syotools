@@ -33,13 +33,18 @@ def _do_calculation(tel, inst, exp, mode=None, source=None, snr=10.0, exptime=10
 
     elif target == "exptime":
         
-        exp._snr = [snr] * u.Unit('electron(1/2)')  
+        print("target SNR", snr)
+        exp.snr = [snr] * u.Unit('electron(1/2)')  
+        print("Exposure SNR", exp.snr)
         tel.add_camera(inst)
-        inst.add_exposure(exp)
         exp.unknown = target
-        print(target)
+        inst.add_exposure(exp)
 
-        if verbose:
+        print(target)
+        print(exp.snr)
+
+        if verbose and hasattr(inst, "bandnames"):
+            print(inst.bandnames)
             print('-- Computing Exptime as the Unknown --') 
             for bb, ee in zip(inst.bandnames, exp.exptime): print("{}, SNR = {}".format(bb, ee)) 
         result = exp.exptime
@@ -101,7 +106,7 @@ def compute_observation(telescope, instrument="hri", sed="G2V Star", magnitude=2
     elif instrument.lower() in ["spectroscopy", "uvi"]:
         inst = Spectrograph()
         inst.set_from_hwome('UV_MOS.NUV_MOS')
-        inst.bandnames = inst.modes
+        #inst.bandnames = inst.modes
         exp = SourceSpectrographicExposure() 
         exp.source = source
         exp.verbose = verbose
@@ -112,7 +117,7 @@ def compute_observation(telescope, instrument="hri", sed="G2V Star", magnitude=2
     elif instrument.lower() in ["ifs", "ifu"]:
         inst = IFS(tel)
         inst.set_from_hwome('UV_IFU.UV_IFU_Group1')
-        inst.bandnames = inst.modes
+        #inst.bandnames = inst.modes
         exp = SourceIFSExposure()
         exp.source = source
         #exp.source = source2
