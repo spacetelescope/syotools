@@ -673,49 +673,59 @@ class SourceIFSExposure(SourceExposure):
             print(msg1 + msg2)
 
         _snr, _exptime = self.recover('_snr', '_exptime')
-        _wave, aeff, bef, aper, R, wrange, int_eff = self.recover('ifs.wave',
+        print("SNR1", _snr)
+        _snr = _snr[0][0]
+        _wave, aeff, bef, aper, R, wrange = self.recover('ifs.wave',
                                                          'ifs.aeff',
                                                          'ifs.bef',
                                                          'telescope.effective_aperture',
                                                          'ifs.R',
-                                                         'ifs.wrange',
-                                                         "_internal_efficiency")
+                                                         'ifs.wrange')
 
         if self.verbose:
             print("The requested SNR is {}\n".format(_snr))
 
         wave = _wave.to(u.AA)
-        telescope_efficiency = int_eff(wave)
+        wavepix = wave
 
-        swave = source.sed.waveset.to(u.AA)
+        scaled_aper = np.pi * (aper/2)**2
 
-        sflux = syn.units.convert_flux(swave, source.sed(swave), u.erg / u.s / u.cm**2 / u.AA)
+        sourceobs = syn.observation.Observation(source.sed, aeff)
+        source_counts = sourceobs.countrate(scaled_aper, wavelengths=wavepix)
+        bgobs = syn.observation.Observation(bef, aeff)
+        bg_counts = bgobs.countrate(scaled_aper, wavelengths=wavepix)
+
+        #sflux = syn.units.convert_flux(swave, source.sed(swave), u.erg / u.s / u.cm**2 / u.AA)
 
         delta_lambda = self.recover('ifs.delta_lambda').to(u.AA / u.pix)
 
-        iflux = np.interp(wave, swave, sflux, left=0., right=0.)
+        #iflux = np.interp(wave, swave, sflux, left=0., right=0.)
         # telescope efficiency reduces flux at detector (HWOE-183)
-        iflux *= telescope_efficiency
-        bef *= telescope_efficiency
+        #iflux *= telescope_efficiency
+        #bef *= telescope_efficiency
 
         phot_energy = const.h.to(u.erg * u.s) * const.c.to(u.cm / u.s) / wave.to(u.cm) / u.ct
 
         scaled_aeff = aeff * (aper / (15 * u.m))**2
 
         if (self.verbose):
-            print('sflux  = ', sflux, '\n') #<--- this has the correct units, "erg / (Angstrom s cm2)"
-            print('wave = ', wave, '\n') #<---- 20,600 element array of wavelengths tied to IFS object (not Exposure)
+            print('sflux  = ', source.sed(source.sed.waveset), '\n') #<--- this has the correct units, "erg / (Angstrom s cm2)"
+            print('wave = ', wave, '\n') #<---- 20,600 element array of wavelengths tied to Spectrograph object (not Exposure)
             print('delta_lambda = ', delta_lambda, '\n') #<--- this has the correct units, "Angstrom/pix"
-            print('iflux = ', iflux, '\n') #<--- this has the correct units, "erg / (Angstrom s cm2)"
-                                 #<--- becuase the units are carried through the interpolation
-            print('bef = ', bef)  #<--- this has the correct units, "erg / (pix s cm2)"
+            print('iflux = ', sourceobs.binflux, '\n') #<--- this has the correct units, "erg / (Angstrom s cm2)"
+                                 #<--- because the units are carried through the interpolation
+            print('bef = ', bef(bef.waveset))  #<--- this has the correct units, "erg / (pix s cm2)"
             print('photE = ', phot_energy, '\n') #<--- this has the correct units, "erg / ct"
-            print('aeff = ', aeff) #<--- this has the correct units, "cm2"
+            print('aeff = ', aeff(aeff.waveset)) #<--- this has the correct units, "cm2"
             print('aper = ', aper)#<--- this has the correct units, "m"
-            print('scaled_aeff = ', scaled_aeff, '\n') #<--- this has the correct units, "cm2"
+            print('scaled_aeff = ', scaled_aeff(scaled_aeff.waveset), '\n') #<--- this has the correct units, "cm2"
             print('SNR^2 :', (_snr)**2)
 
-        t_exp = (_snr)**2 * (iflux / phot_energy * scaled_aeff * delta_lambda + bef / phot_energy * scaled_aeff) / ((iflux/phot_energy)**2 * scaled_aeff**2 * delta_lambda**2)
+        print("SNR", _snr)
+        print("Source Counts", source_counts)
+        print("BG counts", bg_counts)
+
+        t_exp = (_snr)**2 * (source_counts + bg_counts) / (source_counts**2)
 
         if self.verbose:
             print("Exptime: {}".format(t_exp))
