@@ -24,7 +24,7 @@ def _do_calculation(tel, inst, exp, mode=None, source=None, snr=10.0, exptime=10
             raise NotImplementedError("Spectrographs cannot currently solve for limiting magnitude")
         
         exp._exptime = [[exptime], 'hr']
-        exp._snr = [snr] * u.Unit('electron(1/2)')  
+        exp._snr = snr 
         tel.add_camera(inst)
         inst.add_exposure(exp)
 
@@ -33,18 +33,14 @@ def _do_calculation(tel, inst, exp, mode=None, source=None, snr=10.0, exptime=10
 
     elif target == "exptime":
         
-        print("target SNR", snr)
-        exp.snr = [snr] * u.Unit('electron(1/2)')  
-        print("Exposure SNR", exp.snr)
-        tel.add_camera(inst)
+        exp._snr = [snr] * u.Unit('electron(1/2)')  
         exp.unknown = target
+        tel.add_camera(inst)
+
         inst.add_exposure(exp)
 
-        print(target)
-        print(exp.snr)
 
         if verbose and hasattr(inst, "bandnames"):
-            print(inst.bandnames)
             print('-- Computing Exptime as the Unknown --') 
             for bb, ee in zip(inst.bandnames, exp.exptime): print("{}, SNR = {}".format(bb, ee)) 
         result = exp.exptime
@@ -94,8 +90,8 @@ def compute_observation(telescope, instrument="hri", sed="G2V Star", magnitude=2
     tel.set_from_hwome(telescope)
     result = []
     if instrument.lower() in ["camera", "hri", "imaging"]:
-        inst = Camera()
-        inst.set_from_sei('HRI_S.HRI_S_UVIS')
+        inst = Camera(tel)
+        inst.set_from_hwome('HRI_S.HRI_S_UVIS')
         exp = SourcePhotometricExposure()
 
         exp.source = source
@@ -104,7 +100,7 @@ def compute_observation(telescope, instrument="hri", sed="G2V Star", magnitude=2
         result.append(_do_calculation(tel, inst, exp, source=source, snr=snr, exptime=exptime, bandpass=bandpass, target=target, verbose=verbose))
 
     elif instrument.lower() in ["spectroscopy", "uvi"]:
-        inst = Spectrograph()
+        inst = Spectrograph(tel)
         inst.set_from_hwome('UV_MOS.NUV_MOS')
         #inst.bandnames = inst.modes
         exp = SourceSpectrographicExposure() 
@@ -124,7 +120,6 @@ def compute_observation(telescope, instrument="hri", sed="G2V Star", magnitude=2
         exp.verbose = verbose
 
         for mode in inst.modes:
-            print(mode)
             result.append(_do_calculation(tel, inst, exp, mode=mode, source=source, snr=snr, exptime=exptime, bandpass=bandpass, target=target, verbose=verbose))
     else:
         raise ValueError(f"Unrecognized instrument {instrument}. Valid options are 'camera', 'spectroscopy', 'ifs'.")

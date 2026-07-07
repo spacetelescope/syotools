@@ -238,8 +238,6 @@ class SourcePhotometricExposure(SourceExposure):
 
         fsource = f0 * c_ap[0] * np.pi / 4. * D**2 * (dlam * u.nm) * m
 
-        print("Source", fsource, f0, mag, D, c_ap, np.pi, dlam)
-
         return fsource
 
     def _fsky(self, verbose=True):
@@ -278,6 +276,7 @@ class SourcePhotometricExposure(SourceExposure):
         (_total_qe, _detector_rn, _dark_current, pivotwave) = self.recover('camera.total_qe',
                 'camera.readnoise', 'camera.dark_current', 'camera.pivotwave')
 
+        print("SNR in function", _snr)
         snr2 = -(_snr**2)
         fstar = self._fsource(source)
         fsky = self._fsky(verbose=self.verbose)
@@ -378,12 +377,9 @@ class SourcePhotometricExposure(SourceExposure):
         read_counts = rn**2 * sn_box * number_of_exposures
 
         dark_rate = _dark_current * u.electron/u.count
-        print("Dark", _dark_current)
         dark_counts = sn_box * dark_rate * desired_exp_time
 
         thermal_counts = desired_exp_time * self.camera.c_thermal(verbose=self.verbose)
-
-        print("Counts type", signal_counts, sky_counts, read_counts, dark_counts, thermal_counts)
 
         snr = signal_counts / np.sqrt(signal_counts + sky_counts + read_counts
                                       + dark_counts + thermal_counts)
@@ -458,10 +454,7 @@ class SourceSpectrographicExposure(SourceExposure):
         pixel_integer = np.arange(int(pixel.value[0]), int(pixel.value[-1]))
         #wavepix = np.interp(pixel_integer, pixel.value, wave)
         wavepix = wave
-        print("delta_lambda", delta_lambda)
-        print("Pixel", pixel)
-        print("pixel_integer", pixel_integer)
-        print("wavepix", wavepix)
+
         # with open("wavefile.csv", "w") as outfile:
         #     for wave in wavepix:
         #         outfile.write(f"{wave.value}\n")
@@ -673,8 +666,7 @@ class SourceIFSExposure(SourceExposure):
             print(msg1 + msg2)
 
         _snr, _exptime = self.recover('_snr', '_exptime')
-        print("SNR1", _snr)
-        _snr = _snr[0][0]
+        #_snr = _snr[0][0]
         _wave, aeff, bef, aper, R, wrange = self.recover('ifs.wave',
                                                          'ifs.aeff',
                                                          'ifs.bef',
@@ -720,10 +712,6 @@ class SourceIFSExposure(SourceExposure):
             print('aper = ', aper)#<--- this has the correct units, "m"
             print('scaled_aeff = ', scaled_aeff(scaled_aeff.waveset), '\n') #<--- this has the correct units, "cm2"
             print('SNR^2 :', (_snr)**2)
-
-        print("SNR", _snr)
-        print("Source Counts", source_counts)
-        print("BG counts", bg_counts)
 
         t_exp = (_snr)**2 * (source_counts + bg_counts) / (source_counts**2)
 

@@ -93,7 +93,7 @@ class IFS(Spectrograph):
     @property
     def delta_lambda(self):
         wave, R = self.recover('wave', 'R')
-        print("delta_lambda", wave,R)
+        #print("delta_lambda", wave,R)
         R = R << u.pix # HWOME's definition is unitless
         return wave / R
     
@@ -119,7 +119,6 @@ class IFS(Spectrograph):
         except KeyError:
             raise KeyError(f"Unrecognized Instrument {instrument}.\n Legal values are {self.telescope.hwo_data.Instrument.name}")
 
-        print(self.telescope.hwo_data[instrument])
         instrument_data = self.telescope.hwo_data[instrument]
         #instrument_data = getattr(self.telescope.hwo_data, instrument)
 

@@ -82,7 +82,6 @@ class Spectrograph(PersistentModel):
         for a in range(len(self.throughput)):
             if self.throughput[a]["name"] == nmode:
                 self.modeidx = a
-        print(self.modeidx)
 
         self.R = self.throughput[self.modeidx]["resolution"]
         self.wave = self.throughput[self.modeidx]["bandpass"].waveset
@@ -94,7 +93,7 @@ class Spectrograph(PersistentModel):
     @property
     def delta_lambda(self):
         wave, R = self.recover('wave', 'R')
-        print("delta_lambda", wave,R)
+        #print("delta_lambda", wave,R)
         R = R << u.pix # HWOME's definition is unitless
         return wave / R
     
@@ -120,9 +119,7 @@ class Spectrograph(PersistentModel):
         except KeyError:
             raise KeyError(f"Unrecognized Instrument {instrument}.\n Legal values are {self.telescope.hwo_data.Instrument.name}")
 
-        print(self.telescope.hwo_data[instrument])
         instrument_data = self.telescope.hwo_data[instrument]
-        #instrument_data = getattr(self.telescope.hwo_data, instrument)
 
         self.name = channel
         instrument_data.Channel
@@ -131,12 +128,13 @@ class Spectrograph(PersistentModel):
         except KeyError:
             raise KeyError(f"Unrecognized Channel {channel}.\n Legal values are {instrument_data.Channel.name.keys()}")
         channel_data = instrument_data[channel]
-        #channel_data = getattr(instrument_data, channel)
 
         # extract all the filters
         self.channel_filters = []
         for channel_filter in channel_data.Filter:
             self.channel_filters.append(channel_filter.name.value)
+
+        self.modes = self.channel_filters
 
         self.throughput = []
         for channel_filter in self.channel_filters:
