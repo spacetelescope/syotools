@@ -8,6 +8,8 @@ Created on Sat Oct 15 16:56:40 2016
 import numpy as np
 import astropy.units as u
 from astropy.table import QTable
+import synphot as syn
+from synphot.models import Empirical1D
 
 from syotools.models.base import PersistentModel
 from syotools.models.source_exposure import SourceSpectrographicExposure
@@ -50,7 +52,7 @@ class Spectrograph(PersistentModel):
         self.name = ''
         self.modes = []
         self.descriptions = {}
-        self.bef = np.zeros(0, dtype=float) * (u.erg / u.cm**2 / u.s / u.pix)
+        self.bef = syn.spectrum.SourceSpectrum(Empirical1D, points=[0,10000] << u.AA, lookup_table=[22,22] << u.ABmag)
         self.R = 0. * u.dimensionless_unscaled
         self.wave = np.zeros(0, dtype=float) * u.AA
         self.aeff = np.zeros(0, dtype=float) * u.cm**2
@@ -76,17 +78,23 @@ class Spectrograph(PersistentModel):
         if self._mode == nmode or nmode not in self.channel_filters:
             return
         self._mode = nmode
+        self.modeidx = None
+        for a in range(len(self.throughput)):
+            if self.throughput[a]["name"] == nmode:
+                self.modeidx = a
 
-        self.R = self.resolution[nmode]
-        self.wave = self.throughput_qe[nmode]["wavelength"]
-        self.bef = numpy.zeros_like(self.wave)
-        self.aeff = self.throughput_qe[nmode]["throughput"]
-        wrange = np.array(self.wavelength[nmode]["wmin"], self.wavelength[nmode]["wmax"])
+        self.R = self.throughput[self.modeidx]["resolution"]
+        self.wave = self.throughput[self.modeidx]["bandpass"].waveset
+        self.bef = syn.spectrum.SourceSpectrum(Empirical1D, points=self.wave, lookup_table=np.ones_like(self.wave.value) * 22 << u.ABmag)
+        self.aeff = self.throughput[self.modeidx]["bandpass"]
+        wrange = np.array((np.min(self.wave.value), np.max(self.wave.value)))
         self.wrange = wrange
 
     @property
     def delta_lambda(self):
         wave, R = self.recover('wave', 'R')
+        #print("delta_lambda", wave,R)
+        R = R << u.pix # HWOME's definition is unitless
         return wave / R
     
     def create_exposure(self, source=None):
@@ -103,56 +111,61 @@ class Spectrograph(PersistentModel):
         exposure.calculate()
 
     def set_from_hwome(self, channelname):
-        instrument, channel = channelname.split(".")
-        if instrument not in self.telescope.hwo_data.Instrument.name:
+        try:
+            instrument, channel = channelname.split(".")
+            instrument_data = getattr(self.telescope.hwo_data, instrument)
+        except ValueError:
+            raise ValueError("Need a name + channel (e.g. 'HRI-S.NIR')")
+        except KeyError:
             raise KeyError(f"Unrecognized Instrument {instrument}.\n Legal values are {self.telescope.hwo_data.Instrument.name}")
 
-        instrument_data = getattr(self.telescope.hwo_data, instrument)
-        if not hasattr(instrument_data, channel):
-            raise KeyError(f"Unrecognized Channel {channel}.\n Legal values are {instrument_data.Channel.name}")
-        channel_data = getattr(instrument_data, channel)
+        instrument_data = self.telescope.hwo_data[instrument]
+
+        self.name = channel
+        instrument_data.Channel
+        try:
+            channel_data = getattr(instrument_data, channel)
+        except KeyError:
+            raise KeyError(f"Unrecognized Channel {channel}.\n Legal values are {instrument_data.Channel.name.keys()}")
+        channel_data = instrument_data[channel]
 
         # extract all the filters
         self.channel_filters = []
         for channel_filter in channel_data.Filter:
             self.channel_filters.append(channel_filter.name.value)
 
-        self.throughput_qe = {}
-        self.resolution = {}
-        self.wavelength = {}
+        self.modes = self.channel_filters
+
+        self.throughput = []
         for channel_filter in self.channel_filters:
             # this commands HWOME to walk down the entire optical path of the telescope down to the filter(grating) and collect all of the optics.
-            t_qe = hwo_data.OpticalPath.select(instrument=instrument, channel=channel, filter = channel_filter).throughput(include_detector=True)
+            thru = self.telescope.hwo_data.OpticalPath.select(instrument=instrument, channel=channel, filter = channel_filter).throughput(include_detector=False)
             # then we multiply all of them together
-            total_throughput = np.prod(t_qe.q, axis=0)
-            # and store for later retrieval
-            self.throughput_qe[channel_filter] = {"wavelength": t_qe.w, "throughput": total_throughput, "optics": len(t_qe.value.keys())}
-
-            # Also pull resolution
+            total_throughput = np.prod(thru.q, axis=0)
 
             grating_resolution = channel_data[channel_filter].Grating.spectral_resolution.q
-            self.resolution[channel_filter] = grating_resolution
 
-            # And wave range information
-            wmin = np.min(t_qe.w)
-            wmax = np.max(t_qe.w)
-            self.wavelength[channel_filter] = {"wmin": wmin, "wmax": wmax, "center": (wmin+wmax)/2.0, "width": wmax-wmin}
+            # and store for later retrieval
+            band = syn.spectrum.SpectralElement(Empirical1D, points=thru.w, lookup_table=total_throughput)
+            self.throughput.append({"name": channel_filter, "bandpass": band, "resolution": grating_resolution, "effective_wavelength": band.avgwave(), "optics": len(thru.value.keys())})
+            self.descriptions[channel_filter] = f"{channel_filter}, R={grating_resolution}, {band.waveset[0]} -- {band.waveset[-1]}"
 
+        self.throughput = sorted(self.throughput, key=lambda a: a["effective_wavelength"])
 
         self.diffraction_limit = channel_data.diffraction_limited.q
         self.plate_scale = channel_data.plate_scale.q
         self.fov_x = channel_data.fov_x.q
         self.fov_y = channel_data.fov_y.q
 
-        self.readnoise = []
-        self.thermal = []
-        self.dark_current = []
-        self.detectors = channel_data.Detector.name
 
         for detector in channel_data.Detector:
-            self.readnoise.append(detector.read_noise.q)
-            #self.thermal.append(detector.thermal.q)
-            self.dark_current.append(detector.dark_current.q)
+            self.detector = detector.name
+            self.readnoise = detector.read_noise.q
+            self.thermal = detector.temperature.q
+            self.dark_current = detector.dark_current.q
+            w = detector.qe.w
+            t = detector.qe.q
+            self.total_qe = syn.spectrum.SpectralElement(Empirical1D, points=w, lookup_table=t)
 
     def set_from_sei(self, name):
 

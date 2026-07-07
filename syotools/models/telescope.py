@@ -117,8 +117,6 @@ class Telescope(PersistentModel):
     def set_from_hwome(self,name):
         self.hwo_data = DataModel()
         self.hwo_data.load_hardware(f"{name}.yaml")
-        # get the instruments loaded into this revision of the hardware
-        instruments = self.hwo_data.Instrument.name
 
         self.effective_aperture = self.hwo_data.OTA.circumscribing_diameter.q
 

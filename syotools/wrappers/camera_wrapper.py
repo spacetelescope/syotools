@@ -109,7 +109,7 @@ def camera_exptime(telescope, template, magnitude, snr, silent=False):
 	
 	exp._snr = [snr] * u.Unit('electron(1/2)')  
 	exp.unknown = 'exptime'
-
+	tel.add_camera(hri)
 	hri.add_exposure(exp)
 	
 	if not silent: 
@@ -151,9 +151,10 @@ def camera_magnitude(telescope, template, snr, exptime, silent=False):
 	import numpy as np, astropy.units as u
 	
 	# create a Telescope, Camera, and Exposure 
-	tel, hri = Telescope(), Camera()
+	tel = Telescope()
 	tel.set_from_hwome(telescope)
-	#hri.set_from_sei('HRI')
+	hri = Camera(tel)
+	hri.set_from_hwome('HRI_S.HRI_S_UVIS')
 	
 	source = Source() 
 	redshift = 0. # changes to these are not implemented yet 
@@ -164,7 +165,7 @@ def camera_magnitude(telescope, template, snr, exptime, silent=False):
 	exp = SourcePhotometricExposure() 
 	exp.source = source
 	
-	exp.exptime = [[exptime, exptime, exptime, exptime, exptime, exptime, exptime, exptime, exptime, exptime], 'hr']
+	exp.exptime = [[exptime], 'hr']
 	exp._snr = [snr] * u.Unit('electron(1/2)')  
 	    
 	exp.unknown = 'magnitude' 
