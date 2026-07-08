@@ -110,6 +110,7 @@ def camera_exptime(telescope, template, magnitude, snr, silent=False):
 	exp._snr = [snr] * u.Unit('electron(1/2)')  
 	exp.unknown = 'exptime'
 	tel.add_camera(hri)
+
 	hri.add_exposure(exp)
 	
 	if not silent: 
@@ -149,9 +150,9 @@ def camera_magnitude(telescope, template, snr, exptime, silent=False):
 
 	from syotools.models import Camera, Telescope, Source, SourcePhotometricExposure
 	import numpy as np, astropy.units as u
-	
-	# create a Telescope, Camera, and Exposure 
+
 	tel = Telescope()
+	# create a Telescope, Camera, and Exposure 
 	tel.set_from_hwome(telescope)
 	hri = Camera(tel)
 	hri.set_from_hwome('HRI_S.HRI_S_UVIS')

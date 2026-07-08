@@ -220,34 +220,36 @@ class SourceExposure(PersistentModel):
         """
         wave = source.sed.waveset
         # set up an appropriately sized aperture
-        Npix = self.instrument._sn_box(wave, False)
-        thru, qe, c_thermal, dark_current, readnoise = self.recover("instrument.throughput", "instrument.total_qe", "instrument.c_thermal", "instrument.dark_current", "instrument.readnoise")
+        sn_box = self.instrument._sn_box(wave, False)
+        thru, qe, c_thermal, dark_current, readnoise, pixel_size = self.recover("instrument.throughput", "instrument.total_qe", "instrument.c_thermal", "instrument.dark_current", "instrument.readnoise", "instrument.pixel_size")
 
         # fsource is:
         # shaped
         # goes through the full optical path + QE
         # accumulates over time
-        flux_source = syn.units.convert_flux(source.sed.waveset, source.sed(source.sed.waveset), syn.units.PHOTLAM)
+        flux_source = syn.units.convert_flux(wave, source.sed(wave), syn.units.PHOTLAM)
+        # scale source radius to the aperture size - we get all of the flux if it's smaller than the aperture
         if source.radius > 0:
             radius = source.radius
         else:
             radius = instrument.fwhm_psf(wave)
-        if radius > np.sqrt(Npix)/2.:
-            fsource = fsource * (np.sqrt(Npix)/2)/radius
+        if radius > np.sqrt(sn_box)/2.:
+            fsource = fsource * (np.sqrt(sn_box)/2)/radius
 
         # fsky is:
         # uniform
         # goes through the full optical path QE
         # accumulates over time
-        flux_sky = syn.units.convert_flux(sky.sed.waveset, sky.sed(sly.sed.waveset), syn.units.PHOTLAM)
-        flux_sky *= Npix
+        flux_sky = syn.units.convert_flux(wave, sky.sed(wave), syn.units.PHOTLAM)
+        flux_sky *= sn_box
         
         # thermal is:
         # uniform
         # goes through the filter wheel and QE
         # accumulates over time
         thermal = c_thermal(wave)
-        Omega = (pixel_size**2 * box * u.pix).to(u.sr)
+        # omega is the size of the extraction box in steradians
+        Omega = (pixel_size**2 * sn_box * u.pix).to(u.sr)
         thermal *= Omega
 
         # apply internal effects within telescope & instrument
@@ -259,13 +261,13 @@ class SourceExposure(PersistentModel):
         # uniform
         # only within detector
         # accumulates over time
-        dark = dark_current
+        dark = dark_current * sn_box * u.electron/u.count
 
         # readnoise is:
         # uniform
         # only within detector
         # single event at read time
-        readnoise = readnoise
+        readnoise = readnoise * sn_box * u.electron**0.5/u.pixel**0.5
 
         return fsource, fsky, thermal, dark, readnoise
 
@@ -294,27 +296,6 @@ class SourceExposure(PersistentModel):
         (so in PhotometricExposure, SpectroscopicExposure, etc.)
         """
         raise NotImplementedError
-
-    def add_source(self, new_source):
-        self.source = new_source
-
-class SourcePhotometricExposure(SourceExposure):
-    """ A subclass of the base Exposure model, for photometric ETC calculations """
-
-    def calculate(self):
-        """
-        Wrapper to calculate the exposure time, SNR, or limiting magnitude,
-        based on the other two. The "unknown" attribute controls which of these
-        parameters is calculated.
-        """
-        if self._disable:
-            return False
-        if self.camera is None or self.telescope is None:
-            return False
-        status = {'magnitude': self._update_magnitude,
-                  'exptime': self._update_exptime,
-                  'snr': self._update_snr}[self.unknown](self.source)
-        return status
 
     def _fsource(self, source):
         """
@@ -358,7 +339,7 @@ class SourcePhotometricExposure(SourceExposure):
 
         return fsky
 
-    def _update_exptime(self, source):
+    def _update_exptime(self, source, band):
         """
         Calculate the exposure time to achieve the desired S/N for the
         given SED.
@@ -368,25 +349,21 @@ class SourcePhotometricExposure(SourceExposure):
         (_snr, _nexp) = self.recover('_snr', 'n_exp')
         (throughput, effective_diameter) = self.recover("instrument.throughput", "telescope.effective_aperture")
         effective_aperture = (effective_diameter/2)**2 * np.pi
-        for band in throughput:
-            fsource, fsky, thermal, dark, readnoise = process_observation(source, band)
-            fsource = fsource.countrate(effective_aperture)
-            fsky = fsky.countrate(effective_aperture)
+
+        # all of these are now rates, in the extraction aperture (except read_noise)
+        fsource, fsky, thermal, dark_current, read_noise = self.process_observation(source, band)
+        fsource_countrate = fsource.countrate(effective_aperture)
+        fsky_countrate = fsky.countrate(effective_aperture)
 
         print("SNR in function", _snr)
         snr2 = -(_snr**2)
-        fstar = self._fsource(source)
-        fsky = self._fsky(verbose=self.verbose)
-        Npix = self.camera._sn_box(self.verbose)
-        thermal = self.camera.c_thermal(verbose=self.verbose)
 
-        dark_rate = _dark_current * u.electron/u.count
-        rn = _detector_rn.value * u.electron**0.5/u.pixel**0.5
+        dark_rate = dark 
+        rn = readnoise
 
-        QE = _total_qe(pivotwave) * u.electron/u.photon
-        a = (QE * fstar)**2
-        b = snr2 * (QE * (fstar + fsky) + thermal + dark_rate * Npix)
-        c = snr2 * rn**2 * Npix * _nexp
+        a = (fstar)**2
+        b = snr2 * (fstar_countrate + (fsky_countrate + thermal + dark_current))
+        c = snr2 * read_noise**2 * _nexp
         texp = ((-b + np.sqrt(b**2 - 4*a*c)) / (2*a)).to(u.s)
 
         if self.verbose:
@@ -397,86 +374,68 @@ class SourcePhotometricExposure(SourceExposure):
 
         return True
 
-    def _update_magnitude(self, source):
+    def _update_magnitude(self, source, band):
         """
         Calculate the limiting magnitude given the desired S/N and exposure
         time.
         """
         self.camera._print_initcon(self.verbose)
 
-        (_snr, _exptime, _nexp) = self.recover('snr', 'exptime', 'n_exp')
-        (f0, c_ap, D, dlam, pivotwave) = self.recover('camera.ab_zeropoint',
-                                           'camera.ap_corr',
-                                           'telescope.effective_aperture',
-                                           'camera.derived_bandpass',
-                                           "camera.pivotwave")
-        (_total_qe, _detector_rn, _dark_current, pivotwave) = self.recover('camera.total_qe',
-                                                            'camera.readnoise', 
-                                                            'camera.dark_current', 
-                                                            "camera.pivotwave")
+        (_snr, _exptime, _nexp, effective_diameter) = self.recover('snr', 'exptime', 'n_exp')
+        (effective_diameter) = self.recover('telescope.effective_diameter')
 
-        exptime = (_exptime[0] * u.Unit(_exptime[1])).to(u.s)
+        effective_area = (effective_diameter/2)**2 * np.pi
 
-        D = D.to(u.cm)
-        fsky = self._fsky(verbose=self.verbose)
-
-        Npix = self.camera._sn_box(self.verbose)
-        c_t = self.camera.c_thermal(verbose=self.verbose)
-
-        QE = _total_qe(pivotwave) * u.electron/u.photon
-        rn = _detector_rn.value * u.electron**0.5/u.pixel**0.5
-        dark_rate = _dark_current * u.electron/u.count
+        # all of these are now rates, in the extraction aperture (except read_noise)
+        fsource, fsky, thermal, dark_current, read_noise = self.process_observation(source, band)
+        fsource_countrate = fsource.countrate(effective_area)
+        fsky_countrate = fsky.countrate(effective_area)
 
         snr2 = -(_snr ** 2)
+        f0 = 5509900. * (u.photon / u.s / u.cm**2) / fsource.waveset
 
-        a0 = (QE * exptime)**2
-        b0 = snr2 * QE * exptime
-        c0 = snr2 * ((QE * fsky + c_t + Npix * dark_rate) * exptime + (rn**2 * Npix * _nexp))
+        a0 = (_exptime)**2
+        b0 = snr2 * _exptime
+        c0 = snr2 * ((fsky_countrate + thermal + dark_current) * _exptime + (read_noise**2 * _nexp))
         k = (-b0 + np.sqrt(b0**2 - 4. * a0 * c0)) / (2. * a0)
-        # telescope efficiency reduces the flux at the detector, so it must be divided out
-        # (increase flux) to find the actual flux required to get that SNR in that time.
-        # (HWOE-183)
-        flux = (4. * k) / (f0 * c_ap[0] * np.pi * D**2 * (dlam*u.nm))# / int_eff(pivotwave[0] * u.Unit(pivotwave[1]))
+
+        flux = (4. * k) / (f0 * c_ap[0] * effective_area * band.equivwidth().to(u.nm))
 
         self._magnitude = -2.5 * np.log10(np.array(flux)) * u.mag('AB')
 
         return True
 
-    def _update_snr(self, source):
+    def _update_snr(self, source, band):
         """
         Calculate the SNR for the given exposure time and source SED.
         """
 
         self.camera._print_initcon(self.verbose)
 
-        (_exptime, _nexp, n_bands) = self.recover('_exptime', 'n_exp',
-                                                  'camera.n_bands')
+        (_exptime, _nexp) = self.recover('_exptime', 'n_exp')
 
-        (_total_qe, _detector_rn, _dark_current, pivotwave) = self.recover('camera.total_qe',
-                'camera.readnoise', 'camera.dark_current', "camera.pivotwave")
+        (effective_diameter) = self.recover("telescope.effective_diameter")
 
-        number_of_exposures = np.full(n_bands, _nexp)
-        desired_exp_time = (np.full(n_bands, _exptime[0]) * u.Unit(_exptime[1])).to(u.second)
-        time_per_exposure = desired_exp_time / number_of_exposures
+        effective_area = (effective_diameter/2)**2 * np.pi
 
-        QE = _total_qe(pivotwave) * u.electron/u.photon
+        # all of these are now rates, in the extraction aperture (except read_noise)
+        fsource, fsky, thermal, dark_current, read_noise = process_observation(source, band)
+        fsource_countrate = fsource.countrate(effective_area)
+        fsky_countrate = fsky.countrate(effective_area)
 
-        signal_counts = QE * self._fsource(source) * desired_exp_time
+        time_per_exposure = _exptime / _nexp
+
+        signal_counts = fsource_countrate * _exptime
         shot_noise_in_signal = np.sqrt(signal_counts)
 
-        # telescope efficiency reduces counts at detector (HWOE-183)
-        sky_counts = QE * self._fsky(verbose=self.verbose) * desired_exp_time
+        sky_counts = fsky_countrate * _exptime
         shot_noise_in_sky = np.sqrt(sky_counts)
 
-        sn_box = self.camera._sn_box(self.verbose) #<-- units should be "pix"
+        read_counts = read_noise**2 * _nexp
 
-        rn = _detector_rn.value * u.electron**0.5/u.pixel**0.5
-        read_counts = rn**2 * sn_box * number_of_exposures
+        dark_counts = dark_current * _exptime
 
-        dark_rate = _dark_current * u.electron/u.count
-        dark_counts = sn_box * dark_rate * desired_exp_time
-
-        thermal_counts = desired_exp_time * self.camera.c_thermal(verbose=self.verbose)
+        thermal_counts = thermal * _exptime
 
         snr = signal_counts / np.sqrt(signal_counts + sky_counts + read_counts
                                       + dark_counts + thermal_counts)
@@ -496,6 +455,29 @@ class SourcePhotometricExposure(SourceExposure):
             print('Max SNR: {} in {} band'.format(snr.max(), self.camera.bandnames[snr.argmax()]))
 
         return True
+
+    def add_source(self, new_source):
+        self.source = new_source
+
+class SourcePhotometricExposure(SourceExposure):
+    """ A subclass of the base Exposure model, for photometric ETC calculations """
+
+   def calculate(self):
+        """
+        Wrapper to calculate the exposure time, SNR, or limiting magnitude,
+        based on the other two. The "unknown" attribute controls which of these
+        parameters is calculated.
+        """
+        if self._disable:
+            return False
+        if self.camera is None or self.telescope is None:
+            return False
+        status = {'magnitude': self._update_magnitude,
+                  'exptime': self._update_exptime,
+                  'snr': self._update_snr}[self.unknown](self.source)
+        return status
+
+
 
 class SourceSpectrographicExposure(SourceExposure):
     """
@@ -517,140 +499,6 @@ class SourceSpectrographicExposure(SourceExposure):
             self._update_snr(self.source)
         if self.unknown == "exptime":
             self._update_exptime(self.source)
-
-    def _update_snr(self, source):
-        """
-        Calculate the SNR based on the current SED and spectrograph parameters.
-        """
-
-        if self.verbose:
-            msg1 = "Creating exposure for {} ({})".format(self.telescope.name,
-                                                           self.telescope.recover('effective_aperture'))
-            msg2 = " with {} in mode {}".format(self.spectrograph.name, self.spectrograph.mode)
-            print(msg1 + msg2)
-
-        _exptime = self.recover('exptime')
-        _wave, aeff, bef, aper, R, wrange = self.recover('spectrograph.wave',
-                                                         'spectrograph.aeff',
-                                                         'spectrograph.bef',
-                                                         'telescope.effective_aperture',
-                                                         'spectrograph.R',
-                                                         'spectrograph.wrange')
-
-        exptime = ( self._exptime[0][0] * u.Unit(self._exptime[1])).to(u.s)
-
-        wave = _wave.to(u.AA)
-
-        sourceobs = syn.observation.Observation(source.sed, aeff)
-        
-
-        sflux = syn.units.convert_flux(sourceobs.binset, sourceobs.binflux, (u.erg / u.s / u.cm**2 / u.AA))
-
-        delta_lambda = self.recover('spectrograph.delta_lambda').to(u.AA / u.pix)
-        pixel = np.cumsum(1.0 / delta_lambda * np.gradient(wave))
-        pixel_integer = np.arange(int(pixel.value[0]), int(pixel.value[-1]))
-        #wavepix = np.interp(pixel_integer, pixel.value, wave)
-        wavepix = wave
-
-        # with open("wavefile.csv", "w") as outfile:
-        #     for wave in wavepix:
-        #         outfile.write(f"{wave.value}\n")
-
-
-        #iflux = np.interp(wave, swave, sflux, left=0., right=0.)
-        # telescope efficiency reduces counts at detector (HWOE-183)
-        #self._interp_flux = iflux
-        #phot_energy = const.h.to(u.erg * u.s) * const.c.to(u.cm / u.s) / wave.to(u.cm) / u.pix
-
-        source_counts = sourceobs.countrate(np.pi * (aper/2)**2, wavelengths=wavepix) * exptime
-        #print('_update_snr phot_energy: ', phot_energy)
-
-        # This is the aperture efficiency (throughput) scaled from 15m radius to the requested aperture size
-        #scaled_aeff = aeff * (aper / (15 * u.m))**2
-        #source_counts = iflux / phot_energy * scaled_aeff * exptime * delta_lambda
-        #print('_update_snr source_counts: ', source_counts)
-
-        # telescope efficiency reduces counts at detector (HWOE-183)
-        bgobs = syn.observation.Observation(bef, aeff)
-        bg_counts = bgobs.countrate(np.pi * (aper/2)**2, wavelengths=wavepix) * exptime
-        #bg_counts = bef / phot_energy * scaled_aeff * exptime
-
-        snr = source_counts / np.sqrt(source_counts + bg_counts)
-
-        if self.verbose:
-            print("SNR: {}".format(snr))
-
-        self._snr = snr
-
-        return True
-
-    def _update_exptime(self, source):
-        """
-        Calculate the exptime based on the current SED and spectrograph parameters.
-        """
-
-        if self.verbose:
-            msg1 = "Creating exposure for {} ({})".format(self.telescope.name,
-                                                           self.telescope.recover('aperture'))
-            msg2 = " with {} in mode {}".format(self.spectrograph.name, self.spectrograph.mode)
-            print(msg1 + msg2)
-
-        _snr, _exptime = self.recover('_snr', '_exptime')
-        _wave, aeff, bef, aper, R, wrange= self.recover('spectrograph.wave',
-                                                         'spectrograph.aeff',
-                                                         'spectrograph.bef',
-                                                         'telescope.effective_aperture',
-                                                         'spectrograph.R',
-                                                         'spectrograph.wrange',
-                                                         )
-
-        if self.verbose:
-            print("The requested SNR is {}\n".format(_snr))
-
-        wave = _wave.to(u.AA)
-        wavepix = wave
-
-        scaled_aper = np.pi * (aper/2)**2
-
-        sourceobs = syn.observation.Observation(source.sed, aeff)
-        source_counts = sourceobs.countrate(scaled_aper, wavelengths=wavepix)
-        bgobs = syn.observation.Observation(bef, aeff)
-        bg_counts = bgobs.countrate(scaled_aper, wavelengths=wavepix)
-
-        #sflux = syn.units.convert_flux(swave, source.sed(swave), u.erg / u.s / u.cm**2 / u.AA)
-
-        delta_lambda = self.recover('spectrograph.delta_lambda').to(u.AA / u.pix)
-
-        #iflux = np.interp(wave, swave, sflux, left=0., right=0.)
-        # telescope efficiency reduces flux at detector (HWOE-183)
-        #iflux *= telescope_efficiency
-        #bef *= telescope_efficiency
-
-        phot_energy = const.h.to(u.erg * u.s) * const.c.to(u.cm / u.s) / wave.to(u.cm) / u.ct
-
-        scaled_aeff = aeff * (aper / (15 * u.m))**2
-
-        if (self.verbose):
-            print('sflux  = ', source.sed(source.sed.waveset), '\n') #<--- this has the correct units, "erg / (Angstrom s cm2)"
-            print('wave = ', wave, '\n') #<---- 20,600 element array of wavelengths tied to Spectrograph object (not Exposure)
-            print('delta_lambda = ', delta_lambda, '\n') #<--- this has the correct units, "Angstrom/pix"
-            print('iflux = ', sourceobs.binflux, '\n') #<--- this has the correct units, "erg / (Angstrom s cm2)"
-                                 #<--- because the units are carried through the interpolation
-            print('bef = ', bef(bef.waveset))  #<--- this has the correct units, "erg / (pix s cm2)"
-            print('photE = ', phot_energy, '\n') #<--- this has the correct units, "erg / ct"
-            print('aeff = ', aeff) #<--- this has the correct units, "cm2"
-            print('aper = ', aper)#<--- this has the correct units, "m"
-            print('scaled_aeff = ', scaled_aeff, '\n') #<--- this has the correct units, "cm2"
-            print('SNR^2 :', (_snr)**2)
-
-        t_exp = (_snr)**2 * (source_counts + bg_counts) / (source_counts**2)
-
-        if self.verbose:
-            print("Exptime: {}".format(t_exp))
-
-        self._exptime = t_exp
-
-        return True
 
 class SourceIFSExposure(SourceExposure):
     """ 
@@ -690,135 +538,6 @@ class SourceIFSExposure(SourceExposure):
         self.sources.append(source)
         for source in self.sources:
             self._wavelength = syn.utils.merge_wavelengths(self._wavelength, syn.models.get_waveset(source.sed.model))
-
-    def _update_snr(self, source):
-        """
-        Calculate the SNR based on the current SED and IFS parameters.
-        """
-
-        if self.verbose:
-            msg1 = "Creating exposure for {} ({})".format(self.telescope.name,
-                                                           self.telescope.recover('aperture'))
-            msg2 = " with {} in mode {}".format(self.ifs.name, self.ifs.mode)
-            print(msg1 + msg2)
-
-        _exptime = self.recover('exptime')
-        _wave, aeff, bef, aper, R, wrange = self.recover('ifs.wave',
-                                                         'ifs.aeff',
-                                                         'ifs.bef',
-                                                         'telescope.effective_aperture',
-                                                         'ifs.R',
-                                                         'ifs.wrange')
-
-        exptime = ( self._exptime[0][0] * u.Unit(self._exptime[1])).to(u.s)
-
-        wave = _wave.to(u.AA)
-        wavepix = wave
-
-        sourceobs = syn.observation.Observation(source.sed, aeff)
-
-        sflux = syn.units.convert_flux(sourceobs.binset, sourceobs.binflux, (u.erg / u.s / u.cm**2 / u.AA))
-
-        delta_lambda = self.recover('ifs.delta_lambda').to(u.AA / u.pix)
-        pixel = np.cumsum(1.0 / delta_lambda * np.gradient(wave))
-        pixel_integer = np.arange(int(pixel.value[0]), int(pixel.value[-1]))
-
-        #iflux = np.interp(wave, swave, sflux, left=0., right=0.)
-        # telescope efficiency reduces counts at detector (HWOE-183)
-        #iflux *= internal_efficiency
-        #self._interp_flux = iflux
-        #phot_energy = const.h.to(u.erg * u.s) * const.c.to(u.cm / u.s) / wave.to(u.cm) / u.pix
-
-        source_counts = sourceobs.countrate(np.pi * (aper/2)**2, wavelengths=wavepix) * exptime
-        #print('_update_snr phot_energy: ', phot_energy)
-
-        # This is the aperture efficiency (throughput) scaled from 15m radius to the requested aperture size
-        #scaled_aeff = aeff * (aper / (15 * u.m))**2
-        #source_counts = iflux / phot_energy * scaled_aeff * exptime * delta_lambda
-        #print('_update_snr source_counts: ', source_counts)
-
-        # telescope efficiency reduces counts at detector (HWOE-183)
-        bgobs = syn.observation.Observation(bef, aeff)
-        bg_counts = bgobs.countrate(np.pi * (aper/2)**2, wavelengths=wavepix) * exptime
-        #bg_counts = bef / phot_energy * scaled_aeff * exptime
-
-        snr = source_counts / np.sqrt(source_counts + bg_counts)
-
-        if self.verbose:
-            print("SNR: {}".format(snr))
-
-        self._snr = snr
-
-        return True
-
-    def _update_exptime(self, source):
-        """
-        Calculate the exptime based on the current SED and IFS parameters.
-        """
-
-        if self.verbose:
-            msg1 = "Creating exposure for {} ({})".format(self.telescope.name,
-                                                           self.telescope.recover('aperture'))
-            msg2 = " with {} in mode {}".format(self.ifs.name, self.ifs.mode)
-            print(msg1 + msg2)
-
-        _snr, _exptime = self.recover('_snr', '_exptime')
-        #_snr = _snr[0][0]
-        _wave, aeff, bef, aper, R, wrange = self.recover('ifs.wave',
-                                                         'ifs.aeff',
-                                                         'ifs.bef',
-                                                         'telescope.effective_aperture',
-                                                         'ifs.R',
-                                                         'ifs.wrange')
-
-        if self.verbose:
-            print("The requested SNR is {}\n".format(_snr))
-
-        wave = _wave.to(u.AA)
-        wavepix = wave
-
-        scaled_aper = np.pi * (aper/2)**2
-
-        sourceobs = syn.observation.Observation(source.sed, aeff)
-        source_counts = sourceobs.countrate(scaled_aper, wavelengths=wavepix)
-        bgobs = syn.observation.Observation(bef, aeff)
-        bg_counts = bgobs.countrate(scaled_aper, wavelengths=wavepix)
-
-        #sflux = syn.units.convert_flux(swave, source.sed(swave), u.erg / u.s / u.cm**2 / u.AA)
-
-        delta_lambda = self.recover('ifs.delta_lambda').to(u.AA / u.pix)
-
-        #iflux = np.interp(wave, swave, sflux, left=0., right=0.)
-        # telescope efficiency reduces flux at detector (HWOE-183)
-        #iflux *= telescope_efficiency
-        #bef *= telescope_efficiency
-
-        phot_energy = const.h.to(u.erg * u.s) * const.c.to(u.cm / u.s) / wave.to(u.cm) / u.ct
-
-        scaled_aeff = aeff * (aper / (15 * u.m))**2
-
-        if (self.verbose):
-            print('sflux  = ', source.sed(source.sed.waveset), '\n') #<--- this has the correct units, "erg / (Angstrom s cm2)"
-            print('wave = ', wave, '\n') #<---- 20,600 element array of wavelengths tied to Spectrograph object (not Exposure)
-            print('delta_lambda = ', delta_lambda, '\n') #<--- this has the correct units, "Angstrom/pix"
-            print('iflux = ', sourceobs.binflux, '\n') #<--- this has the correct units, "erg / (Angstrom s cm2)"
-                                 #<--- because the units are carried through the interpolation
-            print('bef = ', bef(bef.waveset))  #<--- this has the correct units, "erg / (pix s cm2)"
-            print('photE = ', phot_energy, '\n') #<--- this has the correct units, "erg / ct"
-            print('aeff = ', aeff(aeff.waveset)) #<--- this has the correct units, "cm2"
-            print('aper = ', aper)#<--- this has the correct units, "m"
-            print('scaled_aeff = ', scaled_aeff(scaled_aeff.waveset), '\n') #<--- this has the correct units, "cm2"
-            print('SNR^2 :', (_snr)**2)
-
-        t_exp = (_snr)**2 * (source_counts + bg_counts) / (source_counts**2)
-
-        if self.verbose:
-            print("Exptime: {}".format(t_exp))
-
-        self._exptime = t_exp
-
-        return True
-
 
     @property
     def num_sources(self):
