@@ -14,9 +14,13 @@ keywords = ["simulation", "astronomy", "astrophysics"]
 requires-python = ">=3.10"
 classifiers = [
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
 ]
 dependencies = [
-    "hwo_sci_eng==0.1.9",
+    "hwome-core @ git@github.com:HWO-Project/hwome-core.git",
+    "hwome_data @ git@github.com:HWO-Project/hwome_data.git",
     "astropy>6",
     "synphot",
     "stsynphot",

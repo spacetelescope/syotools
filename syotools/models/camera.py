@@ -71,7 +71,7 @@ class Camera(PersistentModel):
         self.bandpass_r = np.zeros(1, dtype=float) * u.dimensionless_unscaled
         self.dark_current = np.zeros(1, dtype=float) * (u.electron / u.s / u.pixel)
         #self.detector_rn = np.zeros(1, dtype=float) * (u.electron / u.pixel)**0.5
-        self.sky_sigma = np.ones(1, dtype=float) * 22 * u.dimensionless_unscaled
+        self.sky_sigma = np.ones(1, dtype=float) * 22 * u.dimensionless_unscaled # Hardcode a 22nd magnitude background
         #super().__init__(default_camera, **kw)
 
     @property
@@ -92,6 +92,7 @@ class Camera(PersistentModel):
 
     @property
     def n_channels(self):
+        # this has always referred to the filters
         return len(self.channel_filters)
 
     @property
@@ -102,7 +103,6 @@ class Camera(PersistentModel):
             pivotunit = pivotval.unit
             pivot.append(pivotval.value)
 
-        print(pivot)
         return np.asarray(pivot) << pivotunit
 
 
