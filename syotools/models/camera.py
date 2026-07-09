@@ -71,7 +71,7 @@ class Camera(PersistentModel):
         self.bandpass_r = np.zeros(1, dtype=float) * u.dimensionless_unscaled
         self.dark_current = np.zeros(1, dtype=float) * (u.electron / u.s / u.pixel)
         #self.detector_rn = np.zeros(1, dtype=float) * (u.electron / u.pixel)**0.5
-        self.sky_sigma = np.ones(1, dtype=float) * 22 * u.dimensionless_unscaled # Hardcode a 22nd magnitude background
+        self.sky = syn.spectrum.SourceSpectrum(Empirical1D, points=[0,10000] << u.AA, lookup_table=[22,22] << u.ABmag) # Hardcode a 22nd magnitude background
         #super().__init__(default_camera, **kw)
 
     @property
@@ -84,7 +84,7 @@ class Camera(PersistentModel):
         and optical, J-band for IR.
         """
 
-        return self.plate_scale
+        return self.configuration["pixel_scale"]
 
     @property
     def n_bands(self):
@@ -98,7 +98,7 @@ class Camera(PersistentModel):
     @property
     def pivotwave(self):
         pivot = []
-        for band in self.throughput:
+        for band in self.configuration["element"]:
             pivotval = band["bandpass"].pivot()
             pivotunit = pivotval.unit
             pivot.append(pivotval.value)
@@ -113,7 +113,7 @@ class Camera(PersistentModel):
         """
         pivotwave = self.recover('pivotwave')
         width = []
-        for band in self.throughput:
+        for band in self.configuration["element"]:
             widthval = band["bandpass"].equivwidth()
             widthunit = widthval.unit
             width.append(widthval.value)
@@ -146,32 +146,34 @@ class Camera(PersistentModel):
         Calculate the FWHM of the camera's PSF.
         """
         #Convert to Quantity for calculations.
-        effective_aperture = self.recover('telescope.effective_aperture')
-        diff_limit, diff_fwhm = self.recover('diffraction_limit',
+        effective_aperture = self.recover('telescope.effective_diameter')
+        configuration, diff_fwhm = self.recover('configuration',
                                              'telescope.diff_limit_fwhm')
+
+        diff_limit = configuration["diffraction_limit"]
 
         #fwhm = (1.22 * u.rad * wave / aperture).to(u.arcsec)
         fwhm = (1.03 * u.rad * wave / effective_aperture).to(u.arcsec)
         
         #only use these values where the wavelength is greater than the diffraction limit
-        fwhm = np.where(pivotwave > diff_limit, fwhm.value, diff_fwhm.value) * u.arcsec
+        fwhm = np.where(wave > diff_limit, fwhm.value, diff_fwhm.value) * u.arcsec
 
         return fwhm
 
     def _print_initcon(self, verbose):
         if verbose: #These are our initial conditions
             print('Telescope diffraction limit: {}'.format(self.telescope.diff_limit_wavelength))
-            print('Telescope effective_aperture: {}'.format(self.telescope.effective_aperture))
-            print('Instrument temperature: {}'.format(self.thermal))
+            print('Telescope effective_diameter: {}'.format(self.telescope.effective_diameter))
+            print('Instrument temperature: {}'.format(self.configuration["detector"]["thermal"]))
             print('Pivot waves: {}'.format(nice_print(self.pivotwave)))
             print('Pixel sizes: {}'.format(self.pixel_size))
             print('AB mag zero points: {}'.format(nice_print(self.ab_zeropoint)))
-            print('Quantum efficiency: {}'.format(nice_print(self.total_qe(self.pivotwave))))
+            print('Quantum efficiency: {}'.format(nice_print(self.configuration["detector"]["total_qe"](self.pivotwave))))
             print('Aperture correction: {}'.format(self.ap_corr))
             #print('Bandpass resolution: {}'.format(nice_print(self.bandpass_r[0] * u.Unit(self.bandpass_r[1]))))
             print('Derived_bandpass: {}'.format(nice_print(self.derived_bandpass)))
-            print('Detector read noise: {}'.format(self.readnoise))
-            print('Dark rate: {}'.format(self.dark_current))
+            print('Detector read noise: {}'.format(self.configuration["detector"]["read_noise"]))
+            print('Dark rate: {}'.format(self.configuration["detector"]["dark_current"]))
 
     def _sn_box(self, wave, verbose):
         """
@@ -267,11 +269,12 @@ class Camera(PersistentModel):
 
     def add_exposure(self, exposure):
         self.exposures.append(exposure)
-        exposure.camera = self
+        exposure.instrument = self
         exposure.telescope = self.telescope
         exposure.calculate()
 
     def set_from_hwome(self, channelname):
+        self.configuration = {}
         try:
             instrument, channel = channelname.split(".")
             instrument_data = getattr(self.telescope.hwo_data, instrument)
@@ -280,7 +283,6 @@ class Camera(PersistentModel):
         except KeyError:
             raise KeyError(f"Unrecognized Instrument {instrument}.\n Legal values are {self.telescope.hwo_data.Instrument.name}")
 
-        print(self.telescope.hwo_data[instrument])
         instrument_data = self.telescope.hwo_data[instrument]
         #instrument_data = getattr(self.telescope.hwo_data, instrument)
 
@@ -293,36 +295,45 @@ class Camera(PersistentModel):
         #channel_data = getattr(instrument_data, channel)
 
         # extract all the filters
-        self.channel_filters = []
+        self.configuration["channel_filters"] = []
         for channel_filter in channel_data.Filter:
-            self.channel_filters.append(channel_filter.name.value)
+            self.configuration["channel_filters"].append(channel_filter.name.value)
 
-        self.throughput = []
-        for channel_filter in self.channel_filters:
+        throughput = []
+        for channel_filter in self.configuration["channel_filters"]:
             # this commands HWOME to walk down the entire optical path of the telescope down to the filter(grating) and collect all of the optics.
             thru = self.telescope.hwo_data.OpticalPath.select(instrument=instrument, channel=channel, filter = channel_filter).throughput(include_detector=False)
             # then we multiply all of them together
             total_throughput = np.prod(thru.q, axis=0)
             # and store for later retrieval
             band = syn.spectrum.SpectralElement(Empirical1D, points=thru.w, lookup_table=total_throughput)
-            self.throughput.append({"name": channel_filter, "bandpass": band, "effective_wavelength": band.avgwave(), "optics": len(thru.value.keys())})
+            wavemin = band.avgwave() - band.rectwidth()/2
+            wavemax = band.avgwave() + band.rectwidth()/2
+            throughput.append({"name": channel_filter, "bandpass": band, "effective_wavelength": band.avgwave(), "wave_min": wavemin, "wave_max": wavemax, "optics": len(thru.value.keys())})
 
-        self.throughput = sorted(self.throughput, key=lambda a: a["effective_wavelength"])
+        self.configuration["element"] = sorted(throughput, key=lambda a: a["effective_wavelength"])
 
-        self.diffraction_limit = channel_data.diffraction_limited.q
-        self.plate_scale = channel_data.plate_scale.q
-        self.fov_x = channel_data.fov_x.q
-        self.fov_y = channel_data.fov_y.q
+        self.configuration["diffraction_limit"] = channel_data.diffraction_limited.q
+        self.configuration["pixel_scale"] = channel_data.plate_scale.q
+        self.configuration["fov_x"] = channel_data.fov_x.q
+        self.configuration["fov_y"] = channel_data.fov_y.q
 
 
+        self.configuration["detector"] = {}
         for detector in channel_data.Detector:
-            self.detector = detector.name
-            self.readnoise = detector.read_noise.q
-            self.thermal = detector.temperature.q
-            self.dark_current = detector.dark_current.q
+            self.configuration["detector"]["name"] = detector.name
+            self.configuration["detector"]["read_noise"] = detector.read_noise.q
+            self.configuration["detector"]["thermal"] = detector.temperature.q
+            self.configuration["detector"]["dark_current"] = detector.dark_current.q
             w = detector.qe.w
             t = detector.qe.q
-            self.total_qe = syn.spectrum.SpectralElement(Empirical1D, points=w, lookup_table=t)
+            self.configuration["detector"]["total_qe"] = syn.spectrum.SpectralElement(Empirical1D, points=w, lookup_table=t)
+
+    def set_to_dict(self, config):
+        self.configuration = config
+
+    def get_from_dict(self):
+        return self.configuration
 
     def set_from_sei(self, name): 
 

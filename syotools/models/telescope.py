@@ -76,11 +76,12 @@ class Telescope(PersistentModel):
         Diffraction-limited PSF FWHM.
         """
 
-        diff_limit_wavelength, effective_aperture = self.recover('camera.diffraction_limit',
-                                                       'effective_aperture')
+        configuration, effective_diameter = self.recover('camera.configuration',
+                                                       'effective_diameter')
+        diff_limit_wavelength = configuration["diffraction_limit"]
 
         #result = (1.22 * u.rad * diff_limit_wavelength / aperture).to(u.arcsec)
-        result = (1.03 * u.rad * diff_limit_wavelength / effective_aperture).to(u.arcsec)
+        result = (1.03 * u.rad * diff_limit_wavelength / effective_diameter).to(u.arcsec)
         return result
 
     # @property

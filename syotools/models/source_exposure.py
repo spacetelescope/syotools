@@ -69,10 +69,7 @@ class SourceExposure(PersistentModel):
                         # currently an Exposure can have only one Source
 
         self.telescope = None
-        self.camera = None
-        self.spectrograph = None
-        self.spectropolarimeter = None
-        self.ifs = None
+        self.instrument = None
 
         self.exp_id = ''
         self.n_exp = 0
@@ -218,10 +215,19 @@ class SourceExposure(PersistentModel):
         * All uniform components processed for the height of the slit * 
         resolving power.
         """
+
+        sky = self.recover("instrument.sky")
+        configuration, c_thermal, _sn_box = self.recover("instrument.configuration", "instrument.c_thermal", "instrument._sn_box")
+        pixel_scale = configuration["pixel_scale"]
+        for detector in configuration["detector"]:
+            dark_current = configuration["detector"]["dark_current"]
+            qe = configuration["detector"]["total_qe"]
+            read_noise = configuration["detector"]["read_noise"]
+
         wave = source.sed.waveset
+
         # set up an appropriately sized aperture
-        sn_box = self.instrument._sn_box(wave, False)
-        thru, qe, c_thermal, dark_current, readnoise, pixel_size = self.recover("instrument.throughput", "instrument.total_qe", "instrument.c_thermal", "instrument.dark_current", "instrument.readnoise", "instrument.pixel_size")
+        sn_box = _sn_box(wave, False)
 
         # fsource is:
         # shaped
@@ -232,7 +238,7 @@ class SourceExposure(PersistentModel):
         if source.radius > 0:
             radius = source.radius
         else:
-            radius = instrument.fwhm_psf(wave)
+            radius = self.instrument.fwhm_psf(wave)
         if radius > np.sqrt(sn_box)/2.:
             fsource = fsource * (np.sqrt(sn_box)/2)/radius
 
@@ -276,8 +282,9 @@ class SourceExposure(PersistentModel):
     def magnitude(self, source=None):
         if self.unknown == "magnitude":
             return self._magnitude
-        #If magnitude is not unknown, it should be interpolated from the SED #at the
-        camera bandpasses. if self.verbose:
+        #If magnitude is not unknown, it should be interpolated from the SED 
+        #at the camera bandpasses. 
+        if self.verbose:
             print('magnitude fcn line 191', self.interpolated_source(source))
         return self.interpolated_source(source)
 
@@ -285,7 +292,8 @@ class SourceExposure(PersistentModel):
     def magnitude(self, new_magnitude):
         if self.unknown == "magnitude":
             return
-        self._magnitude = self._ensure_array(new_magnitude) if self.verbose:
+        self._magnitude = self._ensure_array(new_magnitude) 
+        if self.verbose:
             print('magnitude fcn line 200', new_magnitude)
 
         self.calculate()
@@ -344,11 +352,12 @@ class SourceExposure(PersistentModel):
         Calculate the exposure time to achieve the desired S/N for the
         given SED.
         """
-        self.camera._print_initcon(self.verbose)
+        self.instrument._print_initcon(self.verbose)
 
         (_snr, _nexp) = self.recover('_snr', 'n_exp')
-        (throughput, effective_diameter) = self.recover("instrument.throughput", "telescope.effective_aperture")
+        (effective_diameter) = self.recover("telescope.effective_diameter")
         effective_aperture = (effective_diameter/2)**2 * np.pi
+
 
         # all of these are now rates, in the extraction aperture (except read_noise)
         fsource, fsky, thermal, dark_current, read_noise = self.process_observation(source, band)
@@ -462,7 +471,7 @@ class SourceExposure(PersistentModel):
 class SourcePhotometricExposure(SourceExposure):
     """ A subclass of the base Exposure model, for photometric ETC calculations """
 
-   def calculate(self):
+    def calculate(self):
         """
         Wrapper to calculate the exposure time, SNR, or limiting magnitude,
         based on the other two. The "unknown" attribute controls which of these
@@ -470,12 +479,30 @@ class SourcePhotometricExposure(SourceExposure):
         """
         if self._disable:
             return False
-        if self.camera is None or self.telescope is None:
+        if self.instrument is None or self.telescope is None:
             return False
-        status = {'magnitude': self._update_magnitude,
-                  'exptime': self._update_exptime,
-                  'snr': self._update_snr}[self.unknown](self.source)
+        configuration = self.recover("instrument.configuration")
+        bands = configuration["channel_filters"]
+        for band in bands:
+            status = {'magnitude': self._update_magnitude,
+                    'exptime': self._update_exptime,
+                    'snr': self._update_snr}[self.unknown](self.source, band)
         return status
+
+    def calculate_sn(self, source):
+        """
+        Wrapper to implement SN calculation functionality
+
+        Parameters
+        ----------
+        source : Source
+            The source for which the SN is desired
+
+        Returns
+        -------
+        status : bool
+            success status
+        """
 
 
 
