@@ -228,6 +228,7 @@ class SourceExposure(PersistentModel):
 
         # set up an appropriately sized aperture
         sn_box = _sn_box(wave, False)
+        print("SN_Box", sn_box)
 
         # fsource is:
         # shaped
@@ -236,17 +237,18 @@ class SourceExposure(PersistentModel):
         flux_source = syn.units.convert_flux(wave, source.sed(wave), syn.units.PHOTLAM)
         # scale source radius to the aperture size - we get all of the flux if it's smaller than the aperture
         if source.radius > 0:
-            radius = source.radius
+            area = np.pi * (source.radius/pixel_scale)**2 / u.pix
         else:
-            radius = self.instrument.fwhm_psf(wave)
-        if radius > np.sqrt(sn_box)/2.:
-            fsource = fsource * (np.sqrt(sn_box)/2)/radius
+            area = np.pi * (np.median(self.instrument.fwhm_psf(wave))/pixel_scale)**2 / u.pix
+        print("Area", area)
+        if area > np.median(sn_box)/2.:
+            fsource = fsource * sn_box/area
 
         # fsky is:
         # uniform
         # goes through the full optical path QE
         # accumulates over time
-        flux_sky = syn.units.convert_flux(wave, sky.sed(wave), syn.units.PHOTLAM)
+        flux_sky = syn.units.convert_flux(wave, sky(wave), syn.units.PHOTLAM)
         flux_sky *= sn_box
         
         # thermal is:
@@ -255,8 +257,10 @@ class SourceExposure(PersistentModel):
         # accumulates over time
         thermal = c_thermal(wave)
         # omega is the size of the extraction box in steradians
-        Omega = (pixel_size**2 * sn_box * u.pix).to(u.sr)
+        Omega = (pixel_scale**2 * sn_box * u.pix).to(u.sr)
         thermal *= Omega
+
+        print("Band", band)
 
         # apply internal effects within telescope & instrument
         fsource = syn.observation.Observation(flux_source, band["bandpass"] * qe)
@@ -486,7 +490,7 @@ class SourcePhotometricExposure(SourceExposure):
         for band in bands:
             status = {'magnitude': self._update_magnitude,
                     'exptime': self._update_exptime,
-                    'snr': self._update_snr}[self.unknown](self.source, band)
+                    'snr': self._update_snr}[self.unknown](self.source, configuration["element"][band])
         return status
 
     def calculate_sn(self, source):

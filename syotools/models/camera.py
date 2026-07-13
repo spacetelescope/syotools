@@ -99,9 +99,11 @@ class Camera(PersistentModel):
     def pivotwave(self):
         pivot = []
         for band in self.configuration["element"]:
-            pivotval = band["bandpass"].pivot()
+            pivotval = self.configuration["element"][band]["bandpass"].pivot()
             pivotunit = pivotval.unit
             pivot.append(pivotval.value)
+
+        print("Pivot", pivot)
 
         return np.asarray(pivot) << pivotunit
 
@@ -195,42 +197,42 @@ class Camera(PersistentModel):
         """
 
         #Convert to Quantities for calculation.
-        (bandpass, aperture, ota_emissivity,
-         total_qe, pixel_size) = self.recover(
-                'telescope.effective_aperture',  'telescope.ota_emissivity',
+        (diameter, ota_emissivity, total_qe, pixel_size) = self.recover(
+                'telescope.effective_diameter',  'telescope.ota_emissivity',
                 'total_qe', 'pixel_size')
 
-        box = self._sn_box(verbose)
+        box = self._sn_box(wave, verbose)
 
         h = const.h.to(u.erg * u.s) # Planck's constant erg s
         c = const.c.to(u.cm / u.s) # speed of light [cm / s]
 
         energy_per_photon = h * c / wave.to(u.cm) / u.ph
 
-        D = aperture.to(u.cm) # telescope diameter in cm
+        D = diameter.to(u.cm) # telescope diameter in cm
 
         
 
         pephot = self.planck(wave) / energy_per_photon
 
         if verbose:
-            print('Planck spectrum: {}'.format(nice_print(planck)))
+            print('Planck spectrum: {}'.format(nice_print(self.planck(wave))))
             print('Planck / E_phot: {}'.format(nice_print(pephot)))
             print('E_phot: {}'.format(nice_print(energy_per_photon)))
-            print('Omega: {}'.format(nice_print(Omega)))
+            #print('Omega: {}'.format(nice_print(Omega)))
 
-        thermal = (ota_emissivity[0] * planck / energy_per_photon *
+        thermal = (ota_emissivity[0] * self.planck(wave) / energy_per_photon *
     			(np.pi / 4. * D**2))
 
         return thermal
 
-    @property
+    #@property
     def planck(self, wave):
         """
         Planck spectrum for the various wave bands.
         """
         #Convert to Quantities for calculation
-        temperature = self.recover('thermal')
+        configuration = self.recover('configuration')
+        temperature = configuration["detector"]["thermal"]
 
         wave = wave.to('cm')
         if isinstance(temperature, u.Quantity):
@@ -299,7 +301,7 @@ class Camera(PersistentModel):
         for channel_filter in channel_data.Filter:
             self.configuration["channel_filters"].append(channel_filter.name.value)
 
-        throughput = []
+        self.configuration["element"] = {}
         for channel_filter in self.configuration["channel_filters"]:
             # this commands HWOME to walk down the entire optical path of the telescope down to the filter(grating) and collect all of the optics.
             thru = self.telescope.hwo_data.OpticalPath.select(instrument=instrument, channel=channel, filter = channel_filter).throughput(include_detector=False)
@@ -309,9 +311,9 @@ class Camera(PersistentModel):
             band = syn.spectrum.SpectralElement(Empirical1D, points=thru.w, lookup_table=total_throughput)
             wavemin = band.avgwave() - band.rectwidth()/2
             wavemax = band.avgwave() + band.rectwidth()/2
-            throughput.append({"name": channel_filter, "bandpass": band, "effective_wavelength": band.avgwave(), "wave_min": wavemin, "wave_max": wavemax, "optics": len(thru.value.keys())})
+            self.configuration["element"][channel_filter] = {"name": channel_filter, "bandpass": band, "effective_wavelength": band.avgwave(), "wave_min": wavemin, "wave_max": wavemax, "optics": len(thru.value.keys())}
 
-        self.configuration["element"] = sorted(throughput, key=lambda a: a["effective_wavelength"])
+        #self.configuration["element"] = sorted(throughput, key=lambda a: a["effective_wavelength"])
 
         self.configuration["diffraction_limit"] = channel_data.diffraction_limited.q
         self.configuration["pixel_scale"] = channel_data.plate_scale.q
