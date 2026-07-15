@@ -47,7 +47,7 @@ def camera_snr(telescope, template, magnitude, exptime, silent=False):
 	exp = SourcePhotometricExposure() 
 	exp.source = source
 	    
-	exp.exptime = [[exptime], "hr"]
+	exp._exptime = [exptime] * u.hr
 	exp.unknown = 'snr'
 	tel.add_camera(hri)
 	hri.add_exposure(exp)
@@ -107,7 +107,7 @@ def camera_exptime(telescope, template, magnitude, snr, silent=False):
 	exp = SourcePhotometricExposure() 
 	exp.source = source
 	
-	exp._snr = [snr] * u.Unit('electron(1/2)')  
+	exp._snr = [snr] * u.dimensionless_unscaled #* u.Unit('electron(1/2)')  
 	exp.unknown = 'exptime'
 	tel.add_camera(hri)
 
@@ -166,8 +166,8 @@ def camera_magnitude(telescope, template, snr, exptime, silent=False):
 	exp = SourcePhotometricExposure() 
 	exp.source = source
 	
-	exp.exptime = [[exptime], 'hr']
-	exp._snr = [snr] * u.Unit('electron(1/2)')  
+	exp._exptime = [exptime] * u.hr
+	exp._snr = [snr] * u.dimensionless_unscaled
 	    
 	exp.unknown = 'magnitude' 
 	tel.add_camera(hri)

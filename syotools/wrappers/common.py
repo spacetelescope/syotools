@@ -23,17 +23,17 @@ def _do_calculation(tel, inst, exp, mode=None, source=None, snr=10.0, exptime=10
         if isinstance(inst, (Spectrograph, IFS)):
             raise NotImplementedError("Spectrographs cannot currently solve for limiting magnitude")
         
-        exp._exptime = [[exptime], 'hr']
-        exp._snr = snr 
+        exp._exptime = [exptime] * u.hr
+        exp._snr = [snr] * u.dimensionless_unscaled 
+        exp.unknown = target
         tel.add_camera(inst)
         inst.add_exposure(exp)
 
-        exp.unknown = target
-        result = exp.magnitude
+        result = exp._magnitude
 
     elif target == "exptime":
         
-        exp._snr = [snr] * u.Unit('electron(1/2)')  
+        exp._snr = [snr] * u.dimensionless_unscaled
         exp.unknown = target
         tel.add_camera(inst)
 
@@ -43,16 +43,16 @@ def _do_calculation(tel, inst, exp, mode=None, source=None, snr=10.0, exptime=10
         if verbose and hasattr(inst, "bandnames"):
             print('-- Computing Exptime as the Unknown --') 
             for bb, ee in zip(inst.bandnames, exp.exptime): print("{}, SNR = {}".format(bb, ee)) 
-        result = exp.exptime
+        result = exp._exptime
 
     elif target == "snr":
 
-        exp._exptime = [[exptime], 'hr']
+        exp._exptime = [exptime] * u.hr
         exp.unknown = target
         tel.add_camera(inst)
         inst.add_exposure(exp)
 
-        result = exp.snr
+        result = exp._snr
 
     return result
 

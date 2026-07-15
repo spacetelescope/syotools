@@ -71,20 +71,8 @@ class Camera(PersistentModel):
         self.bandpass_r = np.zeros(1, dtype=float) * u.dimensionless_unscaled
         self.dark_current = np.zeros(1, dtype=float) * (u.electron / u.s / u.pixel)
         #self.detector_rn = np.zeros(1, dtype=float) * (u.electron / u.pixel)**0.5
-        self.sky = syn.spectrum.SourceSpectrum(Empirical1D, points=[0,10000] << u.AA, lookup_table=[22,22] << u.ABmag) # Hardcode a 22nd magnitude background
+        self.sky = syn.spectrum.SourceSpectrum(Empirical1D, points=[0.1,10000, 20000] << u.AA, lookup_table=[22,22,22] << u.ABmag) # Hardcode a 22nd magnitude background
         #super().__init__(default_camera, **kw)
-
-    @property
-    def pixel_size(self):
-        """
-        Return the pixel size. Originally, this was a function of pivot wavelength.
-        Now it's read out of the HWOME properties.
-
-        Use the reference band for each channel as the fiducial: U-band for UV
-        and optical, J-band for IR.
-        """
-
-        return self.configuration["pixel_scale"]
 
     @property
     def n_bands(self):
@@ -98,8 +86,9 @@ class Camera(PersistentModel):
     @property
     def pivotwave(self):
         pivot = []
-        for band in self.configuration["element"]:
-            pivotval = self.configuration["element"][band]["bandpass"].pivot()
+        for bpass in self.configuration["element"]:
+            band = self.configuration["element"][bpass]
+            pivotval = band["bandpass"].pivot()
             pivotunit = pivotval.unit
             pivot.append(pivotval.value)
 
@@ -115,7 +104,8 @@ class Camera(PersistentModel):
         """
         pivotwave = self.recover('pivotwave')
         width = []
-        for band in self.configuration["element"]:
+        for bpass in self.configuration["element"]:
+            band = self.configuration["element"][bpass]
             widthval = band["bandpass"].equivwidth()
             widthunit = widthval.unit
             width.append(widthval.value)
@@ -168,9 +158,9 @@ class Camera(PersistentModel):
             print('Telescope effective_diameter: {}'.format(self.telescope.effective_diameter))
             print('Instrument temperature: {}'.format(self.configuration["detector"]["thermal"]))
             print('Pivot waves: {}'.format(nice_print(self.pivotwave)))
-            print('Pixel sizes: {}'.format(self.pixel_size))
+            print('Pixel sizes: {}'.format(self.configuration["pixel_scale"]))
             print('AB mag zero points: {}'.format(nice_print(self.ab_zeropoint)))
-            print('Quantum efficiency: {}'.format(nice_print(self.configuration["detector"]["total_qe"](self.pivotwave))))
+            #print('Quantum efficiency: {}'.format(nice_print(self.configuration["detector"]["total_qe"](self.pivotwave))))
             print('Aperture correction: {}'.format(self.ap_corr))
             #print('Bandpass resolution: {}'.format(nice_print(self.bandpass_r[0] * u.Unit(self.bandpass_r[1]))))
             print('Derived_bandpass: {}'.format(nice_print(self.derived_bandpass)))
@@ -182,24 +172,26 @@ class Camera(PersistentModel):
         Calculate the number of pixels in the SNR computation box.
         """
 
-        (Phi, fwhm_psf) = self.recover('pixel_size', 'fwhm_psf')
-        sn_box = np.round(3. * fwhm_psf(wave) / Phi)
+        Phi = self.configuration["pixel_scale"]
+        sn_box = np.round(3. * self.fwhm_psf(wave) / Phi)
 
         if verbose:
-            print('PSF width: {}'.format(nice_print(fwhm_psf(wave))))
+            print('PSF width: {}'.format(nice_print(self.fwhm_psf(wave))))
             print('SN box width: {}'.format(nice_print(sn_box)))
 
-        return sn_box**2 / u.pix #don't want pix**2 units
+        return sn_box**2
 
-    def c_thermal(self, wave, verbose=True):
+    def c_thermal(self, wave, verbose=False):
         """
         Calculate the thermal emission counts for the telescope.
         """
 
         #Convert to Quantities for calculation.
-        (diameter, ota_emissivity, total_qe, pixel_size) = self.recover(
-                'telescope.effective_diameter',  'telescope.ota_emissivity',
-                'total_qe', 'pixel_size')
+        (diameter, ota_emissivity, configuration) = self.recover(
+                'telescope.effective_diameter',  'telescope.ota_emissivity', 'configuration')
+        total_qe = configuration["detector"]["total_qe"]
+        pixel_scale = configuration["pixel_scale"]
+
 
         box = self._sn_box(wave, verbose)
 
@@ -221,7 +213,13 @@ class Camera(PersistentModel):
             #print('Omega: {}'.format(nice_print(Omega)))
 
         thermal = (ota_emissivity[0] * self.planck(wave) / energy_per_photon *
-    			(np.pi / 4. * D**2))
+    			(np.pi / 4. * D**2 * u.AA**-1))
+
+        # omega is the size of the extraction box in steradians
+        Omega = (pixel_scale**2 * self._sn_box(wave, False)).to(u.sr)
+        thermal *= Omega
+
+        thermal = syn.spectrum.SourceSpectrum(Empirical1D, points=wave, lookup_table=thermal.value * syn.units.PHOTLAM)
 
         return thermal
 
@@ -326,7 +324,7 @@ class Camera(PersistentModel):
             self.configuration["detector"]["name"] = detector.name
             self.configuration["detector"]["read_noise"] = detector.read_noise.q
             self.configuration["detector"]["thermal"] = detector.temperature.q
-            self.configuration["detector"]["dark_current"] = detector.dark_current.q
+            self.configuration["detector"]["dark_current"] = detector.dark_current.q / u.pix
             w = detector.qe.w
             t = detector.qe.q
             self.configuration["detector"]["total_qe"] = syn.spectrum.SpectralElement(Empirical1D, points=w, lookup_table=t)

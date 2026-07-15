@@ -52,7 +52,7 @@ class IFS(Spectrograph):
         self.name = ''
         self.modes = []
         self.descriptions = {}
-        self.bef = syn.spectrum.SourceSpectrum(Empirical1D, points=[0,10000] << u.AA, lookup_table=[22,22] << u.ABmag)
+        self.bef = syn.spectrum.SourceSpectrum(Empirical1D, points=[0,20000] << u.AA, lookup_table=[22,22] << u.ABmag)
         self.R = 0. * u.dimensionless_unscaled
         self.wave = np.zeros(0, dtype=float) * u.AA
         self.aeff = np.zeros(0, dtype=float) * u.cm**2
