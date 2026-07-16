@@ -72,16 +72,16 @@ class SourceExposure(PersistentModel):
         self.instrument = None
 
         self.exp_id = ''
-        self.n_exp = 0
+        self.n_exp = 1
         self._exptime = np.zeros(1, dtype=float) * u.h
         self._snr = np.zeros(1, dtype=float) * u.dimensionless_unscaled
         self._magnitude = np.zeros(1, dtype=float) * u.ABmag
-        self._unknown = '' # one of 'snr', 'magnitude', 'exptime'
+        self._unknown = "exptime" # one of 'snr', 'magnitude', 'exptime'
         self._interp_flux = np.zeros(1, dtype=float) * u.dimensionless_unscaled # the source SED interpolated to the Spectrograph wavelength grid
 
         self.verbose = False # set this to True for debugging purposes
         self._disable = False #set this to disable recalculating (when updating several attributes at the same time)
-        super().__init__(default_model, **kw)
+        #super().__init__(default_model, **kw)
 
     def disable(self):
         self._disable = True
@@ -100,8 +100,12 @@ class SourceExposure(PersistentModel):
 
     @unknown.setter
     def unknown(self, new_unknown):
-        self._unknown = new_unknown
-        self.calculate()
+        valid_unknowns = ("exptime", "snr", "magnitude")
+        if new_unknown in valid_unknowns:
+            self._unknown = new_unknown
+            self.calculate()
+        else:
+            raise KeyError(f"Cannot solve for {new_unknown}, unrecognized unknown.")
 
     def _ensure_array(self, quant):
         """
@@ -119,16 +123,27 @@ class SourceExposure(PersistentModel):
 
         return q
 
+    def _ensure_quantity(self, quant, unit):
+        """
+        Ensure given quantity is an astropy unit.Quantity
+        of appropriate type
+        """
+        if type(quant) == u.Quantity:
+            # just see if this crashes.
+            quant.to(unit)
+        else:
+            quant *= unit
+        return quant
+
     @property
     def exptime(self):
-        #print(" retrieve exptime")
         return self._exptime
 
     @exptime.setter
     def exptime(self, new_exptime):
         if self.unknown == "exptime":
             return
-        self._exptime = self._ensure_array(new_exptime)
+        self._exptime = self._ensure_quantity(new_exptime, u.s)
         self.calculate()
 
     @property
@@ -139,7 +154,28 @@ class SourceExposure(PersistentModel):
     def snr(self, new_snr):
         if self.unknown == "snr":
             return
-        self._snr = self._ensure_array(new_snr)
+        self._snr = self._ensure_quantity(new_snr, u.dimensionless_unscaled)
+        print("Setting SNR:", self._snr)
+        self.calculate()
+
+    @property 
+    def magnitude(self, source=None):
+        if self.unknown == "magnitude":
+            return self._magnitude
+        #If magnitude is not unknown, it should be interpolated from the SED 
+        #at the camera bandpasses. 
+        if self.verbose:
+            print('magnitude fcn line 191', self.interpolated_source(source))
+        return self.interpolated_source(source)
+
+    @magnitude.setter 
+    def magnitude(self, new_magnitude):
+        if self.unknown == "magnitude":
+            return
+        self._magnitude = self._ensure_quantity(new_magnitude, u.ABmag)
+        if self.verbose:
+            print('magnitude fcn line 200', new_magnitude)
+
         self.calculate()
 
 
@@ -217,7 +253,7 @@ class SourceExposure(PersistentModel):
         """
 
         sky = self.recover("instrument.sky")
-        configuration, c_thermal, _sn_box = self.recover("instrument.configuration", "instrument.c_thermal", "instrument._sn_box")
+        configuration, c_thermal, _sn_box = self.recover("instrument.configuration", "instrument._c_thermal", "instrument._sn_box")
         pixel_scale = configuration["pixel_scale"]
         for detector in configuration["detector"]:
             dark_current = configuration["detector"]["dark_current"]
@@ -229,6 +265,8 @@ class SourceExposure(PersistentModel):
         # set up an appropriately sized aperture
         sn_box = _sn_box(wave, False)
 
+        sn_box = np.median(sn_box)
+
         # fsource is:
         # shaped
         # goes through the full optical path + QE
@@ -239,14 +277,15 @@ class SourceExposure(PersistentModel):
             area = np.pi * (source.radius/pixel_scale)**2
         else:
             area = np.pi * (np.median(self.instrument.fwhm_psf(wave))/pixel_scale)**2
-        if area > np.median(sn_box)/2.:
-            flux_source = source.sed * sn_box/area
+        if area > sn_box:
+            flux_source = source.sed * (sn_box/area)
 
         # fsky is:
         # uniform
         # goes through the full optical path QE
         # accumulates over time
-        flux_sky = sky * np.median(sn_box.value)
+        flux_sky = sky * sn_box.value
+        print("Skyflux", flux_sky(flux_sky.waveset))
         
         # thermal is:
         # uniform
@@ -263,36 +302,16 @@ class SourceExposure(PersistentModel):
         # uniform
         # only within detector
         # accumulates over time
-        dark = dark_current * sn_box #* u.electron/u.count
+        dark = dark_current * sn_box
 
         # readnoise is:
         # uniform
         # only within detector
         # single event at read time
-        read_noise = read_noise * sn_box / ( u.ct * u.pix) # * u.electron**0.5/u.pixel**0.5
+        read_noise = read_noise * sn_box / ( u.ct * u.pix)
 
         return fsource, fsky, thermal, dark, read_noise
 
-
-    @property 
-    def magnitude(self, source=None):
-        if self.unknown == "magnitude":
-            return self._magnitude
-        #If magnitude is not unknown, it should be interpolated from the SED 
-        #at the camera bandpasses. 
-        if self.verbose:
-            print('magnitude fcn line 191', self.interpolated_source(source))
-        return self.interpolated_source(source)
-
-    @magnitude.setter 
-    def magnitude(self, new_magnitude):
-        if self.unknown == "magnitude":
-            return
-        self._magnitude = self._ensure_array(new_magnitude) 
-        if self.verbose:
-            print('magnitude fcn line 200', new_magnitude)
-
-        self.calculate()
 
     def calculate(self):
         """
@@ -363,9 +382,19 @@ class SourceExposure(PersistentModel):
 
         snr2 = -(_snr**2)
 
+        print("SNR", _snr, snr2)
+        print("Dark", dark_current)
+        print("Readnoise", read_noise)
+        print("Thermal", thermal_countrate)
+        print("Fsource", fsource_countrate)
+        print("Fsky", fsky_countrate)
+
         a = (fsource_countrate)**2
         b = snr2 * (fsource_countrate + (fsky_countrate + thermal_countrate + dark_current))
         c = snr2 * read_noise**2 * _nexp
+        print("A", a)
+        print("B", b)
+        print("C", c)
         texp = ((-b + np.sqrt(b**2 - 4*a*c)) / (2*a) * u.ct).to(u.s)
 
         if self.verbose:

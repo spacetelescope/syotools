@@ -9,7 +9,7 @@ import astropy.units as u
 import synphot as syn
 from synphot.models import Empirical1D
 
-from syotools.models.base import PersistentModel
+from .instrument import Instrument
 from syotools.models.source_exposure import SourcePhotometricExposure
 from syotools.defaults import default_camera
 from syotools.spectra.utils import mag_from_sed, mirror_efficiency, set_coating
@@ -27,7 +27,7 @@ def nice_print(arr):
         l = ['{:.2f}'.format(i) for i in arr]
     return ', '.join(l)
 
-class Camera(PersistentModel):
+class Camera(Instrument):
     """
     The basic camera class, which provides parameter storage for
     optimization.
@@ -126,32 +126,6 @@ class Camera(PersistentModel):
 
         return abzp# << abunit
 
-    def ee(self,wavelength):
-        effective_aperture = self.recover('telescope.effective_aperture')
-        a = effective_radius
-        k = 2 * np.pi / wavelength
-        q = np.arange()
-        x = 1 - [J0(np.pi * r)]**2 - [J1(np.pi * r)]**2
-
-    def fwhm_psf(self, wave):
-        """
-        Calculate the FWHM of the camera's PSF.
-        """
-        #Convert to Quantity for calculations.
-        effective_aperture = self.recover('telescope.effective_diameter')
-        configuration, diff_fwhm = self.recover('configuration',
-                                             'telescope.diff_limit_fwhm')
-
-        diff_limit = configuration["diffraction_limit"]
-
-        #fwhm = (1.22 * u.rad * wave / aperture).to(u.arcsec)
-        fwhm = (1.03 * u.rad * wave / effective_aperture).to(u.arcsec)
-        
-        #only use these values where the wavelength is greater than the diffraction limit
-        fwhm = np.where(wave > diff_limit, fwhm.value, diff_fwhm.value) * u.arcsec
-
-        return fwhm
-
     def _print_initcon(self, verbose):
         if verbose: #These are our initial conditions
             print('Telescope diffraction limit: {}'.format(self.telescope.diff_limit_wavelength))
@@ -181,72 +155,6 @@ class Camera(PersistentModel):
 
         return sn_box**2
 
-    def c_thermal(self, wave, verbose=False):
-        """
-        Calculate the thermal emission counts for the telescope.
-        """
-
-        #Convert to Quantities for calculation.
-        (diameter, ota_emissivity, configuration) = self.recover(
-                'telescope.effective_diameter',  'telescope.ota_emissivity', 'configuration')
-        total_qe = configuration["detector"]["total_qe"]
-        pixel_scale = configuration["pixel_scale"]
-
-
-        box = self._sn_box(wave, verbose)
-
-        h = const.h.to(u.erg * u.s) # Planck's constant erg s
-        c = const.c.to(u.cm / u.s) # speed of light [cm / s]
-
-        energy_per_photon = h * c / wave.to(u.cm) / u.ph
-
-        D = diameter.to(u.cm) # telescope diameter in cm
-
-        
-
-        pephot = self.planck(wave) / energy_per_photon
-
-        if verbose:
-            print('Planck spectrum: {}'.format(nice_print(self.planck(wave))))
-            print('Planck / E_phot: {}'.format(nice_print(pephot)))
-            print('E_phot: {}'.format(nice_print(energy_per_photon)))
-            #print('Omega: {}'.format(nice_print(Omega)))
-
-        thermal = (ota_emissivity[0] * self.planck(wave) / energy_per_photon *
-    			(np.pi / 4. * D**2 * u.AA**-1))
-
-        # omega is the size of the extraction box in steradians
-        Omega = (pixel_scale**2 * self._sn_box(wave, False)).to(u.sr)
-        thermal *= Omega
-
-        thermal = syn.spectrum.SourceSpectrum(Empirical1D, points=wave, lookup_table=thermal.value * syn.units.PHOTLAM)
-
-        return thermal
-
-    #@property
-    def planck(self, wave):
-        """
-        Planck spectrum for the various wave bands.
-        """
-        #Convert to Quantities for calculation
-        configuration = self.recover('configuration')
-        temperature = configuration["detector"]["thermal"]
-
-        wave = wave.to('cm')
-        if isinstance(temperature, u.Quantity):
-            temp = temperature
-        else:
-            temps = temperature[0] * u.Unit(temperature[1])
-            temp = temps.to('K')
-        h = const.h.to(u.erg * u.s) # Planck's constant erg s 
-        c = const.c.to(u.cm / u.s) # speed of light [cm / s] 
-        k = const.k_B.to(u.erg / u.K) # Boltzmann's constant [erg deg K^-1] 
-        x = 2. * h * c**2 / wave**5 
-        exponent = (h * c / (wave * k * temp)) 
-    
-        result = (x / (np.exp(exponent)-1.)).to(u.erg / u.s / u.cm**3) / u.sr
-
-        return result
 
     def interpolate_at_bands(self, sed):
         """
@@ -284,15 +192,14 @@ class Camera(PersistentModel):
             raise KeyError(f"Unrecognized Instrument {instrument}.\n Legal values are {self.telescope.hwo_data.Instrument.name}")
 
         instrument_data = self.telescope.hwo_data[instrument]
-        #instrument_data = getattr(self.telescope.hwo_data, instrument)
 
+        self.name = channel
         instrument_data.Channel
         try:
             channel_data = getattr(instrument_data, channel)
         except KeyError:
             raise KeyError(f"Unrecognized Channel {channel}.\n Legal values are {instrument_data.Channel.name.keys()}")
         channel_data = instrument_data[channel]
-        #channel_data = getattr(instrument_data, channel)
 
         # extract all the filters
         self.configuration["channel_filters"] = []
@@ -311,17 +218,15 @@ class Camera(PersistentModel):
             wavemax = band.avgwave() + band.rectwidth()/2
             self.configuration["element"][channel_filter] = {"name": channel_filter, "bandpass": band, "effective_wavelength": band.avgwave(), "wave_min": wavemin, "wave_max": wavemax, "optics": len(thru.value.keys())}
 
-        #self.configuration["element"] = sorted(throughput, key=lambda a: a["effective_wavelength"])
-
         self.configuration["diffraction_limit"] = channel_data.diffraction_limited.q
         self.configuration["pixel_scale"] = channel_data.plate_scale.q
         self.configuration["fov_x"] = channel_data.fov_x.q
         self.configuration["fov_y"] = channel_data.fov_y.q
 
-
         self.configuration["detector"] = {}
         for detector in channel_data.Detector:
             self.configuration["detector"]["name"] = detector.name
+            print("READNOISE", detector.read_noise.q)
             self.configuration["detector"]["read_noise"] = detector.read_noise.q
             self.configuration["detector"]["thermal"] = detector.temperature.q
             self.configuration["detector"]["dark_current"] = detector.dark_current.q / u.pix
