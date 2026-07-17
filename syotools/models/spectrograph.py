@@ -52,7 +52,7 @@ class Spectrograph(Instrument):
         self.name = ''
         self.modes = []
         self.descriptions = {}
-        self.sky = syn.spectrum.SourceSpectrum(Empirical1D, points=[0.1,20000] << u.AA, lookup_table=[22,22] << u.ABmag)
+        self.sky = syn.spectrum.SourceSpectrum(Empirical1D, points=[0.1,20000] << u.AA, lookup_table=[24,24] << u.ABmag)
         self.R = 0. * u.dimensionless_unscaled
         self.wave = np.zeros(0, dtype=float) * u.AA
         self.aeff = np.zeros(0, dtype=float) * u.cm**2
@@ -81,7 +81,7 @@ class Spectrograph(Instrument):
 
         self.R = self.configuration["element"][nmode]["resolution"]
         self.wave = self.configuration["element"][nmode]["bandpass"].waveset
-        self.bef = syn.spectrum.SourceSpectrum(Empirical1D, points=self.wave, lookup_table=np.ones_like(self.wave.value) * 22 << u.ABmag)
+        self.bef = syn.spectrum.SourceSpectrum(Empirical1D, points=self.wave, lookup_table=np.ones_like(self.wave.value) * 24 << u.ABmag)
         self.aeff = self.configuration["element"][nmode]["bandpass"]
         wrange = np.array((np.min(self.wave.value), np.max(self.wave.value)))
         self.wrange = wrange
@@ -119,6 +119,10 @@ class Spectrograph(Instrument):
         exposure.instrument = self
         exposure.telescope = self.telescope
         exposure.calculate()
+
+    def transform_flux(self, spectrum, wave):
+        effective_area = self.recover("telescope.effective_area")
+        return syn.units.convert_flux(wave, spectrum(wave), u.ct, area=effective_area) / u.s
 
     def set_from_hwome(self, channelname):
         self.configuration = {}

@@ -99,6 +99,9 @@ class Telescope(PersistentModel):
         self.hwo_data.load_hardware(f"{name}.yaml")
 
         self.effective_diameter = self.hwo_data.OTA.circumscribing_diameter.q
+        self.effective_area = (np.pi * (self.effective_diameter/2.)**2).to(u.cm**2)
+        print("Area", self.effective_area)
+
 
     def set_from_json(self,name):
         if self.verbose:

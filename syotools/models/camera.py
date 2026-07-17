@@ -71,7 +71,7 @@ class Camera(Instrument):
         self.bandpass_r = np.zeros(1, dtype=float) * u.dimensionless_unscaled
         self.dark_current = np.zeros(1, dtype=float) * (u.electron / u.s / u.pixel)
         #self.detector_rn = np.zeros(1, dtype=float) * (u.electron / u.pixel)**0.5
-        self.sky = syn.spectrum.SourceSpectrum(Empirical1D, points=[0.1,10000, 20000] << u.AA, lookup_table=[22,22,22] << u.ABmag) # Hardcode a 22nd magnitude background
+        self.sky = syn.spectrum.SourceSpectrum(Empirical1D, points=[0.1,10000, 20000] << u.AA, lookup_table=[24,24,24] << u.ABmag) # Hardcode a 22nd magnitude background
         #super().__init__(default_camera, **kw)
 
     @property
@@ -180,6 +180,10 @@ class Camera(Instrument):
         exposure.instrument = self
         exposure.telescope = self.telescope
         exposure.calculate()
+
+    def transform_flux(self, spectrum, wave):
+        effective_area = self.recover("telescope.effective_area")
+        return spectrum.countrate(effective_area)
 
     def set_from_hwome(self, channelname):
         self.configuration = {}

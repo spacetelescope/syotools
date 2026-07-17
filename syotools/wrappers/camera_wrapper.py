@@ -47,8 +47,8 @@ def camera_snr(telescope, template, magnitude, exptime, silent=False):
 	exp = SourcePhotometricExposure() 
 	exp.source = source
 	    
-	exp.exptime = [exptime] * u.hr
 	exp.unknown = 'snr'
+	exp.exptime = [exptime] * u.hr
 	tel.add_camera(hri)
 	hri.add_exposure(exp)
 
@@ -56,7 +56,7 @@ def camera_snr(telescope, template, magnitude, exptime, silent=False):
 		print('------ Computing SNR as the Unknown -------') 
 		for bb, ss in zip(hri.bandnames, exp.snr): print("{}, SNR = {}".format(bb, ss)) 
 	            
-	return exp.snr, hri 
+	return exp.results, hri 
 
 
 def camera_exptime(telescope, template, magnitude, snr, silent=False): 
@@ -118,7 +118,7 @@ def camera_exptime(telescope, template, magnitude, snr, silent=False):
 		print('-- Computing Exptime as the Unknown --') 
 		for bb, ee in zip(hri.bandnames, exp.exptime): print("{}, SNR = {}".format(bb, ee)) 
 
-	return exp.exptime, hri 
+	return exp.results, hri 
 
 def camera_magnitude(telescope, template, snr, exptime, silent=False): 
 	''' 
@@ -178,4 +178,4 @@ def camera_magnitude(telescope, template, snr, exptime, silent=False):
 		print('--- Computing Magnitude as the Unknown ---') 
 		for bb, mm in zip(hri.bandnames, exp.magnitude): print("{}, SNR = {}".format(bb, mm)) 
 	
-	return exp.magnitude, hri 
+	return exp.results, hri 

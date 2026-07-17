@@ -52,7 +52,7 @@ class IFS(Spectrograph):
         self.name = ''
         self.modes = []
         self.descriptions = {}
-        self.bef = syn.spectrum.SourceSpectrum(Empirical1D, points=[0,20000] << u.AA, lookup_table=[22,22] << u.ABmag)
+        self.sky = syn.spectrum.SourceSpectrum(Empirical1D, points=[0.1,20000] << u.AA, lookup_table=[24,24] << u.ABmag)
         self.R = 0. * u.dimensionless_unscaled
         self.wave = np.zeros(0, dtype=float) * u.AA
         self.aeff = np.zeros(0, dtype=float) * u.cm**2
@@ -75,18 +75,14 @@ class IFS(Spectrograph):
         """ 
 
         nmode = new_mode.upper()
-        if self._mode == nmode or nmode not in self.channel_filters:
+        if self._mode == nmode or nmode not in self.modes:
             return
         self._mode = nmode
-        self.modeidx = None
-        for a in range(len(self.throughput)):
-            if self.throughput[a]["name"] == nmode:
-                self.modeidx = a
 
-        self.R = self.throughput[self.modeidx]["resolution"]
-        self.wave = self.throughput[self.modeidx]["bandpass"].waveset
-        self.bef = syn.spectrum.SourceSpectrum(Empirical1D, points=self.wave, lookup_table=np.ones_like(self.wave.value) * 22 << u.ABmag)
-        self.aeff = self.throughput[self.modeidx]["bandpass"]
+        self.R = self.configuration["element"][nmode]["resolution"]
+        self.wave = self.configuration["element"][nmode]["bandpass"].waveset
+        self.bef = syn.spectrum.SourceSpectrum(Empirical1D, points=self.wave, lookup_table=np.ones_like(self.wave.value) * 24 << u.ABmag)
+        self.aeff = self.configuration["element"][nmode]["bandpass"]
         wrange = np.array((np.min(self.wave.value), np.max(self.wave.value)))
         self.wrange = wrange
 
@@ -96,7 +92,22 @@ class IFS(Spectrograph):
         #print("delta_lambda", wave,R)
         R = R << u.pix # HWOME's definition is unitless
         return wave / R
-    
+
+    def _sn_box(self, wave, verbose):
+        """
+        Calculate the number of pixels in the SNR computation box.
+        """
+
+        Phi = self.configuration["pixel_scale"]
+        sn_box = np.round(3. * self.fwhm_psf(wave) / Phi)
+
+        if verbose:
+            print('PSF width: {}'.format(nice_print(self.fwhm_psf(wave))))
+            print('SN box height: {}'.format(nice_print(sn_box)))
+            print('SN box width: {}'.format(nice_print(sn_box)))
+
+        return sn_box**2
+
     def create_exposure(self, source=None):
         new_exposure = SourceIFSExposure()
         if source is not None:
@@ -110,7 +121,12 @@ class IFS(Spectrograph):
         exposure.telescope = self.telescope
         exposure.calculate()
 
+    def transform_flux(self, spectrum, wave):
+        effective_area = self.recover("telescope.effective_area")
+        return syn.units.convert_flux(wave, spectrum(wave), u.ct, area=effective_area) / u.s
+
     def set_from_hwome(self, channelname):
+        self.configuration = {}
         try:
             instrument, channel = channelname.split(".")
             instrument_data = getattr(self.telescope.hwo_data, instrument)
@@ -120,7 +136,6 @@ class IFS(Spectrograph):
             raise KeyError(f"Unrecognized Instrument {instrument}.\n Legal values are {self.telescope.hwo_data.Instrument.name}")
 
         instrument_data = self.telescope.hwo_data[instrument]
-        #instrument_data = getattr(self.telescope.hwo_data, instrument)
 
         self.name = channel
         instrument_data.Channel
@@ -129,16 +144,15 @@ class IFS(Spectrograph):
         except KeyError:
             raise KeyError(f"Unrecognized Channel {channel}.\n Legal values are {instrument_data.Channel.name.keys()}")
         channel_data = instrument_data[channel]
-        #channel_data = getattr(instrument_data, channel)
 
-        # extract all the filters
-        self.channel_filters = []
+        self.configuration["channel_filters"] = []
         for channel_filter in channel_data.Filter:
-            self.channel_filters.append(channel_filter.name.value)
+            self.configuration["channel_filters"].append(channel_filter.name.value)
 
-        self.throughput = []
-        self.modes = self.channel_filters
-        for channel_filter in self.channel_filters:
+        self.modes = self.configuration["channel_filters"]
+
+        self.configuration["element"] = {}
+        for channel_filter in self.configuration["channel_filters"]:
             # this commands HWOME to walk down the entire optical path of the telescope down to the filter(grating) and collect all of the optics.
             thru = self.telescope.hwo_data.OpticalPath.select(instrument=instrument, channel=channel, filter = channel_filter).throughput(include_detector=False)
             # then we multiply all of them together
@@ -148,26 +162,24 @@ class IFS(Spectrograph):
 
             # and store for later retrieval
             band = syn.spectrum.SpectralElement(Empirical1D, points=thru.w, lookup_table=total_throughput)
-            self.throughput.append({"name": channel_filter, "bandpass": band, "resolution": grating_resolution, "effective_wavelength": band.avgwave(), "optics": len(thru.value.keys())})
-            self.descriptions[channel_filter] = f"{channel_filter}, R={grating_resolution}, {band.waveset[0]} -- {band.waveset[-1]}"
+            wavemin = band.avgwave() - band.rectwidth()/2
+            wavemax = band.avgwave() + band.rectwidth()/2
+            self.configuration["element"][channel_filter] = {"name": channel_filter, "bandpass": band,  "resolution": grating_resolution, "effective_wavelength": band.avgwave(), "wave_min": wavemin, "wave_max": wavemax, "optics": len(thru.value.keys())}
 
-        self.throughput = sorted(self.throughput, key=lambda a: a["effective_wavelength"])
+        self.configuration["diffraction_limit"] = channel_data.diffraction_limited.q
+        self.configuration["pixel_scale"] = channel_data.plate_scale.q
+        self.configuration["fov_x"] = channel_data.fov_x.q
+        self.configuration["fov_y"] = channel_data.fov_y.q
 
-        self.diffraction_limit = channel_data.diffraction_limited.q
-        self.plate_scale = channel_data.plate_scale.q
-        self.fov_x = channel_data.fov_x.q
-        self.fov_y = channel_data.fov_y.q
-
-
+        self.configuration["detector"] = {}
         for detector in channel_data.Detector:
-            self.detector = detector.name
-            self.readnoise = detector.read_noise.q
-            self.thermal = detector.temperature.q
-            self.dark_current = detector.dark_current.q
+            self.configuration["detector"]["name"] = detector.name
+            self.configuration["detector"]["read_noise"] = detector.read_noise.q
+            self.configuration["detector"]["thermal"] = detector.temperature.q
+            self.configuration["detector"]["dark_current"] = detector.dark_current.q / u.pix
             w = detector.qe.w
             t = detector.qe.q
-            self.total_qe = syn.spectrum.SpectralElement(Empirical1D, points=w, lookup_table=t)
-
+            self.configuration["detector"]["total_qe"] = syn.spectrum.SpectralElement(Empirical1D, points=w, lookup_table=t)
 
     def set_from_sei(self, name): 
 
