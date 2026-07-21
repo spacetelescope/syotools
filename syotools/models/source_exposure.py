@@ -8,8 +8,6 @@ import numpy as np
 import astropy.units as u
 import astropy.constants as const
 
-from matplotlib import pyplot as plt
-
 import synphot as syn
 from synphot.models import Empirical1D
 
@@ -82,7 +80,7 @@ class SourceExposure(PersistentModel):
         self._interp_flux = np.zeros(1, dtype=float) * u.dimensionless_unscaled # the source SED interpolated to the Spectrograph wavelength grid
 
         self.verbose = False # set this to True for debugging purposes
-        self._disable = False #set this to disable recalculating (when updating several attributes at the same time)
+        self._disable = True #set this to disable recalculating (when updating several attributes at the same time)
         #super().__init__(default_model, **kw)
 
     def disable(self):
@@ -105,7 +103,7 @@ class SourceExposure(PersistentModel):
         valid_unknowns = ("exptime", "snr", "magnitude")
         if new_unknown in valid_unknowns:
             self._unknown = new_unknown
-            self.calculate()
+            self.enable() # once this is set, enable calculation (which immediately runs one)
         else:
             raise KeyError(f"Cannot solve for {new_unknown}, unrecognized unknown.")
 
@@ -329,9 +327,6 @@ class SourceExposure(PersistentModel):
         print("QE", qe)
         print("Band", band["bandpass"])
 
-        plt.plot(band["bandpass"].waveset, band["bandpass"](band["bandpass"].waveset))
-        plt.show()
-
         # apply internal effects within telescope & instrument
         fsource = syn.observation.Observation(flux_source, band["bandpass"] * qe)
         fsky = syn.observation.Observation(flux_sky, band["bandpass"] * qe, force='taper')
@@ -353,6 +348,8 @@ class SourceExposure(PersistentModel):
         fsource_countrate = transform_flux(fsource, wave) * dw
         fsky_countrate = transform_flux(fsky, wave) * dw
         thermal_countrate = transform_flux(thermal, wave) * dw
+        if dw == 1:
+            self.wave = band["bandpass"].pivot()
 
         return fsource_countrate, fsky_countrate, thermal_countrate, dark, read_noise
 
@@ -439,10 +436,6 @@ class SourceExposure(PersistentModel):
             print("Fstar:", fsource_countrate)
             print("Texp:", texp)
 
-        plt.plot(self.wave, texp)
-        #plt.ylim(1e1,1e22)
-        plt.yscale("log")
-        plt.show()
 
         self._exptime = texp
 
@@ -528,11 +521,6 @@ class SourceExposure(PersistentModel):
                                       + dark_counts + thermal_counts)
         self._snr = (snr / u.ct**0.5).to(u.dimensionless_unscaled)
 
-        plt.plot(self.wave, snr)
-        #plt.ylim(1e1,1e22)
-        plt.yscale("log")
-        plt.show()
-
         if self.verbose:
             print('# of exposures: {}'.format(_nexp))
             print('Time per exposure: {}'.format(time_per_exposure[0]))
@@ -554,7 +542,7 @@ class SourceExposure(PersistentModel):
 class SourcePhotometricExposure(SourceExposure):
     """ A subclass of the base Exposure model, for photometric ETC calculations """
 
-    def calculate(self, band=None):
+    def calculate(self):
         """
         Wrapper to calculate the exposure time, SNR, or limiting magnitude,
         based on the other two. The "unknown" attribute controls which of these
@@ -564,7 +552,7 @@ class SourcePhotometricExposure(SourceExposure):
             return False
         if self.instrument is None or self.telescope is None:
             return False
-        configuration = self.recover("instrument.configuration")
+        configuration, band = self.recover("instrument.configuration", "instrument.band")
         if band is None:
             bands = configuration["channel_filters"]
         else:
@@ -600,7 +588,7 @@ class SourceSpectrographicExposure(SourceExposure):
     A subclass of the base Exposure model, for spectroscopic ETC calculations.
     """
 
-    def calculate(self, band=None):
+    def calculate(self):
         """
         Wrapper to calculate the exposure time, SNR, or limiting magnitude,
         based on the other two. The "unknown" attribute controls which of these
@@ -610,7 +598,7 @@ class SourceSpectrographicExposure(SourceExposure):
             return False
         if self.instrument is None or self.telescope is None:
             return False
-        configuration = self.recover("instrument.configuration")
+        configuration, band = self.recover("instrument.configuration", "instrument.band")
         if band is None:
             bands = configuration["channel_filters"]
         else:
@@ -638,7 +626,7 @@ class SourceIFSExposure(SourceExposure):
         # Do this after, because by default super().__init__ loads a default source
         self.sources = []
 
-    def calculate(self, band=None):
+    def calculate(self):
         """
         Wrapper to calculate the exposure time, SNR, or limiting magnitude,
         based on the other two. The "unknown" attribute controls which of these
@@ -648,7 +636,7 @@ class SourceIFSExposure(SourceExposure):
             return False
         if self.instrument is None or self.telescope is None:
             return False
-        configuration = self.recover("instrument.configuration")
+        configuration, band = self.recover("instrument.configuration", "instrument.band")
         if band is None:
             bands = configuration["channel_filters"]
         else:
