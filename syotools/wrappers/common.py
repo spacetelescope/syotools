@@ -124,7 +124,7 @@ def compute_observation(telescope, instrument="hri", sed="G2V Star", magnitude=2
     else:
         raise ValueError(f"Unrecognized instrument {instrument}. Valid options are 'camera', 'spectroscopy', 'ifs'.")
 
-    return result
+    return exp.wave, result
 
 def check_relative_diff(actual, expected, rel_tol=0.1):
     """

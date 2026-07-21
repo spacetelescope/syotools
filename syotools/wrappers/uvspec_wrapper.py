@@ -70,7 +70,7 @@ def uvspec_snr(telescope, mode, template, fuvmag, exptime, silent=False):
     uvi_exp.enable()
     uvi_snr = uvi_exp.recover('snr')
 
-    wave, snr =  uvi.wave, uvi_exp.snr
+    wave, snr =  uvi_exp.wave, uvi_exp.snr
 
     return wave, snr, uvi
 
@@ -134,7 +134,7 @@ def uvspec_exptime(telescope, mode, template, fuvmag, snr, silent=False):
         print("Current grating mode: {}".format(uvi.descriptions[uvi.mode]))
         print("Current exposure time: {} hours\n".format(uvi_exp.exptime))
 
-    uvi_exp.snr= snr * u.dimensionless_unscaled
+    uvi_exp.snr= snr# * u.ct**0.5 / u.pix**0.5
     uvi_exp.unknown = 'exptime' #< --- this triggers the _update_exptime function in the SpectrographicExposure exposure object
     print("Setting SNR", snr, uvi_exp.snr)
 
@@ -142,7 +142,7 @@ def uvspec_exptime(telescope, mode, template, fuvmag, snr, silent=False):
 
     uvi_exptime = uvi_exp.recover('exptime')
 
-    wave, exptime =  uvi.wave, uvi_exp.exptime
+    wave, exptime =  uvi_exp.wave, uvi_exp.exptime
 
 
     return wave, exptime, uvi

@@ -7,6 +7,7 @@ import numpy as np
 import astropy.constants as const
 import astropy.units as u
 import synphot as syn
+import stsynphot as stsyn
 from synphot.models import Empirical1D
 
 from .instrument import Instrument
@@ -71,7 +72,8 @@ class Camera(Instrument):
         self.bandpass_r = np.zeros(1, dtype=float) * u.dimensionless_unscaled
         self.dark_current = np.zeros(1, dtype=float) * (u.electron / u.s / u.pixel)
         #self.detector_rn = np.zeros(1, dtype=float) * (u.electron / u.pixel)**0.5
-        self.sky = syn.spectrum.SourceSpectrum(Empirical1D, points=[0.1,10000, 20000] << u.AA, lookup_table=[24,24,24] << u.ABmag) # Hardcode a 22nd magnitude background
+        self.sky = syn.spectrum.SourceSpectrum(Empirical1D, points=[0.1,10000, 20000] << u.AA, lookup_table=[24,24,24] << u.ABmag) # Hardcode a 24th magnitude background. Should actually be ABMag/arcsec^2.
+        self.sky = self.sky.normalize(24 * u.ABmag, stsyn.spectrum.band("johnson,v"))
         #super().__init__(default_camera, **kw)
 
     @property

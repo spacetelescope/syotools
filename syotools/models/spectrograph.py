@@ -7,6 +7,7 @@ Created on Sat Oct 15 16:56:40 2016
 
 import numpy as np
 import astropy.units as u
+import astropy.constants as const
 from astropy.table import QTable
 import synphot as syn
 from synphot.models import Empirical1D
@@ -122,7 +123,9 @@ class Spectrograph(Instrument):
 
     def transform_flux(self, spectrum, wave):
         effective_area = self.recover("telescope.effective_area")
-        return syn.units.convert_flux(wave, spectrum(wave), u.ct, area=effective_area) / u.s
+        flux = syn.units.convert_flux(wave, spectrum(wave), u.erg / u.s / u.cm**2 / u.AA)
+        phot_energy = const.h.to(u.erg * u.s) * const.c.to(u.cm / u.s) / wave.to(u.cm) / u.ct
+        return flux / phot_energy * effective_area
 
     def set_from_hwome(self, channelname):
         self.configuration = {}
@@ -174,8 +177,9 @@ class Spectrograph(Instrument):
         for detector in channel_data.Detector:
             self.configuration["detector"]["name"] = detector.name
             self.configuration["detector"]["read_noise"] = detector.read_noise.q
+            print("readnoise", self.configuration["detector"]["read_noise"])
             self.configuration["detector"]["thermal"] = detector.temperature.q
-            self.configuration["detector"]["dark_current"] = detector.dark_current.q / u.pix
+            self.configuration["detector"]["dark_current"] = detector.dark_current.q / u.pix #* u.electron / u.pix**2 / u.ct # needs to be electrons per pixel per second
             w = detector.qe.w
             t = detector.qe.q
             self.configuration["detector"]["total_qe"] = syn.spectrum.SpectralElement(Empirical1D, points=w, lookup_table=t)

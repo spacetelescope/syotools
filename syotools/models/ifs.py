@@ -7,8 +7,10 @@ Created on Sat Oct 15 16:56:40 2016
 
 import numpy as np
 import astropy.units as u
+import astropy.constants as const
 from astropy.table import QTable
 import synphot as syn
+import stsynphot as stsyn
 from synphot.models import Empirical1D
 
 from syotools.models.base import PersistentModel
@@ -53,6 +55,7 @@ class IFS(Spectrograph):
         self.modes = []
         self.descriptions = {}
         self.sky = syn.spectrum.SourceSpectrum(Empirical1D, points=[0.1,20000] << u.AA, lookup_table=[24,24] << u.ABmag)
+        self.sky = self.sky.normalize(24 * u.ABmag, stsyn.spectrum.band("johnson,v"))
         self.R = 0. * u.dimensionless_unscaled
         self.wave = np.zeros(0, dtype=float) * u.AA
         self.aeff = np.zeros(0, dtype=float) * u.cm**2
@@ -81,7 +84,8 @@ class IFS(Spectrograph):
 
         self.R = self.configuration["element"][nmode]["resolution"]
         self.wave = self.configuration["element"][nmode]["bandpass"].waveset
-        self.bef = syn.spectrum.SourceSpectrum(Empirical1D, points=self.wave, lookup_table=np.ones_like(self.wave.value) * 24 << u.ABmag)
+        self.sky = syn.spectrum.SourceSpectrum(Empirical1D, points=self.wave, lookup_table=np.ones_like(self.wave.value) * 24 << u.ABmag)
+        self.sky = self.sky.normalize(24 * u.ABmag, stsyn.spectrum.band("johnson,v"))
         self.aeff = self.configuration["element"][nmode]["bandpass"]
         wrange = np.array((np.min(self.wave.value), np.max(self.wave.value)))
         self.wrange = wrange
@@ -123,7 +127,9 @@ class IFS(Spectrograph):
 
     def transform_flux(self, spectrum, wave):
         effective_area = self.recover("telescope.effective_area")
-        return syn.units.convert_flux(wave, spectrum(wave), u.ct, area=effective_area) / u.s
+        flux = syn.units.convert_flux(wave, spectrum(wave), u.erg / u.s / u.cm**2 / u.AA)
+        phot_energy = const.h.to(u.erg * u.s) * const.c.to(u.cm / u.s) / wave.to(u.cm) / u.ct
+        return flux / phot_energy * effective_area
 
     def set_from_hwome(self, channelname):
         self.configuration = {}
