@@ -185,7 +185,7 @@ class SourceExposure(PersistentModel):
 
     @property
     def magnitude(self, source=None):
-        if self.unknown == "magnitude":
+        if self.unknown == "magnitude" or source is None:
             return self._magnitude
         #If magnitude is not unknown, it should be interpolated from the SED
         #at the camera bandpasses.

@@ -10,9 +10,37 @@ from syotools.wrappers.camera_wrapper import camera_exptime
 from syotools.wrappers.uvspec_wrapper import uvspec_exptime
 
 import pickle
+import random
 
 UVSPEC_BASELINE_PICKLE = "tests/baselines/uvspec_exptime.pickle"
 CAMERA_BASELINE_PICKLE = "tests/baselines/camera_exptime.pickle"
+BASELINE_SIZE = 50
+
+def generate_uvspec_exptime_baseline():
+    # telescope, mode, template, uvmag, snr_goal
+    baseline = [(mag, snr, [exp for exp in uvspec_exptime('EAC1', 'G180M', 'G2V Star', mag, snr, True)[1]])
+                  for mag in range(4, 35)
+                  for snr in range(3, 10)]
+
+    with open(UVSPEC_BASELINE_PICKLE, "wb") as f:
+        random.seed(7)
+        pickle.dump(random.sample(baseline, BASELINE_SIZE), f)
+
+def generate_camera_exptime_baseline():
+    baseline = [(mag, snr, [q.value for q in camera_exptime('EAC1', 'G2V Star', mag, snr, True)[0]]) for mag in range(4, 35) for snr in range(3, 10)]
+    with open(CAMERA_BASELINE_PICKLE, "wb") as f:
+        random.seed(7)
+        pickle.dump(random.sample(baseline, BASELINE_SIZE, ), f)
+
+if __name__ == "__main__":
+    generate_camera_exptime_baseline()
+    generate_uvspec_exptime_baseline()
+    camera_exptime_baseline = pickle.load(open(CAMERA_BASELINE_PICKLE, "rb"))
+    uvspec_exptime_baseline = pickle.load(open(UVSPEC_BASELINE_PICKLE, "rb"))
+else:
+    camera_exptime_baseline = pickle.load(open(CAMERA_BASELINE_PICKLE, "rb"))
+    uvspec_exptime_baseline = pickle.load(open(UVSPEC_BASELINE_PICKLE, "rb"))
+
 
 def check_relative_diff(actual, expected, rel_tol=0.001):
     """
@@ -75,9 +103,7 @@ def test_telescope_json():
     assert tel1.cameras != tel2.cameras
 
 
-camera_exptime_baseline = pickle.load(open(CAMERA_BASELINE_PICKLE, "rb"))
-uvspec_exptime_baseline = pickle.load(open(UVSPEC_BASELINE_PICKLE, "rb"))
-BASELINE_SIZE = 50
+
 
 @pytest.mark.parametrize("magnitude, snr_goal, expected", camera_exptime_baseline)
 def test_camera_exptime_calculation(magnitude, snr_goal, expected):
@@ -90,24 +116,12 @@ def test_uvspec_exptime_calculation(magnitude, snr_goal, expected):
     expected = [q.value for q in expected]
     assert check_relative_diff([q.value for q in exp_times], expected, 0.0005) #1e-3)
 
-# def test_generate_camera_exptime_baseline():
-#     baseline = [(mag, snr, [q.value for q in camera_exptime('EAC1', 'G2V Star', mag, snr, True)[0]]) for mag in range(4, 35) for snr in range(3, 10)]
-#     with open(CAMERA_BASELINE_PICKLE, "wb") as f:
-#         random.seed(7)
-#         pickle.dump(random.sample(baseline, BASELINE_SIZE, ), f)
 
-# def test_print_things():
-#     print(uvspec_exptime('EAC1', 'G180M', 'G2V Star', 20, 5.0, True)[1][0:10])
 
-# def test_generate_uvspec_exptime_baseline():
-#     # telescope, mode, template, uvmag, snr_goal
-#     baseline = [(mag, snr, [exp for exp in uvspec_exptime('EAC1', 'G180M', 'G2V Star', mag, snr, True)[1]])
-#                   for mag in range(4, 35)
-#                   for snr in range(3, 10)]
+def test_print_things():
+    print(uvspec_exptime('EAC1', 'G180M', 'G2V Star', 20, 5.0, True)[1][0:10])
 
-#     with open(UVSPEC_BASELINE_PICKLE, "wb") as f:
-#         random.seed(7)
-#         pickle.dump(random.sample(baseline, BASELINE_SIZE), f)
+
 
 # Okay, coronagraph models are not actually implemented in the structure
 # that camera and uvspec are.  See cg_example.ipynb for how different
@@ -149,18 +163,20 @@ def create_eac(name: str):
     return telescope
 
 def test_telescope_pickle():
-  """
-  This test verifies that the telescope can be pickled with a camera and
-  spectrograph attached. Pickling is required to support the DISRA notebook
-  framework. Document gotchas related to pickling found by this test here
-  so that if it starts failing people have some clues about where to look.
-  - Some astropy quantities related to FITS file data retain weakrefs
-    (not pickle) to the table data. Using copy() removes these.
-    The spectrograph class had this issue, resolved with:
-     self.wave = table['Wavelength'].copy()
-  """
-  import pickle
-  telescope = create_eac("EAC1")
-  exp = telescope.cameras[0].create_exposure()
-  tele2 = pickle.loads(pickle.dumps(telescope))
-  assert telescope.name == tele2.name
+    """
+    This test verifies that the telescope can be pickled with a camera and
+    spectrograph attached. Pickling is required to support the DISRA notebook
+    framework. Document gotchas related to pickling found by this test here
+    so that if it starts failing people have some clues about where to look.
+    - Some astropy quantities related to FITS file data retain weakrefs
+        (not pickle) to the table data. Using copy() removes these.
+        The spectrograph class had this issue, resolved with:
+        self.wave = table['Wavelength'].copy()
+    """
+    import pickle
+    telescope = create_eac("EAC1")
+    exp = telescope.cameras[0].create_exposure()
+    tele2 = pickle.loads(pickle.dumps(telescope))
+    assert telescope.name == tele2.name
+
+
