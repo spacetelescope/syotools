@@ -36,7 +36,7 @@ def camera_snr(telescope, template, magnitude, exptime, silent=False):
 	tel = Telescope()   # create a Telescope, Camera, and Exposure 
 	tel.set_from_hwome(telescope)
 	hri = Camera(tel)
-	hri.set_from_hwome('HRI_S.HRI_S_NIR')
+	hri.set_from_hwome('HRI_S.HRI_S_UVIS')
 	
 	source = Source() 
 	redshift = 0. # changes to these are not implemented yet 

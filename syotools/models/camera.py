@@ -61,6 +61,7 @@ class Camera(Instrument):
     def __init__(self, telescope, **kw):
 
         self.telescope = telescope
+        self._band = None
         self.exposures = []
         self.name = ''
         #self.pivotwave = np.zeros(1, dtype=float) * u.nm
@@ -77,13 +78,24 @@ class Camera(Instrument):
         #super().__init__(default_camera, **kw)
 
     @property
-    def n_bands(self):
+    def n_modes(self):
         return len(self.channel_filters)
 
     @property
     def n_channels(self):
         # this has always referred to the filters
         return len(self.channel_filters)
+
+    @property
+    def band(self):
+        return self._band
+
+    @band.setter
+    def band(self, new_band):
+        if new_band in self.configuration["channel_filters"]:
+            self._band = new_band
+        else:
+            raise KeyError(f"Cannot set band {new_band}, valid options for this channel are {self.configuration["channel_filters"]}")
 
     @property
     def pivotwave(self):
@@ -207,22 +219,21 @@ class Camera(Instrument):
             raise KeyError(f"Unrecognized Channel {channel}.\n Legal values are {instrument_data.Channel.name.keys()}")
         channel_data = instrument_data[channel]
 
-        # extract all the filters
-        self.configuration["channel_filters"] = []
-        for channel_filter in channel_data.Filter:
-            self.configuration["channel_filters"].append(channel_filter.name.value)
 
         self.configuration["element"] = {}
-        for channel_filter in self.configuration["channel_filters"]:
+        self.configuration["channel_filters"] = []
+        for channel_filter in channel_data.Filter.name.keys():
+            filter_name = channel_filter.split(".")[-1]
+            self.configuration["channel_filters"].append(filter_name)
             # this commands HWOME to walk down the entire optical path of the telescope down to the filter(grating) and collect all of the optics.
-            thru = self.telescope.hwo_data.OpticalPath.select(instrument=instrument, channel=channel, filter = channel_filter).throughput(include_detector=False)
+            thru = self.telescope.hwo_data.OpticalPath.select(instrument=instrument, channel=channel, filter = filter_name).throughput(include_detector=False)
             # then we multiply all of them together
             total_throughput = np.prod(thru.q, axis=0)
             # and store for later retrieval
             band = syn.spectrum.SpectralElement(Empirical1D, points=thru.w, lookup_table=total_throughput)
             wavemin = band.avgwave() - band.rectwidth()/2
             wavemax = band.avgwave() + band.rectwidth()/2
-            self.configuration["element"][channel_filter] = {"name": channel_filter, "bandpass": band, "effective_wavelength": band.avgwave(), "wave_min": wavemin, "wave_max": wavemax, "optics": len(thru.value.keys())}
+            self.configuration["element"][filter_name] = {"name": filter_name, "bandpass": band, "effective_wavelength": band.avgwave(), "wave_min": wavemin, "wave_max": wavemax, "optics": len(thru.value.keys())}
 
         self.configuration["diffraction_limit"] = channel_data.diffraction_limited.q
         self.configuration["pixel_scale"] = channel_data.plate_scale.q

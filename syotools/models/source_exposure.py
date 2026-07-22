@@ -117,7 +117,7 @@ class SourceExposure(PersistentModel):
         if not isinstance(val, list):
             if self.instrument is None:
                 nb = 1
-            else:
+            elif self.instrument:
                 nb = self.recover('instrument.n_bands')
             q[0]['value'] = np.full(nb, val).tolist()
 
@@ -598,7 +598,7 @@ class SourceSpectrographicExposure(SourceExposure):
             return False
         if self.instrument is None or self.telescope is None:
             return False
-        configuration, band = self.recover("instrument.configuration", "instrument.band")
+        configuration, band = self.recover("instrument.configuration", "instrument.mode")
         if band is None:
             bands = configuration["channel_filters"]
         else:
@@ -636,7 +636,7 @@ class SourceIFSExposure(SourceExposure):
             return False
         if self.instrument is None or self.telescope is None:
             return False
-        configuration, band = self.recover("instrument.configuration", "instrument.band")
+        configuration, band = self.recover("instrument.configuration", "instrument.mode")
         if band is None:
             bands = configuration["channel_filters"]
         else:

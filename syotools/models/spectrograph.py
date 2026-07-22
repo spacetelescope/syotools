@@ -10,6 +10,7 @@ import astropy.units as u
 import astropy.constants as const
 from astropy.table import QTable
 import synphot as syn
+import stsynphot as stsyn
 from synphot.models import Empirical1D
 
 from .instrument import Instrument
@@ -54,6 +55,7 @@ class Spectrograph(Instrument):
         self.modes = []
         self.descriptions = {}
         self.sky = syn.spectrum.SourceSpectrum(Empirical1D, points=[0.1,20000] << u.AA, lookup_table=[24,24] << u.ABmag)
+        self.sky = self.sky.normalize(24 * u.ABmag, stsyn.spectrum.band("johnson,v"))
         self.R = 0. * u.dimensionless_unscaled
         self.wave = np.zeros(0, dtype=float) * u.AA
         self.aeff = np.zeros(0, dtype=float) * u.cm**2
@@ -82,7 +84,8 @@ class Spectrograph(Instrument):
 
         self.R = self.configuration["element"][nmode]["resolution"]
         self.wave = self.configuration["element"][nmode]["bandpass"].waveset
-        self.bef = syn.spectrum.SourceSpectrum(Empirical1D, points=self.wave, lookup_table=np.ones_like(self.wave.value) * 24 << u.ABmag)
+        self.sky = syn.spectrum.SourceSpectrum(Empirical1D, points=self.wave, lookup_table=np.ones_like(self.wave.value) * 24 << u.ABmag)
+        self.sky = self.sky.normalize(24 * u.ABmag, stsyn.spectrum.band("johnson,v"))
         self.aeff = self.configuration["element"][nmode]["bandpass"]
         wrange = np.array((np.min(self.wave.value), np.max(self.wave.value)))
         self.wrange = wrange
