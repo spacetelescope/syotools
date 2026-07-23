@@ -1,12 +1,12 @@
 
-def uvspec_snr(telescope, mode, template, fuvmag, exptime, silent=False):
+def uvspec_snr(telescope, band, template, fuvmag, exptime, silent=False):
     ''' Run a basic SNR calculation that takes in a telescope,
         spectral template, normalization magnitude, and exposure
         time to compute SNR. For converting magnitude, template,
 	      and SNR to a desired exposure time, use uvspec_exptime.py
 
         usage:
-	      wave, snr, uvi = uvspec_snr(telescope, mode, template, uvmag, exptime)
+	      wave, snr, uvi = uvspec_snr(telescope, band, template, uvmag, exptime)
 
           positional arguments:
 
@@ -15,7 +15,7 @@ def uvspec_snr(telescope, mode, template, fuvmag, exptime, silent=False):
              EAC2 = 6 m diameter off-axis
              EAC3 = 8 m diameter on-axis
 
-           2-mode = your choice of UVI grating, a string:
+           2-band = your choice of UVI grating, a string:
 		        ['G120M', 'G150M', 'G180M', 'G155L', 'G145LL', 'G300M']
 
            3-template = your choice of spectral template:
@@ -39,7 +39,7 @@ def uvspec_snr(telescope, mode, template, fuvmag, exptime, silent=False):
     tel.set_from_hwome(telescope)
     uvi = Spectrograph(tel)
     uvi.set_from_hwome("UV_MOS.FUV_MOS")
-    uvi.mode = mode
+    uvi.band = band
 
     source = Source()
     redshift = 0.0
@@ -76,7 +76,7 @@ def uvspec_snr(telescope, mode, template, fuvmag, exptime, silent=False):
 
 
 
-def uvspec_exptime(telescope, mode, template, fuvmag, snr, silent=False):
+def uvspec_exptime(telescope, band, template, fuvmag, snr, silent=False):
 
     ''' 
     Run a basic SNR calculation that takes in a telescope, spectral template,
@@ -84,7 +84,7 @@ def uvspec_exptime(telescope, mode, template, fuvmag, snr, silent=False):
     magnitude, template, and exptime to SNR, use uvspec_snr.py
 
       usage:
-	      wave, exptime, uvi = uvspec_exptime(telescope, mode, template, uvmag, snr)
+	      wave, exptime, uvi = uvspec_exptime(telescope, band, template, uvmag, snr)
 
         positional arguments:
 
@@ -93,7 +93,7 @@ def uvspec_exptime(telescope, mode, template, fuvmag, snr, silent=False):
             EAC2 = 6 m diameter off-axis 
             EAC3 = 8 m diameter on-axis
 
-          2-mode = your choice of UVI grating, a string:
+          2-band = your choice of UVI grating, a string:
           ['G120M', 'G150M', 'G180M', 'G155L', 'G145LL', 'G300M']
 
           3-template = your choice of spectral template:
@@ -116,7 +116,7 @@ def uvspec_exptime(telescope, mode, template, fuvmag, snr, silent=False):
     tel.set_from_hwome(telescope)
     uvi = Spectrograph(tel)
     uvi.set_from_hwome("UV_MOS.FUV_MOS")
-    uvi.mode = mode
+    uvi.band = band
 
     source = Source()
     redshift = 0.0

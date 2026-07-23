@@ -52,7 +52,6 @@ class IFS(Spectrograph):
         self._ifs_default_file = ''
 
         self.name = ''
-        self.modes = []
         self.descriptions = {}
         self.sky = syn.spectrum.SourceSpectrum(Empirical1D, points=[0.1,20000] << u.AA, lookup_table=[24,24] << u.ABmag)
         self.sky = self.sky.normalize(24 * u.ABmag, stsyn.spectrum.band("johnson,v"))
@@ -60,35 +59,43 @@ class IFS(Spectrograph):
         self.wave = np.zeros(0, dtype=float) * u.AA
         self.aeff = np.zeros(0, dtype=float) * u.cm**2
         self.wrange = np.zeros(2, dtype=float) * u.AA
-        self._mode = ''
+        self._band = None
         #super().__init__(default_model, **kw)
 
 
-    #Property wrapper for mode, so that we can use a custom setter to propagate
-    #mode updates to all the rest of the parameters
+    #Property wrapper for band, so that we can use a custom setter to propagate
+    #band updates to all the rest of the parameters
+    @property
+    def n_bands(self):
+        return len(self.configuration["channel_filters"])
 
     @property
-    def mode(self):
-        return self._mode
+    def band(self):
+        return self._band
 
-    @mode.setter
-    def mode(self, new_mode):
+    @property
+    def bands(self):
+        return self.configuration["channel_filters"]
+
+    @band.setter
+    def band(self, new_band):
         """
-        Mode is used to set all the other parameters
+        Band is used to set all the other parameters
         """ 
 
-        nmode = new_mode.upper()
-        if self._mode == nmode or nmode not in self.modes:
+        nband = new_band.upper()
+        if self._band == nband or nband not in self.configuration["channel_filters"]:
             return
-        self._mode = nmode
+        self._band = nband
 
-        self.R = self.configuration["element"][nmode]["resolution"]
-        self.wave = self.configuration["element"][nmode]["bandpass"].waveset
+        self.R = self.configuration["element"][nband]["resolution"]
+        self.wave = self.configuration["element"][nband]["bandpass"].waveset
         self.sky = syn.spectrum.SourceSpectrum(Empirical1D, points=self.wave, lookup_table=np.ones_like(self.wave.value) * 24 << u.ABmag)
         self.sky = self.sky.normalize(24 * u.ABmag, stsyn.spectrum.band("johnson,v"))
-        self.aeff = self.configuration["element"][nmode]["bandpass"]
+        self.aeff = self.configuration["element"][nband]["bandpass"]
         wrange = np.array((np.min(self.wave.value), np.max(self.wave.value)))
         self.wrange = wrange
+
 
     @property
     def delta_lambda(self):

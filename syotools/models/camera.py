@@ -78,13 +78,13 @@ class Camera(Instrument):
         #super().__init__(default_camera, **kw)
 
     @property
-    def n_modes(self):
-        return len(self.channel_filters)
+    def n_bands(self):
+        return len(self.configuration["channel_filters"])
 
     @property
     def n_channels(self):
         # this has always referred to the filters
-        return len(self.channel_filters)
+        return len(self.configuration["channel_filters"])
 
     @property
     def band(self):

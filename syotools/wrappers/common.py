@@ -10,35 +10,34 @@ from syotools.spectra.spec_defaults import syn_spectra_library
 from syotools.models import Camera, Spectrograph, IFS, Telescope, Source, SourcePhotometricExposure, SourceSpectrographicExposure, SourceIFSExposure
 from syotools.utils.yaml_utils import read_yaml, write_yaml
 
-def _do_calculation(tel, inst, exp, mode=None, source=None, snr=10.0, exptime=100, bandpass=None, target="magnitude", verbose=False):
+def _do_calculation(tel, inst, exp, band=None, source=None, snr=10.0, exptime=100, bandpass=None, target="magnitude", verbose=False):
 
     if verbose:
         print(target)
 
     # a setting for spectrographs
-    if mode is not None:
-        inst.mode = mode
+    if band is not None:
+        inst.band = band
 
     if target == "magnitude":
         if isinstance(inst, (Spectrograph, IFS)):
             raise NotImplementedError("Spectrographs cannot currently solve for limiting magnitude")
         
-        exp._exptime = [exptime] * u.hr
-        exp._snr = [snr] * u.dimensionless_unscaled 
-        exp.unknown = target
         tel.add_camera(inst)
         inst.add_exposure(exp)
+        exp.exptime = [exptime] * u.hr
+        exp.snr = [snr] * u.dimensionless_unscaled 
+        exp.unknown = target
 
         result = exp._magnitude
 
     elif target == "exptime":
-        
-        exp._snr = [snr] * u.dimensionless_unscaled
-        exp.unknown = target
         tel.add_camera(inst)
 
         inst.add_exposure(exp)
 
+        exp.snr = [snr] * u.dimensionless_unscaled
+        exp.unknown = target
 
         if verbose and hasattr(inst, "bandnames"):
             print('-- Computing Exptime as the Unknown --') 
@@ -47,10 +46,10 @@ def _do_calculation(tel, inst, exp, mode=None, source=None, snr=10.0, exptime=10
 
     elif target == "snr":
 
-        exp._exptime = [exptime] * u.hr
-        exp.unknown = target
         tel.add_camera(inst)
         inst.add_exposure(exp)
+        exp.exptime = [exptime] * u.hr
+        exp.unknown = target
 
         result = exp._snr
 
@@ -107,8 +106,8 @@ def compute_observation(telescope, instrument="hri", sed="G2V Star", magnitude=2
         exp.source = source
         exp.verbose = verbose
 
-        for mode in inst.modes:
-            result.append(_do_calculation(tel, inst, exp, mode=mode, source=source, snr=snr, exptime=exptime, bandpass=bandpass, target=target, verbose=verbose))
+        for band in inst.bands:
+            result.append(_do_calculation(tel, inst, exp, band=band, source=source, snr=snr, exptime=exptime, bandpass=bandpass, target=target, verbose=verbose))
 
     elif instrument.lower() in ["ifs", "ifu"]:
         inst = IFS(tel)
@@ -119,8 +118,8 @@ def compute_observation(telescope, instrument="hri", sed="G2V Star", magnitude=2
         #exp.source = source2
         exp.verbose = verbose
 
-        for mode in inst.modes:
-            result.append(_do_calculation(tel, inst, exp, mode=mode, source=source, snr=snr, exptime=exptime, bandpass=bandpass, target=target, verbose=verbose))
+        for band in inst.bands:
+            result.append(_do_calculation(tel, inst, exp, band=band, source=source, snr=snr, exptime=exptime, bandpass=bandpass, target=target, verbose=verbose))
     else:
         raise ValueError(f"Unrecognized instrument {instrument}. Valid options are 'camera', 'spectroscopy', 'ifs'.")
 

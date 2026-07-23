@@ -47,16 +47,17 @@ def camera_snr(telescope, template, magnitude, exptime, silent=False):
 	exp = SourcePhotometricExposure() 
 	exp.source = source
 	    
-	exp.unknown = 'snr'
-	exp.exptime = [exptime] * u.hr
+
 	tel.add_camera(hri)
 	hri.add_exposure(exp)
+	exp.exptime = [exptime] * u.hr
+	exp.unknown = 'snr'
 
 	if not silent: 
 		print('------ Computing SNR as the Unknown -------') 
 		for bb, ss in zip(hri.bandnames, exp.snr): print("{}, SNR = {}".format(bb, ss)) 
 	            
-	return exp.results, hri 
+	return exp.snr, hri 
 
 
 def camera_exptime(telescope, template, magnitude, snr, silent=False): 
@@ -104,21 +105,24 @@ def camera_exptime(telescope, template, magnitude, snr, silent=False):
 	
 	source.set_sed(template, magnitude, redshift, extinction, bandpass="johnson,v")   
 
-	exp = SourcePhotometricExposure() 
-	exp.source = source
-	
-	exp.unknown = 'exptime'
-	exp.snr = snr #* u.Unit('electron(1/2)')  
-	print("Set to", exp.snr, snr)
 	tel.add_camera(hri)
 
+	exp = SourcePhotometricExposure() 
+	exp.source = source
+
 	hri.add_exposure(exp)
+
+
 	
+
+	exp.snr = snr #* u.Unit('electron(1/2)')
+
+	exp.unknown = 'exptime'
 	if not silent: 
 		print('-- Computing Exptime as the Unknown --') 
 		for bb, ee in zip(hri.bandnames, exp.exptime): print("{}, SNR = {}".format(bb, ee)) 
 
-	return exp.results, hri 
+	return exp.exptime, hri 
 
 def camera_magnitude(telescope, template, snr, exptime, silent=False): 
 	''' 
@@ -167,15 +171,16 @@ def camera_magnitude(telescope, template, snr, exptime, silent=False):
 	exp = SourcePhotometricExposure() 
 	exp.source = source
 	
-	exp.exptime = [exptime] * u.hr
-	exp.snr = [snr] * u.dimensionless_unscaled
+
 	    
-	exp.unknown = 'magnitude' 
 	tel.add_camera(hri)
 	hri.add_exposure(exp)
-	
+	exp.exptime = [exptime] * u.hr
+	exp.snr = [snr] * u.dimensionless_unscaled
+	exp.unknown = 'magnitude' 
+
 	if not silent: 
 		print('--- Computing Magnitude as the Unknown ---') 
 		for bb, mm in zip(hri.bandnames, exp.magnitude): print("{}, SNR = {}".format(bb, mm)) 
 	
-	return exp.results, hri 
+	return exp._magnitude, hri 

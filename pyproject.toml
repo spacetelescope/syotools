@@ -19,8 +19,6 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
 ]
 dependencies = [
-    "hwome-core@https://github.com/HWO-Project/hwome-core.git",
-    "hwome_data@https://github.com/HWO-Project/hwome_data.git",
     "astropy>6",
     "synphot",
     "stsynphot",
