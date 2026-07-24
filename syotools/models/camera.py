@@ -111,8 +111,6 @@ class Camera(Instrument):
             pivotunit = pivotval.unit
             pivot.append(pivotval.value)
 
-        print("Pivot", pivot)
-
         return np.asarray(pivot) << pivotunit
 
 
@@ -140,8 +138,6 @@ class Camera(Instrument):
         pivotwave = self.recover('pivotwave')
         pivot = pivotwave.to(u.nm)
         abzp = 5509900. * (u.photon / u.s / u.cm**2) / pivot
-
-        print("AB Zero", abzp[0])
 
         return abzp# << abunit
 

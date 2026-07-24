@@ -44,11 +44,6 @@ def uvspec_snr(telescope, band, template, fuvmag, exptime, silent=False):
     extinction = 0.0
     source.set_sed(template, fuvmag, redshift, extinction, bandpass="galex,fuv")
 
-
-
-
-    print("Suitable Instruments and Filters", suitable_instruments)
-
     for instrument in suitable_instruments:
         tel.verbose = True
         inst = tel.instruments[instrument]
@@ -131,8 +126,6 @@ def uvspec_exptime(telescope, band, template, fuvmag, snr, silent=False):
     uvi_exp.source = source
     uvi_exp.verbose = not silent
 
-    print("Suitable Instruments and Filters", suitable_instruments)
-
     for instrument in suitable_instruments:
         inst = tel.instruments[instrument]
 
@@ -147,10 +140,8 @@ def uvspec_exptime(telescope, band, template, fuvmag, snr, silent=False):
             print("Current grating mode: {}".format(inst.descriptions[inst.band]))
             print("Current exposure time: {} hours\n".format(uvi_exp.exptime))
 
-        print("SNR initial", snr)
         uvi_exp.snr = snr# * u.ct**0.5 / u.pix**0.5
         uvi_exp.unknown = 'exptime' #< --- this triggers the _update_exptime function in the SpectrographicExposure exposure object
-        print("Setting SNR", snr, uvi_exp.snr)
 
         uvi_exptime = uvi_exp.recover('exptime')
 

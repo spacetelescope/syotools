@@ -115,12 +115,9 @@ class SourceExposure(PersistentModel):
             nb = 1
         elif self.instrument:
             nb = self.recover('instrument.n_bands')
-            print(nb)
         val = quant 
         if quant.isscalar or len(quant) != nb:
-            print("expand", nb)
             q = np.full(nb, val) << quant.unit
-            print(q)
             quant = q
 
         return quant
@@ -139,7 +136,6 @@ class SourceExposure(PersistentModel):
         else:
             quant = quant << unit
         quant = self._ensure_array(quant)
-        print("QUANT", quant)
         return quant
 
     @property
@@ -162,7 +158,6 @@ class SourceExposure(PersistentModel):
         if self.unknown == "snr":
             return
         self._snr = self._ensure_quantity(new_snr, u.dimensionless_unscaled)
-        print("Setting SNR:", self._snr)
         self.calculate()
 
     @property 
@@ -272,11 +267,8 @@ class SourceExposure(PersistentModel):
             R = band["resolution"]
             waveunit = band["bandpass"].waveset.unit
             wavepix = band["bandpass"].waveset.value
-            print("Wavepix", wavepix, R, band["name"])
             delta_lambda = wavepix/R
-            print("Delta Lambda", delta_lambda)
             pixel = np.cumsum(1.0 / delta_lambda * np.gradient(wavepix))
-            print("Pixel", pixel, pixel[0], pixel[-1])
             pixel_integer = np.arange(int(pixel[0]), int(pixel[-1]))
             wave = np.interp(pixel_integer, pixel, wavepix) << waveunit
             dw = wave[1:] - wave[:-1]
@@ -309,7 +301,6 @@ class SourceExposure(PersistentModel):
             area = np.pi * (np.median(self.instrument.fwhm_psf(wave))/pixel_scale)**2
         if area > sn_box:
             flux_source = source.sed * (sn_box/area)
-        print("SN_Box", sn_box/area)
 
         #print("Source Mag", self.interpolated_source(flux_source))
 
@@ -317,7 +308,6 @@ class SourceExposure(PersistentModel):
         # uniform
         # goes through the full optical path QE
         # accumulates over time
-        print("SN_Box", sn_box, pixel_scale**2)
         # Synphot doesn't like dividing a spectrum by an area unit. 
         # Rest assured, sky was supposed to be in ABMag/arcsec**2, so 
         # ABMag/arcsec**2 * pixels**2 * arcsec**2/pixel**2 is flux.
@@ -331,9 +321,6 @@ class SourceExposure(PersistentModel):
         # goes through the filter wheel and QE
         # accumulates over time
         thermal = c_thermal(wave)
-
-        print("QE", qe)
-        print("Band", band["bandpass"])
 
         # apply internal effects within telescope & instrument
         fsource = syn.observation.Observation(flux_source, band["bandpass"] * qe)
@@ -352,7 +339,6 @@ class SourceExposure(PersistentModel):
         # single event at read time
         read_noise = read_noise * np.sqrt(sn_box) # * u.electron**0.5 / u.pix**0.5
 
-        print("DW", dw)
         fsource_countrate = transform_flux(fsource, wave) * dw
         fsky_countrate = transform_flux(fsky, wave) * dw
         thermal_countrate = transform_flux(thermal, wave) * dw
@@ -393,8 +379,6 @@ class SourceExposure(PersistentModel):
             bands = [band]
         self._exptime = []
         _snr_temp = self._snr
-        print("SNR_Temp", _snr_temp)
-        print("All Bands", all_bands)
         for idx, band in enumerate(bands):
             # because a multiple-in, multiple-out is a valid use case
             self._snr = _snr_temp[idx]
@@ -514,19 +498,9 @@ class SourceExposure(PersistentModel):
 
         snr2 = -(_snr**2)
 
-        print("SNR", _snr, snr2)
-        print("Dark", dark_current)
-        print("Readnoise", read_noise)
-        print("Thermal", thermal_countrate)
-        print("Fsource", fsource_countrate)
-        print("Fsky", fsky_countrate)
-
         a = (fsource_countrate)**2
         b = snr2 * (fsource_countrate + (fsky_countrate + thermal_countrate + dark_current)) * u.ct
         c = snr2 * read_noise**2 * _nexp
-        print("A", a)
-        print("B", b)
-        print("C", c)
         texp = ((-b + np.sqrt(b**2 - 4*a*c)) / (2*a)).to(u.s)
 
         if self.verbose:
@@ -557,23 +531,10 @@ class SourceExposure(PersistentModel):
         snr2 = -(_snr ** 2)
         f0 = 5509900. * (u.photon / u.s / u.cm**2) / band["bandpass"].pivot()
 
-        print("SNR", _snr, snr2)
-        print("Dark", dark_current)
-        print("Readnoise", read_noise)
-        print("Thermal", thermal_countrate)
-        print("Pivot", f0)
-        print("Fsky", fsky_countrate)
-
-
         a0 = (_exptime)**2
         b0 = snr2 * _exptime
         c0 = snr2 * ((fsky_countrate + thermal_countrate + dark_current) * _exptime + (read_noise**2 * _nexp)) / u.ct
         k = (-b0 + np.sqrt(b0**2 - 4. * a0 * c0)) / (2. * a0)
-
-        print("a0", a0)
-        print("b0", b0)
-        print("c0", c0)
-        print("k", k)
 
         flux = (4. * k) / (f0 * effective_area * band["bandpass"].equivwidth().to(u.nm))
 
@@ -606,13 +567,6 @@ class SourceExposure(PersistentModel):
         dark_counts = dark_current * _exptime
 
         thermal_counts = thermal_countrate * _exptime
-
-        print("Exptime", _exptime,_nexp)
-        print("Dark", dark_counts)
-        print("Readnoise", read_counts)
-        print("Thermal", thermal_counts)
-        print("Fsource", signal_counts)
-        print("Fsky", sky_counts)
 
         snr = signal_counts / np.sqrt(signal_counts + sky_counts + read_counts
                                       + dark_counts + thermal_counts)

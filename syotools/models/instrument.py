@@ -258,7 +258,6 @@ class Instrument(PersistentModel):
         for detector in channel_data.Detector:
             self.configuration["detector"]["name"] = detector.name
             self.configuration["detector"]["read_noise"] = detector.read_noise.q
-            print("readnoise", self.configuration["detector"]["read_noise"])
             self.configuration["detector"]["thermal"] = detector.temperature.q
             self.configuration["detector"]["dark_current"] = detector.dark_current.q / u.pix #* u.electron / u.pix**2 / u.ct # needs to be electrons per pixel per second
             w = detector.qe.w

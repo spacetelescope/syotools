@@ -41,9 +41,7 @@ def camera_snr(telescope, template, magnitude, exptime, silent=False):
 	redshift = 0. # changes to these are not implemented yet 
 	extinction = 0. 
 	
-	source.set_sed(template, magnitude, redshift, extinction, bandpass="johnson,v")   
-
-	print("Suitable Instruments and Filters", suitable_instruments)
+	source.set_sed(template, magnitude, redshift, extinction, bandpass="johnson,v")
 
 	for instrument in suitable_instruments:
 		inst = tel.instruments[instrument]
@@ -106,11 +104,9 @@ def camera_exptime(telescope, template, magnitude, snr, silent=False):
 	
 	source.set_sed(template, magnitude, redshift, extinction, bandpass="johnson,v")
 
-	print("Suitable Instruments and Filters", suitable_instruments)
 
 	for instrument in suitable_instruments:
 		inst = tel.instruments[instrument]
-		print("Bands", inst.bands)
 		exp = SourcePhotometricExposure()
 		exp.source = source
 
@@ -168,8 +164,6 @@ def camera_magnitude(telescope, template, snr, exptime, silent=False):
 	extinction = 0. 
 	
 	source.set_sed(template, 30., redshift, extinction)   
-	        
-	print("Suitable Instruments and Filters", suitable_instruments)
 
 	for instrument in suitable_instruments:
 		inst = tel.instruments[instrument]

@@ -100,7 +100,6 @@ class IFS(Spectrograph):
     @property
     def delta_lambda(self):
         wave, R = self.recover('wave', 'R')
-        #print("delta_lambda", wave,R)
         R = R << u.pix # HWOME's definition is unitless
         return wave / R
 

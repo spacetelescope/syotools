@@ -87,14 +87,12 @@ class Telescope(PersistentModel):
         self.telescope_filters = {}
 
         for instrument in self.hwo_data.Instrument:
-            print(instrument.name.value)
             if "Coronagraph" not in instrument.name.value and "Astrometry" not in instrument.name.value:
                 try:
                     modenames = list(instrument.Channel.name.keys())
                 except KeyError:
                     modenames = [instrument.Channel.value]
                 for modename in modenames:
-                    print("Modename", modename)
                     if "Imager" in modename or "IMG" in modename or "HRI" in modename:
                         tel_instrument = Camera(self)
                     elif "IFU" in modename:
@@ -107,7 +105,6 @@ class Telescope(PersistentModel):
 
         self.effective_diameter = self.hwo_data.OTA.circumscribing_diameter.q
         self.effective_area = (np.pi * (self.effective_diameter/2.)**2).to(u.cm**2)
-        print("Area", self.effective_area)
 
     def find_instrument_with(self, kind, wavelength=None):
         """
@@ -125,7 +122,6 @@ class Telescope(PersistentModel):
         for modename in self.telescope_filters:
             for element in self.telescope_filters[modename]:
                 item = self.telescope_filters[modename][element]
-                print(item)
                 if item["kind"] == kind.lower():
                     if wavelength is not None:
                         if (wavelength >= item["wave_min"]) and (wavelength <= item["wave_max"]):
