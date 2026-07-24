@@ -361,13 +361,21 @@ class SourceExposure(PersistentModel):
 
         return fsource_countrate, fsky_countrate, thermal_countrate, dark, read_noise
 
-
     def calculate(self):
         """
-        This method is implemented at the subclass level, not here
-        (so in PhotometricExposure, SpectroscopicExposure, etc.)
+        Wrapper to calculate the exposure time, SNR, or limiting magnitude,
+        based on the other two. The "unknown" attribute controls which of these
+        parameters is calculated.
         """
-        raise NotImplementedError
+        if self._disable:
+            return False
+        if self.instrument is None or self.telescope is None:
+            return False
+        result = {'magnitude': self.calculate_magnitude,
+                'exptime': self.calculate_exptime,
+                'snr': self.calculate_snr}[self.unknown](self.source)
+
+        return result
 
     def calculate_exptime(self, band=None):
         """
@@ -630,21 +638,7 @@ class SourceExposure(PersistentModel):
 class SourcePhotometricExposure(SourceExposure):
     """ A subclass of the base Exposure model, for photometric ETC calculations """
 
-    def calculate(self):
-        """
-        Wrapper to calculate the exposure time, SNR, or limiting magnitude,
-        based on the other two. The "unknown" attribute controls which of these
-        parameters is calculated.
-        """
-        if self._disable:
-            return False
-        if self.instrument is None or self.telescope is None:
-            return False
-        result = {'magnitude': self.calculate_magnitude,
-                'exptime': self.calculate_exptime,
-                'snr': self.calculate_snr}[self.unknown](self.source)
 
-        return result
 
 
 class SourceSpectrographicExposure(SourceExposure):
@@ -652,21 +646,11 @@ class SourceSpectrographicExposure(SourceExposure):
     A subclass of the base Exposure model, for spectroscopic ETC calculations.
     """
 
-    def calculate(self):
+    def calculate_magnitude(self, source):
         """
-        Wrapper to calculate the exposure time, SNR, or limiting magnitude,
-        based on the other two. The "unknown" attribute controls which of these
-        parameters is calculated.
+        Not supported, make this an error
         """
-        if self._disable:
-            return False
-        if self.instrument is None or self.telescope is None:
-            return False
-        result = {'magnitude': self.calculate_magnitude,
-                'exptime': self.calculate_exptime,
-                'snr': self.calculate_snr}[self.unknown](self.source)
-
-        return result
+        raise ValueError("Magnitude calculation not supported for Spectroscopy")
 
 class SourceIFSExposure(SourceExposure):
     """ 
@@ -684,26 +668,6 @@ class SourceIFSExposure(SourceExposure):
         super().__init__(default_model, **kw)
         # Do this after, because by default super().__init__ loads a default source
         self.sources = []
-
-    def calculate(self):
-        """
-        Wrapper to calculate the exposure time, SNR, or limiting magnitude,
-        based on the other two. The "unknown" attribute controls which of these
-        parameters is calculated.
-        """
-        if self._disable:
-            return False
-        if self.instrument is None or self.telescope is None:
-            return False
-        configuration, band = self.recover("instrument.configuration", "instrument.band")
-        if band is None:
-            bands = configuration["channel_filters"]
-        else:
-            bands = [band]
-        for band in bands:
-            status = {'exptime': self._update_exptimes,
-                    'snr': self._update_snrs}[self.unknown](configuration["element"][band])
-        return status
 
     def add_source(self, source):
         # and now the magic: create a master wavelength array from all of the sources.
@@ -723,37 +687,80 @@ class SourceIFSExposure(SourceExposure):
     def source(self, new_source):
         self.add_source(new_source)
 
-    def _update_exptimes(self, band):
-        self._exptimes = []
-        if self.sources == []:
-            self._exptimes = [None]
-            self._exptime = None
-        else:
-            # loop through by setting all the sources.
-            for source in self.sources:
-                self._update_exptime(source, band)
-                self._exptimes.append(self._exptime)
-            
-            # and set the regular exposure time to the maximum
-            # the output is a spectrum, so we want to find the highest entire
-            # spectrum, not any specific value.
-            self._exptime = sorted(self._exptimes, key=(lambda a: np.nanmean(a)))[-1]
+    def calculate_exptime(self, band=None):
+        """
+        Calculate for exposure times. If a band has been passed in, do that. 
+        Otherwise, do all of the bands in the channel.
 
-    def _update_snrs(self, band):
-        self._snrs = []
-        if self.sources == []:
-            self._snrs = [None]
-            self._snr = None
+
+        Parameters
+        ----------
+        band : _type_, optional
+            _description_, by default None
+        """
+        configuration, band = self.recover("instrument.configuration", "instrument.band")
+        if band is None:
+            bands = configuration["channel_filters"]
         else:
-            # loop through by setting all the sources.
-            for source in self.sources:
-                self._update_snr(source, band)
-                self._snrs.append(self._snr)
-            
-            # and set the regular snr to the minimum
-            # the output is a spectrum, so we want to find the lowest entire
-            # spectrum, not any specific value.
-            self._snr = sorted(self._snrs, key=(lambda a: np.nanmean(a)))[0]
+            bands = [band]
+        self._exptime = []
+        _source = []
+        _snr_temp = self._snr
+        # The unique thing about IFS is it has multiple sources
+        for source in self.sources:
+            _single_exptime = []
+            for idx,band in enumerate(bands):
+                # because a multiple-in, multiple-out is a valid use case
+                self._snr = _snr_temp[idx]
+                result = self._update_exptime(source, configuration["element"][band])
+                _single_exptime.append(result)
+            _source.append(_single_exptime)
+        # find the highest exposure time amongst the set of sources
+        _exptime = np.max(source,axis=0)
+        
+        self._snr = _snr_temp
+
+        return True
+
+    def calculate_snr(self, band=None):
+        """
+        Calculate for SNR. If a band has been passed in, do that. 
+        Otherwise, do all of the bands in the channel.
+
+        Parameters
+        ----------
+        band : _type_, optional
+            _description_, by default None
+        """
+        configuration, band = self.recover("instrument.configuration", "instrument.band")
+        if band is None:
+            bands = configuration["channel_filters"]
+        else:
+            bands = [band]
+        self._snr = []
+        _source = []
+        _exptime_temp = self._exptime
+        # The unique thing about IFS is it has multiple sources
+        for source in self.sources:
+            _single_snr = []
+            for idx, band in enumerate(bands):
+                # because a multiple-in, multiple-out is a valid use case
+                self._exptime = _exptime_temp[idx]
+                result = self._update_snr(source, configuration["element"][band])
+                _single_snr.append(result)
+            _source.append(_single_snr)
+        # find the highest exposure time amongst the set of sources
+        _snr = np.max(source,axis=0)
+
+        self._exptime = _exptime_temp
+
+        return True
+
+    def calculate_magnitude(self, source):
+        """
+        Not supported, make this an error
+        """
+        raise ValueError("Magnitude calculation not supported for IFS Spectroscopy")
 
 class SourceCoronagraphicExposure(SourceExposure):
     """
