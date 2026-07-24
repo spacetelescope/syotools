@@ -79,12 +79,17 @@ class Camera(Instrument):
 
     @property
     def n_bands(self):
-        return len(self.configuration["channel_filters"])
+        return len(self.bands)
 
     @property
     def n_channels(self):
         # this has always referred to the filters
         return len(self.configuration["channel_filters"])
+
+    @property
+    def bands(self):
+        return [self.configuration["element"][x]["name"] for x in self.configuration["element"] if self.configuration["element"][x]["kind"] == "filter"]
+
 
     @property
     def band(self):

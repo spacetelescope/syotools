@@ -76,7 +76,7 @@ class Spectrograph(Instrument):
 
     @property
     def bands(self):
-        return [self.configuration["element"][x] for x in self.configuration["element"] if self.configuration["element"][x]["kind"] == "disperser"]
+        return [self.configuration["element"][x]["name"] for x in self.configuration["element"] if self.configuration["element"][x]["kind"] == "disperser"]
 
     @band.setter
     def band(self, new_band):

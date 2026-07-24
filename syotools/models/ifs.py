@@ -67,7 +67,7 @@ class IFS(Spectrograph):
     #band updates to all the rest of the parameters
     @property
     def n_bands(self):
-        return len(self.configuration["channel_filters"])
+        return len(self.bands)
 
     @property
     def band(self):
@@ -75,7 +75,7 @@ class IFS(Spectrograph):
 
     @property
     def bands(self):
-        return self.configuration["channel_filters"]
+        return [self.configuration["element"][x]["name"] for x in self.configuration["element"] if self.configuration["element"][x]["kind"] == "ifu"]
 
     @band.setter
     def band(self, new_band):

@@ -110,6 +110,7 @@ def camera_exptime(telescope, template, magnitude, snr, silent=False):
 
 	for instrument in suitable_instruments:
 		inst = tel.instruments[instrument]
+		print("Bands", inst.bands)
 		exp = SourcePhotometricExposure()
 		exp.source = source
 

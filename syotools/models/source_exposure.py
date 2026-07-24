@@ -386,15 +386,16 @@ class SourceExposure(PersistentModel):
         band : _type_, optional
             _description_, by default None
         """
-        configuration, band = self.recover("instrument.configuration", "instrument.band")
+        configuration, band, all_bands = self.recover("instrument.configuration", "instrument.band", "instrument.bands")
         if band is None:
-            bands = configuration["channel_filters"]
+            bands = all_bands
         else:
             bands = [band]
         self._exptime = []
         _snr_temp = self._snr
         print("SNR_Temp", _snr_temp)
-        for idx,band in enumerate(bands):
+        print("All Bands", all_bands)
+        for idx, band in enumerate(bands):
             # because a multiple-in, multiple-out is a valid use case
             self._snr = _snr_temp[idx]
             result = self._update_exptime(self.source, configuration["element"][band])
@@ -412,9 +413,9 @@ class SourceExposure(PersistentModel):
         band : _type_, optional
             _description_, by default None
         """
-        configuration, band = self.recover("instrument.configuration", "instrument.band")
+        configuration, band, all_bands = self.recover("instrument.configuration", "instrument.band", "instrument.bands")
         if band is None:
-            bands = configuration["channel_filters"]
+            bands = all_bands
         else:
             bands = [band]
         self._snr = []
@@ -437,9 +438,9 @@ class SourceExposure(PersistentModel):
         band : _type_, optional
             _description_, by default None
         """
-        configuration, band = self.recover("instrument.configuration", "instrument.band")
+        configuration, band, all_bands = self.recover("instrument.configuration", "instrument.band", "instrument.bands")
         if band is None:
-            bands = configuration["channel_filters"]
+            bands = all_bands
         else:
             bands = [band]
         self._magnitude = []
