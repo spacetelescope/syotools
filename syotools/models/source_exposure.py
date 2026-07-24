@@ -269,10 +269,10 @@ class SourceExposure(PersistentModel):
             read_noise = configuration["detector"]["read_noise"]
 
         if hasattr(self.instrument, "R"):
-            R = self.recover("instrument.R")
+            R = band["resolution"]
             waveunit = band["bandpass"].waveset.unit
             wavepix = band["bandpass"].waveset.value
-            print("Wavepix", wavepix, R)
+            print("Wavepix", wavepix, R, band["name"])
             delta_lambda = wavepix/R
             print("Delta Lambda", delta_lambda)
             pixel = np.cumsum(1.0 / delta_lambda * np.gradient(wavepix))

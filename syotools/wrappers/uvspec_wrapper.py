@@ -37,42 +37,48 @@ def uvspec_snr(telescope, band, template, fuvmag, exptime, silent=False):
     # create the basic objects 
     tel = Telescope()
     tel.set_from_hwome(telescope)
-    uvi = Spectrograph(tel)
-    uvi.set_from_hwome("UV_MOS.FUV_MOS")
-    uvi.band = band
+    suitable_instruments, suitable_filters = tel.find_instrument_with("disperser")
 
     source = Source()
     redshift = 0.0
     extinction = 0.0
     source.set_sed(template, fuvmag, redshift, extinction, bandpass="galex,fuv")
 
-    uvi_exp = SourceSpectrographicExposure()
-    uvi_exp.source = source
-    uvi_exp.verbose = not silent
-    uvi_exp.unknown = "snr"
-    tel.add_spectrograph(uvi)
-    uvi.add_exposure(uvi_exp)
 
-    uvi_exp.exptime = exptime * u.hr
 
-    tel.verbose = True
-    if (silent):
-       uvi_exp.verbose = False
-       tel.verbose = False
-       uvi.verbose = False
-       print("We have set verbose = False")
 
-    if not silent:
-        print("Current SED template: {}".format(uvi_exp.source.name))
-        print("Current grating mode: {}".format(uvi.descriptions[uvi.mode]))
-        print("Current exposure time: {} hours\n".format(uvi_exp.exptime))
+    print("Suitable Instruments and Filters", suitable_instruments)
 
-    uvi_exp.enable()
-    uvi_snr = uvi_exp.recover('snr')
+    for instrument in suitable_instruments:
+        tel.verbose = True
+        inst = tel.instruments[instrument]
 
-    wave, snr =  uvi_exp.wave, uvi_exp.snr
+        uvi_exp = SourceSpectrographicExposure()
+        uvi_exp.source = source
+        uvi_exp.verbose = not silent
 
-    return wave, snr, uvi
+        inst.add_exposure(uvi_exp)
+
+        if (silent):
+            uvi_exp.verbose = False
+            tel.verbose = False
+            inst.verbose = False
+            print("We have set verbose = False")
+
+        if not silent:
+            print("Current SED template: {}".format(uvi_exp.source.name))
+            print("Current grating mode: {}".format(inst.descriptions[inst.band]))
+            print("Current exposure time: {} hours\n".format(uvi_exp.exptime))
+
+        uvi_exp.exptime = exptime * u.hr
+
+        uvi_exp.unknown = "snr"
+
+        uvi_snr = uvi_exp.recover('snr')
+
+        wave, snr =  uvi_exp.wave, uvi_exp.snr
+
+    return wave, snr, inst
 
 
 
@@ -114,35 +120,41 @@ def uvspec_exptime(telescope, band, template, fuvmag, snr, silent=False):
     # create the basic objects
     tel = Telescope()
     tel.set_from_hwome(telescope)
-    uvi = Spectrograph(tel)
-    uvi.set_from_hwome("UV_MOS.FUV_MOS")
-    uvi.band = band
+    suitable_instruments, suitable_filters = tel.find_instrument_with("filter")
 
     source = Source()
     redshift = 0.0
     extinction = 0.0
     source.set_sed(template, fuvmag, redshift, extinction, bandpass="galex,fuv")
 
-    uvi_exp = SourceSpectrographicExposure()
+    uvi_exp = SourceSpectrographicExposure() 
     uvi_exp.source = source
     uvi_exp.verbose = not silent
-    tel.add_spectrograph(uvi)
-    uvi.add_exposure(uvi_exp)
 
-    if not silent:
-        print("Current SED template: {}".format(template))
-        print("Current grating mode: {}".format(uvi.descriptions[uvi.mode]))
-        print("Current exposure time: {} hours\n".format(uvi_exp.exptime))
+    print("Suitable Instruments and Filters", suitable_instruments)
 
-    uvi_exp.snr= snr# * u.ct**0.5 / u.pix**0.5
-    uvi_exp.unknown = 'exptime' #< --- this triggers the _update_exptime function in the SpectrographicExposure exposure object
-    print("Setting SNR", snr, uvi_exp.snr)
+    for instrument in suitable_instruments:
+        inst = tel.instruments[instrument]
 
-    snr = uvi_exp.recover('exptime')
+        uvi_exp = SourceSpectrographicExposure() 
+        uvi_exp.source = source
+        uvi_exp.verbose = not silent
 
-    uvi_exptime = uvi_exp.recover('exptime')
+        inst.add_exposure(uvi_exp)
 
-    wave, exptime =  uvi_exp.wave, uvi_exp.exptime
+        if not silent:
+            print("Current SED template: {}".format(template))
+            print("Current grating mode: {}".format(inst.descriptions[inst.band]))
+            print("Current exposure time: {} hours\n".format(uvi_exp.exptime))
+
+        print("SNR initial", snr)
+        uvi_exp.snr = snr# * u.ct**0.5 / u.pix**0.5
+        uvi_exp.unknown = 'exptime' #< --- this triggers the _update_exptime function in the SpectrographicExposure exposure object
+        print("Setting SNR", snr, uvi_exp.snr)
+
+        uvi_exptime = uvi_exp.recover('exptime')
+
+        wave, exptime =  uvi_exp.wave, uvi_exp.exptime
 
 
-    return wave, exptime, uvi
+    return wave, exptime, inst

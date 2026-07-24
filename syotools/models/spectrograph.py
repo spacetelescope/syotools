@@ -68,7 +68,7 @@ class Spectrograph(Instrument):
 
     @property
     def n_bands(self):
-        return len(self.configuration["channel_filters"])
+        return len(self.bands)
 
     @property
     def band(self):
@@ -76,7 +76,7 @@ class Spectrograph(Instrument):
 
     @property
     def bands(self):
-        return self.configuration["channel_filters"]
+        return [self.configuration["element"][x] for x in self.configuration["element"] if self.configuration["element"][x]["kind"] == "disperser"]
 
     @band.setter
     def band(self, new_band):
@@ -136,63 +136,6 @@ class Spectrograph(Instrument):
         flux = syn.units.convert_flux(wave, spectrum(wave), u.erg / u.s / u.cm**2 / u.AA)
         phot_energy = const.h.to(u.erg * u.s) * const.c.to(u.cm / u.s) / wave.to(u.cm) / u.ct
         return flux / phot_energy * effective_area
-
-    def set_from_hwome(self, channelname):
-        self.configuration = {}
-        try:
-            instrument, channel = channelname.split(".")
-            instrument_data = getattr(self.telescope.hwo_data, instrument)
-        except ValueError:
-            raise ValueError("Need a name + channel (e.g. 'HRI-S.NIR')")
-        except KeyError:
-            raise KeyError(f"Unrecognized Instrument {instrument}.\n Legal values are {self.telescope.hwo_data.Instrument.name}")
-
-        instrument_data = self.telescope.hwo_data[instrument]
-
-        self.name = channel
-        instrument_data.Channel
-        try:
-            channel_data = getattr(instrument_data, channel)
-        except KeyError:
-            raise KeyError(f"Unrecognized Channel {channel}.\n Legal values are {instrument_data.Channel.name.keys()}")
-        channel_data = instrument_data[channel]
-
-        self.configuration["channel_filters"] = []
-        for channel_filter in channel_data.Filter:
-            self.configuration["channel_filters"].append(channel_filter.name.value)
-
-        self.modes = self.configuration["channel_filters"]
-
-        self.configuration["element"] = {}
-        for channel_filter in self.configuration["channel_filters"]:
-            # this commands HWOME to walk down the entire optical path of the telescope down to the filter(grating) and collect all of the optics.
-            thru = self.telescope.hwo_data.OpticalPath.select(instrument=instrument, channel=channel, filter = channel_filter).throughput(include_detector=False)
-            # then we multiply all of them together
-            total_throughput = np.prod(thru.q, axis=0)
-
-            grating_resolution = channel_data[channel_filter].Grating.spectral_resolution.q
-
-            # and store for later retrieval
-            band = syn.spectrum.SpectralElement(Empirical1D, points=thru.w, lookup_table=total_throughput)
-            wavemin = band.avgwave() - band.rectwidth()/2
-            wavemax = band.avgwave() + band.rectwidth()/2
-            self.configuration["element"][channel_filter] = {"name": channel_filter, "bandpass": band,  "resolution": grating_resolution, "effective_wavelength": band.avgwave(), "wave_min": wavemin, "wave_max": wavemax, "optics": len(thru.value.keys())}
-
-        self.configuration["diffraction_limit"] = channel_data.diffraction_limited.q
-        self.configuration["pixel_scale"] = channel_data.plate_scale.q
-        self.configuration["fov_x"] = channel_data.fov_x.q
-        self.configuration["fov_y"] = channel_data.fov_y.q
-
-        self.configuration["detector"] = {}
-        for detector in channel_data.Detector:
-            self.configuration["detector"]["name"] = detector.name
-            self.configuration["detector"]["read_noise"] = detector.read_noise.q
-            print("readnoise", self.configuration["detector"]["read_noise"])
-            self.configuration["detector"]["thermal"] = detector.temperature.q
-            self.configuration["detector"]["dark_current"] = detector.dark_current.q / u.pix #* u.electron / u.pix**2 / u.ct # needs to be electrons per pixel per second
-            w = detector.qe.w
-            t = detector.qe.q
-            self.configuration["detector"]["total_qe"] = syn.spectrum.SpectralElement(Empirical1D, points=w, lookup_table=t)
 
     def set_from_sei(self, name):
 

@@ -35,29 +35,31 @@ def camera_snr(telescope, template, magnitude, exptime, silent=False):
       
 	tel = Telescope()   # create a Telescope, Camera, and Exposure 
 	tel.set_from_hwome(telescope)
-	hri = Camera(tel)
-	hri.set_from_hwome('HRI_S.HRI_S_UVIS')
+	suitable_instruments, suitable_filters = tel.find_instrument_with("filter")
 	
 	source = Source() 
 	redshift = 0. # changes to these are not implemented yet 
 	extinction = 0. 
 	
 	source.set_sed(template, magnitude, redshift, extinction, bandpass="johnson,v")   
-	
-	exp = SourcePhotometricExposure() 
-	exp.source = source
-	    
 
-	tel.add_camera(hri)
-	hri.add_exposure(exp)
-	exp.exptime = [exptime] * u.hr
-	exp.unknown = 'snr'
+	print("Suitable Instruments and Filters", suitable_instruments)
 
-	if not silent: 
-		print('------ Computing SNR as the Unknown -------') 
-		for bb, ss in zip(hri.bandnames, exp.snr): print("{}, SNR = {}".format(bb, ss)) 
+	for instrument in suitable_instruments:
+		inst = tel.instruments[instrument]
+
+		exp = SourcePhotometricExposure() 
+		exp.source = source
+
+		inst.add_exposure(exp)
+		exp.exptime = [exptime] * u.hr
+		exp.unknown = 'snr'
+
+		if not silent: 
+			print('------ Computing SNR as the Unknown -------') 
+			for bb, ss in zip(inst.bandnames, exp.snr): print("{}, SNR = {}".format(bb, ss)) 
 	            
-	return exp.snr, hri 
+	return exp.snr, inst
 
 
 def camera_exptime(telescope, template, magnitude, snr, silent=False): 
@@ -96,33 +98,31 @@ def camera_exptime(telescope, template, magnitude, snr, silent=False):
 	# create a Telescope, Camera, and Exposure 
 	tel = Telescope()
 	tel.set_from_hwome(telescope)
-	hri = Camera(tel)
-	hri.set_from_hwome('HRI_S.HRI_S_UVIS')
+	suitable_instruments, suitable_filters = tel.find_instrument_with("filter")
 	
 	source = Source()
 	redshift = 0. # changes to these are not implemented yet 
 	extinction = 0. 
 	
-	source.set_sed(template, magnitude, redshift, extinction, bandpass="johnson,v")   
+	source.set_sed(template, magnitude, redshift, extinction, bandpass="johnson,v")
 
-	tel.add_camera(hri)
+	print("Suitable Instruments and Filters", suitable_instruments)
 
-	exp = SourcePhotometricExposure() 
-	exp.source = source
+	for instrument in suitable_instruments:
+		inst = tel.instruments[instrument]
+		exp = SourcePhotometricExposure()
+		exp.source = source
 
-	hri.add_exposure(exp)
+		inst.add_exposure(exp)
 
+		exp.snr = snr #* u.Unit('electron(1/2)')
 
-	
+		exp.unknown = 'exptime'
+		if not silent: 
+			print('-- Computing Exptime as the Unknown --') 
+			for bb, ee in zip(inst.bandnames, exp.exptime): print("{}, SNR = {}".format(bb, ee)) 
 
-	exp.snr = snr #* u.Unit('electron(1/2)')
-
-	exp.unknown = 'exptime'
-	if not silent: 
-		print('-- Computing Exptime as the Unknown --') 
-		for bb, ee in zip(hri.bandnames, exp.exptime): print("{}, SNR = {}".format(bb, ee)) 
-
-	return exp.exptime, hri 
+	return exp.exptime, inst
 
 def camera_magnitude(telescope, template, snr, exptime, silent=False): 
 	''' 
@@ -160,7 +160,7 @@ def camera_magnitude(telescope, template, snr, exptime, silent=False):
 	# create a Telescope, Camera, and Exposure 
 	tel.set_from_hwome(telescope)
 	hri = Camera(tel)
-	hri.set_from_hwome('HRI_S.HRI_S_UVIS')
+	suitable_instruments, suitable_filters = tel.find_instrument_with("filter")
 	
 	source = Source() 
 	redshift = 0. # changes to these are not implemented yet 
@@ -168,19 +168,20 @@ def camera_magnitude(telescope, template, snr, exptime, silent=False):
 	
 	source.set_sed(template, 30., redshift, extinction)   
 	        
-	exp = SourcePhotometricExposure() 
-	exp.source = source
-	
+	print("Suitable Instruments and Filters", suitable_instruments)
 
-	    
-	tel.add_camera(hri)
-	hri.add_exposure(exp)
-	exp.exptime = [exptime] * u.hr
-	exp.snr = [snr] * u.dimensionless_unscaled
-	exp.unknown = 'magnitude' 
+	for instrument in suitable_instruments:
+		inst = tel.instruments[instrument]
+		exp = SourcePhotometricExposure()
+		exp.source = source
 
-	if not silent: 
-		print('--- Computing Magnitude as the Unknown ---') 
-		for bb, mm in zip(hri.bandnames, exp.magnitude): print("{}, SNR = {}".format(bb, mm)) 
+		inst.add_exposure(exp)
+		exp.exptime = [exptime] * u.hr
+		exp.snr = [snr] * u.dimensionless_unscaled
+		exp.unknown = 'magnitude' 
+
+		if not silent: 
+			print('--- Computing Magnitude as the Unknown ---') 
+			for bb, mm in zip(inst.bandnames, exp.magnitude): print("{}, SNR = {}".format(bb, mm)) 
 	
-	return exp._magnitude, hri 
+	return exp._magnitude, inst

@@ -89,8 +89,7 @@ def compute_observation(telescope, instrument="hri", sed="G2V Star", magnitude=2
     tel.set_from_hwome(telescope)
     result = []
     if instrument.lower() in ["camera", "hri", "imaging"]:
-        inst = Camera(tel)
-        inst.set_from_hwome('HRI_S.HRI_S_UVIS')
+        inst = tel.instruments[instrument]
         exp = SourcePhotometricExposure()
 
         exp.source = source
@@ -99,8 +98,7 @@ def compute_observation(telescope, instrument="hri", sed="G2V Star", magnitude=2
         result.append(_do_calculation(tel, inst, exp, source=source, snr=snr, exptime=exptime, bandpass=bandpass, target=target, verbose=verbose))
 
     elif instrument.lower() in ["spectroscopy", "uvi"]:
-        inst = Spectrograph(tel)
-        inst.set_from_hwome('UV_MOS.NUV_MOS')
+        inst = tel.instruments[instrument]
         #inst.bandnames = inst.modes
         exp = SourceSpectrographicExposure() 
         exp.source = source
@@ -110,8 +108,7 @@ def compute_observation(telescope, instrument="hri", sed="G2V Star", magnitude=2
             result.append(_do_calculation(tel, inst, exp, band=band, source=source, snr=snr, exptime=exptime, bandpass=bandpass, target=target, verbose=verbose))
 
     elif instrument.lower() in ["ifs", "ifu"]:
-        inst = IFS(tel)
-        inst.set_from_hwome('UV_IFU.UV_IFU_Group1')
+        inst = tel.instruments[instrument]
         #inst.bandnames = inst.modes
         exp = SourceIFSExposure()
         exp.source = source
