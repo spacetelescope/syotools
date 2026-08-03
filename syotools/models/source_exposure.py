@@ -17,14 +17,25 @@ from syotools.models.source import Source
 
 def nice_print(arr):
     """ Utility to make the verbose output more readable. """
+    scalar = True
 
     if isinstance(arr, u.Quantity):
-        l = ['{:.2f}'.format(i) for i in arr.value]
-        unit = str(arr.unit)
+        if arr.isscalar:
+            l = arr.value
+            unit = str(arr.unit)
+        else:
+            l = ['{:.2f}'.format(i) for i in arr.value]
+            unit = str(arr.unit)
+            scalar = False
     else:
         l = ['{:.2f}'.format(i) for i in arr]
         unit = ''
-    return ', '.join(l) + '  ' + unit
+        scalar = False
+    if scalar:
+        outstring = f"{l} {u}"
+    else:
+        outstring = f"{', '.join(l)} {unit}"
+    return outstring
 
 class SourceExposure(PersistentModel):
     """
@@ -363,7 +374,7 @@ class SourceExposure(PersistentModel):
 
         return result
 
-    def calculate_exptime(self, band=None):
+    def calculate_exptime(self, source, band=None):
         """
         Calculate for exposure times. If a band has been passed in, do that. Otherwise, do all of them in the channel.
 
@@ -382,13 +393,13 @@ class SourceExposure(PersistentModel):
         for idx, band in enumerate(bands):
             # because a multiple-in, multiple-out is a valid use case
             self._snr = _snr_temp[idx]
-            result = self._update_exptime(self.source, configuration["element"][band])
+            result = self._update_exptime(source, configuration["element"][band])
             self._exptime.append(result)
         self._snr = _snr_temp
 
         return True
 
-    def calculate_snr(self, band=None):
+    def calculate_snr(self, source, band=None):
         """
         Calculate for SNR. If a band has been passed in, do that. Otherwise, do all of them in the channel.
 
@@ -404,16 +415,17 @@ class SourceExposure(PersistentModel):
             bands = [band]
         self._snr = []
         _exptime_temp = self.exptime
+        print(_exptime_temp, bands)
         for idx, band in enumerate(bands):
             # because a multiple-in, multiple-out is a valid use case
             self._exptime = _exptime_temp[idx]
-            result = self._update_snr(self.source, configuration["element"][band])
+            result = self._update_snr(source, configuration["element"][band])
             self._snr.append(result)
         self._exptime = _exptime_temp
 
         return True
 
-    def calculate_magnitude(self, band=None):
+    def calculate_magnitude(self, source, band=None):
         """
         Calculate for magnitudes. If a band has been passed in, do that. Otherwise, do all of them in the channel.
 
@@ -434,7 +446,7 @@ class SourceExposure(PersistentModel):
             # because a multiple-in, multiple-out is a valid use case
             self._exptime = _exptime_temp[idx]
             self._snr = _snr_temp[idx]
-            result = self._update_magnitude(self.source, configuration["element"][band])
+            result = self._update_magnitude(source, configuration["element"][band])
             self._magnitude.append(result)
 
         self._exptime = _exptime_temp
@@ -574,7 +586,7 @@ class SourceExposure(PersistentModel):
 
         if self.verbose:
             print('# of exposures: {}'.format(_nexp))
-            print('Time per exposure: {}'.format(time_per_exposure[0]))
+            print('Time per exposure: {}'.format(time_per_exposure))
             print('Signal counts: {}'.format(nice_print(signal_counts)))
             print('Signal shot noise: {}'.format(nice_print(shot_noise_in_signal)))
             print('Sky counts: {}'.format(nice_print(sky_counts)))
