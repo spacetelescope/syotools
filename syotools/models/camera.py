@@ -17,16 +17,6 @@ from syotools.spectra.utils import mag_from_sed, mirror_efficiency, set_coating
 from hwo_sci_eng.utils import read_yaml
 from hwome.core.navigator import DataModel
 
-def nice_print(arr):
-    """
-    Utility to make the verbose output more readable.
-    """
-
-    if isinstance(arr, u.Quantity):
-        l = ['{:.2f}'.format(i) for i in arr.value]
-    else:
-        l = ['{:.2f}'.format(i) for i in arr]
-    return ', '.join(l)
 
 class Camera(Instrument):
     """
@@ -88,7 +78,7 @@ class Camera(Instrument):
 
     @property
     def bands(self):
-        return [self.configuration["element"][x]["name"] for x in self.configuration["element"] if self.configuration["element"][x]["kind"] == "filter"]
+        return [self.configuration["band"][x]["name"] for x in self.configuration["band"] if self.configuration["band"][x]["kind"] == "filter"]
 
 
     @property
@@ -105,8 +95,8 @@ class Camera(Instrument):
     @property
     def pivotwave(self):
         pivot = []
-        for bpass in self.configuration["element"]:
-            band = self.configuration["element"][bpass]
+        for bpass in self.configuration["band"]:
+            band = self.configuration["band"][bpass]
             pivotval = band["bandpass"].pivot()
             pivotunit = pivotval.unit
             pivot.append(pivotval.value)
@@ -121,8 +111,8 @@ class Camera(Instrument):
         """
         pivotwave = self.recover('pivotwave')
         width = []
-        for bpass in self.configuration["element"]:
-            band = self.configuration["element"][bpass]
+        for bpass in self.configuration["band"]:
+            band = self.configuration["band"][bpass]
             widthval = band["bandpass"].equivwidth()
             widthunit = widthval.unit
             width.append(widthval.value)
@@ -141,21 +131,6 @@ class Camera(Instrument):
 
         return abzp# << abunit
 
-    def _print_initcon(self, verbose):
-        if verbose: #These are our initial conditions
-            print('Telescope diffraction limit: {}'.format(self.telescope.diff_limit_wavelength))
-            print('Telescope effective_diameter: {}'.format(self.telescope.effective_diameter))
-            print('Instrument temperature: {}'.format(self.configuration["detector"]["thermal"]))
-            print('Pivot waves: {}'.format(nice_print(self.pivotwave)))
-            print('Pixel sizes: {}'.format(self.configuration["pixel_scale"]))
-            print('AB mag zero points: {}'.format(nice_print(self.ab_zeropoint)))
-            #print('Quantum efficiency: {}'.format(nice_print(self.configuration["detector"]["total_qe"](self.pivotwave))))
-            print('Aperture correction: {}'.format(self.ap_corr))
-            #print('Bandpass resolution: {}'.format(nice_print(self.bandpass_r[0] * u.Unit(self.bandpass_r[1]))))
-            print('Derived_bandpass: {}'.format(nice_print(self.derived_bandpass)))
-            print('Detector read noise: {}'.format(self.configuration["detector"]["read_noise"]))
-            print('Dark rate: {}'.format(self.configuration["detector"]["dark_current"]))
-
     def _sn_box(self, wave, verbose):
         """
         Calculate the number of pixels in the SNR computation box.
@@ -165,8 +140,8 @@ class Camera(Instrument):
         sn_box = np.round(3. * self.fwhm_psf(wave) / Phi)
 
         if verbose:
-            print('PSF width: {}'.format(nice_print(self.fwhm_psf(wave))))
-            print('SN box width: {}'.format(nice_print(sn_box)))
+            print('PSF width: {}'.format(self.nice_print(self.fwhm_psf(wave))))
+            print('SN box width: {}'.format(self.nice_print(sn_box)))
 
         return sn_box**2
 
@@ -182,6 +157,22 @@ class Camera(Instrument):
         Interpolate an SED to obtain magnitudes for the camera's wavebands.
         """
         return mag_from_source(self, source)
+
+    def _print_initcon(self, verbose):
+        if verbose: #These are our initial conditions
+            print('Telescope diffraction limit: {}'.format(self.telescope.diff_limit_wavelength))
+            print('Telescope effective_diameter: {}'.format(self.telescope.effective_diameter))
+            print('Instrument temperature: {}'.format(self.configuration["detector"]["thermal"]))
+            print('Pivot waves: {}'.format(self.nice_print(self.pivotwave)))
+            print('Pixel sizes: {}'.format(self.configuration["pixel_scale"]))
+            print('AB mag zero points: {}'.format(self.nice_print(self.ab_zeropoint)))
+            #print('Quantum efficiency: {}'.format(self.nice_print(self.configuration["detector"]["total_qe"](self.pivotwave))))
+            print('Aperture correction: {}'.format(self.ap_corr))
+            #print('Bandpass resolution: {}'.format(self.nice_print(self.bandpass_r[0] * u.Unit(self.bandpass_r[1]))))
+            print('Derived_bandpass: {}'.format(self.nice_print(self.derived_bandpass)))
+            print('Detector read noise: {}'.format(self.configuration["detector"]["read_noise"]))
+            print('Dark rate: {}'.format(self.configuration["detector"]["dark_current"]))
+
 
     def create_exposure(self, source=None):
         new_exposure = SourcePhotometricExposure()

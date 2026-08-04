@@ -76,7 +76,7 @@ class Spectrograph(Instrument):
 
     @property
     def bands(self):
-        return [self.configuration["element"][x]["name"] for x in self.configuration["element"] if self.configuration["element"][x]["kind"] == "disperser"]
+        return [self.configuration["band"][x]["name"] for x in self.configuration["band"] if self.configuration["band"][x]["kind"] == "disperser"]
 
     @band.setter
     def band(self, new_band):
@@ -89,11 +89,11 @@ class Spectrograph(Instrument):
             return
         self._band = nband
 
-        self.R = self.configuration["element"][nband]["resolution"]
-        self.wave = self.configuration["element"][nband]["bandpass"].waveset
+        self.R = self.configuration["band"][nband]["resolution"]
+        self.wave = self.configuration["band"][nband]["bandpass"].waveset
         self.sky = syn.spectrum.SourceSpectrum(Empirical1D, points=self.wave, lookup_table=np.ones_like(self.wave.value) * 24 << u.ABmag)
         self.sky = self.sky.normalize(24 * u.ABmag, stsyn.spectrum.band("johnson,v"))
-        self.aeff = self.configuration["element"][nband]["bandpass"]
+        self.aeff = self.configuration["band"][nband]["bandpass"]
         wrange = np.array((np.min(self.wave.value), np.max(self.wave.value)))
         self.wrange = wrange
 
@@ -112,11 +112,26 @@ class Spectrograph(Instrument):
         sn_box = np.round(3. * self.fwhm_psf(wave) / Phi)
 
         if verbose:
-            print('PSF width: {}'.format(nice_print(self.fwhm_psf(wave))))
-            print('SN box height: {}'.format(nice_print(sn_box)))
+            print('PSF width: {}'.format(self.nice_print(self.fwhm_psf(wave))))
+            print('SN box height: {}'.format(self.nice_print(sn_box)))
 
         return sn_box * 1 * u.pix
-    
+
+    def _print_initcon(self, verbose):
+        if verbose: #These are our initial conditions
+            print('Telescope diffraction limit: {}'.format(self.telescope.diff_limit_wavelength))
+            print('Telescope effective_diameter: {}'.format(self.telescope.effective_diameter))
+            print('Instrument temperature: {}'.format(self.configuration["detector"]["thermal"]))
+            print("R", self.R)
+            print('Resolution: {}'.format(self.nice_print(self.R)))
+            print('Pixel sizes: {}'.format(self.configuration["pixel_scale"]))
+            #print('AB mag zero points: {}'.format(self.nice_print(self.ab_zeropoint)))
+            print('Quantum efficiency: {}'.format(self.nice_print(self.configuration["detector"]["total_qe"].waveset)))
+            #print('Aperture correction: {}'.format(self.ap_corr))
+            print('Detector read noise: {}'.format(self.configuration["detector"]["read_noise"]))
+            print('Dark rate: {}'.format(self.configuration["detector"]["dark_current"]))
+
+
     def create_exposure(self, source=None):
         new_exposure = SourceSpectrographicExposure()
         if source is not None:

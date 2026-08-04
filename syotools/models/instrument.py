@@ -14,16 +14,6 @@ from syotools.spectra.utils import mag_from_sed, mirror_efficiency, set_coating
 from hwo_sci_eng.utils import read_yaml
 from hwome.core.navigator import DataModel
 
-def nice_print(arr):
-    """
-    Utility to make the verbose output more readable.
-    """
-
-    if isinstance(arr, u.Quantity):
-        l = ['{:.2f}'.format(i) for i in arr.value]
-    else:
-        l = ['{:.2f}'.format(i) for i in arr]
-    return ', '.join(l)
 
 class Instrument(PersistentModel):
     """
@@ -107,22 +97,6 @@ class Instrument(PersistentModel):
 
         return fwhm
 
-    def _print_initcon(self, verbose):
-        if verbose: #These are our initial conditions
-            print('Telescope diffraction limit: {}'.format(self.telescope.diff_limit_wavelength))
-            print('Telescope effective_diameter: {}'.format(self.telescope.effective_diameter))
-            print('Instrument temperature: {}'.format(self.configuration["detector"]["thermal"]))
-            print('Pivot waves: {}'.format(nice_print(self.pivotwave)))
-            print('Pixel sizes: {}'.format(self.configuration["pixel_scale"]))
-            print('AB mag zero points: {}'.format(nice_print(self.ab_zeropoint)))
-            #print('Quantum efficiency: {}'.format(nice_print(self.configuration["detector"]["total_qe"](self.pivotwave))))
-            print('Aperture correction: {}'.format(self.ap_corr))
-            #print('Bandpass resolution: {}'.format(nice_print(self.bandpass_r[0] * u.Unit(self.bandpass_r[1]))))
-            print('Derived_bandpass: {}'.format(nice_print(self.derived_bandpass)))
-            print('Detector read noise: {}'.format(self.configuration["detector"]["read_noise"]))
-            print('Dark rate: {}'.format(self.configuration["detector"]["dark_current"]))
-
-
 
     def _c_thermal(self, wave, verbose=False):
         """
@@ -150,10 +124,10 @@ class Instrument(PersistentModel):
         pephot = self._planck(wave) / energy_per_photon
 
         if verbose:
-            print('Planck spectrum: {}'.format(nice_print(self.planck(wave))))
-            print('Planck / E_phot: {}'.format(nice_print(pephot)))
-            print('E_phot: {}'.format(nice_print(energy_per_photon)))
-            #print('Omega: {}'.format(nice_print(Omega)))
+            print('Planck spectrum: {}'.format(self.nice_print(self.planck(wave))))
+            print('Planck / E_phot: {}'.format(self.nice_print(pephot)))
+            print('E_phot: {}'.format(self.nice_print(energy_per_photon)))
+            #print('Omega: {}'.format(self.nice_print(Omega)))
 
         thermal = (ota_emissivity[0] * self._planck(wave) / energy_per_photon *
     			(np.pi / 4. * D**2 * u.AA**-1))
@@ -222,7 +196,7 @@ class Instrument(PersistentModel):
             channel_filters = list(channel_data.Filter.name.keys())
         except TypeError:
             channel_filters = [channel_data.Filter.name.value]
-        self.configuration["element"] = {}
+        self.configuration["band"] = {}
         self.configuration["channel_filters"] = []
 
         for channel_filter in channel_filters:
@@ -237,17 +211,17 @@ class Instrument(PersistentModel):
             band = syn.spectrum.SpectralElement(Empirical1D, points=thru.w, lookup_table=total_throughput)
             wavemin = band.avgwave() - band.rectwidth()/2
             wavemax = band.avgwave() + band.rectwidth()/2
-            self.configuration["element"][filter_name] = {"name": filter_name, "bandpass": band,  "effective_wavelength": band.avgwave(), "wave_min": wavemin, "wave_max": wavemax, "optics": len(thru.value.keys())}
+            self.configuration["band"][filter_name] = {"name": filter_name, "bandpass": band,  "effective_wavelength": band.avgwave(), "wave_min": wavemin, "wave_max": wavemax, "optics": len(thru.value.keys())}
 
             try:
                 grating_resolution = channel_data[filter_name].Grating.spectral_resolution.q
-                self.configuration["element"][filter_name]["resolution"] = float(grating_resolution)
+                self.configuration["band"][filter_name]["resolution"] = float(grating_resolution)
                 if "ifu" in filter_name.lower():
-                    self.configuration["element"][filter_name]["kind"] = "ifu"
+                    self.configuration["band"][filter_name]["kind"] = "ifu"
                 else:
-                    self.configuration["element"][filter_name]["kind"] = "disperser"
+                    self.configuration["band"][filter_name]["kind"] = "disperser"
             except KeyError:
-                self.configuration["element"][filter_name]["kind"] = "filter"
+                self.configuration["band"][filter_name]["kind"] = "filter"
 
         self.configuration["diffraction_limit"] = channel_data.diffraction_limited.q
         self.configuration["pixel_scale"] = channel_data.plate_scale.q

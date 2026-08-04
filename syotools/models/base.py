@@ -6,6 +6,10 @@ Created on Sat Oct 15 10:59:16 2016
 """
 
 from functools import reduce
+from collections.abc import Iterable
+
+from astropy import units as u
+
 from syotools.persistence import JSON
 from syotools.utils import pre_encode, pre_decode
 
@@ -163,3 +167,30 @@ class PersistentModel(object):
 
         for attr, quantity in kw.items():
             setattr(self, attr, pre_encode(quantity))
+
+    def nice_print(self,arr):
+        """ Utility to make the verbose output more readable. """
+        scalar = True
+
+        if isinstance(arr, u.Quantity):
+            print("Scalar value of", arr, arr.isscalar)
+            if arr.isscalar:
+                l = arr.value
+                unit = str(arr.unit)
+            else:
+                l = ['{:.2f}'.format(i) for i in arr.value]
+                unit = str(arr.unit)
+                scalar = False
+        else:
+            if isinstance(arr, Iterable):
+                l = ['{:.2f}'.format(i) for i in arr]
+                unit = ""
+                scalar = False
+            else:
+                l = arr
+                unit = ""
+        if scalar:
+            outstring = f"{l} {u}"
+        else:
+            outstring = f"{', '.join(l)} {unit}"
+        return outstring

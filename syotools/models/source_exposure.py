@@ -12,30 +12,9 @@ import synphot as syn
 from synphot.models import Empirical1D
 
 from syotools.models.base import PersistentModel
+
 from syotools.defaults import default_exposure
 from syotools.models.source import Source
-
-def nice_print(arr):
-    """ Utility to make the verbose output more readable. """
-    scalar = True
-
-    if isinstance(arr, u.Quantity):
-        if arr.isscalar:
-            l = arr.value
-            unit = str(arr.unit)
-        else:
-            l = ['{:.2f}'.format(i) for i in arr.value]
-            unit = str(arr.unit)
-            scalar = False
-    else:
-        l = ['{:.2f}'.format(i) for i in arr]
-        unit = ''
-        scalar = False
-    if scalar:
-        outstring = f"{l} {u}"
-    else:
-        outstring = f"{', '.join(l)} {unit}"
-    return outstring
 
 class SourceExposure(PersistentModel):
     """
@@ -118,17 +97,20 @@ class SourceExposure(PersistentModel):
         else:
             raise KeyError(f"Cannot solve for {new_unknown}, unrecognized unknown.")
 
-    def _ensure_array(self, quant):
+    def _ensure_array(self, quant, nb=None):
         """
         Ensure that the given Quantity is an array, propagating if necessary.
         """
         if self.instrument is None:
-            nb = 1
-        elif self.instrument:
+             nb = 1
+        elif nb is None:
             nb = self.recover('instrument.n_bands')
         val = quant 
-        if quant.isscalar or len(quant) != nb:
+        if quant.isscalar or len(quant) < nb:
             q = np.full(nb, val) << quant.unit
+            quant = q
+        elif len(quant) > nb:
+            q = quant[0:nb]
             quant = q
 
         return quant
@@ -209,11 +191,11 @@ class SourceExposure(PersistentModel):
         telescope efficiency reduces counts at detector (HWOE-183)
         """
         configuration = self.recover("instrument.configuration")
-        thru = configuration["element"]
+        thru = configuration["band"]
         output_mags = [] # <--- create blank list of mags
         for band in configuration["channel_filters"]:
             # multiply the sed by the bandpass
-            bandpass = configuration["element"][band]["bandpass"]
+            bandpass = configuration["band"][band]["bandpass"]
             sed = syn.observation.Observation(source, bandpass, force="taper")
             # extract the magnitude in AB Magnitudes
             this_mag = sed.effstim(u.ABmag)
@@ -313,8 +295,6 @@ class SourceExposure(PersistentModel):
         if area > sn_box:
             flux_source = source.sed * (sn_box/area)
 
-        #print("Source Mag", self.interpolated_source(flux_source))
-
         # fsky is:
         # uniform
         # goes through the full optical path QE
@@ -333,10 +313,25 @@ class SourceExposure(PersistentModel):
         # accumulates over time
         thermal = c_thermal(wave)
 
+        # print("Source", flux_source.waveset)
+        # print("Sky", flux_sky.waveset)
+        # print("Thermal", thermal.waveset)
+        # total_band = band["bandpass"] * qe
+        # total_flux = total_band(total_band.waveset)
+        # b1, b2 = total_band.waveset.min(), total_band.waveset.max()
+        # a1, a2 = flux_source.waveset.min(), flux_source.waveset.max()
+        # print("WAVE EDGES", a1, b1, a2, b2, a2 < b1, b2 < a1)
+        # print("Disjoint", total_band.check_overlap(flux_source))
+        # print("Valid band", total_band.waveset[total_flux > 0])
+        # print("Band", (band["bandpass"]* qe).waveset)
+        # print("QE", qe.waveset)
+
+
+
         # apply internal effects within telescope & instrument
-        fsource = syn.observation.Observation(flux_source, band["bandpass"] * qe)
-        fsky = syn.observation.Observation(flux_sky, band["bandpass"] * qe, force='taper')
-        thermal = syn.observation.Observation(thermal, band["bandpass"] * qe)
+        fsource = syn.observation.Observation(flux_source, band["bandpass"] * qe, force="taper")
+        fsky = syn.observation.Observation(flux_sky, band["bandpass"] * qe, force="taper")
+        thermal = syn.observation.Observation(thermal, band["bandpass"] * qe, force="taper")
 
         # dark is:
         # uniform
@@ -389,11 +384,11 @@ class SourceExposure(PersistentModel):
         else:
             bands = [band]
         self._exptime = []
-        _snr_temp = self._snr
+        _snr_temp = self._ensure_array(self._snr, len(bands))
         for idx, band in enumerate(bands):
             # because a multiple-in, multiple-out is a valid use case
             self._snr = _snr_temp[idx]
-            result = self._update_exptime(source, configuration["element"][band])
+            result = self._update_exptime(source, configuration["band"][band])
             self._exptime.append(result)
         self._snr = _snr_temp
 
@@ -408,18 +403,18 @@ class SourceExposure(PersistentModel):
         band : _type_, optional
             _description_, by default None
         """
-        configuration, band, all_bands = self.recover("instrument.configuration", "instrument.band", "instrument.bands")
+        configuration, all_bands = self.recover("instrument.configuration", "instrument.bands")
         if band is None:
             bands = all_bands
         else:
             bands = [band]
         self._snr = []
-        _exptime_temp = self.exptime
-        print(_exptime_temp, bands)
+        _exptime_temp = self._ensure_array(self._exptime, len(bands))
         for idx, band in enumerate(bands):
             # because a multiple-in, multiple-out is a valid use case
             self._exptime = _exptime_temp[idx]
-            result = self._update_snr(source, configuration["element"][band])
+            print("Exptime", self._exptime)
+            result = self._update_snr(source, configuration["band"][band])
             self._snr.append(result)
         self._exptime = _exptime_temp
 
@@ -446,7 +441,7 @@ class SourceExposure(PersistentModel):
             # because a multiple-in, multiple-out is a valid use case
             self._exptime = _exptime_temp[idx]
             self._snr = _snr_temp[idx]
-            result = self._update_magnitude(source, configuration["element"][band])
+            result = self._update_magnitude(source, configuration["band"][band])
             self._magnitude.append(result)
 
         self._exptime = _exptime_temp
@@ -587,16 +582,15 @@ class SourceExposure(PersistentModel):
         if self.verbose:
             print('# of exposures: {}'.format(_nexp))
             print('Time per exposure: {}'.format(time_per_exposure))
-            print('Signal counts: {}'.format(nice_print(signal_counts)))
-            print('Signal shot noise: {}'.format(nice_print(shot_noise_in_signal)))
-            print('Sky counts: {}'.format(nice_print(sky_counts)))
-            print('Sky shot noise: {}'.format(nice_print(shot_noise_in_sky)))
-            print('Total read noise: {}'.format(nice_print(read_counts)))
-            print('Dark current noise: {}'.format(nice_print(dark_counts)))
-            print('Thermal counts: {}'.format(nice_print(thermal_counts)))
+            print('Signal counts: {}'.format(self.nice_print(signal_counts)))
+            print('Signal shot noise: {}'.format(self.nice_print(shot_noise_in_signal)))
+            print('Sky counts: {}'.format(self.nice_print(sky_counts)))
+            print('Sky shot noise: {}'.format(self.nice_print(shot_noise_in_sky)))
+            print('Total read noise: {}'.format(self.nice_print(read_counts)))
+            print('Dark current noise: {}'.format(self.nice_print(dark_counts)))
+            print('Thermal counts: {}'.format(self.nice_print(thermal_counts)))
             print('SNR: {}'.format(snr))
-            print('Max SNR: {} in {} band'.format(snr.max(), self.instrument.bandnames[snr.argmax()]))
-
+            
         return _snr
 
     def add_source(self, new_source):
@@ -679,7 +673,7 @@ class SourceIFSExposure(SourceExposure):
             for idx,band in enumerate(bands):
                 # because a multiple-in, multiple-out is a valid use case
                 self._snr = _snr_temp[idx]
-                result = self._update_exptime(source, configuration["element"][band])
+                result = self._update_exptime(source, configuration["band"][band])
                 _single_exptime.append(result)
             _source.append(_single_exptime)
         # find the highest exposure time amongst the set of sources
@@ -713,7 +707,7 @@ class SourceIFSExposure(SourceExposure):
             for idx, band in enumerate(bands):
                 # because a multiple-in, multiple-out is a valid use case
                 self._exptime = _exptime_temp[idx]
-                result = self._update_snr(source, configuration["element"][band])
+                result = self._update_snr(source, configuration["band"][band])
                 _single_snr.append(result)
             _source.append(_single_snr)
         # find the highest exposure time amongst the set of sources

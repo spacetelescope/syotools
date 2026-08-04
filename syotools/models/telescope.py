@@ -84,7 +84,7 @@ class Telescope(PersistentModel):
         self.hwo_data = DataModel()
         self.hwo_data.load_hardware(f"{name}.yaml")
 
-        self.telescope_filters = {}
+        self.telescope_bands = {}
 
         for instrument in self.hwo_data.Instrument:
             if "Coronagraph" not in instrument.name.value and "Astrometry" not in instrument.name.value:
@@ -101,10 +101,39 @@ class Telescope(PersistentModel):
                         tel_instrument = Spectrograph(self)
                     tel_instrument.set_from_hwome(modename)
                     self.instruments[modename] = tel_instrument
-                    self.telescope_filters[modename] = tel_instrument.configuration["element"]
+                    self.telescope_bands[modename] = tel_instrument.configuration["band"]
 
+        # this also sets self.effective_area
         self.effective_diameter = self.hwo_data.OTA.circumscribing_diameter.q
-        self.effective_area = (np.pi * (self.effective_diameter/2.)**2).to(u.cm**2)
+
+    @property
+    def effective_area(self):
+        return self._effective_area
+
+    @effective_area.setter
+    def effective_area(self, new_area):
+        # trap any values that aren't float- or float-compatible or the correct unit
+        try:
+            new_area/(2 * u.cm**2)
+        except Exception as err:
+            raise err
+        # linking them like this should ensure we always get consistent numbers
+        self._effective_area = new_area
+        self._effective_diameter = (np.sqrt(new_area / np.pi) * 2.).to(u.m)
+
+    @property
+    def effective_diameter(self):
+        return self._effective_diameter
+
+    @effective_diameter.setter
+    def effective_diameter(self, new_diameter):
+        # trap any values that aren't float- or float-compatible or the correct unit
+        try:
+            new_diameter/(2 * u.m)
+        except Exception as err:
+            raise err
+        self._effective_diameter = new_diameter
+        self._effective_area = (np.pi * (new_diameter/2.)**2).to(u.cm**2)
 
     def find_instrument_with(self, kind, wavelength=None):
         """
@@ -116,22 +145,29 @@ class Telescope(PersistentModel):
             "filter" or "disperser", as desired.
         wavelength : float, optional
             specific wavelength to search for, by default None
+
+        Returns
+        -------
+        suitable_instruments: dict
+            A dictionary of instruments, each with their list of suitable bands
+        suitable_bands: dict
+            A dictionary of suitable bands, each value is the instrument
         """
-        suitable_instruments = set()
-        suitable_filters = defaultdict(list)
-        for modename in self.telescope_filters:
-            for element in self.telescope_filters[modename]:
-                item = self.telescope_filters[modename][element]
+        suitable_instruments = defaultdict(list)
+        suitable_bands = {}
+        for insname in self.telescope_bands:
+            for band in self.telescope_bands[insname]:
+                item = self.telescope_bands[insname][band]
                 if item["kind"] == kind.lower():
                     if wavelength is not None:
                         if (wavelength >= item["wave_min"]) and (wavelength <= item["wave_max"]):
-                            suitable_instruments.add(modename)
-                            suitable_filters[modename].append(item["name"])
+                            suitable_bands[band] = insname
+                            suitable_instruments[insname].append(band)
                     else:
-                        suitable_instruments.add(modename)
-                        suitable_filters[modename].append(item["name"])
+                        suitable_bands[band] = insname
+                        suitable_instruments[insname].append(band)
 
-        return suitable_instruments, suitable_filters
+        return suitable_instruments, suitable_bands
 
     def set_from_json(self,name):
         if self.verbose:
