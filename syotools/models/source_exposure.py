@@ -369,7 +369,7 @@ class SourceExposure(PersistentModel):
 
         return result
 
-    def calculate_exptime(self, source, band=None):
+    def calculate_exptime(self, band=None):
         """
         Calculate for exposure times. If a band has been passed in, do that. Otherwise, do all of them in the channel.
 
@@ -388,13 +388,14 @@ class SourceExposure(PersistentModel):
         for idx, band in enumerate(bands):
             # because a multiple-in, multiple-out is a valid use case
             self._snr = _snr_temp[idx]
-            result = self._update_exptime(source, configuration["band"][band])
+            self.instrument.band = band
+            result = self._update_exptime(self.source, configuration["band"][band])
             self._exptime.append(result)
         self._snr = _snr_temp
 
         return True
 
-    def calculate_snr(self, source, band=None):
+    def calculate_snr(self, band=None):
         """
         Calculate for SNR. If a band has been passed in, do that. Otherwise, do all of them in the channel.
 
@@ -413,14 +414,14 @@ class SourceExposure(PersistentModel):
         for idx, band in enumerate(bands):
             # because a multiple-in, multiple-out is a valid use case
             self._exptime = _exptime_temp[idx]
-            print("Exptime", self._exptime)
-            result = self._update_snr(source, configuration["band"][band])
+            self.instrument.band = band
+            result = self._update_snr(self.source, configuration["band"][band])
             self._snr.append(result)
         self._exptime = _exptime_temp
 
         return True
 
-    def calculate_magnitude(self, source, band=None):
+    def calculate_magnitude(self, band=None):
         """
         Calculate for magnitudes. If a band has been passed in, do that. Otherwise, do all of them in the channel.
 
@@ -441,7 +442,8 @@ class SourceExposure(PersistentModel):
             # because a multiple-in, multiple-out is a valid use case
             self._exptime = _exptime_temp[idx]
             self._snr = _snr_temp[idx]
-            result = self._update_magnitude(source, configuration["band"][band])
+            self.instrument.band = band
+            result = self._update_magnitude(self.source, configuration["band"][band])
             self._magnitude.append(result)
 
         self._exptime = _exptime_temp
@@ -693,13 +695,13 @@ class SourceIFSExposure(SourceExposure):
         band : _type_, optional
             _description_, by default None
         """
-        configuration, band = self.recover("instrument.configuration", "instrument.band")
+        configuration, bands = self.recover("instrument.configuration", "instrument.bands")
         if band is None:
             bands = configuration["channel_filters"]
         else:
             bands = [band]
         self._snr = []
-        _source = []
+        self._snrs = []
         _exptime_temp = self._exptime
         # The unique thing about IFS is it has multiple sources
         for source in self.sources:
@@ -709,9 +711,9 @@ class SourceIFSExposure(SourceExposure):
                 self._exptime = _exptime_temp[idx]
                 result = self._update_snr(source, configuration["band"][band])
                 _single_snr.append(result)
-            _source.append(_single_snr)
+            self._snrs.append(_single_snr)
         # find the highest exposure time amongst the set of sources
-        _snr = np.max(source,axis=0)
+        self._snr = np.max(self._snrs,axis=0)
 
         self._exptime = _exptime_temp
 

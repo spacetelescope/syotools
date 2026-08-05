@@ -201,6 +201,7 @@ class Instrument(PersistentModel):
 
         for channel_filter in channel_filters:
             filter_name = channel_filter.split(".")[-1]
+            fancy_name = ".".join((channel, filter_name))
             self.configuration["channel_filters"].append(filter_name)
             # this commands HWOME to walk down the entire optical path of the telescope down to the filter(grating) and collect all of the optics.
             thru = self.telescope.hwo_data.OpticalPath.select(instrument=instrument, channel=channel, filter = filter_name).throughput(include_detector=False)
@@ -211,17 +212,17 @@ class Instrument(PersistentModel):
             band = syn.spectrum.SpectralElement(Empirical1D, points=thru.w, lookup_table=total_throughput)
             wavemin = band.avgwave() - band.rectwidth()/2
             wavemax = band.avgwave() + band.rectwidth()/2
-            self.configuration["band"][filter_name] = {"name": filter_name, "bandpass": band,  "effective_wavelength": band.avgwave(), "wave_min": wavemin, "wave_max": wavemax, "optics": len(thru.value.keys())}
+            self.configuration["band"][fancy_name] = {"name": filter_name, "bandpass": band,  "effective_wavelength": band.avgwave(), "wave_min": wavemin, "wave_max": wavemax, "optics": len(thru.value.keys())}
 
             try:
                 grating_resolution = channel_data[filter_name].Grating.spectral_resolution.q
-                self.configuration["band"][filter_name]["resolution"] = float(grating_resolution)
+                self.configuration["band"][fancy_name]["resolution"] = float(grating_resolution)
                 if "ifu" in filter_name.lower():
-                    self.configuration["band"][filter_name]["kind"] = "ifu"
+                    self.configuration["band"][fancy_name]["kind"] = "ifu"
                 else:
-                    self.configuration["band"][filter_name]["kind"] = "disperser"
+                    self.configuration["band"][fancy_name]["kind"] = "disperser"
             except KeyError:
-                self.configuration["band"][filter_name]["kind"] = "filter"
+                self.configuration["band"][fancy_name]["kind"] = "filter"
 
         self.configuration["diffraction_limit"] = channel_data.diffraction_limited.q
         self.configuration["pixel_scale"] = channel_data.plate_scale.q

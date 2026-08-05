@@ -87,15 +87,21 @@ class Telescope(PersistentModel):
         self.telescope_bands = {}
 
         for instrument in self.hwo_data.Instrument:
-            if "Coronagraph" not in instrument.name.value and "Astrometry" not in instrument.name.value:
+            print(instrument)
+            print(instrument.Channel.name)
+            if not isinstance(instrument.Channel.name, dict):
+                print(instrument.Channel.name.__dict__)
+            if "Coronagraph" not in instrument.name.value:# and "Astrometry" not in instrument.name.value:
                 try:
                     modenames = list(instrument.Channel.name.keys())
-                except KeyError:
-                    modenames = [instrument.Channel.value]
+                except (KeyError, TypeError):
+                    modenames = [f"{instrument.name.value}.HRI_A_VIS"]
+                print("modenames", modenames)
                 for modename in modenames:
                     if "Imager" in modename or "IMG" in modename or "HRI" in modename:
                         tel_instrument = Camera(self)
                     elif "IFU" in modename:
+                        print(modename)
                         tel_instrument = IFS(self)
                     elif "MOS" in modename:
                         tel_instrument = Spectrograph(self)
@@ -103,6 +109,7 @@ class Telescope(PersistentModel):
                     self.instruments[modename] = tel_instrument
                     self.telescope_bands[modename] = tel_instrument.configuration["band"]
 
+        print("All_Bands", self.telescope_bands)
         # this also sets self.effective_area
         self.effective_diameter = self.hwo_data.OTA.circumscribing_diameter.q
 
@@ -117,6 +124,8 @@ class Telescope(PersistentModel):
             new_area/(2 * u.cm**2)
         except Exception as err:
             raise err
+        if isinstance(new_area, (int, float)):
+            new_area = float(new_area) << u.cm**2
         # linking them like this should ensure we always get consistent numbers
         self._effective_area = new_area
         self._effective_diameter = (np.sqrt(new_area / np.pi) * 2.).to(u.m)
@@ -128,10 +137,13 @@ class Telescope(PersistentModel):
     @effective_diameter.setter
     def effective_diameter(self, new_diameter):
         # trap any values that aren't float- or float-compatible or the correct unit
+        print("Received value", new_diameter)
         try:
             new_diameter/(2 * u.m)
         except Exception as err:
             raise err
+        if isinstance(new_diameter, (int, float)):
+            new_diameter = float(new_diameter) << u.m
         self._effective_diameter = new_diameter
         self._effective_area = (np.pi * (new_diameter/2.)**2).to(u.cm**2)
 
