@@ -87,29 +87,31 @@ class Telescope(PersistentModel):
         self.telescope_bands = {}
 
         for instrument in self.hwo_data.Instrument:
-            print(instrument)
-            print(instrument.Channel.name)
-            if not isinstance(instrument.Channel.name, dict):
-                print(instrument.Channel.name.__dict__)
-            if "Coronagraph" not in instrument.name.value:# and "Astrometry" not in instrument.name.value:
+            if "Coronagraph" not in instrument.name.value:
                 try:
                     modenames = list(instrument.Channel.name.keys())
                 except (KeyError, TypeError):
                     modenames = [f"{instrument.name.value}.HRI_A_VIS"]
-                print("modenames", modenames)
                 for modename in modenames:
-                    if "Imager" in modename or "IMG" in modename or "HRI" in modename:
-                        tel_instrument = Camera(self)
-                    elif "IFU" in modename:
-                        print(modename)
+                    if "IFU" in modename or "IFS" in modename:
                         tel_instrument = IFS(self)
-                    elif "MOS" in modename:
+                        tel_instrument.set_from_hwome(modename, "ifs")
+                        if tel_instrument.configuration["channel_filters"] != []:
+                            self.instruments[f"{modename}_IFS"] = tel_instrument
+                            self.telescope_bands[f"{modename}_IFS"] = tel_instrument.configuration["band"]
+                    else:
+                        tel_instrument = Camera(self)
+                        tel_instrument.set_from_hwome(modename, "imager")
+                        if tel_instrument.configuration["channel_filters"] != []:
+                            self.instruments[f"{modename}_Imager"] = tel_instrument
+                            self.telescope_bands[f"{modename}_Imager"] = tel_instrument.configuration["band"]
                         tel_instrument = Spectrograph(self)
-                    tel_instrument.set_from_hwome(modename)
-                    self.instruments[modename] = tel_instrument
-                    self.telescope_bands[modename] = tel_instrument.configuration["band"]
+                        tel_instrument.set_from_hwome(modename, "spectrograph")
+                        if tel_instrument.configuration["channel_filters"] != []:
+                            self.instruments[f"{modename}_Spectrograph"] = tel_instrument
+                            self.telescope_bands[f"{modename}_Spectrograph"] = tel_instrument.configuration["band"]
 
-        print("All_Bands", self.telescope_bands)
+
         # this also sets self.effective_area
         self.effective_diameter = self.hwo_data.OTA.circumscribing_diameter.q
 

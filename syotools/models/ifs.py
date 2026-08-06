@@ -75,7 +75,7 @@ class IFS(Spectrograph):
 
     @property
     def bands(self):
-        return [self.configuration["band"][x]["name"] for x in self.configuration["band"] if self.configuration["band"][x]["kind"] == "ifu"]
+        return [x for x in self.configuration["band"] if self.configuration["band"][x]["kind"] == "ifs"]
 
     @band.setter
     def band(self, new_band):

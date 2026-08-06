@@ -331,7 +331,7 @@ class SourceExposure(PersistentModel):
         # apply internal effects within telescope & instrument
         fsource = syn.observation.Observation(flux_source, band["bandpass"] * qe, force="taper")
         fsky = syn.observation.Observation(flux_sky, band["bandpass"] * qe, force="taper")
-        thermal = syn.observation.Observation(thermal, band["bandpass"] * qe, force="taper")
+        self.thermal = syn.observation.Observation(thermal, band["bandpass"] * qe, force="taper")
 
         # dark is:
         # uniform
@@ -347,7 +347,7 @@ class SourceExposure(PersistentModel):
 
         fsource_countrate = transform_flux(fsource, wave) * dw
         fsky_countrate = transform_flux(fsky, wave) * dw
-        thermal_countrate = transform_flux(thermal, wave) * dw
+        thermal_countrate = transform_flux(self.thermal, wave) * dw
         if dw == 1:
             self.wave = band["bandpass"].pivot()
 
@@ -668,7 +668,7 @@ class SourceIFSExposure(SourceExposure):
             bands = [band]
         self._exptime = []
         _source = []
-        _snr_temp = self._snr
+        _snr_temp = self._ensure_array(self._snr, len(bands))
         # The unique thing about IFS is it has multiple sources
         for source in self.sources:
             _single_exptime = []
@@ -702,7 +702,7 @@ class SourceIFSExposure(SourceExposure):
             bands = [band]
         self._snr = []
         self._snrs = []
-        _exptime_temp = self._exptime
+        _exptime_temp =  self._ensure_array(self._exptime, len(bands))
         # The unique thing about IFS is it has multiple sources
         for source in self.sources:
             _single_snr = []

@@ -171,7 +171,7 @@ class Instrument(PersistentModel):
         exposure.telescope = self.telescope
         exposure.calculate()
 
-    def set_from_hwome(self, channelname):
+    def set_from_hwome(self, channelname, ins_type):
         self.configuration = {}
         try:
             instrument, channel = channelname.split(".")
@@ -202,7 +202,23 @@ class Instrument(PersistentModel):
         for channel_filter in channel_filters:
             filter_name = channel_filter.split(".")[-1]
             fancy_name = ".".join((channel, filter_name))
-            self.configuration["channel_filters"].append(filter_name)
+
+            # only load optical elements if they're the correct type
+            try:
+                getattr(channel_data[filter_name], "Grating")
+                kind = "disperser"
+                if "ifu" in filter_name.lower():
+                    kind = "ifs"
+            except KeyError:
+                kind = "filter"
+            if ins_type.lower() in ("imager") and kind != "filter":
+                continue
+            elif ins_type.lower() in ("spectrograph") and kind != "disperser":
+                continue
+            elif ins_type.lower() in ("ifs") and kind != "ifs":
+                continue
+
+            self.configuration["channel_filters"].append(fancy_name)
             # this commands HWOME to walk down the entire optical path of the telescope down to the filter(grating) and collect all of the optics.
             thru = self.telescope.hwo_data.OpticalPath.select(instrument=instrument, channel=channel, filter = filter_name).throughput(include_detector=False)
             # then we multiply all of them together
@@ -212,17 +228,11 @@ class Instrument(PersistentModel):
             band = syn.spectrum.SpectralElement(Empirical1D, points=thru.w, lookup_table=total_throughput)
             wavemin = band.avgwave() - band.rectwidth()/2
             wavemax = band.avgwave() + band.rectwidth()/2
-            self.configuration["band"][fancy_name] = {"name": filter_name, "bandpass": band,  "effective_wavelength": band.avgwave(), "wave_min": wavemin, "wave_max": wavemax, "optics": len(thru.value.keys())}
-
-            try:
+            self.configuration["band"][fancy_name] = {"internal_name": filter_name, "bandpass": band,  "effective_wavelength": band.avgwave(), "wave_min": wavemin, "wave_max": wavemax, "optics": len(thru.value.keys())}
+            if kind in ("disperser", "ifs"):
                 grating_resolution = channel_data[filter_name].Grating.spectral_resolution.q
                 self.configuration["band"][fancy_name]["resolution"] = float(grating_resolution)
-                if "ifu" in filter_name.lower():
-                    self.configuration["band"][fancy_name]["kind"] = "ifu"
-                else:
-                    self.configuration["band"][fancy_name]["kind"] = "disperser"
-            except KeyError:
-                self.configuration["band"][fancy_name]["kind"] = "filter"
+            self.configuration["band"][fancy_name]["kind"] = kind
 
         self.configuration["diffraction_limit"] = channel_data.diffraction_limited.q
         self.configuration["pixel_scale"] = channel_data.plate_scale.q
@@ -231,14 +241,13 @@ class Instrument(PersistentModel):
 
         self.configuration["detector"] = {}
         for detector in channel_data.Detector:
-            self.configuration["detector"]["name"] = detector.name
+            self.configuration["detector"]["internal_name"] = detector.name
             self.configuration["detector"]["read_noise"] = detector.read_noise.q
             self.configuration["detector"]["thermal"] = detector.temperature.q
             self.configuration["detector"]["dark_current"] = detector.dark_current.q / u.pix #* u.electron / u.pix**2 / u.ct # needs to be electrons per pixel per second
             w = detector.qe.w
             t = detector.qe.q
             self.configuration["detector"]["total_qe"] = syn.spectrum.SpectralElement(Empirical1D, points=w, lookup_table=t)
-
 
     def set_to_dict(self, config):
         self.configuration = config

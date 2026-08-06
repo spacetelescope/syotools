@@ -78,7 +78,7 @@ class Camera(Instrument):
 
     @property
     def bands(self):
-        return [self.configuration["band"][x]["name"] for x in self.configuration["band"] if self.configuration["band"][x]["kind"] == "filter"]
+        return [x for x in self.configuration["band"] if self.configuration["band"][x]["kind"] == "filter"]
 
 
     @property

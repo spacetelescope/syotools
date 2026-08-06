@@ -76,7 +76,7 @@ class Spectrograph(Instrument):
 
     @property
     def bands(self):
-        return [self.configuration["band"][x]["name"] for x in self.configuration["band"] if self.configuration["band"][x]["kind"] == "disperser"]
+        return [x for x in self.configuration["band"] if self.configuration["band"][x]["kind"] == "disperser"]
 
     @band.setter
     def band(self, new_band):
@@ -88,6 +88,7 @@ class Spectrograph(Instrument):
         if self._band == nband or nband not in self.configuration["channel_filters"]:
             return
         self._band = nband
+        print(nband)
 
         self.R = self.configuration["band"][nband]["resolution"]
         self.wave = self.configuration["band"][nband]["bandpass"].waveset
