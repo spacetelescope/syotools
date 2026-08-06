@@ -272,13 +272,11 @@ class SourceExposure(PersistentModel):
         else:
             dw = 1
             wave = source.sed.waveset
+        syn.utils.validate_wavelengths(wave)
         self.wave = wave
 
-        syn.utils.validate_wavelengths(wave)
-
-
         # set up an appropriately sized aperture
-        sn_box = _sn_box(wave, False)
+        sn_box = _sn_box(self.wave, False)
 
         sn_box = np.median(sn_box)
 
@@ -291,7 +289,7 @@ class SourceExposure(PersistentModel):
         if source.radius > 0:
             area = np.pi * (source.radius/pixel_scale)**2
         else:
-            area = np.pi * (np.median(self.instrument.fwhm_psf(wave))/pixel_scale)**2
+            area = np.pi * (np.median(self.instrument.fwhm_psf(self.wave))/pixel_scale)**2
         if area > sn_box:
             flux_source = source.sed * (sn_box/area)
 
@@ -311,7 +309,7 @@ class SourceExposure(PersistentModel):
         # uniform
         # goes through the filter wheel and QE
         # accumulates over time
-        thermal = c_thermal(wave)
+        thermal = c_thermal(self.wave)
 
         # print("Source", flux_source.waveset)
         # print("Sky", flux_sky.waveset)
@@ -329,9 +327,9 @@ class SourceExposure(PersistentModel):
 
 
         # apply internal effects within telescope & instrument
-        fsource = syn.observation.Observation(flux_source, band["bandpass"] * qe, force="taper")
-        fsky = syn.observation.Observation(flux_sky, band["bandpass"] * qe, force="taper")
-        self.thermal = syn.observation.Observation(thermal, band["bandpass"] * qe, force="taper")
+        fsource = syn.observation.Observation(flux_source, band["bandpass"] * qe, binset=wave, force="taper")
+        fsky = syn.observation.Observation(flux_sky, band["bandpass"] * qe, binset=wave, force="taper")
+        self.thermal = syn.observation.Observation(thermal, band["bandpass"] * qe, binset=wave, force="taper")
 
         # dark is:
         # uniform
@@ -365,7 +363,7 @@ class SourceExposure(PersistentModel):
             return False
         result = {'magnitude': self.calculate_magnitude,
                 'exptime': self.calculate_exptime,
-                'snr': self.calculate_snr}[self.unknown](self.source)
+                'snr': self.calculate_snr}[self.unknown]()
 
         return result
 
@@ -530,6 +528,8 @@ class SourceExposure(PersistentModel):
 
         (_snr, _exptime, _nexp) = self.recover('snr', 'exptime', 'n_exp')
         effective_area = self.recover("telescope.effective_area")
+        configuration = self.recover("instrument.configuration")
+        qe = configuration["detector"]["total_qe"]
 
         # all of these are now rates, in the extraction aperture (except read_noise)
         fsource_countrate, fsky_countrate, thermal_countrate, dark_current, read_noise = self.process_observation(source, band)
@@ -545,7 +545,9 @@ class SourceExposure(PersistentModel):
         c0 = snr2 * ((fsky_countrate + thermal_countrate + dark_current) * _exptime + (read_noise**2 * _nexp)) / u.ct
         k = (-b0 + np.sqrt(b0**2 - 4. * a0 * c0)) / (2. * a0)
 
-        flux = (4. * k) / (f0 * effective_area * band["bandpass"].equivwidth().to(u.nm))
+        flux = (4. * k) / (f0 * effective_area * (band["bandpass"]*qe).equivwidth().to(u.nm))
+
+        flux *= band["bandpass"].tlambda()
 
         _magnitude = -2.5 * np.log10(np.array(flux)) * u.mag('AB')
 
@@ -579,7 +581,7 @@ class SourceExposure(PersistentModel):
 
         snr = signal_counts / np.sqrt(signal_counts + sky_counts + read_counts
                                       + dark_counts + thermal_counts)
-        _snr = (snr / u.ct**0.5).to(u.dimensionless_unscaled)
+        _snr = snr.value * u.dimensionless_unscaled
 
         if self.verbose:
             print('# of exposures: {}'.format(_nexp))

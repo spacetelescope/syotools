@@ -23,7 +23,6 @@ def _do_calculation(tel, inst, exp, band=None, source=None, snr=10.0, exptime=10
         if isinstance(inst, (Spectrograph, IFS)):
             raise NotImplementedError("Spectrographs cannot currently solve for limiting magnitude")
         
-        tel.add_camera(inst)
         inst.add_exposure(exp)
         exp.exptime = [exptime] * u.hr
         exp.snr = [snr] * u.dimensionless_unscaled 
@@ -32,7 +31,6 @@ def _do_calculation(tel, inst, exp, band=None, source=None, snr=10.0, exptime=10
         result = exp._magnitude
 
     elif target == "exptime":
-        tel.add_camera(inst)
 
         inst.add_exposure(exp)
 
@@ -46,7 +44,6 @@ def _do_calculation(tel, inst, exp, band=None, source=None, snr=10.0, exptime=10
 
     elif target == "snr":
 
-        tel.add_camera(inst)
         inst.add_exposure(exp)
         exp.exptime = [exptime] * u.hr
         exp.unknown = target
@@ -88,7 +85,7 @@ def compute_observation(telescope, instrument="hri", sed="G2V Star", magnitude=2
     tel = Telescope()
     tel.set_from_hwome(telescope)
     result = []
-    if instrument.lower() in ["camera", "hri", "imaging"]:
+    if "imag" in instrument.lower():
         inst = tel.instruments[instrument]
         exp = SourcePhotometricExposure()
 
@@ -97,7 +94,7 @@ def compute_observation(telescope, instrument="hri", sed="G2V Star", magnitude=2
 
         result.append(_do_calculation(tel, inst, exp, source=source, snr=snr, exptime=exptime, bandpass=bandpass, target=target, verbose=verbose))
 
-    elif instrument.lower() in ["spectroscopy", "uvi"]:
+    elif "mos" in instrument.lower() or "spec" in instrument.lower():
         inst = tel.instruments[instrument]
         #inst.bandnames = inst.modes
         exp = SourceSpectrographicExposure() 
@@ -107,7 +104,8 @@ def compute_observation(telescope, instrument="hri", sed="G2V Star", magnitude=2
         for band in inst.bands:
             result.append(_do_calculation(tel, inst, exp, band=band, source=source, snr=snr, exptime=exptime, bandpass=bandpass, target=target, verbose=verbose))
 
-    elif instrument.lower() in ["ifs", "ifu"]:
+    elif "ifu" in instrument.lower() or "ifs" in instrument.lower():
+        print(tel.instruments)
         inst = tel.instruments[instrument]
         #inst.bandnames = inst.modes
         exp = SourceIFSExposure()

@@ -117,7 +117,7 @@ def camera_exptime(telescope, template, magnitude, snr, silent=False):
 		exp.unknown = 'exptime'
 		if not silent: 
 			print('-- Computing Exptime as the Unknown --') 
-			for bb, ee in zip(inst.bandnames, exp.exptime): print("{}, SNR = {}".format(bb, ee)) 
+			for bb, ee in zip(inst.bands, exp.exptime): print("{}, SNR = {}".format(bb, ee)) 
 
 	return exp.exptime, inst
 

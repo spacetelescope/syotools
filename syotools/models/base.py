@@ -8,6 +8,8 @@ Created on Sat Oct 15 10:59:16 2016
 from functools import reduce
 from collections.abc import Iterable
 
+import numpy as np
+
 from astropy import units as u
 
 from syotools.persistence import JSON
@@ -173,13 +175,16 @@ class PersistentModel(object):
         scalar = True
 
         if isinstance(arr, u.Quantity):
-            print("Scalar value of", arr, arr.isscalar)
             if arr.isscalar:
                 l = arr.value
                 unit = str(arr.unit)
             else:
-                l = ['{:.2f}'.format(i) for i in arr.value]
-                unit = str(arr.unit)
+                if len(arr) < 20:
+                    l = ['{:.2f}'.format(i) for i in arr.value]
+                    unit = str(arr.unit)
+                else:
+                    l = ['mean={:.2f}'.format(np.mean(arr.value)), 'median={:.2f}'.format(np.median(arr.value)), 'max={:.2f}'.format(np.max(arr.value)), 'std={:.2f}'.format(np.std(arr.value)), 'len={}'.format(len(arr.value))]
+                    unit = str(arr.unit)
                 scalar = False
         else:
             if isinstance(arr, Iterable):
