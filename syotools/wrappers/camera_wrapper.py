@@ -55,9 +55,12 @@ def camera_snr(telescope, template, magnitude, exptime, silent=False):
 
 		if not silent: 
 			print('------ Computing SNR as the Unknown -------') 
-			for bb, ss in zip(inst.bandnames, exp.snr): print("{}, SNR = {}".format(bb, ss)) 
+			for bb, ss in zip(inst.bands, exp.snr): print("{}, SNR = {}".format(bb, ss)) 
 	            
-	return exp.snr, inst
+		for bb,ee in zip(inst.bands, exp.snr): 
+			results[bb] = (inst, ee)
+
+	return results
 
 
 def camera_exptime(telescope, template, magnitude, snr, silent=False): 
@@ -104,6 +107,7 @@ def camera_exptime(telescope, template, magnitude, snr, silent=False):
 	
 	source.set_sed(template, magnitude, redshift, extinction, bandpass="johnson,v")
 
+	results = {}
 
 	for instrument in suitable_instruments:
 		inst = tel.instruments[instrument]
@@ -117,9 +121,13 @@ def camera_exptime(telescope, template, magnitude, snr, silent=False):
 		exp.unknown = 'exptime'
 		if not silent: 
 			print('-- Computing Exptime as the Unknown --') 
-			for bb, ee in zip(inst.bands, exp.exptime): print("{}, SNR = {}".format(bb, ee)) 
+			for bb, ee in zip(inst.bands, exp.exptime): print("{}, exptime = {}".format(bb, ee))
 
-	return exp.exptime, inst
+		for bb,ee in zip(inst.bands, exp.exptime): 
+			results[bb] = (inst, ee)
+
+
+	return results
 
 def camera_magnitude(telescope, template, snr, exptime, silent=False): 
 	''' 
@@ -177,6 +185,9 @@ def camera_magnitude(telescope, template, snr, exptime, silent=False):
 
 		if not silent: 
 			print('--- Computing Magnitude as the Unknown ---') 
-			for bb, mm in zip(inst.bandnames, exp.magnitude): print("{}, SNR = {}".format(bb, mm)) 
+			for bb, mm in zip(inst.bands, exp.magnitude): print("{}, Mag = {}".format(bb, mm)) 
 	
-	return exp._magnitude, inst
+		for bb,ee in zip(inst.bands, exp.magnitude): 
+			results[bb] = (inst, ee)
+
+	return results

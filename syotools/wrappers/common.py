@@ -54,7 +54,7 @@ def _do_calculation(tel, inst, exp, band=None, source=None, snr=10.0, exptime=10
 
 
 
-def compute_observation(telescope, instrument="hri", sed="G2V Star", magnitude=20.0, snr=10.0, exptime=100, redshift=0, extinction=0, bandpass="johnson,v", target="magnitude", verbose=False):
+def compute_observation(telescope, instrument="HRI_S.HRI_S_UVIS", sed="G2V Star", magnitude=20.0, snr=10.0, exptime=100, redshift=0, extinction=0, bandpass="johnson,v", target="magnitude", verbose=False):
     
     if verbose:
         print("telescope:", telescope)
@@ -105,7 +105,6 @@ def compute_observation(telescope, instrument="hri", sed="G2V Star", magnitude=2
             result.append(_do_calculation(tel, inst, exp, band=band, source=source, snr=snr, exptime=exptime, bandpass=bandpass, target=target, verbose=verbose))
 
     elif "ifu" in instrument.lower() or "ifs" in instrument.lower():
-        print(tel.instruments)
         inst = tel.instruments[instrument]
         #inst.bandnames = inst.modes
         exp = SourceIFSExposure()

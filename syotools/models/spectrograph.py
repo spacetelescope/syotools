@@ -88,7 +88,6 @@ class Spectrograph(Instrument):
         if self._band == nband or nband not in self.configuration["channel_filters"]:
             return
         self._band = nband
-        print(nband)
 
         self.R = self.configuration["band"][nband]["resolution"]
         self.wave = self.configuration["band"][nband]["bandpass"].waveset

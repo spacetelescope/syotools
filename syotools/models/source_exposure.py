@@ -154,23 +154,14 @@ class SourceExposure(PersistentModel):
         self.calculate()
 
     @property 
-    def magnitude(self, source=None):
-        if self.unknown == "magnitude":
-            return self._magnitude
-        #If magnitude is not unknown, it should be interpolated from the SED 
-        #at the camera bandpasses. 
-        if self.verbose:
-            print('magnitude fcn line 191', self.interpolated_source(source))
-        return self.interpolated_source(source)
+    def magnitude(self):
+        return self._magnitude
 
     @magnitude.setter 
     def magnitude(self, new_magnitude):
         if self.unknown == "magnitude":
             return
         self._magnitude = self._ensure_quantity(new_magnitude, u.ABmag)
-        if self.verbose:
-            print('magnitude fcn line 200', new_magnitude)
-
         self.calculate()
 
 
@@ -183,26 +174,6 @@ class SourceExposure(PersistentModel):
             return self.sed
         sed = self.recover('sed')
         return self.camera.interpolate_at_bands(sed)
-
-    def interpolated_source(self, source):
-        """
-        The exposure's new Source SED interpolated at the camera bandpasses.
-
-        telescope efficiency reduces counts at detector (HWOE-183)
-        """
-        configuration = self.recover("instrument.configuration")
-        thru = configuration["band"]
-        output_mags = [] # <--- create blank list of mags
-        for band in configuration["channel_filters"]:
-            # multiply the sed by the bandpass
-            bandpass = configuration["band"][band]["bandpass"]
-            sed = syn.observation.Observation(source, bandpass, force="taper")
-            # extract the magnitude in AB Magnitudes
-            this_mag = sed.effstim(u.ABmag)
-            output_mags.append(this_mag.value)
-            if self.verbose:
-                print('getting mags from interpolated _source: ', bandpass.avgwave())
-        return np.array(output_mags)
 
     def process_observation(self, source, band, verbose=False):
         """
@@ -303,8 +274,6 @@ class SourceExposure(PersistentModel):
         flux_sky = sky * (sn_box * pixel_scale**2).value
         #print("Skyflux", flux_sky(flux_sky.waveset))
 
-        #print("Sky Mag", self.interpolated_source(flux_sky))
-
         # thermal is:
         # uniform
         # goes through the filter wheel and QE
@@ -327,9 +296,9 @@ class SourceExposure(PersistentModel):
 
 
         # apply internal effects within telescope & instrument
-        fsource = syn.observation.Observation(flux_source, band["bandpass"] * qe, binset=wave, force="taper")
-        fsky = syn.observation.Observation(flux_sky, band["bandpass"] * qe, binset=wave, force="taper")
-        self.thermal = syn.observation.Observation(thermal, band["bandpass"] * qe, binset=wave, force="taper")
+        fsource = syn.observation.Observation(flux_source, band["bandpass"] * qe, binset=self.wave, force="taper")
+        fsky = syn.observation.Observation(flux_sky, band["bandpass"] * qe, binset=self.wave, force="taper")
+        self.thermal = syn.observation.Observation(thermal, band["bandpass"] * qe, binset=self.wave, force="taper")
 
         # dark is:
         # uniform
@@ -402,13 +371,14 @@ class SourceExposure(PersistentModel):
         band : _type_, optional
             _description_, by default None
         """
-        configuration, all_bands = self.recover("instrument.configuration", "instrument.bands")
+        configuration, band, all_bands = self.recover("instrument.configuration", "instrument.band", "instrument.bands")
         if band is None:
             bands = all_bands
         else:
             bands = [band]
         self._snr = []
         _exptime_temp = self._ensure_array(self._exptime, len(bands))
+        print(bands)
         for idx, band in enumerate(bands):
             # because a multiple-in, multiple-out is a valid use case
             self._exptime = _exptime_temp[idx]
@@ -448,48 +418,6 @@ class SourceExposure(PersistentModel):
         self._snr = _snr_temp
 
         return True
-    
-    def _fsource(self, source):
-        """
-        Calculate the stellar flux as per Eq 2 in the SNR equation paper.
-        """
-        mag = self.interpolated_source(source)
-        (f0, c_ap, D, dlam) = self.recover('camera.ab_zeropoint',
-                                           'camera.ap_corr',
-                                           'telescope.effective_aperture',
-                                           'camera.derived_bandpass')
-
-        m = 10.**(-0.4*(mag)) # magnitude to flux
-        D = D.to(u.cm)
-
-        fsource = f0 * c_ap[0] * np.pi / 4. * D**2 * (dlam * u.nm) * m
-
-        return fsource
-
-    def _fsky(self, verbose=True):
-        """
-        Calculate the sky flux as per Eq 6 in the SNR equation paper.
-        """
-
-        (f0, D, dlam, Phi, fwhm, Sigma, throughput, qe, pivotwave) = self.recover('camera.ab_zeropoint',
-                'telescope.effective_aperture', 'camera.derived_bandpass', 'camera.pixel_size', 
-                'camera.fwhm_psf', 'camera.sky_sigma', 'camera.throughput', 'camera.total_qe', 'camera.pivotwave')
-
-        D = D.to(u.cm)
-        m = 10.**(-0.4 * np.array(Sigma)) / u.arcsec**2
-        Npix = self.camera._sn_box(False)
-
-        if verbose:
-            print('Sky brightness: {}'.format(Sigma))
-
-        fsky = f0 * np.pi / 4. * D**2 * (dlam*u.nm) * m * (Phi**2 * Npix) * u.pix
-        # telescope efficiency reduces counts at detector (HWOE-183)
-
-        for bidx, band in enumerate(throughput):
-            bandpass = band["bandpass"]
-            fsky[bidx] *= bandpass(pivotwave[bidx])
-
-        return fsky
 
     def _update_exptime(self, source, band):
         """
@@ -602,7 +530,7 @@ class SourceExposure(PersistentModel):
 
 class SourcePhotometricExposure(SourceExposure):
     """ A subclass of the base Exposure model, for photometric ETC calculations """
-
+    pass
 
 
 
@@ -611,7 +539,7 @@ class SourceSpectrographicExposure(SourceExposure):
     A subclass of the base Exposure model, for spectroscopic ETC calculations.
     """
 
-    def calculate_magnitude(self, source):
+    def calculate_magnitude(self, source, band=None):
         """
         Not supported, make this an error
         """
@@ -681,7 +609,7 @@ class SourceIFSExposure(SourceExposure):
                 _single_exptime.append(result)
             _source.append(_single_exptime)
         # find the highest exposure time amongst the set of sources
-        _exptime = np.max(source,axis=0)
+        self._exptime = np.max(source,axis=0)
         
         self._snr = _snr_temp
 
@@ -721,7 +649,7 @@ class SourceIFSExposure(SourceExposure):
 
         return True
 
-    def calculate_magnitude(self, source):
+    def calculate_magnitude(self, source, band=None):
         """
         Not supported, make this an error
         """

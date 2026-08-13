@@ -37,41 +37,50 @@ def uvspec_snr(telescope, band, template, fuvmag, exptime, silent=False):
     # create the basic objects 
     tel = Telescope()
     tel.set_from_hwome(telescope)
-    suitable_instruments, suitable_filters = tel.find_instrument_with("disperser")
+    suitable_instruments, suitable_bands = tel.find_instrument_with("disperser")
+    instrument = None
+    for test_band in suitable_bands:
+        if band in test_band:
+            instrument = suitable_bands[test_band]
+            break
+    if instrument is None:
+        raise ValueError(f"Could not find an instrument with {band}")
+    print("Using Instrument:", instrument)
 
     source = Source()
     redshift = 0.0
     extinction = 0.0
     source.set_sed(template, fuvmag, redshift, extinction, bandpass="galex,fuv")
 
-    for instrument in suitable_instruments:
-        tel.verbose = True
-        inst = tel.instruments[instrument]
+    tel.verbose = True
+    inst = tel.instruments[instrument]
 
-        uvi_exp = SourceSpectrographicExposure()
-        uvi_exp.source = source
-        uvi_exp.verbose = not silent
+    uvi_exp = SourceSpectrographicExposure()
+    uvi_exp.source = source
+    uvi_exp.verbose = not silent
 
-        inst.add_exposure(uvi_exp)
+    inst.add_exposure(uvi_exp)
+    inst.band = test_band # doing it this way is a little more forgiving as an API
 
-        if (silent):
-            uvi_exp.verbose = False
-            tel.verbose = False
-            inst.verbose = False
-            print("We have set verbose = False")
+    if (silent):
+        uvi_exp.verbose = False
+        tel.verbose = False
+        inst.verbose = False
+        print("We have set verbose = False")
 
-        if not silent:
-            print("Current SED template: {}".format(uvi_exp.source.name))
-            print("Current grating mode: {}".format(inst.descriptions[inst.band]))
-            print("Current exposure time: {} hours\n".format(uvi_exp.exptime))
+    if not silent:
+        print("Current SED template: {}".format(uvi_exp.source.name))
+        print("Current grating mode: {}".format(inst.band))
+        print("Current exposure time: {} hours\n".format(uvi_exp.exptime))
 
-        uvi_exp.exptime = exptime * u.hr
+    uvi_exp.exptime = exptime * u.hr
 
-        uvi_exp.unknown = "snr"
+    uvi_exp.unknown = "snr"
 
-        uvi_snr = uvi_exp.recover('snr')
+    uvi_snr = uvi_exp.recover('snr')
 
-        wave, snr =  uvi_exp.wave, uvi_exp.snr
+    wave, snr =  uvi_exp.wave, uvi_exp.snr
+
 
     return wave, snr, inst
 
@@ -115,7 +124,7 @@ def uvspec_exptime(telescope, band, template, fuvmag, snr, silent=False):
     # create the basic objects
     tel = Telescope()
     tel.set_from_hwome(telescope)
-    suitable_instruments, suitable_filters = tel.find_instrument_with("filter")
+    suitable_instruments, suitable_filters = tel.find_instrument_with("disperser")
 
     source = Source()
     redshift = 0.0
