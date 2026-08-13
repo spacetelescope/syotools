@@ -240,7 +240,7 @@ class SourceExposure(PersistentModel):
         * All non-spatially-uniform components are convolved with a 
         response function equal to the resolving power of the instrument
         and then have their (size * psf size) compared to slit size 
-        (widwth * height, if applicable), light losses adjusted accordingly, 
+        (width * height, if applicable), light losses adjusted accordingly, 
         and convolved with the bandpass+QE (source, sky) or QE (thermal), 
         then convolved with a response function equal to the resolving power 
         of the instrument.
@@ -256,7 +256,7 @@ class SourceExposure(PersistentModel):
             qe = configuration["detector"]["total_qe"]
             read_noise = configuration["detector"]["read_noise"]
 
-        if hasattr(self.instrument, "R"):
+        if band["kind"] in ("disperser", "ifs"):
             R = band["resolution"]
             waveunit = band["bandpass"].waveset.unit
             wavepix = band["bandpass"].waveset.value

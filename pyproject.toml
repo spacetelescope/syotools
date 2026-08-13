@@ -20,6 +20,7 @@ classifiers = [
 ]
 dependencies = [
     "astropy>6",
+    "hwome-core @ git+https://github.com/HWO-Project/hwome-core@79ebdf6c84500fb96d45b472bc395aa9ff16bd77",
     "synphot",
     "stsynphot",
     "numpy",

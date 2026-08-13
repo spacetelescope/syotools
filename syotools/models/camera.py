@@ -90,7 +90,7 @@ class Camera(Instrument):
         if new_band in self.configuration["channel_filters"]:
             self._band = new_band
         else:
-            raise KeyError(f"Cannot set band {new_band}, valid options for this channel are {self.configuration["channel_filters"]}")
+            raise KeyError(f"Cannot set band {new_band}, valid options for this channel are {self.configuration['channel_filters']}")
 
     @property
     def pivotwave(self):
