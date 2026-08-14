@@ -555,7 +555,7 @@ class SourceSpectrographicExposure(SourceExposure):
     A subclass of the base Exposure model, for spectroscopic ETC calculations.
     """
 
-    def calculate_magnitude(self, source, band=None):
+    def calculate_magnitude(self, custom_band=None):
         """
         Not supported, make this an error
         """
@@ -596,7 +596,7 @@ class SourceIFSExposure(SourceExposure):
     def source(self, new_source):
         self.add_source(new_source)
 
-    def calculate_exptime(self, band=None):
+    def calculate_exptime(self, custom_band=None):
         """
         Calculate for exposure times. If a band has been passed in, do that. 
         Otherwise, do all of the bands in the channel.
@@ -607,11 +607,14 @@ class SourceIFSExposure(SourceExposure):
         band : _type_, optional
             _description_, by default None
         """
-        configuration, band = self.recover("instrument.configuration", "instrument.band")
-        if band is None:
-            bands = configuration["channel_filters"]
+        configuration, band, all_bands = self.recover("instrument.configuration", "instrument.band", "instrument.bands")
+        if custom_band is not None:
+            bands = [custom_band]
         else:
-            bands = [band]
+            if band is None:
+                bands = all_bands
+            else:
+                bands = [band]
         self._exptime = []
         _source = []
         _snr_temp = self._ensure_array(self._snr, len(bands))
@@ -631,7 +634,7 @@ class SourceIFSExposure(SourceExposure):
 
         return True
 
-    def calculate_snr(self, band=None):
+    def calculate_snr(self, custom_band=None):
         """
         Calculate for SNR. If a band has been passed in, do that. 
         Otherwise, do all of the bands in the channel.
@@ -641,11 +644,14 @@ class SourceIFSExposure(SourceExposure):
         band : _type_, optional
             _description_, by default None
         """
-        configuration, bands = self.recover("instrument.configuration", "instrument.bands")
-        if band is None:
-            bands = configuration["channel_filters"]
+        configuration, band, all_bands = self.recover("instrument.configuration", "instrument.band", "instrument.bands")
+        if custom_band is not None:
+            bands = [custom_band]
         else:
-            bands = [band]
+            if band is None:
+                bands = all_bands
+            else:
+                bands = [band]
         self._snr = []
         self._snrs = []
         _exptime_temp =  self._ensure_array(self._exptime, len(bands))
@@ -665,7 +671,7 @@ class SourceIFSExposure(SourceExposure):
 
         return True
 
-    def calculate_magnitude(self, source, band=None):
+    def calculate_magnitude(self, custom_band=None):
         """
         Not supported, make this an error
         """

@@ -1,0 +1,9 @@
+exptime: 0.1
+extinction: 0
+instrument: UV_IFU.UV_IFU_Group2_IFS
+magnitude: 20
+redshift: 0
+sed: G2V Star
+snr: 2.1045434412761873e+26
+target: snr
+telescope: EAC5

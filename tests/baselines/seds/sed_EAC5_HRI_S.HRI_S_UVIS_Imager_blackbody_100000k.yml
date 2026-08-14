@@ -1,0 +1,9 @@
+exptime: 1
+extinction: 0
+instrument: HRI_S.HRI_S_UVIS_Imager
+magnitude: 20
+redshift: 0
+sed: Blackbody (100,000K)
+snr: 10
+target: exptime
+telescope: EAC5

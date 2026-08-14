@@ -170,6 +170,7 @@ def check_relative_diff(actual, expected, rel_tol=0.1):
 
 def generate_test(test_setup, filename, reset):
 
+    filename = filename.replace(" ","_")
     write = False
 
     if reset: # if we're asking to reset, definitely write a fresh file

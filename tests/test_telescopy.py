@@ -18,16 +18,22 @@ BASELINE_SIZE = 50
 
 def generate_uvspec_exptime_baseline():
     # telescope, mode, template, uvmag, snr_goal
-    baseline = [(mag, snr, [exp for exp in uvspec_exptime('EAC5', 'G180M', 'G2V Star', mag, snr, True)[1]])
-                  for mag in range(4, 35)
-                  for snr in range(3, 10)]
+    baseline = []
+    for mag in range(4, 35):
+        for snr in range(3, 10):
+            result = camera_exptime('EAC5', 'G180M', 'G2V Star', mag, snr, True)
+            baseline.append(mag, snr, [result[q].value for q,b in result[0]]) 
 
     with open(UVSPEC_BASELINE_PICKLE, "wb") as f:
         random.seed(7)
         pickle.dump(random.sample(baseline, BASELINE_SIZE), f)
 
 def generate_camera_exptime_baseline():
-    baseline = [(mag, snr, [q.value for q in camera_exptime('EAC5', 'G2V Star', mag, snr, True)[0]]) for mag in range(4, 35) for snr in range(3, 10)]
+    baseline = []
+    for mag in range(4, 35):
+        for snr in range(3, 10):
+            result = camera_exptime('EAC5', 'G2V Star', mag, snr, True)
+            baseline.append(mag, snr, [result[q].value for q,b in result[0]]) 
     with open(CAMERA_BASELINE_PICKLE, "wb") as f:
         random.seed(7)
         pickle.dump(random.sample(baseline, BASELINE_SIZE, ), f)
@@ -108,7 +114,7 @@ def test_telescope_json():
 @pytest.mark.parametrize("magnitude, snr_goal, expected", camera_exptime_baseline)
 def test_camera_exptime_calculation(magnitude, snr_goal, expected):
     exp_times, camera = camera_exptime('EAC5', 'G2V Star', magnitude, snr_goal, True)
-    assert check_relative_diff([q.value for q in exp_times], expected, 0.0005) #1e-3)
+    assert check_relative_diff([exp_times[q].value for q in exp_times], expected, 0.0005) #1e-3)
 
 @pytest.mark.parametrize("magnitude, snr_goal, expected", uvspec_exptime_baseline)
 def test_uvspec_exptime_calculation(magnitude, snr_goal, expected):
@@ -119,7 +125,7 @@ def test_uvspec_exptime_calculation(magnitude, snr_goal, expected):
 
 
 def test_print_things():
-    print(uvspec_exptime('EAC1', 'G180M', 'G2V Star', 20, 5.0, True)[1][0:10])
+    print(uvspec_exptime('EAC5', 'G180M', 'G2V Star', 20, 5.0, True)[1][0:10])
 
 
 
@@ -154,12 +160,9 @@ def test_print_things():
 
 def create_eac(name: str):
     telescope = Telescope()
-    telescope.set_from_sei(name)
-    camera = Camera()
-    telescope.add_camera(camera)
-    spec = Spectrograph()
-    telescope.add_spectrograph(spec)
-    camera.set_from_sei('HRI')
+    telescope.set_from_hwome("EAC5")
+    camera = telescope.instrument["HRI_S_UVIS.HRI_S_UVIS_Imager"]
+    spec = telescope.instrument["UV_MOS.FUV_MOS_L_Spectrograph"]
     return telescope
 
 def test_telescope_pickle():
@@ -174,7 +177,7 @@ def test_telescope_pickle():
         self.wave = table['Wavelength'].copy()
     """
     import pickle
-    telescope = create_eac("EAC1")
+    telescope = create_eac("EAC5")
     exp = telescope.cameras[0].create_exposure()
     tele2 = pickle.loads(pickle.dumps(telescope))
     assert telescope.name == tele2.name

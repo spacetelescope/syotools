@@ -180,13 +180,14 @@ class Instrument(PersistentModel):
             instrument, channel = channelname.split(".")
             instrument_data = getattr(self.telescope.hwo_data, instrument)
         except ValueError:
-            raise ValueError("Need a name + channel (e.g. 'HRI-S.NIR')")
+            raise ValueError("Need a name + channel (e.g. 'HRI_S.HRI_S_NIR_Imager')")
         except KeyError:
             raise KeyError(f"Unrecognized Instrument {instrument}.\n Legal values are {self.telescope.hwo_data.Instrument.name}")
 
         instrument_data = self.telescope.hwo_data[instrument]
 
         self.name = channel
+        self.configuration["ins_type"] = ins_type
         instrument_data.Channel
         try:
             channel_data = getattr(instrument_data, channel)

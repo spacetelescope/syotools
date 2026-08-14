@@ -80,6 +80,7 @@ class Telescope(PersistentModel):
             raise NotImplementedError
 
     def set_from_hwome(self,name):
+        self.name = name
         self.hwo_data = DataModel()
         self.hwo_data.load_hardware(f"{name}.yaml")
 
@@ -114,6 +115,38 @@ class Telescope(PersistentModel):
         # this also sets self.effective_area
         self.effective_diameter = self.hwo_data.OTA.circumscribing_diameter.q
 
+    def save_to_dict(self):
+        output = {}
+        for instrument in self.instruments:
+            output[instrument] = self.instruments[instrument].save_to_dict()
+        output["name"] = self.name
+        output["effective_diameter"] = self.effective_diameter
+
+        output = simplify_data(output)
+
+        return output
+
+    def load_from_dict(self, config):
+        """
+        Restore a telescope from a stored dictionary
+        """
+        config = complexify_data(config)
+
+        self.name = config.pop("name")
+        self.effective_diameter = config.pop("effective_diameter")
+
+        self.instruments = {}
+
+        for instrument in config:
+            if config[instrument]["ins_type"] = "imager":
+                inst = Camera(self)
+            elif config[instrument]["ins_type"] = "spectrograph":
+                inst = Spectrograph(self)
+            elif config[instrument]["ins_type"] = "ifs":
+                inst = IFS(self)
+            inst.load_from_dictionary(config[instrument])
+            self.instruments[instrument] = inst
+
     @property
     def effective_area(self):
         return self._effective_area
@@ -138,7 +171,6 @@ class Telescope(PersistentModel):
     @effective_diameter.setter
     def effective_diameter(self, new_diameter):
         # trap any values that aren't float- or float-compatible or the correct unit
-        print("Received value", new_diameter)
         try:
             new_diameter/(2 * u.m)
         except Exception as err:

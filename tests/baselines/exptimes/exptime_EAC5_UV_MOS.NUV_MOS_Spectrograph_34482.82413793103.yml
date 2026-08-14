@@ -1,0 +1,9 @@
+exptime: 34482.82413793103
+extinction: 0
+instrument: UV_MOS.NUV_MOS_Spectrograph
+magnitude: 20
+redshift: 0
+sed: G2V Star
+snr: 10
+target: exptime
+telescope: EAC5
