@@ -138,11 +138,11 @@ class Telescope(PersistentModel):
         self.instruments = {}
 
         for instrument in config:
-            if config[instrument]["ins_type"] = "imager":
+            if config[instrument]["ins_type"] == "imager":
                 inst = Camera(self)
-            elif config[instrument]["ins_type"] = "spectrograph":
+            elif config[instrument]["ins_type"] == "spectrograph":
                 inst = Spectrograph(self)
-            elif config[instrument]["ins_type"] = "ifs":
+            elif config[instrument]["ins_type"] == "ifs":
                 inst = IFS(self)
             inst.load_from_dictionary(config[instrument])
             self.instruments[instrument] = inst
