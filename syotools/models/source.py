@@ -44,6 +44,7 @@ class Source(PersistentModel):
         #set default here
         self.sed = None # Will be set in set_sed, do this so sed is in __init__.
         self.set_sed(self.name, self.magnitude, self.redshift, self.extinction)
+        self.radius = 0 # point source
 
         # yes this is weird, required because the superclass expects
         # attributes to be present and initialized.

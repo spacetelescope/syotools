@@ -10,53 +10,51 @@ from syotools.spectra.spec_defaults import syn_spectra_library
 from syotools.models import Camera, Spectrograph, IFS, Telescope, Source, SourcePhotometricExposure, SourceSpectrographicExposure, SourceIFSExposure
 from syotools.utils.yaml_utils import read_yaml, write_yaml
 
-def _do_calculation(tel, inst, exp, mode=None, source=None, snr=10.0, exptime=100, bandpass=None, target="magnitude", verbose=False):
+def _do_calculation(tel, inst, exp, band=None, source=None, snr=10.0, exptime=100, bandpass=None, target="magnitude", verbose=False):
 
     if verbose:
         print(target)
 
     # a setting for spectrographs
-    if mode is not None:
-        inst.mode = mode
+    if band is not None:
+        inst.band = band
 
     if target == "magnitude":
         if isinstance(inst, (Spectrograph, IFS)):
             raise NotImplementedError("Spectrographs cannot currently solve for limiting magnitude")
         
-        exp._exptime = [[exptime, exptime, exptime, exptime, exptime, exptime, exptime, exptime, exptime, exptime], 'hr']
-        exp._snr = [snr] * u.Unit('electron(1/2)')  
-        tel.add_camera(inst)
         inst.add_exposure(exp)
-
+        exp.exptime = [exptime] * u.hr
+        exp.snr = [snr] * u.dimensionless_unscaled 
         exp.unknown = target
-        result = exp.magnitude
+
+        result = exp._magnitude
 
     elif target == "exptime":
-        
-        exp._snr = [snr] * u.Unit('electron(1/2)')  
-        exp.unknown = target
-        tel.add_camera(inst)
+
         inst.add_exposure(exp)
 
-        if verbose:
+        exp.snr = [snr] * u.dimensionless_unscaled
+        exp.unknown = target
+
+        if verbose and hasattr(inst, "bandnames"):
             print('-- Computing Exptime as the Unknown --') 
             for bb, ee in zip(inst.bandnames, exp.exptime): print("{}, SNR = {}".format(bb, ee)) 
-        result = exp.exptime
+        result = exp._exptime
 
     elif target == "snr":
 
-        exp._exptime = [[exptime, exptime, exptime, exptime, exptime, exptime, exptime, exptime, exptime, exptime], 'hr']
-        exp.unknown = target
-        tel.add_camera(inst)
         inst.add_exposure(exp)
+        exp.exptime = [exptime] * u.hr
+        exp.unknown = target
 
-        result = exp.snr
+        result = exp._snr
 
     return result
 
 
 
-def compute_observation(telescope, instrument="hri", sed="G2V Star", magnitude=20.0, snr=10.0, exptime=100, redshift=0, extinction=0, bandpass="johnson,v", target="magnitude", verbose=False):
+def compute_observation(telescope, instrument="HRI_S.HRI_S_UVIS", sed="G2V Star", magnitude=20.0, snr=10.0, exptime=100, redshift=0, extinction=0, bandpass="johnson,v", target="magnitude", verbose=False):
     
     if verbose:
         print("telescope:", telescope)
@@ -85,11 +83,10 @@ def compute_observation(telescope, instrument="hri", sed="G2V Star", magnitude=2
 
     # create a Telescope, Camera, and Exposure 
     tel = Telescope()
-    tel.set_from_sei(telescope)
+    tel.set_from_hwome(telescope)
     result = []
-    if instrument.lower() in ["camera", "hri", "imaging"]:
-        inst = Camera()
-        inst.set_from_sei('HRI')
+    if "imag" in instrument.lower():
+        inst = tel.instruments[instrument]
         exp = SourcePhotometricExposure()
 
         exp.source = source
@@ -97,32 +94,30 @@ def compute_observation(telescope, instrument="hri", sed="G2V Star", magnitude=2
 
         result.append(_do_calculation(tel, inst, exp, source=source, snr=snr, exptime=exptime, bandpass=bandpass, target=target, verbose=verbose))
 
-    elif instrument.lower() in ["spectroscopy", "uvi"]:
-        inst = Spectrograph()
-        inst.set_from_sei('UVI')
-        inst.bandnames = inst.modes
+    elif "mos" in instrument.lower() or "spec" in instrument.lower():
+        inst = tel.instruments[instrument]
+        #inst.bandnames = inst.modes
         exp = SourceSpectrographicExposure() 
         exp.source = source
         exp.verbose = verbose
 
-        for mode in inst.modes:
-            result.append(_do_calculation(tel, inst, exp, mode=mode, source=source, snr=snr, exptime=exptime, bandpass=bandpass, target=target, verbose=verbose))
+        for band in inst.bands:
+            result.append(_do_calculation(tel, inst, exp, band=band, source=source, snr=snr, exptime=exptime, bandpass=bandpass, target=target, verbose=verbose))
 
-    elif instrument.lower() in ["ifs", "ifu"]:
-        inst = IFS()
-        inst.set_from_sei('IFS')
-        inst.bandnames = inst.modes
-        exp = SourceIFSExposure() 
+    elif "ifu" in instrument.lower() or "ifs" in instrument.lower():
+        inst = tel.instruments[instrument]
+        #inst.bandnames = inst.modes
+        exp = SourceIFSExposure()
         exp.source = source
         #exp.source = source2
         exp.verbose = verbose
 
-        for mode in inst.modes:
-            result.append(_do_calculation(tel, inst, exp, mode=mode, source=source, snr=snr, exptime=exptime, bandpass=bandpass, target=target, verbose=verbose))
+        for band in inst.bands:
+            result.append(_do_calculation(tel, inst, exp, band=band, source=source, snr=snr, exptime=exptime, bandpass=bandpass, target=target, verbose=verbose))
     else:
         raise ValueError(f"Unrecognized instrument {instrument}. Valid options are 'camera', 'spectroscopy', 'ifs'.")
 
-    return result
+    return exp.wave, result
 
 def check_relative_diff(actual, expected, rel_tol=0.1):
     """
@@ -175,6 +170,7 @@ def check_relative_diff(actual, expected, rel_tol=0.1):
 
 def generate_test(test_setup, filename, reset):
 
+    filename = filename.replace(" ","_")
     write = False
 
     if reset: # if we're asking to reset, definitely write a fresh file

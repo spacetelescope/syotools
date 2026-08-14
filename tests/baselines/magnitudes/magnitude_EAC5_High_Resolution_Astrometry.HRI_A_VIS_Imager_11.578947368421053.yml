@@ -1,0 +1,9 @@
+exptime: 10000
+extinction: 0
+instrument: High Resolution Astrometry.HRI_A_VIS_Imager
+magnitude: 11.578947368421053
+redshift: 0
+sed: G2V Star
+snr: 10
+target: magnitude
+telescope: EAC5

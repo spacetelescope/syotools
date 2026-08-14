@@ -1,12 +1,12 @@
 
-def uvspec_snr(telescope, mode, template, fuvmag, exptime, silent=False):
+def uvspec_snr(telescope, band, template, fuvmag, exptime, silent=False):
     ''' Run a basic SNR calculation that takes in a telescope,
         spectral template, normalization magnitude, and exposure
         time to compute SNR. For converting magnitude, template,
 	      and SNR to a desired exposure time, use uvspec_exptime.py
 
         usage:
-	      wave, snr, uvi = uvspec_snr(telescope, mode, template, uvmag, exptime)
+	      wave, snr, uvi = uvspec_snr(telescope, band, template, uvmag, exptime)
 
           positional arguments:
 
@@ -15,7 +15,7 @@ def uvspec_snr(telescope, mode, template, fuvmag, exptime, silent=False):
              EAC2 = 6 m diameter off-axis
              EAC3 = 8 m diameter on-axis
 
-           2-mode = your choice of UVI grating, a string:
+           2-band = your choice of UVI grating, a string:
 		        ['G120M', 'G150M', 'G180M', 'G155L', 'G145LL', 'G300M']
 
            3-template = your choice of spectral template:
@@ -35,46 +35,58 @@ def uvspec_snr(telescope, mode, template, fuvmag, exptime, silent=False):
     import astropy.units as u
 
     # create the basic objects 
-    uvi, tel = Spectrograph(), Telescope() 
-    tel.set_from_sei(telescope)
-    uvi.set_from_sei("uvi")
-    tel.add_spectrograph(uvi)
-    uvi.mode = mode
+    tel = Telescope()
+    tel.set_from_hwome(telescope)
+    suitable_instruments, suitable_bands = tel.find_instrument_with("disperser")
+    instrument = None
+    for test_band in suitable_bands:
+        if band in test_band:
+            instrument = suitable_bands[test_band]
+            break
+    if instrument is None:
+        raise ValueError(f"Could not find an instrument with {band}")
+    print(f"Using Instrument {instrument} with band {test_band}")
 
     source = Source()
     redshift = 0.0
     extinction = 0.0
     source.set_sed(template, fuvmag, redshift, extinction, bandpass="galex,fuv")
 
+    tel.verbose = True
+    inst = tel.instruments[instrument]
+
     uvi_exp = SourceSpectrographicExposure()
     uvi_exp.source = source
     uvi_exp.verbose = not silent
-    uvi.add_exposure(uvi_exp)
 
-    uvi_exp.exptime = [[exptime, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0], 'hr']
+    inst.add_exposure(uvi_exp)
+    inst.band = test_band # doing it this way is a little more forgiving as an API
 
-    tel.verbose = True
     if (silent):
-       uvi_exp.verbose = False
-       tel.verbose = False
-       uvi.verbose = False
-       print("We have set verbose = False")
+        uvi_exp.verbose = False
+        tel.verbose = False
+        inst.verbose = False
+        print("We have set verbose = False")
 
     if not silent:
         print("Current SED template: {}".format(uvi_exp.source.name))
-        print("Current grating mode: {}".format(uvi.descriptions[uvi.mode]))
+        print("Current grating mode: {}".format(inst.band))
         print("Current exposure time: {} hours\n".format(uvi_exp.exptime))
 
-    uvi_exp.enable()
+    uvi_exp.exptime = exptime * u.hr
+
+    uvi_exp.unknown = "snr"
+
     uvi_snr = uvi_exp.recover('snr')
 
-    wave, snr =  uvi.wave, uvi_exp.snr
-
-    return wave, snr, uvi
+    wave, snr =  uvi_exp.wave, uvi_exp.snr
 
 
+    return wave, snr, inst
 
-def uvspec_exptime(telescope, mode, template, fuvmag, snr, silent=False):
+
+
+def uvspec_exptime(telescope, band, template, fuvmag, snr, silent=False):
 
     ''' 
     Run a basic SNR calculation that takes in a telescope, spectral template,
@@ -82,7 +94,7 @@ def uvspec_exptime(telescope, mode, template, fuvmag, snr, silent=False):
     magnitude, template, and exptime to SNR, use uvspec_snr.py
 
       usage:
-	      wave, exptime, uvi = uvspec_exptime(telescope, mode, template, uvmag, snr)
+	      wave, exptime, uvi = uvspec_exptime(telescope, band, template, uvmag, snr)
 
         positional arguments:
 
@@ -91,7 +103,7 @@ def uvspec_exptime(telescope, mode, template, fuvmag, snr, silent=False):
             EAC2 = 6 m diameter off-axis 
             EAC3 = 8 m diameter on-axis
 
-          2-mode = your choice of UVI grating, a string:
+          2-band = your choice of UVI grating, a string:
           ['G120M', 'G150M', 'G180M', 'G155L', 'G145LL', 'G300M']
 
           3-template = your choice of spectral template:
@@ -110,35 +122,48 @@ def uvspec_exptime(telescope, mode, template, fuvmag, snr, silent=False):
     import astropy.units as u
 
     # create the basic objects
-    uvi, tel = Spectrograph(), Telescope()
-    tel.set_from_sei(telescope)
-    uvi.set_from_sei("uvi")
-    tel.add_spectrograph(uvi)
-    uvi.mode = mode
+    tel = Telescope()
+    tel.set_from_hwome(telescope)
+    suitable_instruments, suitable_bands = tel.find_instrument_with("disperser")
+    instrument = None
+    for test_band in suitable_bands:
+        if band in test_band:
+            instrument = suitable_bands[test_band]
+            break
+    if instrument is None:
+        raise ValueError(f"Could not find an instrument with {band}")
+    print(f"Using Instrument {instrument} with band {test_band}")
+
 
     source = Source()
     redshift = 0.0
     extinction = 0.0
     source.set_sed(template, fuvmag, redshift, extinction, bandpass="galex,fuv")
 
-    uvi_exp = SourceSpectrographicExposure()
+    uvi_exp = SourceSpectrographicExposure() 
     uvi_exp.source = source
     uvi_exp.verbose = not silent
-    uvi.add_exposure(uvi_exp)
+
+    inst = tel.instruments[instrument]
+
+    uvi_exp = SourceSpectrographicExposure() 
+    uvi_exp.source = source
+    uvi_exp.verbose = not silent
+
+    inst.add_exposure(uvi_exp)
+    inst.band = test_band  # doing it this way is a little more forgiving as an API
 
     if not silent:
         print("Current SED template: {}".format(template))
-        print("Current grating mode: {}".format(uvi.descriptions[uvi.mode]))
+        print("Current grating mode: {}".format(inst.band))
         print("Current exposure time: {} hours\n".format(uvi_exp.exptime))
 
-    uvi_exp._snr= snr * (u.ct)**0.5 / (u.pix)**0.5
-
-    snr = uvi_exp.recover('exptime')
+    uvi_exp.snr = snr# * u.ct**0.5 / u.pix**0.5
     uvi_exp.unknown = 'exptime' #< --- this triggers the _update_exptime function in the SpectrographicExposure exposure object
 
     uvi_exptime = uvi_exp.recover('exptime')
 
-    wave, exptime =  uvi.wave, uvi_exp.exptime
+    wave, exptime =  uvi_exp.wave, uvi_exp.exptime
 
 
-    return wave, exptime, uvi
+    return wave, exptime, inst

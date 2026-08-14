@@ -5,6 +5,7 @@ Created on Fri Oct 14 20:28:51 2016
 """
 import os, yaml
 import math
+from collections import defaultdict
 
 from syotools.models.base import PersistentModel
 from syotools.defaults import default_telescope
@@ -15,7 +16,10 @@ import astropy.units as u #for unit conversions
 import numpy as np
 import scipy as sc
 import synphot as syn
-from hwo_sci_eng.utils import read_yaml, read_json
+from hwome.core.navigator import DataModel
+from syotools.models.camera import Camera
+from syotools.models.ifs import IFS
+from syotools.models.spectrograph import Spectrograph
 
 class Telescope(PersistentModel):
     """
@@ -42,10 +46,7 @@ class Telescope(PersistentModel):
 
     def __init__(self, **kw):
 
-        self.cameras = []
-        self.spectrographs = []
-        self.coronagraphs = []
-        self.ifses = []
+        self.instruments = {}
 
         self.name = ''
         self.aperture = 0. * u.m
@@ -57,58 +58,161 @@ class Telescope(PersistentModel):
         self.verbose = False
         super().__init__(default_model=default_telescope, **kw)
 
-    def diffraction_limit(self, wavelength: u.Quantity) -> u.Quantity:
-        """
-        Calculate the diffraction limit for a given wavelength.
-        """
-        ap_nm = self.effective_aperture.to(u.nm)
-        diff_limit_radians = 1.22 * u.rad * wavelength.to(u.nm) / ap_nm
-        return diff_limit_radians.to(u.arcsec)
 
-
-    @property
-    def diff_limit_fwhm(self):
-        """
-        Diffraction-limited PSF FWHM.
-        """
-
-        diff_limit_wavelength, effective_aperture = self.recover('diff_limit_wavelength',
-                                                       'effective_aperture')
-
-        #result = (1.22 * u.rad * diff_limit_wavelength / aperture).to(u.arcsec)
-        result = (1.03 * u.rad * diff_limit_wavelength[0] * u.Unit(diff_limit_wavelength[1]) / effective_aperture).to(u.arcsec)
-        return result
 
     # @property
     # def effective_aperture(self):
     #     unobscured, aper = self.recover('unobscured_fraction', 'aperture')
     #     return np.sqrt(unobscured) * aper
 
-    def add_camera(self, camera):
-        self.cameras.append(camera)
-        camera.telescope = self
-
-    def add_spectrograph(self, spectrograph):
-        self.spectrographs.append(spectrograph)
-        spectrograph.telescope = self
-
-    def add_ifs(self, ifs):
-        self.ifses.append(ifs)
-        ifs.telescope = self
-
-    def add_coronagraph(self, coronagraph):
-        self.coronagraphs.append(coronagraph)
-        coronagraph.telescope = self
+    def add_instrument(self, instrument):
+        self.instruments[instrument.name] = instrument
+        instrument.telescope = self
 
     def hexagon_area(self, side):
         return 3. * 3.**0.5 / 2. * side**2
 
     def set_from_sei(self, name):
-        if name in ("EAC1", "EAC2", "EAC3"):
-            tel = self.set_from_yaml(name.lower())
+        if name in ("EAC1", "EAC2", "EAC3", "EAC5"):
+            tel = self.set_from_hwome(name.lower())
         else:
             print('We do not have SEI information for: ', name)
             raise NotImplementedError
+
+    def set_from_hwome(self,name):
+        self.name = name
+        self.hwo_data = DataModel()
+        self.hwo_data.load_hardware(f"{name}.yaml")
+
+        self.telescope_bands = {}
+
+        for instrument in self.hwo_data.Instrument:
+            if "Coronagraph" not in instrument.name.value:
+                try:
+                    modenames = list(instrument.Channel.name.keys())
+                except (KeyError, TypeError):
+                    modenames = [f"{instrument.name.value}.HRI_A_VIS"]
+                for modename in modenames:
+                    if "IFU" in modename or "IFS" in modename:
+                        tel_instrument = IFS(self)
+                        tel_instrument.set_from_hwome(modename, "ifs")
+                        if tel_instrument.configuration["channel_filters"] != []:
+                            self.instruments[f"{modename}_IFS"] = tel_instrument
+                            self.telescope_bands[f"{modename}_IFS"] = tel_instrument.configuration["band"]
+                    else:
+                        tel_instrument = Camera(self)
+                        tel_instrument.set_from_hwome(modename, "imager")
+                        if tel_instrument.configuration["channel_filters"] != []:
+                            self.instruments[f"{modename}_Imager"] = tel_instrument
+                            self.telescope_bands[f"{modename}_Imager"] = tel_instrument.configuration["band"]
+                        tel_instrument = Spectrograph(self)
+                        tel_instrument.set_from_hwome(modename, "spectrograph")
+                        if tel_instrument.configuration["channel_filters"] != []:
+                            self.instruments[f"{modename}_Spectrograph"] = tel_instrument
+                            self.telescope_bands[f"{modename}_Spectrograph"] = tel_instrument.configuration["band"]
+
+
+        # this also sets self.effective_area
+        self.effective_diameter = self.hwo_data.OTA.circumscribing_diameter.q
+
+    def save_to_dict(self):
+        output = {}
+        for instrument in self.instruments:
+            output[instrument] = self.instruments[instrument].save_to_dict()
+        output["name"] = self.name
+        output["effective_diameter"] = self.effective_diameter
+
+        output = simplify_data(output)
+
+        return output
+
+    def load_from_dict(self, config):
+        """
+        Restore a telescope from a stored dictionary
+        """
+        config = complexify_data(config)
+
+        self.name = config.pop("name")
+        self.effective_diameter = config.pop("effective_diameter")
+
+        self.instruments = {}
+
+        for instrument in config:
+            if config[instrument]["ins_type"] = "imager":
+                inst = Camera(self)
+            elif config[instrument]["ins_type"] = "spectrograph":
+                inst = Spectrograph(self)
+            elif config[instrument]["ins_type"] = "ifs":
+                inst = IFS(self)
+            inst.load_from_dictionary(config[instrument])
+            self.instruments[instrument] = inst
+
+    @property
+    def effective_area(self):
+        return self._effective_area
+
+    @effective_area.setter
+    def effective_area(self, new_area):
+        # trap any values that aren't float- or float-compatible or the correct unit
+        try:
+            new_area/(2 * u.cm**2)
+        except Exception as err:
+            raise err
+        if isinstance(new_area, (int, float)):
+            new_area = float(new_area) << u.cm**2
+        # linking them like this should ensure we always get consistent numbers
+        self._effective_area = new_area
+        self._effective_diameter = (np.sqrt(new_area / np.pi) * 2.).to(u.m)
+
+    @property
+    def effective_diameter(self):
+        return self._effective_diameter
+
+    @effective_diameter.setter
+    def effective_diameter(self, new_diameter):
+        # trap any values that aren't float- or float-compatible or the correct unit
+        try:
+            new_diameter/(2 * u.m)
+        except Exception as err:
+            raise err
+        if isinstance(new_diameter, (int, float)):
+            new_diameter = float(new_diameter) << u.m
+        self._effective_diameter = new_diameter
+        self._effective_area = (np.pi * (new_diameter/2.)**2).to(u.cm**2)
+
+    def find_instrument_with(self, kind, wavelength=None):
+        """
+        Convenience function to find an instrument with specific wavelength coverage
+
+        Parameters
+        ----------
+        kind : str
+            "filter" or "disperser", as desired.
+        wavelength : float, optional
+            specific wavelength to search for, by default None
+
+        Returns
+        -------
+        suitable_instruments: dict
+            A dictionary of instruments, each with their list of suitable bands
+        suitable_bands: dict
+            A dictionary of suitable bands, each value is the instrument
+        """
+        suitable_instruments = defaultdict(list)
+        suitable_bands = {}
+        for insname in self.telescope_bands:
+            for band in self.telescope_bands[insname]:
+                item = self.telescope_bands[insname][band]
+                if item["kind"] == kind.lower():
+                    if wavelength is not None:
+                        if (wavelength >= item["wave_min"]) and (wavelength <= item["wave_max"]):
+                            suitable_bands[band] = insname
+                            suitable_instruments[insname].append(band)
+                    else:
+                        suitable_bands[band] = insname
+                        suitable_instruments[insname].append(band)
+
+        return suitable_instruments, suitable_bands
 
     def set_from_json(self,name):
         if self.verbose:

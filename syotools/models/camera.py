@@ -6,25 +6,18 @@ Created on Fri Oct 14 21:31:18 2016
 import numpy as np
 import astropy.constants as const
 import astropy.units as u
+import synphot as syn
+import stsynphot as stsyn
+from synphot.models import Empirical1D
 
-from syotools.models.base import PersistentModel
+from .instrument import Instrument
 from syotools.models.source_exposure import SourcePhotometricExposure
 from syotools.defaults import default_camera
 from syotools.spectra.utils import mag_from_sed, mirror_efficiency, set_coating
-from hwo_sci_eng.utils import read_yaml 
+from hwome.core.navigator import DataModel
 
-def nice_print(arr):
-    """
-    Utility to make the verbose output more readable.
-    """
 
-    if isinstance(arr, u.Quantity):
-        l = ['{:.2f}'.format(i) for i in arr.value]
-    else:
-        l = ['{:.2f}'.format(i) for i in arr]
-    return ', '.join(l)
-
-class Camera(PersistentModel):
+class Camera(Instrument):
     """
     The basic camera class, which provides parameter storage for
     optimization.
@@ -54,184 +47,103 @@ class Camera(PersistentModel):
         R_effective - this doesn't seem to be used anywhere
     """
 
-    def __init__(self, **kw):
+    def __init__(self, telescope, **kw):
 
-        self.telescope = None
+        self.telescope = telescope
+        self._band = None
         self.exposures = []
         self.name = ''
-        self.pivotwave = np.zeros(1, dtype=float) * u.nm
+        #self.pivotwave = np.zeros(1, dtype=float) * u.nm
         self.bandnames = ['']
         self.channels = [([],0)]
         self.fiducials = np.zeros(1, dtype=float) * u.nm
         self.total_qe = np.zeros(1, dtype=float) * u.dimensionless_unscaled
-        self.ap_corr = np.zeros(1, dtype=float) * u.dimensionless_unscaled
+        self.ap_corr = np.ones(1, dtype=float) * u.dimensionless_unscaled
         self.bandpass_r = np.zeros(1, dtype=float) * u.dimensionless_unscaled
         self.dark_current = np.zeros(1, dtype=float) * (u.electron / u.s / u.pixel)
-        self.detector_rn = np.zeros(1, dtype=float) * (u.electron / u.pixel)**0.5
-        self.sky_sigma = np.zeros(1, dtype=float) * u.dimensionless_unscaled
-        super().__init__(default_camera, **kw)
-
-    @property
-    def pixel_size(self):
-        """
-        Compute the pixel size as a function of pivot wavelength.
-
-        Use the reference band for each channel as the fiducial: U-band for UV
-        and optical, J-band for IR.
-        """
-
-        pixsize = np.zeros(self.n_bands, dtype=float)
-        
-        fiducials, effective_aperture = self.recover('fiducials', 'telescope.effective_aperture')
-        
-        for ref, bands in enumerate(self.channels):
-            pxs = (0.5 * fiducials[0][ref] * u.Unit(fiducials[1])* u.rad / effective_aperture).to(u.arcsec).value
-            pixsize[bands] = pxs
-
-        return pixsize * u.arcsec / u.pix
+        #self.detector_rn = np.zeros(1, dtype=float) * (u.electron / u.pixel)**0.5
+        self.sky = syn.spectrum.SourceSpectrum(Empirical1D, points=[0.1,10000, 20000] << u.AA, lookup_table=[24,24,24] << u.ABmag) # Hardcode a 24th magnitude background. Should actually be ABMag/arcsec^2.
+        self.sky = self.sky.normalize(24 * u.ABmag, stsyn.spectrum.band("johnson,v"))
+        #super().__init__(default_camera, **kw)
 
     @property
     def n_bands(self):
-        return len(self.bandnames)
+        return len(self.bands)
 
     @property
     def n_channels(self):
-        return len(self.channels)
+        # this has always referred to the filters
+        return len(self.configuration["channel_filters"])
+
+    @property
+    def bands(self):
+        return [x for x in self.configuration["band"] if self.configuration["band"][x]["kind"] == "filter"]
+
+
+    @property
+    def band(self):
+        return self._band
+
+    @band.setter
+    def band(self, new_band):
+        if new_band in self.configuration["channel_filters"]:
+            self._band = new_band
+        else:
+            raise KeyError(f"Cannot set band {new_band}, valid options for this channel are {self.configuration['channel_filters']}")
+
+    @property
+    def pivotwave(self):
+        pivot = []
+        for bpass in self.configuration["band"]:
+            band = self.configuration["band"][bpass]
+            pivotval = band["bandpass"].pivot()
+            pivotunit = pivotval.unit
+            pivot.append(pivotval.value)
+
+        return np.asarray(pivot) << pivotunit
+
 
     @property
     def derived_bandpass(self):
         """
         Calculate the bandpasses.
         """
+        pivotwave = self.recover('pivotwave')
+        width = []
+        for bpass in self.configuration["band"]:
+            band = self.configuration["band"][bpass]
+            widthval = band["bandpass"].equivwidth()
+            widthunit = widthval.unit
+            width.append(widthval.value)
+        width = width << widthunit
 
-        #Convert to Quantity for calculations.
-        pivotwave, bandpass_r = self.recover('pivotwave','bandpass_r')
-
-        return np.array(pivotwave[0]) / np.array(bandpass_r[0])
+        return np.array(pivotwave/width)
 
     @property
     def ab_zeropoint(self):
         """
         AB-magnitude zero points as per Marc Postman's equation.
         """
-        pivotwave = self.pivotwave[0] * u.nm
-        abzp = 5509900. * (u.photon / u.s / u.cm**2) / pivotwave
+        pivotwave = self.recover('pivotwave')
+        pivot = pivotwave.to(u.nm)
+        abzp = 5509900. * (u.photon / u.s / u.cm**2) / pivot
 
-        return abzp
+        return abzp# << abunit
 
-
-    @property
-    def fwhm_psf(self):
-        """
-        Calculate the FWHM of the camera's PSF.
-        """
-        #Convert to Quantity for calculations.
-        pivotwave, effective_aperture = self.recover('pivotwave', 'telescope.effective_aperture')
-        diff_limit, diff_fwhm = self.recover('telescope.diff_limit_wavelength',
-                                             'telescope.diff_limit_fwhm')
-
-        #fwhm = (1.22 * u.rad * pivotwave / aperture).to(u.arcsec)
-        pivots = pivotwave[0] * u.Unit(pivotwave[1]) 
-        fwhm = (1.03 * u.rad * pivots / effective_aperture).to(u.arcsec)
-        
-        #only use these values where the wavelength is greater than the diffraction limit
-        fwhm = np.where(pivots.value > diff_limit[0], fwhm.value, diff_fwhm.value) * u.arcsec
-
-        return fwhm
-
-    def _print_initcon(self, verbose):
-        if verbose: #These are our initial conditions
-            print('Telescope diffraction limit: {}'.format(self.telescope.diff_limit_wavelength))
-            print('Telescope effective_aperture: {}'.format(self.telescope.effective_aperture))
-            print('Telescope temperature: {}'.format(self.telescope.temperature))
-            print('Pivot waves: {}'.format(nice_print(self.pivotwave[0] * u.Unit(self.pivotwave[1]))))
-            print('Pixel sizes: {}'.format(nice_print(self.pixel_size)))
-            print('AB mag zero points: {}'.format(nice_print(self.ab_zeropoint)))
-            print('Quantum efficiency: {}'.format(nice_print(self.total_qe[0] * u.Unit(self.total_qe[1]))))
-            print('Aperture correction: {}'.format(nice_print(self.ap_corr[0] * u.Unit(self.ap_corr[1]))))
-            print('Bandpass resolution: {}'.format(nice_print(self.bandpass_r[0] * u.Unit(self.bandpass_r[1]))))
-            print('Derived_bandpass: {}'.format(nice_print(self.derived_bandpass)))
-            print('Detector read noise: {}'.format(nice_print(self.detector_rn[0] * u.Unit(self.detector_rn[1]))))
-            print('Dark rate: {}'.format(nice_print(self.dark_current[0] * u.Unit(self.dark_current[1]))))
-
-    def _sn_box(self, verbose):
+    def _sn_box(self, wave, verbose):
         """
         Calculate the number of pixels in the SNR computation box.
         """
 
-        (Phi, fwhm_psf) = self.recover('pixel_size', 'fwhm_psf')
-        sn_box = np.round(3. * fwhm_psf / Phi)
+        Phi = self.configuration["pixel_scale"]
+        sn_box = np.round(3. * self.fwhm_psf(wave) / Phi)
 
         if verbose:
-            print('PSF width: {}'.format(nice_print(fwhm_psf)))
-            print('SN box width: {}'.format(nice_print(sn_box)))
+            print('PSF width: {}'.format(self.nice_print(self.fwhm_psf(wave))))
+            print('SN box width: {}'.format(self.nice_print(sn_box)))
 
-        return sn_box**2 / u.pix #don't want pix**2 units
+        return sn_box**2
 
-    def c_thermal(self, verbose=True):
-        """
-        Calculate the thermal emission counts for the telescope.
-        """
-
-        #Convert to Quantities for calculation.
-        (bandpass, pivotwave, aperture, ota_emissivity,
-         total_qe, pixel_size) = self.recover('derived_bandpass', 'pivotwave',
-                'telescope.effective_aperture',  'telescope.ota_emissivity',
-                'total_qe', 'pixel_size')
-
-        box = self._sn_box(verbose)
-
-        bandwidth = (bandpass * u.nm).to(u.cm)
-
-        h = const.h.to(u.erg * u.s) # Planck's constant erg s
-        c = const.c.to(u.cm / u.s) # speed of light [cm / s]
-
-        pivots = pivotwave[0] * u.Unit(pivotwave[1])
-        energy_per_photon = h * c / pivots.to(u.cm) / u.ph
-
-        D = aperture.to(u.cm) # telescope diameter in cm
-
-        Omega = (pixel_size**2 * box * u.pix).to(u.sr)
-
-        planck = self.planck
-        QE = total_qe[0] * u.Unit(total_qe[1])
-        qepephot = QE * planck / energy_per_photon
-
-        if verbose:
-            print('Planck spectrum: {}'.format(nice_print(planck)))
-            print('QE * Planck / E_phot: {}'.format(nice_print(qepephot)))
-            print('E_phot: {}'.format(nice_print(energy_per_photon)))
-            print('Omega: {}'.format(nice_print(Omega)))
-
-        thermal = (ota_emissivity[0] * planck / energy_per_photon *
-    			(np.pi / 4. * D**2) * QE * Omega * bandwidth )
-
-        return thermal
-
-    @property
-    def planck(self):
-        """
-        Planck spectrum for the various wave bands.
-        """
-        #Convert to Quantities for calculation
-        pivotwave, temperature = self.recover('pivotwave', 'telescope.temperature')
-
-        pivots = pivotwave[0] * u.Unit(pivotwave[1])
-        wave = pivots.to('cm')
-        if isinstance(temperature, u.Quantity):
-            temp = temperature
-        else:
-            temps = temperature[0] * u.Unit(temperature[1])
-            temp = temps.to('K')
-        h = const.h.to(u.erg * u.s) # Planck's constant erg s 
-        c = const.c.to(u.cm / u.s) # speed of light [cm / s] 
-        k = const.k_B.to(u.erg / u.K) # Boltzmann's constant [erg deg K^-1] 
-        x = 2. * h * c**2 / wave**5 
-        exponent = (h * c / (wave * k * temp)) 
-    
-        result = (x / (np.exp(exponent)-1.)).to(u.erg / u.s / u.cm**3) / u.sr
-
-        return result
 
     def interpolate_at_bands(self, sed):
         """
@@ -245,6 +157,22 @@ class Camera(PersistentModel):
         """
         return mag_from_source(self, source)
 
+    def _print_initcon(self, verbose):
+        if verbose: #These are our initial conditions
+            print('Telescope diffraction limit: {}'.format(self.telescope.diff_limit_wavelength))
+            print('Telescope effective_diameter: {}'.format(self.telescope.effective_diameter))
+            print('Instrument temperature: {}'.format(self.configuration["detector"]["thermal"]))
+            print('Pivot waves: {}'.format(self.nice_print(self.pivotwave)))
+            print('Pixel sizes: {}'.format(self.configuration["pixel_scale"]))
+            print('AB mag zero points: {}'.format(self.nice_print(self.ab_zeropoint)))
+            #print('Quantum efficiency: {}'.format(self.nice_print(self.configuration["detector"]["total_qe"](self.pivotwave))))
+            print('Aperture correction: {}'.format(self.ap_corr))
+            #print('Bandpass resolution: {}'.format(self.nice_print(self.bandpass_r[0] * u.Unit(self.bandpass_r[1]))))
+            print('Derived_bandpass: {}'.format(self.nice_print(self.derived_bandpass)))
+            print('Detector read noise: {}'.format(self.configuration["detector"]["read_noise"]))
+            print('Dark rate: {}'.format(self.configuration["detector"]["dark_current"]))
+
+
     def create_exposure(self, source=None):
         new_exposure = SourcePhotometricExposure()
         if source is not None:
@@ -254,10 +182,20 @@ class Camera(PersistentModel):
 
     def add_exposure(self, exposure):
         self.exposures.append(exposure)
-        exposure.camera = self
+        exposure.instrument = self
         exposure.telescope = self.telescope
         exposure.calculate()
-            
+
+    def transform_flux(self, spectrum, wave):
+        effective_area = self.recover("telescope.effective_area")
+        return spectrum.countrate(effective_area)
+
+    def set_to_dict(self, config):
+        self.configuration = config
+
+    def get_from_dict(self):
+        return self.configuration
+
     def set_from_sei(self, name): 
 
         if ('HRI' in name): hri = read_yaml.hri()

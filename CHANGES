@@ -1,3 +1,11 @@
+1.4.0
+    - Data from HWOME
+    - Calculation functions standardized and genericized
+    - Telescope now automatically loads all instruments
+    - All optical elements are now "bands"
+    - All functions now return a single band's exptime, snr, or magnitude
+1.3.9
+    - Data from HWOME
 1.3.2
     - IFS instrument
 1.3.1

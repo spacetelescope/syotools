@@ -6,6 +6,12 @@ Created on Sat Oct 15 10:59:16 2016
 """
 
 from functools import reduce
+from collections.abc import Iterable
+
+import numpy as np
+
+from astropy import units as u
+
 from syotools.persistence import JSON
 from syotools.utils import pre_encode, pre_decode
 
@@ -163,3 +169,33 @@ class PersistentModel(object):
 
         for attr, quantity in kw.items():
             setattr(self, attr, pre_encode(quantity))
+
+    def nice_print(self,arr):
+        """ Utility to make the verbose output more readable. """
+        scalar = True
+
+        if isinstance(arr, u.Quantity):
+            if arr.isscalar:
+                l = arr.value
+                unit = str(arr.unit)
+            else:
+                if len(arr) < 20:
+                    l = ['{:.2f}'.format(i) for i in arr.value]
+                    unit = str(arr.unit)
+                else:
+                    l = ['mean={:.2f}'.format(np.mean(arr.value)), 'median={:.2f}'.format(np.median(arr.value)), 'max={:.2f}'.format(np.max(arr.value)), 'std={:.2f}'.format(np.std(arr.value)), 'len={}'.format(len(arr.value))]
+                    unit = str(arr.unit)
+                scalar = False
+        else:
+            if isinstance(arr, Iterable):
+                l = ['{:.2f}'.format(i) for i in arr]
+                unit = ""
+                scalar = False
+            else:
+                l = arr
+                unit = ""
+        if scalar:
+            outstring = f"{l} {u}"
+        else:
+            outstring = f"{', '.join(l)} {unit}"
+        return outstring

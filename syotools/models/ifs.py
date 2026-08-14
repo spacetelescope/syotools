@@ -7,14 +7,17 @@ Created on Sat Oct 15 16:56:40 2016
 
 import numpy as np
 import astropy.units as u
+import astropy.constants as const
 from astropy.table import QTable
+import synphot as syn
+import stsynphot as stsyn
+from synphot.models import Empirical1D
 
 from syotools.models.base import PersistentModel
-from syotools.models.source_exposure import SourceSpectrographicExposure
+from syotools.models.source_exposure import SourceIFSExposure
 from syotools.models.spectrograph import Spectrograph
 from syotools.spectra.utils import mirror_efficiency, set_coating
 from syotools.defaults import default_ifs
-from hwo_sci_eng.utils import read_yaml 
 
 class IFS(Spectrograph):
     """
@@ -41,55 +44,79 @@ class IFS(Spectrograph):
         _default_model - used by PersistentModel
     """
 
-    def __init__(self, default_model = default_ifs, **kw):
-        self.telescope = None
+    def __init__(self, telescope, default_model = default_ifs, **kw):
+        self.telescope = telescope
         self.exposures = []
 
         self._ifs_default_file = ''
 
         self.name = ''
-        self.modes = []
         self.descriptions = {}
-        self.bef = np.zeros(0, dtype=float) * (u.erg / u.cm**2 / u.s / u.pix)
+        self.sky = syn.spectrum.SourceSpectrum(Empirical1D, points=[0.1,20000] << u.AA, lookup_table=[24,24] << u.ABmag)
+        self.sky = self.sky.normalize(24 * u.ABmag, stsyn.spectrum.band("johnson,v"))
         self.R = 0. * u.dimensionless_unscaled
         self.wave = np.zeros(0, dtype=float) * u.AA
         self.aeff = np.zeros(0, dtype=float) * u.cm**2
         self.wrange = np.zeros(2, dtype=float) * u.AA
-        self._mode = ''
-        super().__init__(default_model, **kw)
+        self._band = None
+        #super().__init__(default_model, **kw)
 
 
-    #Property wrapper for mode, so that we can use a custom setter to propagate
-    #mode updates to all the rest of the parameters
+    #Property wrapper for band, so that we can use a custom setter to propagate
+    #band updates to all the rest of the parameters
+    @property
+    def n_bands(self):
+        return len(self.bands)
 
     @property
-    def mode(self):
-        return self._mode
+    def band(self):
+        return self._band
 
-    @mode.setter
-    def mode(self, new_mode):
+    @property
+    def bands(self):
+        return [x for x in self.configuration["band"] if self.configuration["band"][x]["kind"] == "ifs"]
+
+    @band.setter
+    def band(self, new_band):
         """
-        Mode is used to set all the other parameters
+        Band is used to set all the other parameters
         """ 
 
-        nmode = new_mode.upper()
-        if self._mode == nmode or nmode not in self.modes:
+        nband = new_band.upper()
+        if self._band == nband or nband not in self.configuration["channel_filters"]:
             return
-        self._mode = nmode
-        table = QTable.read(self._ifs_default_file, nmode)
-                
-        self.R = table.meta['R'] * u.pix
-        self.wave = table['Wavelength'].copy()  # Copy to remove FITS file weakrefs
-        self.bef = table['BEF'].copy()          # Copy to remove FITS file weakrefs
-        self.aeff = table['A_Eff'].copy()       # Copy to remove FITS file weakrefs
-        wrange = np.array([table.meta['WAVE_LO'], table.meta['WAVE_HI']]) * u.AA
+        self._band = nband
+
+        self.R = self.configuration["band"][nband]["resolution"]
+        self.wave = self.configuration["band"][nband]["bandpass"].waveset
+        self.sky = syn.spectrum.SourceSpectrum(Empirical1D, points=self.wave, lookup_table=np.ones_like(self.wave.value) * 24 << u.ABmag)
+        self.sky = self.sky.normalize(24 * u.ABmag, stsyn.spectrum.band("johnson,v"))
+        self.aeff = self.configuration["band"][nband]["bandpass"]
+        wrange = np.array((np.min(self.wave.value), np.max(self.wave.value)))
         self.wrange = wrange
+
 
     @property
     def delta_lambda(self):
         wave, R = self.recover('wave', 'R')
+        R = R << u.pix # HWOME's definition is unitless
         return wave / R
-    
+
+    def _sn_box(self, wave, verbose):
+        """
+        Calculate the number of pixels in the SNR computation box.
+        """
+
+        Phi = self.configuration["pixel_scale"]
+        sn_box = np.round(3. * self.fwhm_psf(wave) / Phi)
+
+        if verbose:
+            print('PSF width: {}'.format(self.nice_print(self.fwhm_psf(wave))))
+            print('SN box height: {}'.format(self.nice_print(sn_box)))
+            print('SN box width: {}'.format(self.nice_print(sn_box)))
+
+        return sn_box**2
+
     def create_exposure(self, source=None):
         new_exposure = SourceIFSExposure()
         if source is not None:
@@ -99,9 +126,15 @@ class IFS(Spectrograph):
 
     def add_exposure(self, exposure):
         self.exposures.append(exposure)
-        exposure.ifs = self
+        exposure.instrument = self
         exposure.telescope = self.telescope
         exposure.calculate()
+
+    def transform_flux(self, spectrum, wave):
+        effective_area = self.recover("telescope.effective_area")
+        flux = syn.units.convert_flux(wave, spectrum(wave), u.erg / u.s / u.cm**2 / u.AA)
+        phot_energy = const.h.to(u.erg * u.s) * const.c.to(u.cm / u.s) / wave.to(u.cm) / u.ct
+        return flux / phot_energy * effective_area
 
     def set_from_sei(self, name): 
 

@@ -8,9 +8,12 @@ import astropy.units as u
 from syotools.spectra.spec_defaults import syn_spectra_library
 from syotools.utils.yaml_utils import read_yaml, write_yaml
 from syotools.wrappers.common import generate_test
+from syotools.models.telescope import Telescope
 
-telescopes = ["EAC1", "EAC2", "EAC3"]
-instruments = ["hri", "uvi"]
+telescopes = ["EAC5"]
+telescope = Telescope()
+telescope.set_from_hwome("EAC5")
+instruments = list(telescope.instruments.keys())
 seds = syn_spectra_library
 redshifts = np.logspace(0,5,20)
 extinctions = np.linspace(0,6,10)
@@ -28,7 +31,7 @@ def create_comparisons(reset):
     extinction=0
     magnitude = 20
     exptime = 1000
-    target = "magnitude"
+    target = "snr"
 
     for telescope in telescopes:
         for instrument in instruments:
