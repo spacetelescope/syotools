@@ -80,9 +80,9 @@ class Telescope(PersistentModel):
             raise NotImplementedError
 
     def set_from_hwome(self,name):
-        self.name = name
+        self.name = name.lower()
         self.hwo_data = DataModel()
-        self.hwo_data.load_hardware(f"{name}.yaml")
+        self.hwo_data.load_hardware(f"{self.name}.yaml")
 
         self.telescope_bands = {}
 
