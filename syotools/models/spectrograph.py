@@ -17,7 +17,6 @@ from .instrument import Instrument
 from syotools.models.source_exposure import SourceSpectrographicExposure
 from syotools.spectra.utils import mirror_efficiency, set_coating
 from syotools.defaults import default_spectrograph, default_spectropolarimeter
-from hwo_sci_eng.utils import read_yaml
 from hwome.core.navigator import DataModel
 
 class Spectrograph(Instrument):

@@ -9,6 +9,7 @@ from syotools.models.instrument import Instrument
 class Mock_Instrument(Instrument):
     def __init__(self):
         self.configuration = {"detector": {"total_qe": 1}}
+        self.n_bands = 1
 
     def _print_initcon(self, verbose):
         pass
@@ -193,6 +194,26 @@ def test_readnoise_exptime(verbose=False):
 
     assert exptime_2 > exptime_1
 
+def test_ensure_array(verbose=False):
+    source_exposure = Mock_SourceExposure(snr=10)
+    source_exposure.instrument.n_bands = 10
+    array1 = source_exposure._ensure_quantity(1, u.s)
+
+    array2 = source_exposure._ensure_quantity([1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 134, 213], u.AA)
+    
+    array3 = source_exposure._ensure_quantity([1, 1, 2, 3, 5, 8, 13, 21, 34, 55], u.m)
+
+    array4 = source_exposure._ensure_quantity([11, 12], u.ABmag)
+
+    if verbose:
+        print("Array 1 (len 1):", len(array1), array1)
+        print("Array 2 (len 13):", len(array2), array2)
+        print("Array 3 (len 10):", len(array3), array3)
+        print("Array 4 (len 2):", len(array4), array4)
+        print("-----------------------")
+
+    assert len(array4) == 10
+
 if __name__ == "__main__":
     test_exptime(verbose=True)
     test_snr(verbose=True)
@@ -202,3 +223,4 @@ if __name__ == "__main__":
     test_dark_exptime(verbose=True)
     test_thermal_exptime(verbose=True)
     test_readnoise_exptime(verbose=True)
+    test_ensure_array(verbose=True)

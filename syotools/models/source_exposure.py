@@ -102,25 +102,33 @@ class SourceExposure(PersistentModel):
         Ensure that the given Quantity is an array, propagating if necessary.
         """
         if self.instrument is None:
-             nb = 1
+            nb = 1
         elif nb is None:
             nb = self.recover('instrument.n_bands')
         val = quant 
-        if quant.isscalar or len(quant) < nb:
-            q = np.full(nb, val) << quant.unit
-            quant = q
+        if quant.isscalar:
+            q = np.full(nb, val)
+        elif len(quant) < nb:
+            if len(quant) > 1:
+                q = np.full(nb, val[0])
+            else:
+                q = np.full(nb, val)
         elif len(quant) > nb:
             q = quant[0:nb]
-            quant = q
+        else:
+            q = val
 
-        return quant
+        if not isinstance(q, u.Quantity):
+            q = q << quant.unit
+
+        return q
 
     def _ensure_quantity(self, quant, unit):
         """
         Ensure given quantity is an astropy unit.Quantity
         of appropriate type
         """
-        if type(quant) == u.Quantity:
+        if isinstance(quant, u.Quantity):
             # just see if this crashes.
             try:
                 quant.to(unit)
@@ -320,7 +328,7 @@ class SourceExposure(PersistentModel):
 
         return fsource_countrate, fsky_countrate, thermal_countrate, dark, read_noise
 
-    def calculate(self):
+    def calculate(self, custom_band=None):
         """
         Wrapper to calculate the exposure time, SNR, or limiting magnitude,
         based on the other two. The "unknown" attribute controls which of these
@@ -332,11 +340,11 @@ class SourceExposure(PersistentModel):
             return False
         result = {'magnitude': self.calculate_magnitude,
                 'exptime': self.calculate_exptime,
-                'snr': self.calculate_snr}[self.unknown]()
+                'snr': self.calculate_snr}[self.unknown](custom_band=custom_band)
 
         return result
 
-    def calculate_exptime(self, band=None):
+    def calculate_exptime(self, custom_band=None):
         """
         Calculate for exposure times. If a band has been passed in, do that. Otherwise, do all of them in the channel.
 
@@ -346,10 +354,13 @@ class SourceExposure(PersistentModel):
             _description_, by default None
         """
         configuration, band, all_bands = self.recover("instrument.configuration", "instrument.band", "instrument.bands")
-        if band is None:
-            bands = all_bands
+        if custom_band is not None:
+            bands = [custom_band]
         else:
-            bands = [band]
+            if band is None:
+                bands = all_bands
+            else:
+                bands = [band]
         self._exptime = []
         _snr_temp = self._ensure_array(self._snr, len(bands))
         for idx, band in enumerate(bands):
@@ -362,7 +373,7 @@ class SourceExposure(PersistentModel):
 
         return True
 
-    def calculate_snr(self, band=None):
+    def calculate_snr(self, custom_band=None):
         """
         Calculate for SNR. If a band has been passed in, do that. Otherwise, do all of them in the channel.
 
@@ -372,13 +383,15 @@ class SourceExposure(PersistentModel):
             _description_, by default None
         """
         configuration, band, all_bands = self.recover("instrument.configuration", "instrument.band", "instrument.bands")
-        if band is None:
-            bands = all_bands
+        if custom_band is not None:
+            bands = [custom_band]
         else:
-            bands = [band]
+            if band is None:
+                bands = all_bands
+            else:
+                bands = [band]
         self._snr = []
         _exptime_temp = self._ensure_array(self._exptime, len(bands))
-        print(bands)
         for idx, band in enumerate(bands):
             # because a multiple-in, multiple-out is a valid use case
             self._exptime = _exptime_temp[idx]
@@ -389,7 +402,7 @@ class SourceExposure(PersistentModel):
 
         return True
 
-    def calculate_magnitude(self, band=None):
+    def calculate_magnitude(self, custom_band=None):
         """
         Calculate for magnitudes. If a band has been passed in, do that. Otherwise, do all of them in the channel.
 
@@ -399,10 +412,13 @@ class SourceExposure(PersistentModel):
             _description_, by default None
         """
         configuration, band, all_bands = self.recover("instrument.configuration", "instrument.band", "instrument.bands")
-        if band is None:
-            bands = all_bands
+        if custom_band is not None:
+            bands = [custom_band]
         else:
-            bands = [band]
+            if band is None:
+                bands = all_bands
+            else:
+                bands = [band]
         self._magnitude = []
         _exptime_temp = self.exptime
         _snr_temp = self._snr

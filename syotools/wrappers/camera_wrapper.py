@@ -43,6 +43,9 @@ def camera_snr(telescope, template, magnitude, exptime, silent=False):
 	
 	source.set_sed(template, magnitude, redshift, extinction, bandpass="johnson,v")
 
+	results = {}
+	out_instrument = {}
+
 	for instrument in suitable_instruments:
 		inst = tel.instruments[instrument]
 
@@ -58,9 +61,10 @@ def camera_snr(telescope, template, magnitude, exptime, silent=False):
 			for bb, ss in zip(inst.bands, exp.snr): print("{}, SNR = {}".format(bb, ss)) 
 	            
 		for bb,ee in zip(inst.bands, exp.snr): 
-			results[bb] = (inst, ee)
+			results[bb] = ee
+			out_instrument[bb] = inst
 
-	return results
+	return results, out_instrument
 
 
 def camera_exptime(telescope, template, magnitude, snr, silent=False): 
@@ -108,6 +112,7 @@ def camera_exptime(telescope, template, magnitude, snr, silent=False):
 	source.set_sed(template, magnitude, redshift, extinction, bandpass="johnson,v")
 
 	results = {}
+	out_instrument = {}
 
 	for instrument in suitable_instruments:
 		inst = tel.instruments[instrument]
@@ -124,10 +129,10 @@ def camera_exptime(telescope, template, magnitude, snr, silent=False):
 			for bb, ee in zip(inst.bands, exp.exptime): print("{}, exptime = {}".format(bb, ee))
 
 		for bb,ee in zip(inst.bands, exp.exptime): 
-			results[bb] = (inst, ee)
+			results[bb] = ee
+			out_instrument[bb] = inst
 
-
-	return results
+	return results, out_instrument
 
 def camera_magnitude(telescope, template, snr, exptime, silent=False): 
 	''' 
@@ -173,6 +178,9 @@ def camera_magnitude(telescope, template, snr, exptime, silent=False):
 	
 	source.set_sed(template, 30., redshift, extinction)   
 
+	results = {}
+	out_instrument = {}
+
 	for instrument in suitable_instruments:
 		inst = tel.instruments[instrument]
 		exp = SourcePhotometricExposure()
@@ -188,6 +196,7 @@ def camera_magnitude(telescope, template, snr, exptime, silent=False):
 			for bb, mm in zip(inst.bands, exp.magnitude): print("{}, Mag = {}".format(bb, mm)) 
 	
 		for bb,ee in zip(inst.bands, exp.magnitude): 
-			results[bb] = (inst, ee)
+			results[bb] = ee
+			out_instrument[bb] = inst
 
-	return results
+	return results, out_instrument

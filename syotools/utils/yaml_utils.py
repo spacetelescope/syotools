@@ -8,7 +8,7 @@ def simplify_data(data):
     if isinstance(data, str):
         data = str(data)
     elif isinstance(data, u.Quantity):
-        data = ["!Astropy", simplify_data(data.value),data.unit] # Special astropy handling
+        data = ["!Astropy", simplify_data(data.value),str(data.unit)] # Special astropy handling
     elif isinstance(data, (int, np.int32, np.int64)):
         data = int(data)
     elif isinstance(data, (float, np.float32, np.float64)):

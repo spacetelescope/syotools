@@ -14,7 +14,6 @@ from .instrument import Instrument
 from syotools.models.source_exposure import SourcePhotometricExposure
 from syotools.defaults import default_camera
 from syotools.spectra.utils import mag_from_sed, mirror_efficiency, set_coating
-from hwo_sci_eng.utils import read_yaml
 from hwome.core.navigator import DataModel
 
 

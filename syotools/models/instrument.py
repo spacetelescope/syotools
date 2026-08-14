@@ -3,6 +3,8 @@
 Created on Fri Oct 14 21:31:18 2016
 @author: gkanarek, tumlinson
 """
+import copy
+
 import numpy as np
 import astropy.constants as const
 import astropy.units as u
@@ -11,7 +13,7 @@ from synphot.models import Empirical1D
 
 from syotools.models.base import PersistentModel
 from syotools.spectra.utils import mag_from_sed, mirror_efficiency, set_coating
-from hwo_sci_eng.utils import read_yaml
+from syotools.utils.yaml_utils import simplify_data, complexify_data
 from hwome.core.navigator import DataModel
 
 
@@ -71,6 +73,7 @@ class Instrument(PersistentModel):
         result = (1.03 * u.rad * diff_limit_wavelength / effective_diameter).to(u.arcsec)
         return result
 
+    # UNFINISHED
     def ee(self,wavelength):
         effective_aperture = self.recover('telescope.effective_aperture')
         a = effective_radius
@@ -225,10 +228,11 @@ class Instrument(PersistentModel):
             total_throughput = np.prod(thru.q, axis=0)
 
             # and store for later retrieval
-            band = syn.spectrum.SpectralElement(Empirical1D, points=thru.w, lookup_table=total_throughput)
+            band = self.load_throughput(thru.w, total_throughput)
             wavemin = band.avgwave() - band.rectwidth()/2
             wavemax = band.avgwave() + band.rectwidth()/2
-            self.configuration["band"][fancy_name] = {"internal_name": filter_name, "bandpass": band,  "effective_wavelength": band.avgwave(), "wave_min": wavemin, "wave_max": wavemax, "optics": len(thru.value.keys())}
+            self.configuration["band"][fancy_name] = {"internal_name": filter_name, "bandpass": band, "original_wave": thru.w, "original_thru": total_throughput, "effective_wavelength": band.avgwave(), 
+                                                    "wave_min": wavemin, "wave_max": wavemax, "optics": len(thru.value.keys())}
             if kind in ("disperser", "ifs"):
                 grating_resolution = channel_data[filter_name].Grating.spectral_resolution.q
                 self.configuration["band"][fancy_name]["resolution"] = float(grating_resolution)
@@ -247,13 +251,44 @@ class Instrument(PersistentModel):
             self.configuration["detector"]["dark_current"] = detector.dark_current.q / u.pix #* u.electron / u.pix**2 / u.ct # needs to be electrons per pixel per second
             w = detector.qe.w
             t = detector.qe.q
-            self.configuration["detector"]["total_qe"] = syn.spectrum.SpectralElement(Empirical1D, points=w, lookup_table=t)
+            self.configuration["detector"]["total_qe"] = self.load_throughput(w, t)
+            self.configuration["detector"]["original_qe_wave"] = w
+            self.configuration["detector"]["original_qe_thru"] = t
 
-    def set_to_dict(self, config):
+    def load_throughput(self, wave, thru):
+        return syn.spectrum.SpectralElement(Empirical1D, points=wave, lookup_table=thru)
+
+    def load_from_dict(self, config):
+        """
+        Restore an instrument from a stored dictionary
+        """
+        config = complexify_data(config)
+
+        for band in config["band"]:
+            config["band"][band]["bandpass"] = self.load_throughput(config["band"][band]["original_wave"], config["band"][band]["original_thru"])
+
+        config["detector"]["total_qe"] = self.load_throughput(config["detector"]["original_qe_wave"], config["detector"]["original_qe_thru"])
+
         self.configuration = config
 
-    def get_from_dict(self):
-        return self.configuration
+    def save_to_dict(self):
+        """
+        Save an instrument to a dictionary - scrub the Synphot objects so we don't have to flatten them
+
+        Returns
+        -------
+        config: dict
+            A configuration dictionary
+        """
+        config = copy.deepcopy(self.configuration)
+        for band in config["band"]:
+            del config["band"][band]["bandpass"]
+        
+        del config["detector"]["total_qe"]
+
+        config = simplify_data(config)
+
+        return config
 
     def set_from_sei(self, name): 
         """

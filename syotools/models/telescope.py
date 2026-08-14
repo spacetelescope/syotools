@@ -20,7 +20,6 @@ from hwome.core.navigator import DataModel
 from syotools.models.camera import Camera
 from syotools.models.ifs import IFS
 from syotools.models.spectrograph import Spectrograph
-from hwo_sci_eng.utils import read_yaml, read_json
 
 class Telescope(PersistentModel):
     """

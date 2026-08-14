@@ -18,7 +18,6 @@ from syotools.models.source_exposure import SourceIFSExposure
 from syotools.models.spectrograph import Spectrograph
 from syotools.spectra.utils import mirror_efficiency, set_coating
 from syotools.defaults import default_ifs
-from hwo_sci_eng.utils import read_yaml 
 
 class IFS(Spectrograph):
     """
