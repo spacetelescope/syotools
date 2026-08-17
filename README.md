@@ -13,7 +13,7 @@ for the google colab platform
 
 ## Development Setup
 
-You need `PYSYN_CDBS` and `SCI_ENG_DIR` set in your environment. I use `venv` and add this to the activate script:
+You need `PYSYN_CDBS` and `HWOME_DATA_PATH` set in your environment. I use `venv` and add this to the activate script:
 
 ```bash
 export PYSYN_CDBS=$(python -c "import sys; print([p for p in sys.path if 'site-packages' in p][0])")/syotools/reference_data/pysynphot_data/
