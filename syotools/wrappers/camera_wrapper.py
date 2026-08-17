@@ -29,7 +29,7 @@ def camera_snr(telescope, template, magnitude, exptime, silent=False):
 	the camera object "hri" 
     '''
 
-	from syotools.models import Camera, Telescope, Source, SourcePhotometricExposure
+	from syotools.models import Telescope, Source, SourcePhotometricExposure
 	import numpy as np
 	import astropy.units as u 
       
@@ -169,7 +169,6 @@ def camera_magnitude(telescope, template, snr, exptime, silent=False):
 	tel = Telescope()
 	# create a Telescope, Camera, and Exposure 
 	tel.set_from_hwome(telescope)
-	hri = Camera(tel)
 	suitable_instruments, suitable_filters = tel.find_instrument_with("filter")
 	
 	source = Source() 

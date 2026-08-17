@@ -362,6 +362,7 @@ class SourceExposure(PersistentModel):
             else:
                 bands = [band]
         self._exptime = []
+        _initial_band = self.instrument.band
         _snr_temp = self._ensure_array(self._snr, len(bands))
         for idx, band in enumerate(bands):
             # because a multiple-in, multiple-out is a valid use case
@@ -370,6 +371,7 @@ class SourceExposure(PersistentModel):
             result = self._update_exptime(self.source, configuration["band"][band])
             self._exptime.append(result)
         self._snr = _snr_temp
+        self.instrument.band = _initial_band
 
         return True
 
@@ -391,6 +393,7 @@ class SourceExposure(PersistentModel):
             else:
                 bands = [band]
         self._snr = []
+        _initial_band = self.instrument.band
         _exptime_temp = self._ensure_array(self._exptime, len(bands))
         for idx, band in enumerate(bands):
             # because a multiple-in, multiple-out is a valid use case
@@ -399,6 +402,7 @@ class SourceExposure(PersistentModel):
             result = self._update_snr(self.source, configuration["band"][band])
             self._snr.append(result)
         self._exptime = _exptime_temp
+        self.instrument.band = _initial_band
 
         return True
 
@@ -420,6 +424,7 @@ class SourceExposure(PersistentModel):
             else:
                 bands = [band]
         self._magnitude = []
+        self.instrument.band = _initial_band
         _exptime_temp = self.exptime
         _snr_temp = self._snr
         for idx, band in enumerate(bands):
@@ -432,6 +437,7 @@ class SourceExposure(PersistentModel):
 
         self._exptime = _exptime_temp
         self._snr = _snr_temp
+        self.instrument.band = _initial_band
 
         return True
 

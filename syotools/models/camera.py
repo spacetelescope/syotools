@@ -86,7 +86,7 @@ class Camera(Instrument):
 
     @band.setter
     def band(self, new_band):
-        if new_band in self.configuration["channel_filters"]:
+        if new_band in self.configuration["channel_filters"] or new_band is None:
             self._band = new_band
         else:
             raise KeyError(f"Cannot set band {new_band}, valid options for this channel are {self.configuration['channel_filters']}")
