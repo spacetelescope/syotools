@@ -142,7 +142,7 @@ flamsp.__setattr__('band', 'johnson,v')
 syn_spectra_library['Flat in F_lambda'] = flamsp
 
 bb = syn.spectrum.SourceSpectrum(syn.models.BlackBody1D, temperature=5000)
-wave = np.linspace(100,3000,300) << u.Angstrom
+wave = np.linspace(100,30000,300) << u.Angstrom
 bb = bb.normalize(30.0 * u.ABmag, band=stsyn.band('galex,fuv'))
 # This library is built on the idea of storing flux and wavelength arrays, so we need to make this an empirical spectrum.
 bb = syn.spectrum.SourceSpectrum(syn.models.Empirical1D, points=wave, lookup_table=bb(wave))
