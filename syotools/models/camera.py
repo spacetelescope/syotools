@@ -54,7 +54,6 @@ class Camera(Instrument):
         self.exposures = []
         self.name = ''
         #self.pivotwave = np.zeros(1, dtype=float) * u.nm
-        self.bandnames = ['']
         self.channels = [([],0)]
         self.fiducials = np.zeros(1, dtype=float) * u.nm
         self.total_qe = np.zeros(1, dtype=float) * u.dimensionless_unscaled
@@ -74,6 +73,10 @@ class Camera(Instrument):
     def n_channels(self):
         # this has always referred to the filters
         return len(self.configuration["channel_filters"])
+
+    @property
+    def bandnames(self):
+        return self.configuration["channel_filters"]
 
     @property
     def bands(self):

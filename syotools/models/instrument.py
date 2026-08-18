@@ -39,7 +39,6 @@ class Instrument(PersistentModel):
         self.exposures = []
         self.name = ''
         #self.pivotwave = np.zeros(1, dtype=float) * u.nm
-        self.bandnames = ['']
         self.channels = [([],0)]
         self.fiducials = np.zeros(1, dtype=float) * u.nm
         self.total_qe = np.zeros(1, dtype=float) * u.dimensionless_unscaled

@@ -74,6 +74,10 @@ class Spectrograph(Instrument):
         return self._band
 
     @property
+    def bandnames(self):
+        return self.configuration["channel_filters"]
+
+    @property
     def bands(self):
         return [x for x in self.configuration["band"] if self.configuration["band"][x]["kind"] == "disperser"]
 
