@@ -427,7 +427,7 @@ class SourceExposure(PersistentModel):
             else:
                 bands = [band]
         self._magnitude = []
-        self.instrument.band = _initial_band
+        _initial_band = self.instrument.band
         _exptime_temp = self.exptime
         _snr_temp = self._snr
         for idx, band in enumerate(bands):

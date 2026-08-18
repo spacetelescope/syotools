@@ -45,7 +45,6 @@ def uvspec_snr(telescope, band, template, fuvmag, exptime, silent=False):
             break
     if instrument is None:
         raise ValueError(f"Could not find an instrument with {band}")
-    print(f"Using Instrument {instrument} with band {test_band}")
 
     source = Source()
     redshift = 0.0
@@ -132,7 +131,6 @@ def uvspec_exptime(telescope, band, template, fuvmag, snr, silent=False):
             break
     if instrument is None:
         raise ValueError(f"Could not find an instrument with {band}")
-    print(f"Using Instrument {instrument} with band {test_band}")
 
 
     source = Source()

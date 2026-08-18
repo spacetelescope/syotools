@@ -1,3 +1,8 @@
+1.4.1
+    - Save-to-dict functionality now writes software version
+    - Fixed spectrograph fringing and G120M/G180M functionality
+    - Running calculate_exptime() (or the others) no longer accidentally
+      sets the Instrument.band permanently.
 1.4.0
     - Data from HWOME
     - Calculation functions standardized and genericized
