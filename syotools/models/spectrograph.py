@@ -158,6 +158,7 @@ class Spectrograph(Instrument):
         effective_area = self.recover("telescope.effective_area")
         flux = syn.units.convert_flux(wave, spectrum(wave), u.erg / u.s / u.cm**2 / u.AA)
         phot_energy = const.h.to(u.erg * u.s) * const.c.to(u.cm / u.s) / wave.to(u.cm) / u.ct
+
         return flux / phot_energy * effective_area
 
     def set_from_sei(self, name):

@@ -238,11 +238,14 @@ class SourceExposure(PersistentModel):
         if band["kind"] in ("disperser", "ifs"):
             R = band["resolution"]
             waveunit = band["bandpass"].waveset.unit
-            wavepix = band["bandpass"].waveset.value
+            wavepix = np.linspace(band["bandpass"].waveset[0], band["bandpass"].waveset[-1], 1000) # using the bandpass wavelengths leads to weird fringing
             delta_lambda = wavepix/R
             pixel = np.cumsum(1.0 / delta_lambda * np.gradient(wavepix))
             pixel_integer = np.arange(int(pixel[0]), int(pixel[-1]))
             wave = np.interp(pixel_integer, pixel, wavepix) << waveunit
+            # Or just use the instrument bandpass
+            #wave = band["bandpass"].waveset
+
             dw = wave[1:] - wave[:-1]
             good = np.where(dw != 0)[0]
             wave = wave[good]
