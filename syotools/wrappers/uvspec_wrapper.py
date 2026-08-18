@@ -1,33 +1,40 @@
 
 def uvspec_snr(telescope, band, template, fuvmag, exptime, silent=False):
-    ''' Run a basic SNR calculation that takes in a telescope,
-        spectral template, normalization magnitude, and exposure
-        time to compute SNR. For converting magnitude, template,
-	      and SNR to a desired exposure time, use uvspec_exptime.py
+    ''' 
+    Run a basic SNR calculation that takes in a telescope,
+    spectral template, normalization magnitude, and exposure
+    time to compute SNR. For converting magnitude, template,
+        and SNR to a desired exposure time, use uvspec_exptime.py
 
-        usage:
-	      wave, snr, uvi = uvspec_snr(telescope, band, template, uvmag, exptime)
+    usage:
+        wave, snr, inst = uvspec_snr(telescope, band, template, uvmag, exptime)
 
-          positional arguments:
+        positional arguments:
 
-           1-telescope = 'EAC1', 'EAC2', or 'EAC3'. This argument is a string.
-             EAC1 = 6 m inner diameter, 7.2 outer diameter hex pattern, off-axis
-             EAC2 = 6 m diameter off-axis
-             EAC3 = 8 m diameter on-axis
+	1 - telescope = 'EAC5'. This argument is a string. 
+	    EAC5 = 10 m outer diameter mirror
 
-           2-band = your choice of UVI grating, a string:
-		        ['G120M', 'G150M', 'G180M', 'G155L', 'G145LL', 'G300M']
+    2 - band = your choice of grating, a string:
+            ['HRI_S_NIR.HRI_Grism1a', 'HRI_S_NIR.HRI_Grism1b', 
+             'HRI_S_UVIS.HRI_Grism_2a', 'HRI_S_UVIS.HRI_Grism_2b', 
+             'FUV_MOS.G120M', 'FUV_MOS.G150M', 'FUV_MOS.G180M', 
+             'FUV_MOS_L.G145LL', 'FUV_MOS_L.G155L', 'FUV_MOS_L.G165LL', 
+             'NUV_MOS.G300M', 'NUV_MOS.G700L']
 
-           3-template = your choice of spectral template:
-		          ['flam', 'qso', 's99', 'o5v', 'g2v', 'g191b2b', 'gd71', 'gd153', 'ctts',
-                        'mdwarf', 'orion', 'nodust', 'ebv6', 'hi1hei1', 'hi0hei1']
+	3 - template = your choice of spectral template: 
+	    'Classical T Tauri', 'M1 Dwarf', 'G Dwarf', '10 Myr Starburst', 'QSO', 'Seyfert
+	    1', 'Seyfert 2', 'Liner', 'O5V Star', 'G2V Star', 'Orion Nebula', 'G191B2B (WD)',
+	    'GD71 (WD)', 'GD153 (WD)', 'Starburst, No Dust', 'Starburst, E(B-V) = 0.6', 'B5V
+	    Star', 'M2V Star', 'Elliptical Galaxy', 'Sbc Galaxy', 'Starburst Galaxy', 'NGC
+	    1068', 'Galaxy with f_esc, HI=1, HeI=1', 'Galaxy with f_esc, HI=0.001, HeI=1',
+	    'Blackbody5000', 'Blackbody100000' 
 
-           4-fuvmag = FUV magnitude to normalize the template spectrum, a float.
+    4 - fuvmag = FUV magnitude to normalize the template spectrum, a float.
 
-	   5-exptime = desired exposure time in hours, a float
+    5 - exptime = desired exposure time in hours, a float
 
-        outputs are two arrays of floats for wavelength and snr and the Spectrograph
-		    object in case it is needed by other code.
+    outputs are two arrays of floats for wavelength and snr, and the Spectrograph
+        object in case it is needed by other code.
     '''
 
     from syotools.models import Telescope, Spectrograph, Source, SourceSpectrographicExposure
@@ -39,6 +46,7 @@ def uvspec_snr(telescope, band, template, fuvmag, exptime, silent=False):
     tel.set_from_hwome(telescope)
     suitable_instruments, suitable_bands = tel.find_instrument_with("disperser")
     instrument = None
+    # this code demonstrates how to find a band with a partial name
     for test_band in suitable_bands:
         if band in test_band:
             instrument = suitable_bands[test_band]
@@ -68,6 +76,7 @@ def uvspec_snr(telescope, band, template, fuvmag, exptime, silent=False):
         print("We have set verbose = False")
 
     if not silent:
+        print(f"Using Instrument {instrument} with band {test_band}")
         print("Current SED template: {}".format(uvi_exp.source.name))
         print("Current grating mode: {}".format(inst.band))
         print("Current exposure time: {} hours\n".format(uvi_exp.exptime))
@@ -78,7 +87,7 @@ def uvspec_snr(telescope, band, template, fuvmag, exptime, silent=False):
 
     uvi_snr = uvi_exp.recover('snr')
 
-    wave, snr =  uvi_exp.wave, uvi_exp.snr
+    wave, snr =  uvi_exp.wave, uvi_exp.snr[0]
 
 
     return wave, snr, inst
@@ -93,30 +102,35 @@ def uvspec_exptime(telescope, band, template, fuvmag, snr, silent=False):
     magnitude, template, and exptime to SNR, use uvspec_snr.py
 
       usage:
-	      wave, exptime, uvi = uvspec_exptime(telescope, band, template, uvmag, snr)
+	      wave, exptime, inst = uvspec_exptime(telescope, band, template, uvmag, snr)
 
         positional arguments:
 
-          1-telescope = 'EAC1', 'EAC2', or 'EAC3'. This argument is a string.
-            EAC1 = 6 m inner diameter, 7.2 outer diameter hex pattern, off-axis 
-            EAC2 = 6 m diameter off-axis 
-            EAC3 = 8 m diameter on-axis
+	1 - telescope = 'EAC5'. This argument is a string. 
+	    EAC5 = 10 m outer diameter mirror
 
-          2-band = your choice of UVI grating, a string:
-          ['G120M', 'G150M', 'G180M', 'G155L', 'G145LL', 'G300M']
+    2 - band = your choice of grating, a string:
+            ['HRI_S_NIR.HRI_Grism1a', 'HRI_S_NIR.HRI_Grism1b', 
+             'HRI_S_UVIS.HRI_Grism_2a', 'HRI_S_UVIS.HRI_Grism_2b', 
+             'FUV_MOS.G120M', 'FUV_MOS.G150M', 'FUV_MOS.G180M', 
+             'FUV_MOS_L.G145LL', 'FUV_MOS_L.G155L', 'FUV_MOS_L.G165LL', 
+             'NUV_MOS.G300M', 'NUV_MOS.G700L']
 
-          3-template = your choice of spectral template:
-            ['flam', 'qso', 's99', 'o5v', 'g2v', 'g191b2b', 'gd71', 'gd153', 'ctts',
-                      'mdwarf', 'orion', 'nodust', 'ebv6', 'hi1hei1', 'hi0hei1']
+	3 - template = your choice of spectral template: 
+	    'Classical T Tauri', 'M1 Dwarf', 'G Dwarf', '10 Myr Starburst', 'QSO', 'Seyfert
+	    1', 'Seyfert 2', 'Liner', 'O5V Star', 'G2V Star', 'Orion Nebula', 'G191B2B (WD)',
+	    'GD71 (WD)', 'GD153 (WD)', 'Starburst, No Dust', 'Starburst, E(B-V) = 0.6', 'B5V
+	    Star', 'M2V Star', 'Elliptical Galaxy', 'Sbc Galaxy', 'Starburst Galaxy', 'NGC
+	    1068', 'Galaxy with f_esc, HI=1, HeI=1', 'Galaxy with f_esc, HI=0.001, HeI=1',
+	    'Blackbody5000', 'Blackbody100000' 
 
-          4-fuvmag = FUV magnitude to normalize the template spectrum, a float.
+    4 - fuvmag = FUV magnitude to normalize the template spectrum, a float.
 
-          5-snr = desired SNR, per pixel
+    5 - snr = desired SNR, per pixel
 
-      outputs are two arrays of floats for wavelength and exptime and the Spectrograph
-      object in case it is needed by other code.
+    outputs are two arrays of floats for wavelength and snr, and the Spectrograph
+        object in case it is needed by other code.
     '''
-
     from syotools.models import Telescope, Spectrograph, Source, SourceSpectrographicExposure
     import astropy.units as u
 
@@ -125,6 +139,7 @@ def uvspec_exptime(telescope, band, template, fuvmag, snr, silent=False):
     tel.set_from_hwome(telescope)
     suitable_instruments, suitable_bands = tel.find_instrument_with("disperser")
     instrument = None
+    # this code demonstrates how to find a band with a partial name
     for test_band in suitable_bands:
         if band in test_band:
             instrument = suitable_bands[test_band]
@@ -152,6 +167,7 @@ def uvspec_exptime(telescope, band, template, fuvmag, snr, silent=False):
     inst.band = test_band  # doing it this way is a little more forgiving as an API
 
     if not silent:
+        print(f"Using Instrument {instrument} with band {test_band}")
         print("Current SED template: {}".format(template))
         print("Current grating mode: {}".format(inst.band))
         print("Current exposure time: {} hours\n".format(uvi_exp.exptime))
@@ -161,7 +177,7 @@ def uvspec_exptime(telescope, band, template, fuvmag, snr, silent=False):
 
     uvi_exptime = uvi_exp.recover('exptime')
 
-    wave, exptime =  uvi_exp.wave, uvi_exp.exptime
+    wave, exptime =  uvi_exp.wave, uvi_exp.exptime[0]
 
 
     return wave, exptime, inst
