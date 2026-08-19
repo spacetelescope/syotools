@@ -6,6 +6,7 @@ Created on Fri Oct 14 20:28:51 2016
 import os, yaml
 import math
 from collections import defaultdict
+from importlib import metadata
 
 from syotools.models.base import PersistentModel
 from syotools.defaults import default_telescope
@@ -121,6 +122,9 @@ class Telescope(PersistentModel):
             output[instrument] = self.instruments[instrument].save_to_dict()
         output["name"] = self.name
         output["effective_diameter"] = self.effective_diameter
+
+        # tag the software version the dict was created with, too
+        output["version"] = metadata.version('syotools')
 
         output = simplify_data(output)
 

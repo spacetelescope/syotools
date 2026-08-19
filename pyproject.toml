@@ -4,10 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "syotools"
-version = "1.4"
+version = "1.4.1"
 description = "Science Yield Optimization Tools (SYOTools)"
 authors = [
-    {name = "Jason Tumlinson, STScI", email = "tumlinson@stsci.edu"}
+    {name = "Jason Tumlinson, STScI", email = "tumlinson@stsci.edu"},
+    {name = "Adric Riedel, STScI", email = "riedel@stsci.edu"}
 ]
 license = "BSD-3-Clause"
 keywords = ["simulation", "astronomy", "astrophysics"]

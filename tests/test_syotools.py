@@ -4,6 +4,7 @@ import glob
 
 import pytest
 import numpy as np
+from astropy import units as u
 
 from syotools.utils.yaml_utils import read_yaml, write_yaml
 from syotools.wrappers.common import compute_observation, check_relative_diff
@@ -34,6 +35,32 @@ def formatted_print(expected, result):
         for value in item:
             print(f" {value:>6}: {item[value]:>16}           {result[idx][value]:>16}")
 
+def quant_oper(item, operation_type):
+    operation = {"mean": np.nanmean, "median": np.nanmedian, "std": np.nanstd, "len": len}
+    interm = []
+    for input_array in item:
+        if isinstance(input_array, u.Quantity):
+            input_array = input_array.value
+
+        if isinstance(input_array, (float, int, str)):
+            if operation_type == "len":
+                interm.append(1)
+            else:
+                interm.append(input_array)
+        else:
+            interm.append(operation[operation_type](input_array))
+
+    if len(interm) <= 1:
+        if operation_type == "std":
+            result = 0
+        if operation_type == "len":
+            result = len(interm)
+        result = operation[operation_type](interm)
+    else:
+        result = operation[operation_type](interm)
+
+    return np.round(result,6)
+
 @pytest.mark.parametrize("inputs", test_setups, ids = test_names)
 def test_files(inputs):
     testfile = read_yaml(inputs["filename"])
@@ -44,7 +71,7 @@ def test_files(inputs):
         write = True
 
     try:
-        actual = compute_observation(testfile["telescope"], instrument=testfile["instrument"], sed=testfile["sed"], 
+        wave, actual = compute_observation(testfile["telescope"], instrument=testfile["instrument"], sed=testfile["sed"], 
                     magnitude=testfile["magnitude"], snr=testfile["snr"], exptime=testfile["exptime"], 
                     redshift=testfile["redshift"], extinction=testfile["extinction"], target=testfile["target"])
     except Exception as err:
@@ -64,8 +91,8 @@ def test_files(inputs):
 
     result = []
     if actual is not None:
-        for band in actual:
-            result.append({"mean": np.nanmean(band.value), "median": np.nanmedian(band.value), "std": np.nanstd(band.value), "len": len(band)})
+        for result_per_band in actual:
+            result.append({"mean": quant_oper(result_per_band, "mean"), "median": quant_oper(result_per_band, "median"), "std": quant_oper(result_per_band, "std"), "len": quant_oper(result_per_band, "len")})
     # Two cases to set values:
     # 1. set is in the input command AND it's true AND there's no "expected" value in the file
     # 2. reset is in the input command AND it's true

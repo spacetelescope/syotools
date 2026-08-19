@@ -4,6 +4,7 @@ Created on Fri Oct 14 21:31:18 2016
 @author: gkanarek, tumlinson
 """
 import copy
+from importlib import metadata
 
 import numpy as np
 import astropy.constants as const
@@ -38,7 +39,6 @@ class Instrument(PersistentModel):
         self.exposures = []
         self.name = ''
         #self.pivotwave = np.zeros(1, dtype=float) * u.nm
-        self.bandnames = ['']
         self.channels = [([],0)]
         self.fiducials = np.zeros(1, dtype=float) * u.nm
         self.total_qe = np.zeros(1, dtype=float) * u.dimensionless_unscaled
@@ -233,7 +233,7 @@ class Instrument(PersistentModel):
             wavemin = band.avgwave() - band.rectwidth()/2
             wavemax = band.avgwave() + band.rectwidth()/2
             self.configuration["band"][fancy_name] = {"internal_name": filter_name, "bandpass": band, "original_wave": thru.w, "original_thru": total_throughput, "effective_wavelength": band.avgwave(), 
-                                                    "wave_min": wavemin, "wave_max": wavemax, "optics": len(thru.value.keys())}
+                                                    "wave_min": wavemin, "bandwidth": band.equivwidth(), "wave_max": wavemax, "optics": len(thru.value.keys())}
             if kind in ("disperser", "ifs"):
                 grating_resolution = channel_data[filter_name].Grating.spectral_resolution.q
                 self.configuration["band"][fancy_name]["resolution"] = float(grating_resolution)
@@ -287,6 +287,8 @@ class Instrument(PersistentModel):
         
         del config["detector"]["total_qe"]
 
+        # tag the software version the dict was created with, too
+        config["version"] = metadata.version('syotools')
         config = simplify_data(config)
 
         return config

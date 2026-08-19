@@ -7,29 +7,26 @@ def camera_snr(telescope, template, magnitude, exptime, silent=False):
 	
 	positional arguments:
 	
-	telescope = 'EAC1', 'EAC2', or 'EAC3'. This argument is a string. 
-
-	    EAC1 = 6 m inner diameter, 7.2 outer diameter hex pattern, off-axis 
-		EAC2 = 6 m diameter off-axis 
-		EAC3 = 8 m diameter on-axis 
+	1 - telescope = 'EAC5'. This argument is a string. 
+	    EAC5 = 10 m outer diameter mirror
 	
-	spectral template = your choice of spectral template: 
+	2 - spectral template = your choice of spectral template: 
 	    'Classical T Tauri', 'M1 Dwarf', 'G Dwarf', '10 Myr Starburst', 'QSO', 'Seyfert
 	    1', 'Seyfert 2', 'Liner', 'O5V Star', 'G2V Star', 'Orion Nebula', 'G191B2B (WD)',
 	    'GD71 (WD)', 'GD153 (WD)', 'Starburst, No Dust', 'Starburst, E(B-V) = 0.6', 'B5V
-	    Star', 'M2V Sta', 'Elliptical Galaxy', 'Sbc Galaxy', 'Starburst Galaxy', 'NGC
+	    Star', 'M2V Star', 'Elliptical Galaxy', 'Sbc Galaxy', 'Starburst Galaxy', 'NGC
 	    1068', 'Galaxy with f_esc, HI=1, HeI=1', 'Galaxy with f_esc, HI=0.001, HeI=1',
 	    'Blackbody5000', 'Blackbody100000' 
 
-	mag = V magnitude to normalize the template spectrum
+	3 - mag = V magnitude to normalize the template spectrum
 
-	exptime = desired exptime in hours 
+	4 - exptime = desired exptime in hours 
 	
-	outputs are arrays with the SNR in each band for FUV, NUV, U, B, V, R, I, J, H, K and
-	the camera object "hri" 
+	outputs are dicts of the snrs, and of the instrument objects, keyed by the 
+    filter name
     '''
 
-	from syotools.models import Camera, Telescope, Source, SourcePhotometricExposure
+	from syotools.models import Telescope, Source, SourcePhotometricExposure
 	import numpy as np
 	import astropy.units as u 
       
@@ -72,28 +69,27 @@ def camera_exptime(telescope, template, magnitude, snr, silent=False):
 	Run a basic SNR calculation that takes in a telescope, spectral template,
 	normalization magnitude, and SNR goal to compute exposure time. 
 	
-	usage: exptime, hri = camera_exptime(telescope, template, mag, snr) 
+	usage: exptime, inst = camera_exptime(telescope, template, mag, snr) 
 	
 	positional arguments:
 	
-	telescope = 'EAC1', 'EAC2', or 'EAC3'. This argument is a string. 
-	    EAC1 = 6 m inner diameter, 7.2 outer diameter hex pattern, off-axis 
-		EAC2 = 6 m diameter off-axis 
-		EAC3 = 8 m diameter on-axis 
+	1 - telescope = 'EAC5'. This argument is a string. 
+	    EAC5 = 10 m outer diameter mirror
 	
-	2-template = your choice of spectral template: 
+	2 - template = your choice of spectral template: 
 	    'Classical T Tauri', 'M1 Dwarf', 'G Dwarf', '10 Myr Starburst', 'QSO', 'Seyfert
 	    1', 'Seyfert 2', 'Liner', 'O5V Star', 'G2V Star', 'Orion Nebula', 'G191B2B (WD)',
 	    'GD71 (WD)', 'GD153 (WD)', 'Starburst, No Dust', 'Starburst, E(B-V) = 0.6', 'B5V
-	    Star', 'M2V Sta', 'Elliptical Galaxy', 'Sbc Galaxy', 'Starburst Galaxy', 'NGC
+	    Star', 'M2V Star', 'Elliptical Galaxy', 'Sbc Galaxy', 'Starburst Galaxy', 'NGC
 	    1068', 'Galaxy with f_esc, HI=1, HeI=1', 'Galaxy with f_esc, HI=0.001, HeI=1',
 	    'Blackbody5000', 'Blackbody100000' 
 	
-	magnitude = V magnitude to normalize the template spectrum, a float.
+	3 - magnitude = V magnitude to normalize the template spectrum, a float.
 	
-	snr = desired SNR, per pixel, for each band 
+	4 - snr = desired SNR, per pixel, for each band
 	
-	outputs are arrays with the exptime in each band for FUV, NUV, U, B, V, R, I, J, H, K 
+	outputs are dicts of the snrs, and of the instrument objects, keyed by the 
+    filter name
 	'''
 
 	from syotools.models import Camera, Telescope, Source, SourcePhotometricExposure
@@ -136,32 +132,31 @@ def camera_exptime(telescope, template, magnitude, snr, silent=False):
 
 def camera_magnitude(telescope, template, snr, exptime, silent=False): 
 	''' 
-	Run a basic SNR calculation that takes in a telescope, spectral template, SNR goal,
-	and exposure time and computes the limiting magnitude. 
+	Run a basic magnitude calculation that takes in a telescope, spectral template,
+	snr, and exptime to compute magnitude.
 	
-	usage: exptime, hri = camera_magnitude(telescope, template, snr, exptime) 
+	usage: mag, instrument = camera_magnitude(telescope, template, snr, exptime) 
 	
 	positional arguments:
 	
-	telescope = 'EAC1', 'EAC2', or 'EAC3'. This argument is a string. 
-	    EAC1 = 6 m inner diameter, 7.2 outer diameter hex pattern, off-axis 
-        EAC2 = 6 m diameter off-axis 
-	    EAC3 = 8 m diameter on-axis 
-
-	spectral template = your choice of spectral template: 
+	1 - telescope = 'EAC5'. This argument is a string. 
+	    EAC5 = 10 m outer diameter mirror
+	
+	2 - spectral template = your choice of spectral template: 
 	    'Classical T Tauri', 'M1 Dwarf', 'G Dwarf', '10 Myr Starburst', 'QSO', 'Seyfert
 	    1', 'Seyfert 2', 'Liner', 'O5V Star', 'G2V Star', 'Orion Nebula', 'G191B2B (WD)',
 	    'GD71 (WD)', 'GD153 (WD)', 'Starburst, No Dust', 'Starburst, E(B-V) = 0.6', 'B5V
-	    Star', 'M2V Sta', 'Elliptical Galaxy', 'Sbc Galaxy', 'Starburst Galaxy', 'NGC
+	    Star', 'M2V Star', 'Elliptical Galaxy', 'Sbc Galaxy', 'Starburst Galaxy', 'NGC
 	    1068', 'Galaxy with f_esc, HI=1, HeI=1', 'Galaxy with f_esc, HI=0.001, HeI=1',
 	    'Blackbody5000', 'Blackbody100000' 
 
-	snr = desired SNR for each band 
+	3 - snr = desired SNR, per pixel, for each band
 
-	exptime = exposure time per band in hours
-
-	outputs are arrays with the limiting in each band for FUV, NUV, U, B, V, R, I, J, H, K 
-	'''
+	4 - exptime = desired exptime in hours 
+	
+	outputs are dicts of the magnitudes, and of the instrument objects, keyed by the 
+    filter name
+    '''
 
 	from syotools.models import Camera, Telescope, Source, SourcePhotometricExposure
 	import numpy as np, astropy.units as u
@@ -169,7 +164,6 @@ def camera_magnitude(telescope, template, snr, exptime, silent=False):
 	tel = Telescope()
 	# create a Telescope, Camera, and Exposure 
 	tel.set_from_hwome(telescope)
-	hri = Camera(tel)
 	suitable_instruments, suitable_filters = tel.find_instrument_with("filter")
 	
 	source = Source() 

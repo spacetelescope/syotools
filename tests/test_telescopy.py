@@ -161,8 +161,8 @@ def test_print_things():
 def create_eac(name: str):
     telescope = Telescope()
     telescope.set_from_hwome("EAC5")
-    camera = telescope.instrument["HRI_S_UVIS.HRI_S_UVIS_Imager"]
-    spec = telescope.instrument["UV_MOS.FUV_MOS_L_Spectrograph"]
+    camera = telescope.instruments["HRI_S_UVIS.HRI_S_UVIS_Imager"]
+    spec = telescope.instruments["UV_MOS.FUV_MOS_L_Spectrograph"]
     return telescope
 
 def test_telescope_pickle():

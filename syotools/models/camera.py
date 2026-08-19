@@ -54,7 +54,6 @@ class Camera(Instrument):
         self.exposures = []
         self.name = ''
         #self.pivotwave = np.zeros(1, dtype=float) * u.nm
-        self.bandnames = ['']
         self.channels = [([],0)]
         self.fiducials = np.zeros(1, dtype=float) * u.nm
         self.total_qe = np.zeros(1, dtype=float) * u.dimensionless_unscaled
@@ -76,6 +75,10 @@ class Camera(Instrument):
         return len(self.configuration["channel_filters"])
 
     @property
+    def bandnames(self):
+        return self.configuration["channel_filters"]
+
+    @property
     def bands(self):
         return [x for x in self.configuration["band"] if self.configuration["band"][x]["kind"] == "filter"]
 
@@ -86,7 +89,7 @@ class Camera(Instrument):
 
     @band.setter
     def band(self, new_band):
-        if new_band in self.configuration["channel_filters"]:
+        if new_band in self.configuration["channel_filters"] or new_band is None:
             self._band = new_band
         else:
             raise KeyError(f"Cannot set band {new_band}, valid options for this channel are {self.configuration['channel_filters']}")

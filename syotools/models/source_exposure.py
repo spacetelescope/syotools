@@ -238,11 +238,14 @@ class SourceExposure(PersistentModel):
         if band["kind"] in ("disperser", "ifs"):
             R = band["resolution"]
             waveunit = band["bandpass"].waveset.unit
-            wavepix = band["bandpass"].waveset.value
+            wavepix = np.linspace(band["bandpass"].waveset[0], band["bandpass"].waveset[-1], 1000) # using the bandpass wavelengths leads to weird fringing
             delta_lambda = wavepix/R
             pixel = np.cumsum(1.0 / delta_lambda * np.gradient(wavepix))
             pixel_integer = np.arange(int(pixel[0]), int(pixel[-1]))
             wave = np.interp(pixel_integer, pixel, wavepix) << waveunit
+            # Or just use the instrument bandpass
+            #wave = band["bandpass"].waveset
+
             dw = wave[1:] - wave[:-1]
             good = np.where(dw != 0)[0]
             wave = wave[good]
@@ -362,6 +365,7 @@ class SourceExposure(PersistentModel):
             else:
                 bands = [band]
         self._exptime = []
+        _initial_band = self.instrument.band
         _snr_temp = self._ensure_array(self._snr, len(bands))
         for idx, band in enumerate(bands):
             # because a multiple-in, multiple-out is a valid use case
@@ -370,6 +374,7 @@ class SourceExposure(PersistentModel):
             result = self._update_exptime(self.source, configuration["band"][band])
             self._exptime.append(result)
         self._snr = _snr_temp
+        self.instrument.band = _initial_band
 
         return True
 
@@ -391,6 +396,7 @@ class SourceExposure(PersistentModel):
             else:
                 bands = [band]
         self._snr = []
+        _initial_band = self.instrument.band
         _exptime_temp = self._ensure_array(self._exptime, len(bands))
         for idx, band in enumerate(bands):
             # because a multiple-in, multiple-out is a valid use case
@@ -399,6 +405,7 @@ class SourceExposure(PersistentModel):
             result = self._update_snr(self.source, configuration["band"][band])
             self._snr.append(result)
         self._exptime = _exptime_temp
+        self.instrument.band = _initial_band
 
         return True
 
@@ -420,6 +427,7 @@ class SourceExposure(PersistentModel):
             else:
                 bands = [band]
         self._magnitude = []
+        _initial_band = self.instrument.band
         _exptime_temp = self.exptime
         _snr_temp = self._snr
         for idx, band in enumerate(bands):
@@ -432,6 +440,7 @@ class SourceExposure(PersistentModel):
 
         self._exptime = _exptime_temp
         self._snr = _snr_temp
+        self.instrument.band = _initial_band
 
         return True
 

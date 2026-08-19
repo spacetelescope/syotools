@@ -74,6 +74,10 @@ class Spectrograph(Instrument):
         return self._band
 
     @property
+    def bandnames(self):
+        return self.configuration["channel_filters"]
+
+    @property
     def bands(self):
         return [x for x in self.configuration["band"] if self.configuration["band"][x]["kind"] == "disperser"]
 
@@ -82,19 +86,29 @@ class Spectrograph(Instrument):
         """
         Band is used to set all the other parameters
         """ 
+        if new_band is not None:
 
-        nband = new_band.upper()
-        if self._band == nband or nband not in self.configuration["channel_filters"]:
-            return
-        self._band = nband
+            nband = new_band.upper()
+            if self._band == nband or nband not in self.configuration["channel_filters"]:
+                return
+            self._band = nband
 
-        self.R = self.configuration["band"][nband]["resolution"]
-        self.wave = self.configuration["band"][nband]["bandpass"].waveset
-        self.sky = syn.spectrum.SourceSpectrum(Empirical1D, points=self.wave, lookup_table=np.ones_like(self.wave.value) * 24 << u.ABmag)
-        self.sky = self.sky.normalize(24 * u.ABmag, stsyn.spectrum.band("johnson,v"))
-        self.aeff = self.configuration["band"][nband]["bandpass"]
-        wrange = np.array((np.min(self.wave.value), np.max(self.wave.value)))
-        self.wrange = wrange
+            self.R = self.configuration["band"][nband]["resolution"]
+            self.wave = self.configuration["band"][nband]["bandpass"].waveset
+            self.sky = syn.spectrum.SourceSpectrum(Empirical1D, points=self.wave, lookup_table=np.ones_like(self.wave.value) * 24 << u.ABmag)
+            self.sky = self.sky.normalize(24 * u.ABmag, stsyn.spectrum.band("johnson,v"))
+            self.aeff = self.configuration["band"][nband]["bandpass"]
+            wrange = np.array((np.min(self.wave.value), np.max(self.wave.value)))
+            self.wrange = wrange
+        else:
+            self.R = 0. * u.dimensionless_unscaled
+            self.wave = np.zeros(0, dtype=float) * u.AA
+            self.sky = syn.spectrum.SourceSpectrum(Empirical1D, points=[0.1,20000] << u.AA, lookup_table=[24,24] << u.ABmag)
+            self.sky = self.sky.normalize(24 * u.ABmag, stsyn.spectrum.band("johnson,v"))
+            self.aeff = np.zeros(0, dtype=float) * u.cm**2
+            self.wrange = np.zeros(2, dtype=float) * u.AA
+            self._band = None
+
 
     @property
     def delta_lambda(self):
@@ -148,6 +162,7 @@ class Spectrograph(Instrument):
         effective_area = self.recover("telescope.effective_area")
         flux = syn.units.convert_flux(wave, spectrum(wave), u.erg / u.s / u.cm**2 / u.AA)
         phot_energy = const.h.to(u.erg * u.s) * const.c.to(u.cm / u.s) / wave.to(u.cm) / u.ct
+
         return flux / phot_energy * effective_area
 
     def set_from_sei(self, name):
