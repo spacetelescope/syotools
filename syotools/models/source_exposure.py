@@ -605,6 +605,22 @@ class SourceIFSExposure(SourceExposure):
     def source(self, new_source):
         self.add_source(new_source)
 
+    @property
+    def exptimes(self):
+        return self._exptimes
+
+    @exptimes.setter
+    def exptimes(self, new_exptime):
+        print("Did not set exptimes")
+
+    @property
+    def snrs(self):
+        return self._snrs
+
+    @snrs.setter
+    def snrs(self, new_snr):
+        print("Did not set snrs")
+
     def calculate_exptime(self, custom_band=None):
         """
         Calculate for exposure times. If a band has been passed in, do that. 
@@ -625,7 +641,7 @@ class SourceIFSExposure(SourceExposure):
             else:
                 bands = [band]
         self._exptime = []
-        _source = []
+        self._exptimes = []
         _snr_temp = self._ensure_array(self._snr, len(bands))
         # The unique thing about IFS is it has multiple sources
         for source in self.sources:
@@ -635,9 +651,9 @@ class SourceIFSExposure(SourceExposure):
                 self._snr = _snr_temp[idx]
                 result = self._update_exptime(source, configuration["band"][band])
                 _single_exptime.append(result)
-            _source.append(_single_exptime)
+            self._exptimes.append(_single_exptime)
         # find the highest exposure time amongst the set of sources
-        self._exptime = np.max(source,axis=0)
+        self._exptime = np.max(self._exptimes,axis=0)
         
         self._snr = _snr_temp
 
