@@ -116,7 +116,7 @@ class Spectrograph(Instrument):
         R = R << u.pix # HWOME's definition is unitless
         return wave / R
 
-    def _sn_box(self, wave, verbose):
+    def _sn_box(self, wave, verbose=False):
         """
         Calculate the number of pixels in the SNR computation box.
         """

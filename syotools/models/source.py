@@ -51,7 +51,7 @@ class Source(PersistentModel):
         super().__init__()
 
 
-    def set_sed(self, source_name, magnitude, redshift, extinction, bandpass=None, library=syn_spectra_library):
+    def set_sed(self, source_name, magnitude, redshift, extinction, bandpass=None, radius=0, library=syn_spectra_library):
         self.name = source_name  
         self.sed = library[source_name]
         self.magnitude = magnitude
@@ -62,6 +62,9 @@ class Source(PersistentModel):
             self.renorm_band = library[source_name].band
         else:
             self.renorm_band = bandpass
+
+        # Set a radius for extended sources. 0 = unresolved point source.
+        self.radius = radius
 
         #print("SET SED:", bandpass, library[source_name].band, self.renorm_band, stsyn.band(self.renorm_band).waveset)
         #print("SED_INFO:", self.name, self.sed.waveset, self.renorm_band, self.redshift, self.extinction)
