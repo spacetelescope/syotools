@@ -106,7 +106,9 @@ class SourceExposure(PersistentModel):
         elif nb is None:
             nb = self.recover('instrument.n_bands')
         val = quant 
-        if quant.isscalar:
+        if isinstance(quant, (int, float)):
+            q = np.full(nb, val)
+        if isinstance(quant, (u.Quantity)) and quant.isscalar:
             q = np.full(nb, val)
         elif len(quant) < nb:
             if len(quant) > 1:
@@ -123,7 +125,7 @@ class SourceExposure(PersistentModel):
 
         return q
 
-    def _ensure_quantity(self, quant, unit):
+    def _ensure_quantity(self, quant, unit, nb=None):
         """
         Ensure given quantity is an astropy unit.Quantity
         of appropriate type
@@ -136,7 +138,7 @@ class SourceExposure(PersistentModel):
                 raise ValueError(f"Quantity {quant} unit is not convertible to {unit}.")
         else:
             quant = quant << unit
-        quant = self._ensure_array(quant)
+        quant = self._ensure_array(quant, nb=nb)
         return quant
 
     @property
@@ -266,14 +268,15 @@ class SourceExposure(PersistentModel):
         # shaped
         # goes through the full optical path + QE
         # accumulates over time
-        flux_source = source.sed
+        rel_area = 1
         # scale source radius to the aperture size - we get all of the flux if it's smaller than the aperture
-        if source.radius > 0:
+        if source.radius > 0 * u.arcsec:
             area = np.pi * (source.radius/pixel_scale)**2
         else:
             area = np.pi * (np.median(self.instrument.fwhm_psf(self.wave))/pixel_scale)**2
         if area > sn_box:
-            flux_source = source.sed * (sn_box/area)
+            rel_area = (sn_box/area)
+        flux_source = source.sed * rel_area
 
         # fsky is:
         # uniform
@@ -366,7 +369,7 @@ class SourceExposure(PersistentModel):
                 bands = [band]
         self._exptime = []
         _initial_band = self.instrument.band
-        _snr_temp = self._ensure_array(self._snr, len(bands))
+        _snr_temp = self._ensure_quantity(self._snr, u.dimensionless_unscaled, len(bands))
         for idx, band in enumerate(bands):
             # because a multiple-in, multiple-out is a valid use case
             self._snr = _snr_temp[idx]
@@ -397,7 +400,7 @@ class SourceExposure(PersistentModel):
                 bands = [band]
         self._snr = []
         _initial_band = self.instrument.band
-        _exptime_temp = self._ensure_array(self._exptime, len(bands))
+        _exptime_temp = self._ensure_quantity(self._exptime, u.s, len(bands))
         for idx, band in enumerate(bands):
             # because a multiple-in, multiple-out is a valid use case
             self._exptime = _exptime_temp[idx]
@@ -428,8 +431,8 @@ class SourceExposure(PersistentModel):
                 bands = [band]
         self._magnitude = []
         _initial_band = self.instrument.band
-        _exptime_temp = self.exptime
-        _snr_temp = self._snr
+        _exptime_temp = self._ensure_quantity(self._exptime, u.s, len(bands))
+        _snr_temp = self._ensure_quantity(self._snr, u.dimensionless_unscaled, len(bands))
         for idx, band in enumerate(bands):
             # because a multiple-in, multiple-out is a valid use case
             self._exptime = _exptime_temp[idx]
