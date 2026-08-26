@@ -5,6 +5,7 @@ Created on Th Nov 21 2024 JT
 """
 import numpy as np
 import astropy.units as u
+from astropy import coordinates as coord
 
 from syotools.models.base import PersistentModel
 from syotools.spectra.spec_defaults import syn_spectra_library 
@@ -40,6 +41,8 @@ class Source(PersistentModel):
         self.redshift = 0. 
         self.extinction = 0.  
         self.renorm_band = 'johnson,v'
+        self._ra = 135.0 * u.deg
+        self._dec = 20.0 * u.deg
 
         #set default here
         self.sed = None # Will be set in set_sed, do this so sed is in __init__.
@@ -50,8 +53,53 @@ class Source(PersistentModel):
         # attributes to be present and initialized.
         super().__init__()
 
+    @property
+    def ra(self):
+        return self._ra
 
-    def set_sed(self, source_name, magnitude, redshift, extinction, bandpass=None, radius=0, library=syn_spectra_library):
+    @ra.setter
+    def ra(self, new_ra):
+        if isinstance(new_ra, str):
+            self._ra = coord.Angle(new_ra)
+        elif isinstance(new_ra, (int, float)):
+            self._ra = coord.Angle(new_ra * u.deg)
+        elif isinstance(new_ra, u.Quantity):
+            self._ra = coord.Angle(new_ra)
+        else:
+            raise ValueError(f"Unrecognized RA angle {new_ra}")
+
+    @property
+    def dec(self):
+        return self._dec
+
+    @dec.setter
+    def dec(self, new_dec):
+        if isinstance(new_dec, str):
+            self._dec = coord.Angle(new_dec)
+        elif isinstance(new_dec, (int, float)):
+            self._dec = coord.Angle(new_dec * u.deg)
+        elif isinstance(new_dec, u.Quantity):
+            self._dec = coord.Angle(new_dec)
+        else:
+            raise ValueError(f"Unrecognized DEC angle {new_dec}")
+
+    @property
+    def coords(self):
+        return coord.SkyCoord(ra=self.ra, dec=self.dec, frame="icrs")
+
+    @coords.setter
+    def coords(self):
+        pass
+
+    @property
+    def coordinates(self):
+        return self.coords
+
+    @coordinates.setter
+    def coordinates(self):
+        pass
+
+    def set_sed(self, source_name, magnitude, redshift, extinction, bandpass=None, radius=0, ra=135.0, dec=20.0, library=syn_spectra_library):
         self.name = source_name  
         self.sed = library[source_name]
         self.magnitude = magnitude
@@ -65,6 +113,9 @@ class Source(PersistentModel):
 
         # Set a radius for extended sources. 0 = unresolved point source.
         self.radius = radius
+
+        self.ra = ra
+        self.dec = dec
 
         #print("SET SED:", bandpass, library[source_name].band, self.renorm_band, stsyn.band(self.renorm_band).waveset)
         #print("SED_INFO:", self.name, self.sed.waveset, self.renorm_band, self.redshift, self.extinction)
