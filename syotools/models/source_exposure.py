@@ -744,7 +744,7 @@ class SourceExposure(PersistentModel):
 
         (_snr, _exptime, _nexp) = self.recover('snr', 'exptime', 'n_exp')
         effective_area = self.recover("telescope.effective_area")
-        configuration = self.recover("instrument.configuration")
+        configuration, ab_zeropoint = self.recover("instrument.configuration", "instrument.ab_zeropoint")
         qe = configuration["detector"]["total_qe"]
 
         # all of these are now rates, in the extraction aperture (except read_noise)
@@ -753,17 +753,54 @@ class SourceExposure(PersistentModel):
         read_noise /= u.ct**0.5
         _exptime = _exptime.to(u.s)
 
-        snr2 = -(_snr ** 2)
-        f0 = 5509900. * (u.photon / u.s / u.cm**2) / band["bandpass"].pivot()
+        snr2 = (_snr ** 2) * u.ct
+        f0 = ab_zeropoint(band)
+
+        fsky_counts = fsource_countrate * _exptime
+        thermal_counts = fsource_countrate * _exptime
+        dark_counts = dark_current * _exptime
+
+        # Original equation is SNR = Sc / sqrt(Sc + Dc*Npix + Thermal*Npix + Sky*Npix + Rn**2*Nreads*Npix)
+        # Rearrange: Sc/SNR = sqrt(Sc + Dc*Npix + Thermal*Npix + Sky*Npix + Rn**2*Nreads*Npix)
+        # Square and collect terms of SC: 
+        # Rearranged it becomes -Sc**2/SNR**2 + Sc**1 * 1 + Sc**0 * (Dc*Npix + Thermal*Npix + Sky*Npix + Rn**2*Nreads*Npix)
+        # 
+        # Our outputs from process_observation already have Npix applied, and read_noise is multiplied by the square root of Npix.
+        a0 = -1 / snr2
+        b0 = 1
+        c0 = (dark_counts + thermal_counts + fsky_counts + read_noise**2 * _nexp)
+
+        sc = (-b0 - np.sqrt(b0**2 - 4.0 * a0 * c0))/(2.0 * a0)
+        # now get the source flux in counts.
+        #sc = sc * _exptime
+        # Convert counts back to photons
+        phot_energy = const.h.to(u.erg * u.s) * const.c.to(u.cm / u.s) / band["bandpass"].pivot().to(u.cm) / u.ct
+        photons = sc * phot_energy / effective_area
+        flux = syn.units.convert_flux(band["bandpass"].pivot(), photons, syn.units.PHOTLAM, area=effective_area)
+        fnu = syn.units.convert_flux(band["bandpass"].pivot(), photons, syn.units.FNU, area=effective_area)
+        mag = -2.5*np.log10(flux.value / band["bandpass"].efficiency()/f0.value)
+        print("Mag1", mag)
+        fnu = fnu / band["bandpass"].efficiency()
+        mag = -2.5*np.log10(fnu.value) + 8.90
+        #mag = flux.to_value(u.ABmag)
+        # Remove the impact of the bandpass
+        print(sc, photons, flux, fnu)
+        print("SNR", _snr)
+        print("A0:", a0)
+        print("B0:", b0)
+        print("C0:", c0)
+        print("Mag:", mag)
+
+        # Convert to AB Magnitudes
 
         a0 = (_exptime)**2
         b0 = snr2 * _exptime
         c0 = snr2 * ((fsky_countrate + thermal_countrate + dark_current) * _exptime + (read_noise**2 * _nexp)) / u.ct
         k = (-b0 + np.sqrt(b0**2 - 4. * a0 * c0)) / (2. * a0)
 
-        flux = (4. * k) / (f0 * effective_area * (band["bandpass"]*qe).equivwidth().to(u.nm))
+        flux = (4. * k) / (f0 * effective_area)# * (band["bandpass"]*qe).equivwidth().to(u.nm))
 
-        flux *= band["bandpass"].tlambda()
+        flux /= band["bandpass"].tlambda()
 
         _magnitude = -2.5 * np.log10(np.array(flux)) * u.mag('AB')
 

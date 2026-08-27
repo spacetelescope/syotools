@@ -114,7 +114,7 @@ class Camera(Instrument):
         pivotwave = self.recover('pivotwave')
         width = []
         for bpass in self.configuration["band"]:
-            band = self.configuration["band"][bpass]
+            band = self.configuration["band"][self.band]
             widthval = band["bandpass"].equivwidth()
             widthunit = widthval.unit
             width.append(widthval.value)
@@ -122,14 +122,16 @@ class Camera(Instrument):
 
         return np.array(pivotwave/width)
 
-    @property
-    def ab_zeropoint(self):
+    def ab_zeropoint(self, band):
         """
         AB-magnitude zero points as per Marc Postman's equation.
         """
-        pivotwave = self.recover('pivotwave')
-        pivot = pivotwave.to(u.nm)
-        abzp = 5509900. * (u.photon / u.s / u.cm**2) / pivot
+        source = syn.spectrum.SourceSpectrum(syn.models.ConstFlux1D, amplitude=0 * u.ABmag)
+        obs = syn.observation.Observation(source, band["bandpass"])
+        abzp = syn.units.convert_flux(obs.pivot(), obs(obs.pivot()), syn.units.PHOTLAM)
+        #pivotwave = self.recover('pivotwave')
+        #pivot = pivotwave.to(u.nm)
+        #abzp = 5509900. * (u.photon / u.s / u.cm**2) / pivot
 
         return abzp# << abunit
 

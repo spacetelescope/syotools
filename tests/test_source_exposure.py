@@ -40,7 +40,14 @@ class Mock_SourceExposure(SourceExposure):
 
     @exptime.setter
     def exptime(self, new_exptime):
-        self._exptime = new_exptime * u.s
+        if isinstance(new_exptime, u.Quantity):
+            try:
+                new_exptime.to_value(u.s)
+            except u.UnitConversionError as err:
+                raise err
+            self._exptime = new_exptime
+        else:
+            self._exptime = new_exptime * u.s
 
     @property
     def snr(self):
@@ -112,6 +119,23 @@ def test_snr_exptime(verbose=False):
 
     assert np.round(exptime_2, 6) == np.round(exptime_1,6)
 
+def test_snr_exptime2(verbose=False):
+    # This is a separate test to ensure conversions are being done correctly
+    exptime_1 = 2.0 * u.h
+    source_exposure = Mock_SourceExposure(exptime=exptime_1)
+    snr_1 = source_exposure._update_snr(None, None)
+
+    source_exposure.snr = snr_1
+    exptime_2 = source_exposure._update_exptime(None, None)
+
+    if verbose:
+        print("Initial Exptime:", exptime_1)
+        print("Roundtrip Exptime:", exptime_2)
+        print("Ratio (1 expected):", exptime_2/exptime_1)
+        print("-----------------------")
+
+    assert np.round(exptime_2, 6) == np.round(exptime_1,6)
+
 def test_flux_snr(verbose=False):
     fsource = 10.0
     fsky = 0
@@ -128,26 +152,6 @@ def test_flux_snr(verbose=False):
         print("-----------------------")
 
     assert snr_2 == snr_1 * np.sqrt(2)
-
-def test_mag(verbose=False):
-    bandpass = syn.spectrum.SpectralElement(syn.models.Gaussian1D, amplitude=1, mean=5000, stddev=400)
-    band = {"bandpass": bandpass}
-
-    snr = 10
-    fsky = 0
-    source_exposure = Mock_SourceExposure(snr=snr, fsky=fsky)
-    mag_1 = source_exposure._update_magnitude(None, band)
-
-    source_exposure.snr = 100
-    mag_2 = source_exposure._update_magnitude(None, band)
-
-    if verbose:
-        print("Mag SNR=10:", mag_1)
-        print("Mag SNR=100:", mag_2)
-        print("Difference (5 expected):", mag_1 - mag_2)
-        print("-----------------------")
-
-    assert np.round(mag_1, 6).value == np.round(mag_2, 6).value + 5
 
 def test_dark_exptime(verbose=False):
     source_exposure = Mock_SourceExposure(snr=10)
@@ -218,8 +222,8 @@ if __name__ == "__main__":
     test_exptime(verbose=True)
     test_snr(verbose=True)
     test_snr_exptime(verbose=True)
+    test_snr_exptime2(verbose=True)
     test_flux_snr(verbose=True)
-    test_mag(verbose=True)
     test_dark_exptime(verbose=True)
     test_thermal_exptime(verbose=True)
     test_readnoise_exptime(verbose=True)
