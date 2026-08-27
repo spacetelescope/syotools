@@ -119,14 +119,16 @@ class IFS(Spectrograph):
         """
 
         Phi = self.configuration["pixel_scale"]
+        slicewidth = self.configuration["image_slicer"]["spaxel_angle"]
         sn_box = np.round(3. * self.fwhm_psf(wave) / Phi)
+        spaxel_width = slice_width/Phi
 
         if verbose:
             print('PSF width: {}'.format(self.nice_print(self.fwhm_psf(wave))))
             print('SN box height: {}'.format(self.nice_print(sn_box)))
             print('SN box width: {}'.format(self.nice_print(sn_box)))
 
-        return sn_box**2
+        return sn_box * spaxel_width
 
     def create_exposure(self, source=None):
         new_exposure = SourceIFSExposure()

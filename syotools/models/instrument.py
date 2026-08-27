@@ -255,6 +255,11 @@ class Instrument(PersistentModel):
             self.configuration["detector"]["original_qe_wave"] = w
             self.configuration["detector"]["original_qe_thru"] = t
 
+        if kind in ("ifs"):
+            self.configuration["image_slicer"] = {}
+            for slicer in channel_data.ImageSlicer:
+                self.configuration["image_slicer"]["spaxel_angle"] = slicer.spaxel_angle.q
+
     def load_throughput(self, wave, thru):
         return syn.spectrum.SpectralElement(Empirical1D, points=wave, lookup_table=thru)
 

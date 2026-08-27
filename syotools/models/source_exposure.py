@@ -6,6 +6,7 @@ Created on Mon Oct 30 12:31:11 2017
 """
 import numpy as np
 from scipy.interpolate import interp1d
+import scipy.special as sp
 import astropy.units as u
 import astropy.constants as const
 
@@ -425,6 +426,165 @@ class SourceExposure(PersistentModel):
         sky = syn.spectrum.SourceSpectrum(Empirical1D, points=wave, lookup_table=syn.units.convert_flux(wave, flux_zodi, syn.units.PHOTLAM))
 
         return sky  # 1/arcsec^2 (UNITS OF SPECTRAL RADIANCE) - original, now PHOTLAM
+
+    def pixelscale(self):
+        """
+        Return a per-pixel normalization factor for the appropriate area unit.
+
+        Returns
+        -------
+        normfactor: float
+            Normalization factor, unitless
+
+        Raises
+        ------
+        EngineInputError
+            Raised on invalid area unit
+        """
+        if self.source.geometry["surf_area_units"] in ['sr']:
+            arcsec2 = u.arcsec * u.arcsec
+            normfactor = self.pix_area_sqarcsec / u.sr.to(arcsec2)  # convert area in steradians to area in pixels
+        elif self.source.geometry["surf_area_units"] in ['arcsec^2', None]: # 'None' should be an option because integrated flux
+                                                        # shouldn't have units (internally, the grid is arcsec)
+            normfactor = self.pix_area_sqarcsec
+        else:
+            msg = f"Unsupported surface area unit: {self.source.geometry['surf_area_units']}"
+            raise EngineInputError(value=msg)
+
+        return normfactor
+
+    def sn_box(self):
+        """
+        Function to set the percentage of flux going through an SN box of various sizes
+        Used for extended sources
+
+        Returns
+        -------
+        through_aperture : float
+            The fraction of the total source flux going through the aperture
+        aperture_pixels : float
+            The number of pixels in the aperture (for correcting other properties)
+        """
+
+        geometry = self.source.geometry
+        shape = geometry["shape"]
+
+        geometry_creator = {"point": self.point_profile, "gaussian2d": self.gaussian_profile, "sersic": self.sersic_profile}
+
+        profile = geometry_creator[shape](geometry)
+
+        from matplotlib import pyplot as plt
+
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        ax.imshow(np.log(profile))
+        plt.show()
+
+    def generate_profile(self):
+        """
+        Make a 2D grid to add the profile to
+        """
+        configuration = self.recover("instrument.configuration")
+        pixel_scale = configuration["pixel_scale"].value
+        self.pix_area_sqarcsec = pixel_scale**2
+
+        profile = np.zeros((101,101), dtype=float)
+        xval = np.arange(-50,51,1) * pixel_scale
+        yval = np.arange(-50,51,1) * pixel_scale
+
+        x,y = np.meshgrid(xval,yval)
+        print(x)
+        xsamp = ysamp = pixel_scale
+
+        return profile, x, y, xsamp, ysamp
+
+    def point_profile(self, geometry):
+        effective_diameter = self.recover("telescope.effective_diameter")
+        wavelen = self.instrument.configuration["band"][self.instrument.band]["effective_wavelength"]
+        profile, x, y, xsamp, ysamp = self.generate_profile()
+
+        # dist is in arcsec and actually an angle
+        dist = np.sqrt(x**2.0 + y**2.0)
+
+        from matplotlib import pyplot as plt
+        plt.imshow(dist)
+        plt.show()
+        
+        print(effective_diameter)
+        x = 2*np.pi/wavelen.to_value(u.m) * effective_diameter/2.0 * np.sin(dist * u.arcsec)
+        print(x)
+        x = x.value
+        profile += (2 * sp.j1(x)/x)**2
+
+        return profile
+
+    def sersic_profile(self, geometry):
+        profile, x, y, xsamp, ysamp = self.generate_profile()
+
+        major = geometry["major"].value
+        minor = geometry["minor"].value
+        index = geometry["sersic_index"]
+
+        # the actual value of b. Formula taken from astropy's sersic2d shape.
+        b = sp.gammaincinv(2*index,0.5)
+
+        dist = np.sqrt((x / major)**2.0 + (y / minor)**2.0)
+        # This is Equation 1 of Graham & Driver (2005) 2005PASA...22..118G
+        profile += np.exp( -b * (dist**(1.0 / index) - 1) )
+
+        if geometry["norm_method"] == "surf_scale":
+            norm_val = self.pixelscale()
+        elif geometry["norm_method"] == "surf_center":
+            norm_val = self.pixelscale() * np.e**(-1*b)
+        elif geometry["norm_method"] == "integ_infinity":
+            # integrate the Sersic profile to get the total flux for normalization, including flux outside the FOV
+            # http://ned.ipac.caltech.edu/level5/March05/Graham/Graham2.html
+            integral = major * minor * 2 * np.pi * index * np.exp(b)/(b**(2*index))* sp.gamma(2 * index)
+            norm_val = self.pixelscale() / integral
+        profile = profile * norm_val
+
+        return profile
+
+    def gaussian_profile(self, geometry):
+        profile, x, y, xsamp, ysamp = self.generate_profile()
+
+        major = geometry["major"].value * np.sqrt(2.0) # to match the usual definition of a Gaussian
+        minor = geometry["minor"].value * np.sqrt(2.0) # to match the usual definition of a Gaussian
+        index = 0.5
+
+        dist = np.sqrt((x / major) ** 2.0 + (y / minor) ** 2.0)
+        # This is Equation 14 of Graham & Driver (2005) 2005PASA...22..118G
+        profile += np.exp(-dist ** (1.0 / index))
+
+        if geometry["norm_method"] == "surf_scale":
+            norm_val = self.pixelscale() * np.e
+        elif geometry["norm_method"] == "surf_center":
+            norm_val = self.pixelscale()
+        elif geometry["norm_method"] == "integ_infinity":
+            # integrate the Sersic profile to get the total flux for normalization, including flux outside the FOV
+            # http://ned.ipac.caltech.edu/level5/March05/Graham/Graham2.html
+            integral = major * minor * 2 * np.pi * index * sp.gamma(2 * index)
+            norm_val = self.pixelscale() / integral
+        profile = profile * norm_val
+
+        return profile
+
+    def flat(self, geometry):
+        profile, x, y, xsamp, ysamp = self.generate_profile()
+
+        major = geometry["major"].value
+        minor = geometry["minor"].value
+        dist = np.sqrt((x / major) ** 2.0 + (y / minor) ** 2.0)
+
+        profile[dist < 1] = 1.0
+        if geometry["norm_method"] in ("surf_scale", "surf_center"):
+            norm_val = self.pixelscale()
+        elif geometry["norm_method"] == "integ_infinity":
+            norm_val = self.pixelscale() / np.sum(profile)
+
+        profile = profile * norm_val
+
+        return profile
 
     @property
     def interpolated_sed(self):
