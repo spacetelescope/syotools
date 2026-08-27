@@ -160,6 +160,8 @@ class Spectrograph(Instrument):
 
     def transform_flux(self, spectrum, wave):
         effective_area = self.recover("telescope.effective_area")
+
+        #flux = syn.units.convert_flux(wave, spectrum(wave), u.ct, area=effective_area)
         flux = syn.units.convert_flux(wave, spectrum(wave), u.erg / u.s / u.cm**2 / u.AA)
         phot_energy = const.h.to(u.erg * u.s) * const.c.to(u.cm / u.s) / wave.to(u.cm) / u.ct
 

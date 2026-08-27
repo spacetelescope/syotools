@@ -58,7 +58,6 @@ class Instrument(PersistentModel):
         diff_limit_radians = 1.22 * u.rad * wavelength.to(u.nm) / ap_nm
         return diff_limit_radians.to(u.arcsec)
 
-
     @property
     def diff_limit_fwhm(self):
         """
