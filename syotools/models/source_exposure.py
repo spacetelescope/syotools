@@ -199,14 +199,12 @@ class SourceExposure(PersistentModel):
 
         Parameters
         ----------
-        dec : Quantity
-            Declination of targets in degrees (J2000 equatorial coordinate).
-        ra : Quantity
-            Right ascension of targets in degrees (J2000 equatorial coordinate).
         wave : Quantity
             Wavelengths in microns (vector of length nlambda).
-        F0 : Quantity
-            Flux zero points at wavelengths wave (vector of length nlambda).
+        sn_box : Quantity
+            Size of the extraction aperture in pixels squared
+        pixel_scale : QUANTITY
+            Dimensions of a single pixel (assumed to be square) in arcseconds.
 
         Returns
         -------
@@ -242,8 +240,6 @@ class SourceExposure(PersistentModel):
         #     raise ValueError(
         #         "ERROR. You must enable STARSHADE mode if you are setting SS_ELONGATION in degrees."
         #     )
-
-        F0 = 5509900. * (u.photon / u.s / u.cm**2) / wave
 
         # This code is in nanometers
         wave = wave.to(u.nm)
