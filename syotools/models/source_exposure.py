@@ -9,6 +9,8 @@ from scipy.interpolate import interp1d
 import scipy.special as sp
 import astropy.units as u
 import astropy.constants as const
+from astropy.modeling.functional_models import AiryDisk2D
+from photutils.geometry import elliptical_overlap_grid, rectangular_overlap_grid
 
 import synphot as syn
 from synphot.models import Empirical1D
@@ -453,7 +455,7 @@ class SourceExposure(PersistentModel):
 
         return normfactor
 
-    def sn_box(self):
+    def sn_box(self, band):
         """
         Function to set the percentage of flux going through an SN box of various sizes
         Used for extended sources
@@ -466,61 +468,97 @@ class SourceExposure(PersistentModel):
             The number of pixels in the aperture (for correcting other properties)
         """
 
+        self.wavelen = band["effective_wavelength"]
         geometry = self.source.geometry
         shape = geometry["shape"]
+        
+        geometry_creator = {"point": self.point_profile, "gaussian2d": self.gaussian_profile, 
+                            "sersic": self.sersic_profile, "flat": self.flat_profile}
 
-        geometry_creator = {"point": self.point_profile, "gaussian2d": self.gaussian_profile, "sersic": self.sersic_profile}
 
-        profile = geometry_creator[shape](geometry)
+        x_rot, y_rot, x, y, xsamp, ysamp = self.generate_profile(geometry)
+        profile = geometry_creator[shape](geometry, x_rot, y_rot)
 
-        from matplotlib import pyplot as plt
+        # from matplotlib import pyplot as plt
 
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
-        ax.imshow(np.log(profile))
-        plt.show()
+        # fig = plt.figure()
+        # ax = fig.add_subplot(111)
+        # ax.imshow(np.log(profile))
+        # plt.show()
 
-    def generate_profile(self):
+        # now the extraction mask
+        mask = self.instrument.extraction_mask(x,y, band)
+        # fig = plt.figure()
+        # ax1 = fig.add_subplot(131)
+        # ax2 = fig.add_subplot(132)
+        # ax3 = fig.add_subplot(133)
+        # ax1.imshow(profile)
+        # ax2.imshow(mask)
+        # ax3.imshow(mask*profile)
+        # plt.show()
+
+        # print(np.sum(mask*profile))
+
+        return np.sum(mask*profile), np.sum(mask)* u.pix**2
+
+
+    def generate_profile(self, geometry):
         """
         Make a 2D grid to add the profile to
         """
         configuration = self.recover("instrument.configuration")
-        pixel_scale = configuration["pixel_scale"].value
+        pixel_scale = configuration["pixel_scale"].to_value(u.arcsec/u.pix)
         self.pix_area_sqarcsec = pixel_scale**2
 
-        profile = np.zeros((101,101), dtype=float)
+        pa_radians = (geometry.get("pa", 0) * u.deg).to(u.rad)
+
         xval = np.arange(-50,51,1) * pixel_scale
         yval = np.arange(-50,51,1) * pixel_scale
 
         x,y = np.meshgrid(xval,yval)
-        print(x)
+
+        x_rot = x * np.cos(pa_radians) + y * np.sin(pa_radians)
+        y_rot = -x * np.sin(pa_radians) + y * np.cos(pa_radians)
+
         xsamp = ysamp = pixel_scale
 
-        return profile, x, y, xsamp, ysamp
+        return x_rot, y_rot, x, y, xsamp, ysamp
 
-    def point_profile(self, geometry):
+    def point_profile(self, geometry, x, y):
         effective_diameter = self.recover("telescope.effective_diameter")
-        wavelen = self.instrument.configuration["band"][self.instrument.band]["effective_wavelength"]
-        profile, x, y, xsamp, ysamp = self.generate_profile()
 
-        # dist is in arcsec and actually an angle
-        dist = np.sqrt(x**2.0 + y**2.0)
+        Rz = 1.2196698912665045 * u.rad
+        radius = (Rz * self.wavelen.to(u.AA)/effective_diameter.to(u.m))
+        #print("Radius", radius)
+        airymodel = AiryDisk2D(amplitude=1, x_0=0, y_0=0, radius=radius.to_value(u.arcsec))
 
-        from matplotlib import pyplot as plt
-        plt.imshow(dist)
-        plt.show()
+        profile = airymodel(x,y)
+
+        # # dist is in arcsec and actually an angle
+        # dist = np.sqrt(x**2.0 + y**2.0)
         
-        print(effective_diameter)
-        x = 2*np.pi/wavelen.to_value(u.m) * effective_diameter/2.0 * np.sin(dist * u.arcsec)
-        print(x)
-        x = x.value
-        profile += (2 * sp.j1(x)/x)**2
+        # print(effective_diameter)
+        # x = 2*np.pi/wavelen.to_value(u.m) * effective_diameter/2.0 * np.sin(dist * u.arcsec)
+        # print(x)
+        # x = x.value
+        # profile = (2 * sp.j1(x)/x)**2
+        # # The Bessel Function of the first kind first order is 0 at r=0, so the middle is inf.
+        # profile[50,50] = 1
 
-        return profile
+        norm_method = geometry.get("norm_method", "integ_infinity")
 
-    def sersic_profile(self, geometry):
-        profile, x, y, xsamp, ysamp = self.generate_profile()
+        if norm_method == "surf_scale":
+            norm_val = 1
+        elif norm_method == "surf_center":
+            norm_val = 1
+        elif norm_method == "integ_infinity":
+            #print("Profilesum", np.sum(profile))
+            #print("Integration", ((4 * radius.to(u.arcsec)**2)/(np.pi * Rz.to(u.arcsec)**2)).to(u.dimensionless_unscaled)) # from Astropy
+            norm_val = 1/np.sum(profile)
 
+        return profile * norm_val
+
+    def sersic_profile(self, geometry, x, y):
         major = geometry["major"].value
         minor = geometry["minor"].value
         index = geometry["sersic_index"]
@@ -530,7 +568,7 @@ class SourceExposure(PersistentModel):
 
         dist = np.sqrt((x / major)**2.0 + (y / minor)**2.0)
         # This is Equation 1 of Graham & Driver (2005) 2005PASA...22..118G
-        profile += np.exp( -b * (dist**(1.0 / index) - 1) )
+        profile = np.exp( -b * (dist**(1.0 / index) - 1) )
 
         if geometry["norm_method"] == "surf_scale":
             norm_val = self.pixelscale()
@@ -545,8 +583,7 @@ class SourceExposure(PersistentModel):
 
         return profile
 
-    def gaussian_profile(self, geometry):
-        profile, x, y, xsamp, ysamp = self.generate_profile()
+    def gaussian_profile(self, geometry, x, y):
 
         major = geometry["major"].value * np.sqrt(2.0) # to match the usual definition of a Gaussian
         minor = geometry["minor"].value * np.sqrt(2.0) # to match the usual definition of a Gaussian
@@ -554,7 +591,7 @@ class SourceExposure(PersistentModel):
 
         dist = np.sqrt((x / major) ** 2.0 + (y / minor) ** 2.0)
         # This is Equation 14 of Graham & Driver (2005) 2005PASA...22..118G
-        profile += np.exp(-dist ** (1.0 / index))
+        profile = np.exp(-dist ** (1.0 / index))
 
         if geometry["norm_method"] == "surf_scale":
             norm_val = self.pixelscale() * np.e
@@ -569,14 +606,17 @@ class SourceExposure(PersistentModel):
 
         return profile
 
-    def flat(self, geometry):
-        profile, x, y, xsamp, ysamp = self.generate_profile()
+    def flat_profile(self, geometry, x, y):
 
         major = geometry["major"].value
         minor = geometry["minor"].value
-        dist = np.sqrt((x / major) ** 2.0 + (y / minor) ** 2.0)
+        angle = geometry.get("angle", 0*u.deg).to_value(u.rad)
 
-        profile[dist < 1] = 1.0
+        profile = elliptical_overlap_grid(np.min(x), np.max(x), np.min(y), np.max(y), x.shape[1], y.shape[0], major, minor, angle, 1, 1)
+
+        # dist = np.sqrt((x / major) ** 2.0 + (y / minor) ** 2.0)
+
+        # profile[dist < 1] = 1.0
         if geometry["norm_method"] in ("surf_scale", "surf_center"):
             norm_val = self.pixelscale()
         elif geometry["norm_method"] == "integ_infinity":
@@ -640,7 +680,7 @@ class SourceExposure(PersistentModel):
         resolving power.
         """
 
-        configuration, c_thermal, _sn_box, transform_flux = self.recover("instrument.configuration", "instrument._c_thermal", "instrument._sn_box", "instrument.transform_flux")
+        configuration, c_thermal, transform_flux = self.recover("instrument.configuration", "instrument._c_thermal", "instrument.transform_flux")
         pixel_scale = configuration["pixel_scale"]
         for detector in configuration["detector"]:
             dark_current = configuration["detector"]["dark_current"]
@@ -670,28 +710,20 @@ class SourceExposure(PersistentModel):
         self.wave = wave
 
         # set up an appropriately sized aperture
-        sn_box = _sn_box(self.wave, False)
+        encircled_energy, sn_box = self.sn_box(band)
 
-        sn_box = np.median(sn_box)
+        #sn_box = np.median(sn_box)
 
         # fsource is:
         # shaped
         # goes through the full optical path + QE
         # accumulates over time
-        rel_area = 1
-        # scale source radius to the aperture size - we get all of the flux if it's smaller than the aperture
-        if source.radius > 0 * u.arcsec:
-            area = np.pi * (source.radius/pixel_scale)**2
-        else:
-            area = np.pi * (np.median(self.instrument.fwhm_psf(self.wave))/pixel_scale)**2
-        if area > sn_box:
-            rel_area = (sn_box/area)
-        flux_source = source.sed * rel_area
+        flux_source = source.sed * encircled_energy
 
         sky = self.calc_zodi_flux(wave, sn_box, pixel_scale)
 
-        print(sky)
-        print(self.instrument.sky(wave))
+        #print(sky)
+        #print(self.instrument.sky(wave))
 
 
         # fsky is:
@@ -708,7 +740,7 @@ class SourceExposure(PersistentModel):
         # uniform
         # goes through the filter wheel and QE
         # accumulates over time
-        thermal = c_thermal(self.wave)
+        thermal = c_thermal(self.wave, sn_box)
 
         # print("Source", flux_source.waveset)
         # print("Sky", flux_sky.waveset)

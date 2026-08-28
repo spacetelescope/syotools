@@ -68,8 +68,8 @@ class Instrument(PersistentModel):
                                                        'telescope.effective_diameter')
         diff_limit_wavelength = configuration["diffraction_limit"]
 
-        #result = (1.22 * u.rad * diff_limit_wavelength / aperture).to(u.arcsec)
-        result = (1.03 * u.rad * diff_limit_wavelength / effective_diameter).to(u.arcsec)
+        result = (1.22 * u.rad * diff_limit_wavelength / effective_diameter).to(u.arcsec)
+        #result = (1.03 * u.rad * diff_limit_wavelength / effective_diameter).to(u.arcsec)
         return result
 
     # UNFINISHED
@@ -89,10 +89,10 @@ class Instrument(PersistentModel):
         configuration, diff_fwhm = self.recover('configuration',
                                              'diff_limit_fwhm')
 
-        diff_limit = configuration["diffraction_limit"]
+        diff_limit = configuration["diffraction_limit"].to(u.AA)
 
-        #fwhm = (1.22 * u.rad * wave / aperture).to(u.arcsec)
-        fwhm = (1.03 * u.rad * wave / effective_aperture).to(u.arcsec)
+        fwhm = (1.22 * u.rad * wave / effective_aperture).to(u.arcsec)
+        #fwhm = (1.03 * u.rad * wave / effective_aperture).to(u.arcsec)
         
         #only use these values where the wavelength is greater than the diffraction limit
         fwhm = np.where(wave > diff_limit, fwhm.value, diff_fwhm.value) * u.arcsec
@@ -100,7 +100,7 @@ class Instrument(PersistentModel):
         return fwhm
 
 
-    def _c_thermal(self, wave, verbose=False):
+    def _c_thermal(self, wave, sn_box, verbose=False):
         """
         Calculate the thermal emission counts for the telescope.
         """
@@ -111,8 +111,6 @@ class Instrument(PersistentModel):
         total_qe = configuration["detector"]["total_qe"]
         pixel_scale = configuration["pixel_scale"]
 
-
-        box = self._sn_box(wave, verbose)
 
         h = const.h.to(u.erg * u.s) # Planck's constant erg s
         c = const.c.to(u.cm / u.s) # speed of light [cm / s]
@@ -135,7 +133,7 @@ class Instrument(PersistentModel):
     			(np.pi / 4. * D**2 * u.AA**-1))
 
         # omega is the size of the extraction box in steradians
-        Omega = (pixel_scale**2 * self._sn_box(wave, False)).to(u.sr)
+        Omega = (pixel_scale**2 * sn_box).to(u.sr)
         thermal *= Omega
 
         thermal = syn.spectrum.SourceSpectrum(Empirical1D, points=wave, lookup_table=thermal.value * syn.units.PHOTLAM)
@@ -248,6 +246,7 @@ class Instrument(PersistentModel):
             self.configuration["detector"]["internal_name"] = detector.name
             self.configuration["detector"]["read_noise"] = detector.read_noise.q
             self.configuration["detector"]["thermal"] = detector.temperature.q
+            self.configuration["detector"]["pixel_pitch"] = detector.pixel_pitch.q
             self.configuration["detector"]["dark_current"] = detector.dark_current.q / u.pix #* u.electron / u.pix**2 / u.ct # needs to be electrons per pixel per second
             w = detector.qe.w
             t = detector.qe.q
@@ -259,6 +258,11 @@ class Instrument(PersistentModel):
             self.configuration["image_slicer"] = {}
             for slicer in channel_data.ImageSlicer:
                 self.configuration["image_slicer"]["spaxel_angle"] = slicer.spaxel_angle.q
+        if "MicroShutter" in channel_data:
+            self.configuration["microshutter"] = {}
+            for microshutter in channel_data.MicroShutter:
+                self.configuration["microshutter"]["microshutter_width"] = microshutter.opening_x.q / self.configuration["detector"]["pixel_pitch"] * self.configuration["pixel_scale"]
+                self.configuration["microshutter"]["microshutter_height"] = microshutter.opening_y.q / self.configuration["detector"]["pixel_pitch"] * self.configuration["pixel_scale"]
 
     def load_throughput(self, wave, thru):
         return syn.spectrum.SpectralElement(Empirical1D, points=wave, lookup_table=thru)

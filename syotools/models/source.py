@@ -99,7 +99,7 @@ class Source(PersistentModel):
     def coordinates(self):
         pass
 
-    def set_sed(self, source_name, magnitude, redshift, extinction, bandpass=None, radius=0, ra=135.0, dec=20.0, geometry={}, library=syn_spectra_library):
+    def set_sed(self, source_name, magnitude, redshift, extinction, bandpass=None, radius=0, ra=135.0, dec=20.0, geometry={"shape": "point"}, library=syn_spectra_library):
         self.name = source_name  
         self.sed = library[source_name]
         self.magnitude = magnitude
@@ -118,8 +118,9 @@ class Source(PersistentModel):
         self.dec = dec
 
         # one of "point", "flat", "gaussian2d", "sersic"
-        self.geometry = {"shape": "sersic", "major": 0.2 * u.arcsec, "minor": 0.1 * u.arcsec,
-                        "norm_method": "surf_center", "sersic_index": 2, "surf_area_units": "arcsec^2"}
+        self.geometry = geometry
+        #{"shape": "point", "major": 0.2 * u.arcsec, "minor": 0.1 * u.arcsec,
+        #                "norm_method": "integ_infinity", "sersic_index": 2, "angle": 30*u.deg, "surf_area_units": "arcsec^2"}
         # shape is one of "point" or "gaussian2d" or "flat"
         # norm_method is one of "surf_center", "surf_scale", "integ_infinity"
         # surf_area_units is one of "arcsec^2" or "sr"

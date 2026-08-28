@@ -12,6 +12,7 @@ from astropy.table import QTable
 import synphot as syn
 import stsynphot as stsyn
 from synphot.models import Empirical1D
+from photutils.geometry import rectangular_overlap_grid
 
 from syotools.models.base import PersistentModel
 from syotools.models.source_exposure import SourceIFSExposure
@@ -113,13 +114,31 @@ class IFS(Spectrograph):
         R = R << u.pix # HWOME's definition is unitless
         return wave / R
 
+    def extraction_mask(self, x, y, band):
+        """
+        Draw an extraction mask.
+        For ifus, this is a spaxel-wide slit
+
+        Parameters
+        ----------
+        mask : np.ndarray
+            a 2D mask that draws the extraction aperture
+        """
+        wave = band["effective_wavelength"]
+        height = 3 * self.fwhm_psf(wave).to_value(u.arcsec)
+        width = self.configuration["image_slicer"]["spaxel_angle"].to_value(u.arcsec)
+        
+        mask = rectangular_overlap_grid(np.min(x), np.max(x), np.min(y), np.max(y), x.shape[1], y.shape[0], width, height, 0, 0, 2)
+
+        return mask
+
     def _sn_box(self, wave, verbose):
         """
         Calculate the number of pixels in the SNR computation box.
         """
 
         Phi = self.configuration["pixel_scale"]
-        slicewidth = self.configuration["image_slicer"]["spaxel_angle"]
+        slice_width = self.configuration["image_slicer"]["spaxel_angle"]
         sn_box = np.round(3. * self.fwhm_psf(wave) / Phi)
         spaxel_width = slice_width/Phi
 

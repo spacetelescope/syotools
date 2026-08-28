@@ -9,6 +9,7 @@ import astropy.units as u
 import synphot as syn
 import stsynphot as stsyn
 from synphot.models import Empirical1D
+from photutils.geometry import circular_overlap_grid
 
 from .instrument import Instrument
 from syotools.models.source_exposure import SourcePhotometricExposure
@@ -132,6 +133,25 @@ class Camera(Instrument):
         abzp = 5509900. * (u.photon / u.s / u.cm**2) / pivot
 
         return abzp# << abunit
+
+    def extraction_mask(self, x, y, band):
+        """
+        Draw an extraction mask.
+        For cameras, this is circular
+
+        Parameters
+        ----------
+        mask : np.ndarray
+            a 2D mask that draws the extraction aperture
+        """
+        wave = band["effective_wavelength"]
+        radius = 3 * self.fwhm_psf(wave).to_value(u.arcsec)
+        #print(radius)
+
+        mask = circular_overlap_grid(np.min(x), np.max(x), np.min(y), np.max(y), x.shape[1], y.shape[0], radius, 1, 1)
+
+        return mask
+
 
     def _sn_box(self, wave, verbose):
         """

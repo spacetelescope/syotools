@@ -12,6 +12,7 @@ from astropy.table import QTable
 import synphot as syn
 import stsynphot as stsyn
 from synphot.models import Empirical1D
+from photutils.geometry import rectangular_overlap_grid
 
 from .instrument import Instrument
 from syotools.models.source_exposure import SourceSpectrographicExposure
@@ -115,6 +116,31 @@ class Spectrograph(Instrument):
         wave, R = self.recover('wave', 'R')
         R = R << u.pix # HWOME's definition is unitless
         return wave / R
+
+    def extraction_mask(self, x, y, band):
+        """
+        Draw an extraction mask.
+        For ifus, this is a spaxel-wide slit
+
+        Parameters
+        ----------
+        mask : np.ndarray
+            a 2D mask that draws the extraction aperture
+        """
+        wave = band["effective_wavelength"]
+        if "microshutter" in self.configuration:
+            height = self.configuration["microshutter"]["microshutter_height"].to_value(u.arcsec)
+            width = self.configuration["microshutter"]["microshutter_width"].to_value(u.arcsec)
+        else:
+            height = 3 * self.fwhm_psf(wave).to_value(u.arcsec)
+            width = (self.configuration["pixel_scale"] * 2 * u.pix).to_value(u.arcsec)
+        #print("Height", height)
+        #print("Width", width)
+        #print("FWHM", self.fwhm_psf(wave), self.configuration["pixel_scale"])
+        
+        mask = rectangular_overlap_grid(np.min(x), np.max(x), np.min(y), np.max(y), x.shape[1], y.shape[0], width, height, 0, 0, 2)
+
+        return mask
 
     def _sn_box(self, wave, verbose=False):
         """
