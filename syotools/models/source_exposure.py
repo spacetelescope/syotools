@@ -481,25 +481,26 @@ class SourceExposure(PersistentModel):
         x_rot, y_rot, x, y, xsamp, ysamp = self.generate_profile(geometry)
         profile = geometry_creator[shape](geometry, x_rot, y_rot)
 
-        from matplotlib import pyplot as plt
-
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
-        ax.imshow(np.log(profile))
-        plt.show()
-
         # now the extraction mask
         mask = self.instrument.extraction_mask(x,y, band)
-        fig = plt.figure()
-        ax1 = fig.add_subplot(131)
-        ax2 = fig.add_subplot(132)
-        ax3 = fig.add_subplot(133)
-        ax1.imshow(profile)
-        ax2.imshow(mask)
-        ax3.imshow(mask*profile)
-        plt.show()
+        # from matplotlib import pyplot as plt
 
-        print(np.sum(mask*profile))
+        # fig = plt.figure()
+        # ax = fig.add_subplot(111)
+        # ax.imshow(np.log(profile))
+        # plt.show()
+
+
+        # fig = plt.figure()
+        # ax1 = fig.add_subplot(131)
+        # ax2 = fig.add_subplot(132)
+        # ax3 = fig.add_subplot(133)
+        # ax1.imshow(profile)
+        # ax2.imshow(mask)
+        # ax3.imshow(mask*profile)
+        # plt.show()
+
+        # print(np.sum(mask*profile))
 
         return np.sum(mask*profile), np.sum(mask)* u.pix**2
 
