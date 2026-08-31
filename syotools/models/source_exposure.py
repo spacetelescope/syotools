@@ -481,25 +481,25 @@ class SourceExposure(PersistentModel):
         x_rot, y_rot, x, y, xsamp, ysamp = self.generate_profile(geometry)
         profile = geometry_creator[shape](geometry, x_rot, y_rot)
 
-        # from matplotlib import pyplot as plt
+        from matplotlib import pyplot as plt
 
-        # fig = plt.figure()
-        # ax = fig.add_subplot(111)
-        # ax.imshow(np.log(profile))
-        # plt.show()
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        ax.imshow(np.log(profile))
+        plt.show()
 
         # now the extraction mask
         mask = self.instrument.extraction_mask(x,y, band)
-        # fig = plt.figure()
-        # ax1 = fig.add_subplot(131)
-        # ax2 = fig.add_subplot(132)
-        # ax3 = fig.add_subplot(133)
-        # ax1.imshow(profile)
-        # ax2.imshow(mask)
-        # ax3.imshow(mask*profile)
-        # plt.show()
+        fig = plt.figure()
+        ax1 = fig.add_subplot(131)
+        ax2 = fig.add_subplot(132)
+        ax3 = fig.add_subplot(133)
+        ax1.imshow(profile)
+        ax2.imshow(mask)
+        ax3.imshow(mask*profile)
+        plt.show()
 
-        # print(np.sum(mask*profile))
+        print(np.sum(mask*profile))
 
         return np.sum(mask*profile), np.sum(mask)* u.pix**2
 
@@ -596,7 +596,7 @@ class SourceExposure(PersistentModel):
     def sersic_scale_profile(self, geometry, x, y):
         major = geometry["major"].value
         minor = geometry["minor"].value
-        index = geometry["sersic_index"].value
+        index = geometry["sersic_index"]
 
         dist = np.sqrt((x / major) ** 2.0 + (y / minor) ** 2.0)
         # This is Equation 14 of Graham & Driver (2005) 2005PASA...22..118G
@@ -640,17 +640,17 @@ class SourceExposure(PersistentModel):
         r_core = geometry['r_core']
 
         if power_index <= 0:
-            raise ValueError('Power Law Index must be positive, not {}'.format(self.power_index))
+            raise ValueError('Power Law Index must be positive, not {}'.format(power_index))
 
-        dist = np.sqrt((x/r_core)**2.0 + (y/r_core)**2.0)
-        profile = (dist.clip(MIN_CLIP, np.max(dist)))**(-1*index)
+        dist = np.sqrt((x/r_core)**2.0 + (y/r_core)**2.0).value
+        profile = (dist.clip(MIN_CLIP, np.max(dist)))**(-1*power_index)
         # flatten the central portion. Everything within the core radius is set to 1.
         profile[np.where(dist <= 1.0)] = 1.0
 
         if geometry["norm_method"] in ["surf_scale", "surf_center"]:
             norm_val = self.pixelscale()
-        elif geometry["norm_method"] in ["integ_infinity"]
-            integral = np.pi * self.r_core**2 + 2* np.pi * self.r_core**2/(self.power_index - 2)
+        elif geometry["norm_method"] in ["integ_infinity"]:
+            integral = np.pi * r_core**2 + 2* np.pi * r_core**2/(power_index - 2)
             norm_val = self.pixelscale()/integral
 
         profile = profile * norm_val
