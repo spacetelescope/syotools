@@ -23,6 +23,7 @@ from syotools.models.source import Source
 SPECTRAL_RADIANCE = u.W / (u.m**2 * u.sr * u.um)
 PHOTON_SPECTRAL_RADIANCE = u.photon / (u.cm**2 * u.s * u.nm * u.arcsec**2)
 SPECTRAL_RADIANCE_CGS = u.erg / (u.s * u.cm**2 * u.arcsec**2 * u.nm)
+MIN_CLIP = 1e-10
 
 class SourceExposure(PersistentModel):
     """
@@ -473,7 +474,8 @@ class SourceExposure(PersistentModel):
         shape = geometry["shape"]
         
         geometry_creator = {"point": self.point_profile, "gaussian2d": self.gaussian_profile, 
-                            "sersic": self.sersic_profile, "flat": self.flat_profile}
+                            "sersic": self.sersic_profile, "sersic_scale": self.sersic_scale_profile,
+                            "flat": self.flat_profile, "power": self.power_profile}
 
 
         x_rot, y_rot, x, y, xsamp, ysamp = self.generate_profile(geometry)
@@ -585,9 +587,16 @@ class SourceExposure(PersistentModel):
 
     def gaussian_profile(self, geometry, x, y):
 
-        major = geometry["major"].value * np.sqrt(2.0) # to match the usual definition of a Gaussian
-        minor = geometry["minor"].value * np.sqrt(2.0) # to match the usual definition of a Gaussian
-        index = 0.5
+        geometry["major"] *= np.sqrt(2.0) # to match the usual definition of a Gaussian
+        geometry["minor"] *= np.sqrt(2.0) # to match the usual definition of a Gaussian
+        geometry["sersic_index"] = 0.5
+
+        return sersic_scale_profile (geometry, x, y)
+
+    def sersic_scale_profile(self, geometry, x, y):
+        major = geometry["major"].value
+        minor = geometry["minor"].value
+        index = geometry["sersic_index"].value
 
         dist = np.sqrt((x / major) ** 2.0 + (y / minor) ** 2.0)
         # This is Equation 14 of Graham & Driver (2005) 2005PASA...22..118G
@@ -625,6 +634,31 @@ class SourceExposure(PersistentModel):
         profile = profile * norm_val
 
         return profile
+
+    def power_profile(self, geometry, x, y):
+        power_index = geometry['power_index']
+        r_core = geometry['r_core']
+
+        if power_index <= 0:
+            raise ValueError('Power Law Index must be positive, not {}'.format(self.power_index))
+
+        dist = np.sqrt((x/r_core)**2.0 + (y/r_core)**2.0)
+        profile = (dist.clip(MIN_CLIP, np.max(dist)))**(-1*index)
+        # flatten the central portion. Everything within the core radius is set to 1.
+        profile[np.where(dist <= 1.0)] = 1.0
+
+        if geometry["norm_method"] in ["surf_scale", "surf_center"]:
+            norm_val = self.pixelscale()
+        elif geometry["norm_method"] in ["integ_infinity"]
+            integral = np.pi * self.r_core**2 + 2* np.pi * self.r_core**2/(self.power_index - 2)
+            norm_val = self.pixelscale()/integral
+
+        profile = profile * norm_val
+
+        return profile
+
+
+
 
     @property
     def interpolated_sed(self):

@@ -40,7 +40,14 @@ class Mock_SourceExposure(SourceExposure):
 
     @exptime.setter
     def exptime(self, new_exptime):
-        self._exptime = new_exptime * u.s
+        if isinstance(new_exptime, u.Quantity):
+            try:
+                new_exptime.to_value(u.s)
+            except u.UnitConversionError as err:
+                raise err
+            self._exptime = new_exptime
+        else:
+            self._exptime = new_exptime * u.s
 
     @property
     def snr(self):
@@ -99,6 +106,23 @@ def test_snr(verbose=False):
 def test_snr_exptime(verbose=False):
     exptime_1 = 30 * u.s
     source_exposure = Mock_SourceExposure(exptime=exptime_1.value)
+    snr_1 = source_exposure._update_snr(None, None)
+
+    source_exposure.snr = snr_1
+    exptime_2 = source_exposure._update_exptime(None, None)
+
+    if verbose:
+        print("Initial Exptime:", exptime_1)
+        print("Roundtrip Exptime:", exptime_2)
+        print("Ratio (1 expected):", exptime_2/exptime_1)
+        print("-----------------------")
+
+    assert np.round(exptime_2, 6) == np.round(exptime_1,6)
+
+def test_snr_exptime2(verbose=False):
+    # This is a separate test to ensure conversions are being done correctly
+    exptime_1 = 2.0 * u.h
+    source_exposure = Mock_SourceExposure(exptime=exptime_1)
     snr_1 = source_exposure._update_snr(None, None)
 
     source_exposure.snr = snr_1
@@ -218,6 +242,7 @@ if __name__ == "__main__":
     test_exptime(verbose=True)
     test_snr(verbose=True)
     test_snr_exptime(verbose=True)
+    test_snr_exptime2(verbose=True)
     test_flux_snr(verbose=True)
     test_mag(verbose=True)
     test_dark_exptime(verbose=True)
