@@ -483,24 +483,24 @@ class SourceExposure(PersistentModel):
 
         # now the extraction mask
         mask = self.instrument.extraction_mask(x,y, band)
-        # from matplotlib import pyplot as plt
+        from matplotlib import pyplot as plt
 
-        # fig = plt.figure()
-        # ax = fig.add_subplot(111)
-        # ax.imshow(np.log(profile))
-        # plt.show()
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        ax.imshow(np.log(profile))
+        plt.show()
 
 
-        # fig = plt.figure()
-        # ax1 = fig.add_subplot(131)
-        # ax2 = fig.add_subplot(132)
-        # ax3 = fig.add_subplot(133)
-        # ax1.imshow(profile)
-        # ax2.imshow(mask)
-        # ax3.imshow(mask*profile)
-        # plt.show()
+        fig = plt.figure()
+        ax1 = fig.add_subplot(131)
+        ax2 = fig.add_subplot(132)
+        ax3 = fig.add_subplot(133)
+        ax1.imshow(profile)
+        ax2.imshow(mask)
+        ax3.imshow(mask*profile)
+        plt.show()
 
-        # print(np.sum(mask*profile))
+        print(np.sum(mask*profile))
 
         return np.sum(mask*profile), np.sum(mask)* u.pix**2
 
@@ -573,6 +573,14 @@ class SourceExposure(PersistentModel):
         # This is Equation 1 of Graham & Driver (2005) 2005PASA...22..118G
         profile = np.exp( -b * (dist**(1.0 / index) - 1) )
 
+        # Sersic profiles are highly centralized, so we need to oversample the central pixel
+        # to get the appropriate flux. This is the difference between sampling
+        # and integrating, and unfortunately we're sampling this function.
+        dist = np.sqrt((x/101. / major)**2.0 + (y/101. / minor)**2.0)
+        central_pixel = np.exp( -b * (dist**(1.0 / index) - 1) )
+
+        profile[50,50] = np.sum(central_pixel) / 101**2
+
         if geometry["norm_method"] == "surf_scale":
             norm_val = self.pixelscale()
         elif geometry["norm_method"] == "surf_center":
@@ -602,6 +610,14 @@ class SourceExposure(PersistentModel):
         dist = np.sqrt((x / major) ** 2.0 + (y / minor) ** 2.0)
         # This is Equation 14 of Graham & Driver (2005) 2005PASA...22..118G
         profile = np.exp(-dist ** (1.0 / index))
+
+        # Sersic profiles are highly centralized, so we need to oversample the central pixel
+        # to get the appropriate flux. This is the difference between sampling
+        # and integrating, and unfortunately we're sampling this function.
+        dist = np.sqrt((x/101. / major)**2.0 + (y/101. / minor)**2.0)
+        central_pixel = np.exp(-dist ** (1.0 / index))
+
+        profile[50,50] = np.sum(central_pixel) / 101**2
 
         if geometry["norm_method"] == "surf_scale":
             norm_val = self.pixelscale() * np.e
