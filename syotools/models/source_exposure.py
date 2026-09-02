@@ -784,14 +784,9 @@ class SourceExposure(PersistentModel):
         mag = -2.5*np.log10(fnu.value) + 8.90
         #mag = flux.to_value(u.ABmag)
         # Remove the impact of the bandpass
-        print(sc, photons, flux, fnu)
-        print("SNR", _snr)
-        print("A0:", a0)
-        print("B0:", b0)
-        print("C0:", c0)
-        print("Mag:", mag)
 
         # Convert to AB Magnitudes
+        snr2 /= u.ct
 
         a0 = (_exptime)**2
         b0 = snr2 * _exptime
@@ -803,6 +798,14 @@ class SourceExposure(PersistentModel):
         flux /= band["bandpass"].tlambda()
 
         _magnitude = -2.5 * np.log10(np.array(flux)) * u.mag('AB')
+
+        print(sc, photons, flux, fnu)
+        print("SNR", _snr)
+        print("A0:", a0)
+        print("B0:", b0)
+        print("C0:", c0)
+        print("F0:", f0)
+        print("Mag:", _magnitude)
 
         return _magnitude
 
