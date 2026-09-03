@@ -72,7 +72,7 @@ class Spectrograph(Instrument):
 
     @cached_property
     def bandnames(self):
-        return self.configuration["channel_filters"]
+        return list(self.bands.keys())
 
     @cached_property
     def bands(self):

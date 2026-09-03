@@ -6,6 +6,7 @@ import synphot as syn
 
 from syotools.models.instrument import Instrument
 from syotools.models.telescope import Telescope
+from syotools.models.source_exposure import SourceExposure
 
 class Mock_Instrument(Instrument):
     def __init__(self, telescope):
@@ -85,10 +86,14 @@ def test_save_instrument(verbose=False):
     telescope = Telescope()
     telescope.set_from_hwome("EAC5")
     instrument = telescope.instruments["HRI_S.HRI_S_UVIS_Imager"]
+    exposure = SourceExposure()
+    instrument.add_exposure(exposure)
+    instrument.band = "HRI_S_UVIS.HRI_Johnson_V"
 
     pixel_scale_1 = instrument.configuration["pixel_scale"]
+    mask, sn_box = exposure.sn_box(instrument.bands[instrument.band])
 
-    thermal_1 = instrument._c_thermal(wavelength)
+    thermal_1 = instrument._c_thermal(wavelength, sn_box)
 
     # Now let's dump it, and then blank it out.
     config = copy.deepcopy(instrument.save_to_dict())
@@ -103,12 +108,13 @@ def test_save_instrument(verbose=False):
 
     pixel_scale_2 = instrument.configuration["pixel_scale"]
 
-    thermal_2 = instrument._c_thermal(wavelength)
+    mask, sn_box = exposure.sn_box(instrument.bands[instrument.band])
+    thermal_2 = instrument._c_thermal(wavelength, sn_box)
 
     # try putting the pixel scale back (and make sure thermal_3 matches thermal_1)
     instrument.configuration["pixel_scale"] = pixel_scale_1
     
-    thermal_3 = instrument._c_thermal(wavelength)
+    thermal_3 = instrument._c_thermal(wavelength, sn_box)
 
     if verbose:
         print("Save and Load an Instrument")

@@ -74,11 +74,11 @@ class Camera(Instrument):
     @cached_property
     def n_channels(self):
         # this has always referred to the filters
-        return len(self.configuration["channel_filters"])
+        return len(self.bands.keys())
 
     @cached_property
     def bandnames(self):
-        return self.configuration["channel_filters"]
+        return list(self.bands.keys())
 
     @cached_property
     def bands(self):
