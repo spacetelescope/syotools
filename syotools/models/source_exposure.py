@@ -862,7 +862,7 @@ class SourceExposure(PersistentModel):
             # because a multiple-in, multiple-out is a valid use case
             self._snr = _snr_temp[idx]
             self.instrument.band = band
-            result = self._update_exptime(self.source, configuration["band"][band])
+            result = self._update_exptime(self.source, configuration["bands"][band])
             self._exptime.append(result)
         self._snr = _snr_temp
         self.instrument.band = _initial_band
@@ -893,7 +893,7 @@ class SourceExposure(PersistentModel):
             # because a multiple-in, multiple-out is a valid use case
             self._exptime = _exptime_temp[idx]
             self.instrument.band = band
-            result = self._update_snr(self.source, configuration["band"][band])
+            result = self._update_snr(self.source, configuration["bands"][band])
             self._snr.append(result)
         self._exptime = _exptime_temp
         self.instrument.band = _initial_band
@@ -926,7 +926,7 @@ class SourceExposure(PersistentModel):
             self._exptime = _exptime_temp[idx]
             self._snr = _snr_temp[idx]
             self.instrument.band = band
-            result = self._update_magnitude(self.source, configuration["band"][band])
+            result = self._update_magnitude(self.source, configuration["bands"][band])
             self._magnitude.append(result)
 
         self._exptime = _exptime_temp
@@ -1140,7 +1140,7 @@ class SourceIFSExposure(SourceExposure):
             for idx,band in enumerate(bands):
                 # because a multiple-in, multiple-out is a valid use case
                 self._snr = _snr_temp[idx]
-                result = self._update_exptime(source, configuration["band"][band])
+                result = self._update_exptime(source, configuration["bands"][band])
                 _single_exptime.append(result)
             self._exptimes.append(_single_exptime)
         # find the highest exposure time amongst the set of sources
@@ -1177,7 +1177,7 @@ class SourceIFSExposure(SourceExposure):
             for idx, band in enumerate(bands):
                 # because a multiple-in, multiple-out is a valid use case
                 self._exptime = _exptime_temp[idx]
-                result = self._update_snr(source, configuration["band"][band])
+                result = self._update_snr(source, configuration["bands"][band])
                 _single_snr.append(result)
             self._snrs.append(_single_snr)
         # find the highest exposure time amongst the set of sources

@@ -197,7 +197,7 @@ class Instrument(PersistentModel):
             channel_filters = list(channel_data.Filter.name.keys())
         except TypeError:
             channel_filters = [channel_data.Filter.name.value]
-        self.configuration["band"] = {}
+        self.configuration["bands"] = {}
         self.configuration["channel_filters"] = []
 
         for channel_filter in channel_filters:
@@ -229,12 +229,15 @@ class Instrument(PersistentModel):
             band = self.load_throughput(thru.w, total_throughput)
             wavemin = band.avgwave() - band.rectwidth()/2
             wavemax = band.avgwave() + band.rectwidth()/2
-            self.configuration["band"][fancy_name] = {"internal_name": filter_name, "bandpass": band, "original_wave": thru.w, "original_thru": total_throughput, "effective_wavelength": band.avgwave(), 
+            self.configuration["bands"][fancy_name] = {"internal_name": filter_name, "bandpass": band, "original_wave": thru.w, "original_thru": total_throughput, "effective_wavelength": band.avgwave(), 
                                                     "wave_min": wavemin, "bandwidth": band.equivwidth(), "wave_max": wavemax, "optics": len(thru.value.keys())}
             if kind in ("disperser", "ifs"):
                 grating_resolution = channel_data[filter_name].Grating.spectral_resolution.q
-                self.configuration["band"][fancy_name]["resolution"] = float(grating_resolution)
-            self.configuration["band"][fancy_name]["kind"] = kind
+                self.configuration["bands"][fancy_name]["resolution"] = float(grating_resolution)
+            self.configuration["bands"][fancy_name]["kind"] = kind
+        # temporary deprecated name to maintain old software.
+        # To be removed in SYOTools 1.5
+        self.configuration["band"] = self.configuration["bands"]
 
         self.configuration["diffraction_limit"] = channel_data.diffraction_limited.q
         self.configuration["pixel_scale"] = channel_data.plate_scale.q
@@ -273,8 +276,8 @@ class Instrument(PersistentModel):
         """
         config = complexify_data(config)
 
-        for band in config["band"]:
-            config["band"][band]["bandpass"] = self.load_throughput(config["band"][band]["original_wave"], config["band"][band]["original_thru"])
+        for band in config["bands"]:
+            config["bands"][band]["bandpass"] = self.load_throughput(config["bands"][band]["original_wave"], config["bands"][band]["original_thru"])
 
         config["detector"]["total_qe"] = self.load_throughput(config["detector"]["original_qe_wave"], config["detector"]["original_qe_thru"])
 
@@ -290,8 +293,8 @@ class Instrument(PersistentModel):
             A configuration dictionary
         """
         config = copy.deepcopy(self.configuration)
-        for band in config["band"]:
-            del config["band"][band]["bandpass"]
+        for band in config["bands"]:
+            del config["bands"][band]["bandpass"]
         
         del config["detector"]["total_qe"]
 

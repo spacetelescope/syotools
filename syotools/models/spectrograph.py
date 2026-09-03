@@ -80,7 +80,7 @@ class Spectrograph(Instrument):
 
     @property
     def bands(self):
-        return [x for x in self.configuration["band"] if self.configuration["band"][x]["kind"] == "disperser"]
+        return [x for x in self.configuration["bands"] if self.configuration["bands"][x]["kind"] == "disperser"]
 
     @band.setter
     def band(self, new_band):
@@ -94,11 +94,11 @@ class Spectrograph(Instrument):
                 return
             self._band = nband
 
-            self.R = self.configuration["band"][nband]["resolution"]
-            self.wave = self.configuration["band"][nband]["bandpass"].waveset
+            self.R = self.configuration["bands"][nband]["resolution"]
+            self.wave = self.configuration["bands"][nband]["bandpass"].waveset
             self.sky = syn.spectrum.SourceSpectrum(Empirical1D, points=self.wave, lookup_table=np.ones_like(self.wave.value) * 24 << u.ABmag)
             self.sky = self.sky.normalize(24 * u.ABmag, stsyn.spectrum.band("johnson,v"))
-            self.aeff = self.configuration["band"][nband]["bandpass"]
+            self.aeff = self.configuration["bands"][nband]["bandpass"]
             wrange = np.array((np.min(self.wave.value), np.max(self.wave.value)))
             self.wrange = wrange
         else:

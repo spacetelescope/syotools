@@ -81,7 +81,7 @@ class Camera(Instrument):
 
     @property
     def bands(self):
-        return [x for x in self.configuration["band"] if self.configuration["band"][x]["kind"] == "filter"]
+        return [x for x in self.configuration["bands"] if self.configuration["bands"][x]["kind"] == "filter"]
 
 
     @property
@@ -98,8 +98,8 @@ class Camera(Instrument):
     @property
     def pivotwave(self):
         pivot = []
-        for bpass in self.configuration["band"]:
-            band = self.configuration["band"][bpass]
+        for bpass in self.configuration["bands"]:
+            band = self.configuration["bands"][bpass]
             pivotval = band["bandpass"].pivot()
             pivotunit = pivotval.unit
             pivot.append(pivotval.value)
@@ -114,8 +114,8 @@ class Camera(Instrument):
         """
         pivotwave = self.recover('pivotwave')
         width = []
-        for bpass in self.configuration["band"]:
-            band = self.configuration["band"][bpass]
+        for bpass in self.configuration["bands"]:
+            band = self.configuration["bands"][bpass]
             widthval = band["bandpass"].equivwidth()
             widthunit = widthval.unit
             width.append(widthval.value)
