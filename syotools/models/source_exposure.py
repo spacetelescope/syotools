@@ -441,7 +441,7 @@ class SourceExposure(PersistentModel):
 
         Raises
         ------
-        EngineInputError
+        ValueError
             Raised on invalid area unit
         """
         if self.source.geometry["surf_area_units"] in ['sr']:
@@ -452,7 +452,7 @@ class SourceExposure(PersistentModel):
             normfactor = self.pix_area_sqarcsec
         else:
             msg = f"Unsupported surface area unit: {self.source.geometry['surf_area_units']}"
-            raise EngineInputError(value=msg)
+            raise ValueError(msg)
 
         return normfactor
 
@@ -483,24 +483,6 @@ class SourceExposure(PersistentModel):
 
         # now the extraction mask
         mask = self.instrument.extraction_mask(x,y, band)
-        from matplotlib import pyplot as plt
-
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
-        ax.imshow(np.log(profile))
-        plt.show()
-
-
-        fig = plt.figure()
-        ax1 = fig.add_subplot(131)
-        ax2 = fig.add_subplot(132)
-        ax3 = fig.add_subplot(133)
-        ax1.imshow(profile)
-        ax2.imshow(mask)
-        ax3.imshow(mask*profile)
-        plt.show()
-
-        print(np.sum(mask*profile))
 
         return np.sum(mask*profile), np.sum(mask)* u.pix**2
 
@@ -559,11 +541,13 @@ class SourceExposure(PersistentModel):
             #print("Integration", ((4 * radius.to(u.arcsec)**2)/(np.pi * Rz.to(u.arcsec)**2)).to(u.dimensionless_unscaled)) # from Astropy
             norm_val = 1/np.sum(profile)
 
-        return profile * norm_val
+        profile = profile * norm_val
+
+        return profile
 
     def sersic_profile(self, geometry, x, y):
-        major = geometry["major"].value
-        minor = geometry["minor"].value
+        major = geometry["major"].to_value(u.arcsec)
+        minor = geometry["minor"].to_value(u.arcsec)
         index = geometry["sersic_index"]
 
         # the actual value of b. Formula taken from astropy's sersic2d shape.
@@ -590,17 +574,21 @@ class SourceExposure(PersistentModel):
             # http://ned.ipac.caltech.edu/level5/March05/Graham/Graham2.html
             integral = major * minor * 2 * np.pi * index * np.exp(b)/(b**(2*index))* sp.gamma(2 * index)
             norm_val = self.pixelscale() / integral
+
         profile = profile * norm_val
 
         return profile
 
     def gaussian_profile(self, geometry, x, y):
+        # The gaussian profile is actually a scale-sersic of index 0.5
+        sersic_geometry = copy.deepcopy(geometry)
 
-        geometry["major"] *= np.sqrt(2.0) # to match the usual definition of a Gaussian
-        geometry["minor"] *= np.sqrt(2.0) # to match the usual definition of a Gaussian
-        geometry["sersic_index"] = 0.5
+        sersic_geometry["major"] = geometry["major"].to_value(u.arcsec) * np.sqrt(2.0) # to match the usual definition of a Gaussian
+        sersic_geometry["minor"] = geometry["minor"].to_value(u.arcsec) * np.sqrt(2.0) # to match the usual definition of a Gaussian
+        sersic_geometry["shape"] = "sersic_scale"
+        sersic_geometry["sersic_index"] = 0.5
 
-        return sersic_scale_profile (geometry, x, y)
+        return self.sersic_scale_profile(sersic_geometry, x, y)
 
     def sersic_scale_profile(self, geometry, x, y):
         major = geometry["major"].value
@@ -628,17 +616,17 @@ class SourceExposure(PersistentModel):
             # http://ned.ipac.caltech.edu/level5/March05/Graham/Graham2.html
             integral = major * minor * 2 * np.pi * index * sp.gamma(2 * index)
             norm_val = self.pixelscale() / integral
+
         profile = profile * norm_val
 
         return profile
 
     def flat_profile(self, geometry, x, y):
 
-        major = geometry["major"].value
-        minor = geometry["minor"].value
-        angle = geometry.get("angle", 0*u.deg).to_value(u.rad)
+        major = geometry["major"].to_value(u.arcsec)
+        minor = geometry["minor"].to_value(u.arcsec)
 
-        profile = elliptical_overlap_grid(np.min(x), np.max(x), np.min(y), np.max(y), x.shape[1], y.shape[0], major, minor, angle, 1, 1)
+        profile = elliptical_overlap_grid(np.min(x), np.max(x), np.min(y), np.max(y), x.shape[1], y.shape[0], major, minor, 0, 1, 1)
 
         # dist = np.sqrt((x / major) ** 2.0 + (y / minor) ** 2.0)
 
@@ -654,7 +642,7 @@ class SourceExposure(PersistentModel):
 
     def power_profile(self, geometry, x, y):
         power_index = geometry['power_index']
-        r_core = geometry['r_core']
+        r_core = geometry['r_core'].to_value(u.arcsec)
 
         if power_index <= 0:
             raise ValueError('Power Law Index must be positive, not {}'.format(power_index))
