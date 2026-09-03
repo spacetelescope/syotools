@@ -8,6 +8,10 @@
       2D aperture masks
     - Thermal, dark, and zodi contributions now correspond to the 2D 
       aperture mask dimensions
+    - configuration["band"] is now configuration["bands"] but you should
+      use instrument.bands
+    - mirror area is now the real area; for EAC5 that means hexagons with
+      gaps. Diameter is now the effective diameter.
 1.4.2
     - Fix SNR bug
     - New Zodi function from pyEDITH
