@@ -3,6 +3,7 @@
 Created on Fri Oct 14 21:31:18 2016
 @author: gkanarek, tumlinson
 """
+from functools import cached_property
 import numpy as np
 import astropy.constants as const
 import astropy.units as u
@@ -66,22 +67,22 @@ class Camera(Instrument):
         self.sky = self.sky.normalize(24 * u.ABmag, stsyn.spectrum.band("johnson,v"))
         #super().__init__(default_camera, **kw)
 
-    @property
+    @cached_property
     def n_bands(self):
         return len(self.bands)
 
-    @property
+    @cached_property
     def n_channels(self):
         # this has always referred to the filters
         return len(self.configuration["channel_filters"])
 
-    @property
+    @cached_property
     def bandnames(self):
         return self.configuration["channel_filters"]
 
-    @property
+    @cached_property
     def bands(self):
-        return [x for x in self.configuration["bands"] if self.configuration["bands"][x]["kind"] == "filter"]
+        return {x: self.configuration["bands"][x] for x in self.configuration["bands"] if self.configuration["bands"][x]["kind"] == "filter"}
 
 
     @property
@@ -98,8 +99,8 @@ class Camera(Instrument):
     @property
     def pivotwave(self):
         pivot = []
-        for bpass in self.configuration["bands"]:
-            band = self.configuration["bands"][bpass]
+        for bpass in self.bands:
+            band = self.bands[bpass]
             pivotval = band["bandpass"].pivot()
             pivotunit = pivotval.unit
             pivot.append(pivotval.value)
@@ -114,8 +115,8 @@ class Camera(Instrument):
         """
         pivotwave = self.recover('pivotwave')
         width = []
-        for bpass in self.configuration["bands"]:
-            band = self.configuration["bands"][bpass]
+        for bpass in self.bands:
+            band = self.bands[bpass]
             widthval = band["bandpass"].equivwidth()
             widthunit = widthval.unit
             width.append(widthval.value)

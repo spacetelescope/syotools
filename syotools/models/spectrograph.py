@@ -4,7 +4,7 @@ Created on Sat Oct 15 16:56:40 2016
 
 @author: gkanarek, tumlinson
 """
-
+from functools import cached_property
 import numpy as np
 import astropy.units as u
 import astropy.constants as const
@@ -66,21 +66,21 @@ class Spectrograph(Instrument):
     #Property wrapper for band, so that we can use a custom setter to propagate
     #band updates to all the rest of the parameters
 
-    @property
+    @cached_property
     def n_bands(self):
         return len(self.bands)
+
+    @cached_property
+    def bandnames(self):
+        return self.configuration["channel_filters"]
+
+    @cached_property
+    def bands(self):
+        return {x: self.configuration["bands"][x] for x in self.configuration["bands"] if self.configuration["bands"][x]["kind"] == "disperser"}
 
     @property
     def band(self):
         return self._band
-
-    @property
-    def bandnames(self):
-        return self.configuration["channel_filters"]
-
-    @property
-    def bands(self):
-        return [x for x in self.configuration["bands"] if self.configuration["bands"][x]["kind"] == "disperser"]
 
     @band.setter
     def band(self, new_band):
@@ -94,11 +94,11 @@ class Spectrograph(Instrument):
                 return
             self._band = nband
 
-            self.R = self.configuration["bands"][nband]["resolution"]
-            self.wave = self.configuration["bands"][nband]["bandpass"].waveset
+            self.R = self.bands[nband]["resolution"]
+            self.wave = self.bands[nband]["bandpass"].waveset
             self.sky = syn.spectrum.SourceSpectrum(Empirical1D, points=self.wave, lookup_table=np.ones_like(self.wave.value) * 24 << u.ABmag)
             self.sky = self.sky.normalize(24 * u.ABmag, stsyn.spectrum.band("johnson,v"))
-            self.aeff = self.configuration["bands"][nband]["bandpass"]
+            self.aeff = self.bands[nband]["bandpass"]
             wrange = np.array((np.min(self.wave.value), np.max(self.wave.value)))
             self.wrange = wrange
         else:

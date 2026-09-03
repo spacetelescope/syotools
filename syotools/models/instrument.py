@@ -281,6 +281,12 @@ class Instrument(PersistentModel):
 
         config["detector"]["total_qe"] = self.load_throughput(config["detector"]["original_qe_wave"], config["detector"]["original_qe_thru"])
 
+        # These are cached properties; deleting them will allow them to be recreated on next access
+        del self.n_bands
+        del self.bandnames
+        del self.bands
+        if hasattr(self, "n_channels"): del(self.n_channels) # only camera
+
         self.configuration = config
 
     def save_to_dict(self):

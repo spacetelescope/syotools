@@ -46,8 +46,8 @@ geometries = [{
             }]
 testnames = [x["geometry"] for x in geometries]
 
-@pytest.mark.parameterize("geometries", geometries, ids=testnames)
-def test_shape(geometry, verbose=False):
+@pytest.mark.parametrize("geometries", geometries, ids=testnames)
+def test_shape(geometries, verbose=False):
     snr = None
     telescope = Telescope()
     telescope.set_from_hwome("EAC5")
@@ -59,7 +59,7 @@ def test_shape(geometry, verbose=False):
     template = "NGC 1068"
     redshift = 0
     extinction = 0
-    source.set_sed(template, 30., redshift, extinction, geometry=geometry)   
+    source.set_sed(template, 30., redshift, extinction, geometry=geometries)   
 
     exp = SourcePhotometricExposure()
     exp.source = source
@@ -74,8 +74,8 @@ def test_shape(geometry, verbose=False):
     if verbose:
         print("Test geometry")
         #print(config)
-        print("Shape:", geometry["geometry"])
-        print("Geometry:", geometry)
+        print("Shape:", geometries["geometry"])
+        print("Geometry:", geometries)
         print("SNR:", snr)
         print("-----------------------")
 

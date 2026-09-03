@@ -99,18 +99,18 @@ class Telescope(PersistentModel):
                         tel_instrument.set_from_hwome(modename, "ifs")
                         if tel_instrument.configuration["channel_filters"] != []:
                             self.instruments[f"{modename}_IFS"] = tel_instrument
-                            self.telescope_bands[f"{modename}_IFS"] = tel_instrument.configuration["bands"]
+                            self.telescope_bands[f"{modename}_IFS"] = tel_instrument.bands
                     else:
                         tel_instrument = Camera(self)
                         tel_instrument.set_from_hwome(modename, "imager")
                         if tel_instrument.configuration["channel_filters"] != []:
                             self.instruments[f"{modename}_Imager"] = tel_instrument
-                            self.telescope_bands[f"{modename}_Imager"] = tel_instrument.configuration["bands"]
+                            self.telescope_bands[f"{modename}_Imager"] = tel_instrument.bands
                         tel_instrument = Spectrograph(self)
                         tel_instrument.set_from_hwome(modename, "spectrograph")
                         if tel_instrument.configuration["channel_filters"] != []:
                             self.instruments[f"{modename}_Spectrograph"] = tel_instrument
-                            self.telescope_bands[f"{modename}_Spectrograph"] = tel_instrument.configuration["bands"]
+                            self.telescope_bands[f"{modename}_Spectrograph"] = tel_instrument.bands
 
 
         #print(self.hwo_data.OTA.circumscribing_diameter.q)
