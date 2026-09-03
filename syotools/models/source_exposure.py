@@ -4,6 +4,7 @@
 Created on Mon Oct 30 12:31:11 2017
 @author: gkanarek, jt
 """
+import copy
 import numpy as np
 from scipy.interpolate import interp1d
 import scipy.special as sp
@@ -471,7 +472,7 @@ class SourceExposure(PersistentModel):
 
         self.wavelen = band["effective_wavelength"]
         geometry = self.source.geometry
-        shape = geometry["shape"]
+        shape = geometry.get("geometry", "point")
         
         geometry_creator = {"point": self.point_profile, "gaussian2d": self.gaussian_profile, 
                             "sersic": self.sersic_profile, "sersic_scale": self.sersic_scale_profile,
@@ -546,8 +547,8 @@ class SourceExposure(PersistentModel):
         return profile
 
     def sersic_profile(self, geometry, x, y):
-        major = geometry["major"].to_value(u.arcsec)
-        minor = geometry["minor"].to_value(u.arcsec)
+        major = self.quant_to_val(geometry["major"], unit=u.arcsec)
+        minor = self.quant_to_val(geometry["minor"], unit=u.arcsec)
         index = geometry["sersic_index"]
 
         # the actual value of b. Formula taken from astropy's sersic2d shape.
@@ -583,16 +584,16 @@ class SourceExposure(PersistentModel):
         # The gaussian profile is actually a scale-sersic of index 0.5
         sersic_geometry = copy.deepcopy(geometry)
 
-        sersic_geometry["major"] = geometry["major"].to_value(u.arcsec) * np.sqrt(2.0) # to match the usual definition of a Gaussian
-        sersic_geometry["minor"] = geometry["minor"].to_value(u.arcsec) * np.sqrt(2.0) # to match the usual definition of a Gaussian
+        sersic_geometry["major"] = self.quant_to_val(geometry["major"], unit=u.arcsec) * np.sqrt(2.0) # to match the usual definition of a Gaussian
+        sersic_geometry["minor"] = self.quant_to_val(geometry["minor"], unit=u.arcsec) * np.sqrt(2.0) # to match the usual definition of a Gaussian
         sersic_geometry["shape"] = "sersic_scale"
         sersic_geometry["sersic_index"] = 0.5
 
         return self.sersic_scale_profile(sersic_geometry, x, y)
 
     def sersic_scale_profile(self, geometry, x, y):
-        major = geometry["major"].value
-        minor = geometry["minor"].value
+        major = self.quant_to_val(geometry["major"], unit=u.arcsec)
+        minor = self.quant_to_val(geometry["minor"], unit=u.arcsec)
         index = geometry["sersic_index"]
 
         dist = np.sqrt((x / major) ** 2.0 + (y / minor) ** 2.0)
@@ -623,8 +624,8 @@ class SourceExposure(PersistentModel):
 
     def flat_profile(self, geometry, x, y):
 
-        major = geometry["major"].to_value(u.arcsec)
-        minor = geometry["minor"].to_value(u.arcsec)
+        major = self.quant_to_val(geometry["major"], unit=u.arcsec)
+        minor = self.quant_to_val(geometry["minor"], unit=u.arcsec)
 
         profile = elliptical_overlap_grid(np.min(x), np.max(x), np.min(y), np.max(y), x.shape[1], y.shape[0], major, minor, 0, 1, 1)
 
@@ -642,7 +643,7 @@ class SourceExposure(PersistentModel):
 
     def power_profile(self, geometry, x, y):
         power_index = geometry['power_index']
-        r_core = geometry['r_core'].to_value(u.arcsec)
+        r_core = self.quant_to_val(geometry["r_core"], unit=u.arcsec)
 
         if power_index <= 0:
             raise ValueError('Power Law Index must be positive, not {}'.format(power_index))

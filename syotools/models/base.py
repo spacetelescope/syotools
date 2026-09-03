@@ -160,6 +160,20 @@ class PersistentModel(object):
         if len(out) == 1:
             return out[0]
         return out
+    
+    def quant_to_val(self, *args, unit=u.dimensionless_unscaled):
+        """
+        return values; if the input is not a quantity assume it's the appropriate quantity.
+        """
+        out = []
+        for arg in args:
+            if isinstance(arg, u.Quantity):
+                out.append(arg.to_value(unit))
+            else:
+                out.append(arg)
+        if len(out) == 1:
+            out = out[0]
+        return out
 
     def store(self, **kw):
         """
