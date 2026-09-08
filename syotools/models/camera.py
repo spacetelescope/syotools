@@ -80,7 +80,7 @@ class Camera(Instrument):
 
     @property
     def bands(self):
-        return [x for x in self.configuration["band"] if self.configuration["band"][x]["kind"] == "filter"]
+        return [x for x in self.configuration["bands"] if self.configuration["bands"][x]["kind"] == "filter"]
 
 
     @property
@@ -97,8 +97,8 @@ class Camera(Instrument):
     @property
     def pivotwave(self):
         pivot = []
-        for bpass in self.configuration["band"]:
-            band = self.configuration["band"][bpass]
+        for bpass in self.configuration["bands"]:
+            band = self.configuration["bands"][bpass]
             pivotval = band["bandpass"].pivot()
             pivotunit = pivotval.unit
             pivot.append(pivotval.value)
@@ -113,8 +113,8 @@ class Camera(Instrument):
         """
         pivotwave = self.recover('pivotwave')
         width = []
-        for bpass in self.configuration["band"]:
-            band = self.configuration["band"][bpass]
+        for bpass in self.configuration["bands"]:
+            band = self.configuration["bands"][bpass]
             widthval = band["bandpass"].equivwidth()
             widthunit = widthval.unit
             width.append(widthval.value)
@@ -122,16 +122,16 @@ class Camera(Instrument):
 
         return np.array(pivotwave/width)
 
-    @property
-    def ab_zeropoint(self):
-        """
-        AB-magnitude zero points as per Marc Postman's equation.
-        """
-        pivotwave = self.recover('pivotwave')
-        pivot = pivotwave.to(u.nm)
-        abzp = 5509900. * (u.photon / u.s / u.cm**2) / pivot
+    # @property
+    # def ab_zeropoint(self):
+    #     """
+    #     AB-magnitude zero points as per Marc Postman's equation.
+    #     """
+    #     pivotwave = self.recover('pivotwave')
+    #     pivot = pivotwave.to(u.nm)
+    #     abzp = 5509900. * (u.photon / u.s / u.cm**2) / pivot
 
-        return abzp# << abunit
+    #     return abzp# << abunit
 
     def _sn_box(self, wave, verbose):
         """
