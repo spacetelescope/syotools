@@ -42,11 +42,6 @@ class SourceExposure(PersistentModel):
 
     Attributes:
         telescope    - the Telescope model instance associated with this exposure
-        camera       - the Camera model instance associated with this exposure
-        spectrograph - the Spectrograph model instance (if applicable) associated
-                       with this exposure
-        ifs          - the IFS model instance (if applicable) associated with this exposure
-
         exp_id       - a unique exposure ID, used for save/load purposes (string)
                         NOTE: THIS HAS NO DEFAULT, A NEW EXP_ID IS CREATED
                         WHENEVER A NEW CALCULATION IS SAVED.
@@ -729,7 +724,7 @@ class SourceExposure(PersistentModel):
             qe = configuration["detector"]["total_qe"]
             read_noise = configuration["detector"]["read_noise"]
 
-        if band["kind"] in ("disperser", "ifs"):
+        if band["kind"] in ("disperser"):
             R = band["resolution"]
             waveunit = band["bandpass"].waveset.unit
             wavepix = np.linspace(band["bandpass"].waveset[0], band["bandpass"].waveset[-1], 1000) # using the bandpass wavelengths leads to weird fringing
@@ -1149,7 +1144,7 @@ class SourceSpectrographicExposure(SourceExposure):
         """
         raise ValueError("Magnitude calculation not supported for Spectroscopy")
 
-class SourceIFSExposure(SourceExposure):
+class SourceMultiSpecExposure(SourceExposure):
     """ 
     This is currently a subclass of Spectrographic exposure that accepts multiple
     sources and produces multiple returns. 
@@ -1222,7 +1217,7 @@ class SourceIFSExposure(SourceExposure):
         self._exptime = []
         self._exptimes = []
         _snr_temp = self._ensure_array(self._snr, len(bands))
-        # The unique thing about IFS is it has multiple sources
+        # IFS and MOS instruments are valuable because they can observe multiple sources
         for source in self.sources:
             _single_exptime = []
             for idx,band in enumerate(bands):
@@ -1259,7 +1254,7 @@ class SourceIFSExposure(SourceExposure):
         self._snr = []
         self._snrs = []
         _exptime_temp =  self._ensure_array(self._exptime, len(bands))
-        # The unique thing about IFS is it has multiple sources
+        # IFS and MOS instruments are valuable because they can observe multiple sources
         for source in self.sources:
             _single_snr = []
             for idx, band in enumerate(bands):
@@ -1279,7 +1274,7 @@ class SourceIFSExposure(SourceExposure):
         """
         Not supported, make this an error
         """
-        raise ValueError("Magnitude calculation not supported for IFS Spectroscopy")
+        raise ValueError("Magnitude calculation not supported for MultiSpec Spectroscopy")
 
 class SourceCoronagraphicExposure(SourceExposure):
     """

@@ -7,7 +7,7 @@ import numpy as np
 import astropy.units as u
 
 from syotools.spectra.spec_defaults import syn_spectra_library
-from syotools.models import Camera, Spectrograph, IFS, Telescope, Source, SourcePhotometricExposure, SourceSpectrographicExposure, SourceIFSExposure
+from syotools.models import Camera, Spectrograph, MultiSpec, Telescope, Source, SourcePhotometricExposure, SourceSpectrographicExposure, SourceMultiSpecExposure
 from syotools.utils.yaml_utils import read_yaml, write_yaml
 
 def _do_calculation(tel, inst, exp, band=None, source=None, snr=10.0, exptime=100, bandpass=None, target="magnitude", verbose=False):
@@ -20,7 +20,7 @@ def _do_calculation(tel, inst, exp, band=None, source=None, snr=10.0, exptime=10
         inst.band = band
 
     if target == "magnitude":
-        if isinstance(inst, (Spectrograph, IFS)):
+        if isinstance(inst, (Spectrograph, MultiSpec)):
             raise NotImplementedError("Spectrographs cannot currently solve for limiting magnitude")
         
         inst.add_exposure(exp)
@@ -85,37 +85,13 @@ def compute_observation(telescope, instrument="HRI_S.HRI_S_UVIS", sed="G2V Star"
     tel = Telescope()
     tel.set_from_hwome(telescope)
     result = []
-    if "imag" in instrument.lower():
-        inst = tel.instruments[instrument]
-        exp = SourcePhotometricExposure()
+    inst = tel.instruments[instrument]
+    exp = inst.create_exposure()
 
-        exp.source = source
-        exp.verbose = verbose
+    exp.source = source
+    exp.verbose = verbose
 
-        result.append(_do_calculation(tel, inst, exp, source=source, snr=snr, exptime=exptime, bandpass=bandpass, target=target, verbose=verbose))
-
-    elif "mos" in instrument.lower() or "spec" in instrument.lower():
-        inst = tel.instruments[instrument]
-        #inst.bandnames = inst.modes
-        exp = SourceSpectrographicExposure() 
-        exp.source = source
-        exp.verbose = verbose
-
-        for band in inst.bands:
-            result.append(_do_calculation(tel, inst, exp, band=band, source=source, snr=snr, exptime=exptime, bandpass=bandpass, target=target, verbose=verbose))
-
-    elif "ifu" in instrument.lower() or "ifs" in instrument.lower():
-        inst = tel.instruments[instrument]
-        #inst.bandnames = inst.modes
-        exp = SourceIFSExposure()
-        exp.source = source
-        #exp.source = source2
-        exp.verbose = verbose
-
-        for band in inst.bands:
-            result.append(_do_calculation(tel, inst, exp, band=band, source=source, snr=snr, exptime=exptime, bandpass=bandpass, target=target, verbose=verbose))
-    else:
-        raise ValueError(f"Unrecognized instrument {instrument}. Valid options are 'camera', 'spectroscopy', 'ifs'.")
+    result.append(_do_calculation(tel, inst, exp, source=source, snr=snr, exptime=exptime, bandpass=bandpass, target=target, verbose=verbose))
 
     return exp.wave, result
 

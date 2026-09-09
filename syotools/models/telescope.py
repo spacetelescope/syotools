@@ -20,7 +20,7 @@ import scipy as sc
 import synphot as syn
 from hwome.core.navigator import DataModel
 from syotools.models.camera import Camera
-from syotools.models.ifs import IFS
+from syotools.models.multispec import MultiSpec
 from syotools.models.spectrograph import Spectrograph
 
 class Telescope(PersistentModel):
@@ -95,12 +95,18 @@ class Telescope(PersistentModel):
                 except (KeyError, TypeError):
                     modenames = [f"{instrument.name.value}.HRI_A_VIS"]
                 for modename in modenames:
-                    if "IFU" in modename or "IFS" in modename:
-                        tel_instrument = IFS(self)
+                    if "IFU" in modename.upper() or "IFS" in modename.upper():
+                        tel_instrument = MultiSpec(self)
                         tel_instrument.set_from_hwome(modename, "ifs")
                         if tel_instrument.configuration["channel_filters"] != []:
                             self.instruments[f"{modename}_IFS"] = tel_instrument
                             self.telescope_bands[f"{modename}_IFS"] = tel_instrument.bands
+                    elif "MOS" in modename.upper():
+                        tel_instrument = MultiSpec(self)
+                        tel_instrument.set_from_hwome(modename, "mos")
+                        if tel_instrument.configuration["channel_filters"] != []:
+                            self.instruments[f"{modename}_MOS"] = tel_instrument
+                            self.telescope_bands[f"{modename}_MOS"] = tel_instrument.bands
                     else:
                         tel_instrument = Camera(self)
                         tel_instrument.set_from_hwome(modename, "imager")

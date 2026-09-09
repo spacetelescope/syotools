@@ -220,15 +220,13 @@ class Instrument(PersistentModel):
             try:
                 getattr(channel_data[filter_name], "Grating")
                 kind = "disperser"
-                if "ifu" in filter_name.lower():
-                    kind = "ifs"
             except KeyError:
                 kind = "filter"
             if ins_type.lower() in ("imager") and kind != "filter":
                 continue
-            elif ins_type.lower() in ("spectrograph") and kind != "disperser":
+            elif ins_type.lower() in ("spectrograph", "mos", "ifs") and kind != "disperser":
                 continue
-            elif ins_type.lower() in ("ifs") and kind != "ifs":
+            elif ins_type.lower() in ("polarimeter") and kind != "polarizer":
                 continue
 
             self.configuration["channel_filters"].append(fancy_name)
@@ -243,7 +241,7 @@ class Instrument(PersistentModel):
             wavemax = band.avgwave() + band.rectwidth()/2
             self.configuration["bands"][fancy_name] = {"internal_name": filter_name, "bandpass": band, "original_wave": thru.w, "original_thru": total_throughput, "effective_wavelength": band.avgwave(), 
                                                     "wave_min": wavemin, "bandwidth": band.equivwidth(), "wave_max": wavemax, "optics": len(thru.value.keys())}
-            if kind in ("disperser", "ifs"):
+            if kind in ("disperser"):
                 grating_resolution = channel_data[filter_name].Grating.spectral_resolution.q
                 self.configuration["bands"][fancy_name]["resolution"] = float(grating_resolution)
             self.configuration["bands"][fancy_name]["kind"] = kind
@@ -269,7 +267,7 @@ class Instrument(PersistentModel):
             self.configuration["detector"]["original_qe_wave"] = w
             self.configuration["detector"]["original_qe_thru"] = t
 
-        if kind in ("ifs"):
+        if "ImageSlicer" in channel_data:
             self.configuration["image_slicer"] = {}
             for slicer in channel_data.ImageSlicer:
                 self.configuration["image_slicer"]["spaxel_angle"] = slicer.spaxel_angle.q

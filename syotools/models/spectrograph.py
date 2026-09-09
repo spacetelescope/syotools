@@ -120,7 +120,8 @@ class Spectrograph(Instrument):
     def extraction_mask(self, x, y, band):
         """
         Draw an extraction mask.
-        For ifus, this is a spaxel-wide slit
+        The default height is 3x the PSF size
+        The default width is 2 pixels
 
         Parameters
         ----------
@@ -128,15 +129,8 @@ class Spectrograph(Instrument):
             a 2D mask that draws the extraction aperture
         """
         wave = band["effective_wavelength"]
-        if "microshutter" in self.configuration:
-            height = self.configuration["microshutter"]["microshutter_height"].to_value(u.arcsec)
-            width = self.configuration["microshutter"]["microshutter_width"].to_value(u.arcsec)
-        else:
-            height = 3 * self.fwhm_psf(wave).to_value(u.arcsec)
-            width = (self.configuration["pixel_scale"] * 2 * u.pix).to_value(u.arcsec)
-        #print("Height", height)
-        #print("Width", width)
-        #print("FWHM", self.fwhm_psf(wave), self.configuration["pixel_scale"])
+        height = 3 * self.fwhm_psf(wave).to_value(u.arcsec)
+        width = (self.configuration["pixel_scale"] * 2 * u.pix).to_value(u.arcsec)
         
         mask = rectangular_overlap_grid(np.min(x), np.max(x), np.min(y), np.max(y), x.shape[1], y.shape[0], width, height, 0, 0, 2)
 
