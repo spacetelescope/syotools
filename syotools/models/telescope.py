@@ -99,22 +99,26 @@ class Telescope(PersistentModel):
                         tel_instrument.set_from_hwome(modename, "ifs")
                         if tel_instrument.configuration["channel_filters"] != []:
                             self.instruments[f"{modename}_IFS"] = tel_instrument
-                            self.telescope_bands[f"{modename}_IFS"] = tel_instrument.configuration["bands"]
+                            self.telescope_bands[f"{modename}_IFS"] = tel_instrument.bands
                     else:
                         tel_instrument = Camera(self)
                         tel_instrument.set_from_hwome(modename, "imager")
                         if tel_instrument.configuration["channel_filters"] != []:
                             self.instruments[f"{modename}_Imager"] = tel_instrument
-                            self.telescope_bands[f"{modename}_Imager"] = tel_instrument.configuration["bands"]
+                            self.telescope_bands[f"{modename}_Imager"] = tel_instrument.bands
                         tel_instrument = Spectrograph(self)
                         tel_instrument.set_from_hwome(modename, "spectrograph")
                         if tel_instrument.configuration["channel_filters"] != []:
                             self.instruments[f"{modename}_Spectrograph"] = tel_instrument
-                            self.telescope_bands[f"{modename}_Spectrograph"] = tel_instrument.configuration["bands"]
+                            self.telescope_bands[f"{modename}_Spectrograph"] = tel_instrument.bands
 
 
-        # this also sets self.effective_area
-        self.effective_diameter = self.hwo_data.OTA.circumscribing_diameter.q
+        #print(self.hwo_data.OTA.circumscribing_diameter.q)
+        #self.effective_diameter = self.hwo_data.OTA.circumscribing_diameter.q
+        # This value is backed by a function that computes whether the primary mirror is
+        # made of hexagons, keystones, and whether it's on-axis (with a cutout) or not.
+        # The effective diameter within is based off this value assuming a perfect circle.
+        self.effective_area = self.hwo_data.OTA.inscribed_aperture_area.q
 
     def save_to_dict(self):
         output = {}
@@ -165,7 +169,7 @@ class Telescope(PersistentModel):
         if isinstance(new_area, (int, float)):
             new_area = float(new_area) << u.cm**2
         # linking them like this should ensure we always get consistent numbers
-        self._effective_area = new_area
+        self._effective_area = new_area.to(u.cm**2)
         self._effective_diameter = (np.sqrt(new_area / np.pi) * 2.).to(u.m)
 
     @property
@@ -184,7 +188,7 @@ class Telescope(PersistentModel):
         self._effective_diameter = new_diameter
         self._effective_area = (np.pi * (new_diameter/2.)**2).to(u.cm**2)
 
-    def find_instrument_with(self, kind, wavelength=None):
+    def find_instrument_with(self, kind, wavelength=None, resolution=):
         """
         Convenience function to find an instrument with specific wavelength coverage
 
@@ -202,6 +206,18 @@ class Telescope(PersistentModel):
         suitable_bands: dict
             A dictionary of suitable bands, each value is the instrument
         """
+
+        options = search_configuration(channel_type='mos',
+        wavelength_range_nm=[wave_minmin/10, wave_maxmax/10],
+        resolution_range = [8000, 20000],
+        center_nm=None)
+
+        fbyctr = {}
+        for chan_name, cdict in options.items():
+            for filt_name, fdict in cdict.items():
+                print(f"Found {chan_name}.{filt_name}, center={fdict['center']}, width={fdict['width']}, R={fdict['spectral_resolution']}")
+                fbyctr[fdict['center'].to('nm').value] = fdict
+
         suitable_instruments = defaultdict(list)
         suitable_bands = {}
         for insname in self.telescope_bands:

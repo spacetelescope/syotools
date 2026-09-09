@@ -183,7 +183,7 @@ def camera_magnitude(telescope, template, snr, exptime, silent=False):
 		inst.add_exposure(exp)
 		exp.exptime = [exptime] * u.hr
 		exp.snr = [snr] * u.dimensionless_unscaled
-		exp.unknown = 'magnitude' 
+		exp.unknown = 'magnitude'
 
 		if not silent: 
 			print('--- Computing Magnitude as the Unknown ---') 

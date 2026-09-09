@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "syotools"
-version = "1.4.2"
+version = "1.4.3"
 description = "Science Yield Optimization Tools (SYOTools)"
 authors = [
     {name = "Jason Tumlinson, STScI", email = "tumlinson@stsci.edu"},
@@ -26,6 +26,7 @@ dependencies = [
     "stsynphot",
     "numpy",
     "scipy",
+    "photutils",
     "specutils",
 ]
 

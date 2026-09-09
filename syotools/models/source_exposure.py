@@ -4,11 +4,15 @@
 Created on Mon Oct 30 12:31:11 2017
 @author: gkanarek, jt
 """
+import copy
 import numpy as np
 from scipy.interpolate import interp1d
+import scipy.special as sp
 import astropy.units as u
 import astropy.constants as const
 import scipy as sc
+from astropy.modeling.functional_models import AiryDisk2D
+from photutils.geometry import elliptical_overlap_grid, rectangular_overlap_grid
 
 import synphot as syn
 from synphot.models import Empirical1D, ConstFlux1D
@@ -22,6 +26,7 @@ from syotools.models.source import Source
 SPECTRAL_RADIANCE = u.W / (u.m**2 * u.sr * u.um)
 PHOTON_SPECTRAL_RADIANCE = u.photon / (u.cm**2 * u.s * u.nm * u.arcsec**2)
 SPECTRAL_RADIANCE_CGS = u.erg / (u.s * u.cm**2 * u.arcsec**2 * u.nm)
+MIN_CLIP = 1e-10
 
 class SourceExposure(PersistentModel):
     """
@@ -428,6 +433,241 @@ class SourceExposure(PersistentModel):
 
         return sky  # 1/arcsec^2 (UNITS OF SPECTRAL RADIANCE) - original, now PHOTLAM
 
+    def pixelscale(self):
+        """
+        Return a per-pixel normalization factor for the appropriate area unit.
+
+        Returns
+        -------
+        normfactor: float
+            Normalization factor, unitless
+
+        Raises
+        ------
+        ValueError
+            Raised on invalid area unit
+        """
+        if self.source.geometry["surf_area_units"] in ['sr']:
+            arcsec2 = u.arcsec * u.arcsec
+            normfactor = self.pix_area_sqarcsec / u.sr.to(arcsec2)  # convert area in steradians to area in pixels
+        elif self.source.geometry["surf_area_units"] in ['arcsec^2', None]: # 'None' should be an option because integrated flux
+                                                        # shouldn't have units (internally, the grid is arcsec)
+            normfactor = self.pix_area_sqarcsec
+        else:
+            msg = f"Unsupported surface area unit: {self.source.geometry['surf_area_units']}"
+            raise ValueError(msg)
+
+        return normfactor
+
+    def sn_box(self, band):
+        """
+        Function to set the percentage of flux going through an SN box of various sizes
+        Used for extended sources
+
+        Returns
+        -------
+        through_aperture : float
+            The fraction of the total source flux going through the aperture
+        aperture_pixels : float
+            The number of pixels in the aperture (for correcting other properties)
+        """
+
+        self.wavelen = band["effective_wavelength"]
+        geometry = self.source.geometry
+        shape = geometry.get("geometry", "point")
+        
+        geometry_creator = {"point": self.point_profile, "gaussian2d": self.gaussian_profile, 
+                            "sersic": self.sersic_profile, "sersic_scale": self.sersic_scale_profile,
+                            "flat": self.flat_profile, "power": self.power_profile}
+
+
+        x_rot, y_rot, x, y, xsamp, ysamp = self.generate_profile(geometry)
+        profile = geometry_creator[shape](geometry, x_rot, y_rot)
+
+        # now the extraction mask
+        mask = self.instrument.extraction_mask(x,y, band)
+
+        return np.sum(mask*profile), np.sum(mask)* u.pix**2
+
+
+    def generate_profile(self, geometry):
+        """
+        Make a 2D grid to add the profile to
+        """
+        configuration = self.recover("instrument.configuration")
+        pixel_scale = configuration["pixel_scale"].to_value(u.arcsec/u.pix)
+        self.pix_area_sqarcsec = pixel_scale**2
+
+        pa_radians = (geometry.get("pa", 0) * u.deg).to(u.rad)
+
+        xval = np.arange(-50,51,1) * pixel_scale
+        yval = np.arange(-50,51,1) * pixel_scale
+
+        x,y = np.meshgrid(xval,yval)
+
+        x_rot = x * np.cos(pa_radians) + y * np.sin(pa_radians)
+        y_rot = -x * np.sin(pa_radians) + y * np.cos(pa_radians)
+
+        xsamp = ysamp = pixel_scale
+
+        return x_rot, y_rot, x, y, xsamp, ysamp
+
+    def point_profile(self, geometry, x, y):
+        effective_diameter = self.recover("telescope.effective_diameter")
+
+        Rz = 1.2196698912665045 * u.rad
+        radius = (Rz * self.wavelen.to(u.AA)/effective_diameter.to(u.m))
+        #print("Radius", radius)
+        airymodel = AiryDisk2D(amplitude=1, x_0=0, y_0=0, radius=radius.to_value(u.arcsec))
+
+        profile = airymodel(x,y)
+
+        # # dist is in arcsec and actually an angle
+        # dist = np.sqrt(x**2.0 + y**2.0)
+        
+        # print(effective_diameter)
+        # x = 2*np.pi/wavelen.to_value(u.m) * effective_diameter/2.0 * np.sin(dist * u.arcsec)
+        # print(x)
+        # x = x.value
+        # profile = (2 * sp.j1(x)/x)**2
+        # # The Bessel Function of the first kind first order is 0 at r=0, so the middle is inf.
+        # profile[50,50] = 1
+
+        norm_method = geometry.get("norm_method", "integ_infinity")
+
+        if norm_method == "surf_scale":
+            norm_val = 1
+        elif norm_method == "surf_center":
+            norm_val = 1
+        elif norm_method == "integ_infinity":
+            #print("Profilesum", np.sum(profile))
+            #print("Integration", ((4 * radius.to(u.arcsec)**2)/(np.pi * Rz.to(u.arcsec)**2)).to(u.dimensionless_unscaled)) # from Astropy
+            norm_val = 1/np.sum(profile)
+
+        profile = profile * norm_val
+
+        return profile
+
+    def sersic_profile(self, geometry, x, y):
+        major = self.quant_to_val(geometry["major"], unit=u.arcsec)
+        minor = self.quant_to_val(geometry["minor"], unit=u.arcsec)
+        index = geometry["sersic_index"]
+
+        # the actual value of b. Formula taken from astropy's sersic2d shape.
+        b = sp.gammaincinv(2*index,0.5)
+
+        dist = np.sqrt((x / major)**2.0 + (y / minor)**2.0)
+        # This is Equation 1 of Graham & Driver (2005) 2005PASA...22..118G
+        profile = np.exp( -b * (dist**(1.0 / index) - 1) )
+
+        # Sersic profiles are highly centralized, so we need to oversample the central pixel
+        # to get the appropriate flux. This is the difference between sampling
+        # and integrating, and unfortunately we're sampling this function.
+        dist = np.sqrt((x/101. / major)**2.0 + (y/101. / minor)**2.0)
+        central_pixel = np.exp( -b * (dist**(1.0 / index) - 1) )
+
+        profile[50,50] = np.sum(central_pixel) / 101**2
+
+        if geometry["norm_method"] == "surf_scale":
+            norm_val = self.pixelscale()
+        elif geometry["norm_method"] == "surf_center":
+            norm_val = self.pixelscale() * np.e**(-1*b)
+        elif geometry["norm_method"] == "integ_infinity":
+            # integrate the Sersic profile to get the total flux for normalization, including flux outside the FOV
+            # http://ned.ipac.caltech.edu/level5/March05/Graham/Graham2.html
+            integral = major * minor * 2 * np.pi * index * np.exp(b)/(b**(2*index))* sp.gamma(2 * index)
+            norm_val = self.pixelscale() / integral
+
+        profile = profile * norm_val
+
+        return profile
+
+    def gaussian_profile(self, geometry, x, y):
+        # The gaussian profile is actually a scale-sersic of index 0.5
+        sersic_geometry = copy.deepcopy(geometry)
+
+        sersic_geometry["major"] = self.quant_to_val(geometry["major"], unit=u.arcsec) * np.sqrt(2.0) # to match the usual definition of a Gaussian
+        sersic_geometry["minor"] = self.quant_to_val(geometry["minor"], unit=u.arcsec) * np.sqrt(2.0) # to match the usual definition of a Gaussian
+        sersic_geometry["shape"] = "sersic_scale"
+        sersic_geometry["sersic_index"] = 0.5
+
+        return self.sersic_scale_profile(sersic_geometry, x, y)
+
+    def sersic_scale_profile(self, geometry, x, y):
+        major = self.quant_to_val(geometry["major"], unit=u.arcsec)
+        minor = self.quant_to_val(geometry["minor"], unit=u.arcsec)
+        index = geometry["sersic_index"]
+
+        dist = np.sqrt((x / major) ** 2.0 + (y / minor) ** 2.0)
+        # This is Equation 14 of Graham & Driver (2005) 2005PASA...22..118G
+        profile = np.exp(-dist ** (1.0 / index))
+
+        # Sersic profiles are highly centralized, so we need to oversample the central pixel
+        # to get the appropriate flux. This is the difference between sampling
+        # and integrating, and unfortunately we're sampling this function.
+        dist = np.sqrt((x/101. / major)**2.0 + (y/101. / minor)**2.0)
+        central_pixel = np.exp(-dist ** (1.0 / index))
+
+        profile[50,50] = np.sum(central_pixel) / 101**2
+
+        if geometry["norm_method"] == "surf_scale":
+            norm_val = self.pixelscale() * np.e
+        elif geometry["norm_method"] == "surf_center":
+            norm_val = self.pixelscale()
+        elif geometry["norm_method"] == "integ_infinity":
+            # integrate the Sersic profile to get the total flux for normalization, including flux outside the FOV
+            # http://ned.ipac.caltech.edu/level5/March05/Graham/Graham2.html
+            integral = major * minor * 2 * np.pi * index * sp.gamma(2 * index)
+            norm_val = self.pixelscale() / integral
+
+        profile = profile * norm_val
+
+        return profile
+
+    def flat_profile(self, geometry, x, y):
+
+        major = self.quant_to_val(geometry["major"], unit=u.arcsec)
+        minor = self.quant_to_val(geometry["minor"], unit=u.arcsec)
+
+        profile = elliptical_overlap_grid(np.min(x), np.max(x), np.min(y), np.max(y), x.shape[1], y.shape[0], major, minor, 0, 1, 1)
+
+        # dist = np.sqrt((x / major) ** 2.0 + (y / minor) ** 2.0)
+
+        # profile[dist < 1] = 1.0
+        if geometry["norm_method"] in ("surf_scale", "surf_center"):
+            norm_val = self.pixelscale()
+        elif geometry["norm_method"] == "integ_infinity":
+            norm_val = self.pixelscale() / np.sum(profile)
+
+        profile = profile * norm_val
+
+        return profile
+
+    def power_profile(self, geometry, x, y):
+        power_index = geometry['power_index']
+        r_core = self.quant_to_val(geometry["r_core"], unit=u.arcsec)
+
+        if power_index <= 0:
+            raise ValueError('Power Law Index must be positive, not {}'.format(power_index))
+
+        dist = np.sqrt((x/r_core)**2.0 + (y/r_core)**2.0).value
+        profile = (dist.clip(MIN_CLIP, np.max(dist)))**(-1*power_index)
+        # flatten the central portion. Everything within the core radius is set to 1.
+        profile[np.where(dist <= 1.0)] = 1.0
+
+        if geometry["norm_method"] in ["surf_scale", "surf_center"]:
+            norm_val = self.pixelscale()
+        elif geometry["norm_method"] in ["integ_infinity"]:
+            integral = np.pi * r_core**2 + 2* np.pi * r_core**2/(power_index - 2)
+            norm_val = self.pixelscale()/integral
+
+        profile = profile * norm_val
+
+        return profile
+
+
+
+
     @property
     def interpolated_sed(self):
         """
@@ -482,7 +722,7 @@ class SourceExposure(PersistentModel):
         resolving power.
         """
 
-        configuration, c_thermal, _sn_box, transform_flux = self.recover("instrument.configuration", "instrument._c_thermal", "instrument._sn_box", "instrument.transform_flux")
+        configuration, c_thermal, transform_flux = self.recover("instrument.configuration", "instrument._c_thermal", "instrument.transform_flux")
         pixel_scale = configuration["pixel_scale"]
         for detector in configuration["detector"]:
             dark_current = configuration["detector"]["dark_current"]
@@ -512,23 +752,15 @@ class SourceExposure(PersistentModel):
         self.wave = wave
 
         # set up an appropriately sized aperture
-        sn_box = _sn_box(self.wave, False)
+        encircled_energy, sn_box = self.sn_box(band)
 
-        sn_box = np.median(sn_box)
+        #sn_box = np.median(sn_box)
 
         # fsource is:
         # shaped
         # goes through the full optical path + QE
         # accumulates over time
-        rel_area = 1
-        # scale source radius to the aperture size - we get all of the flux if it's smaller than the aperture
-        if source.radius > 0 * u.arcsec:
-            area = np.pi * (source.radius/pixel_scale)**2
-        else:
-            area = np.pi * (np.median(self.instrument.fwhm_psf(self.wave))/pixel_scale)**2
-        if area > sn_box:
-            rel_area = (sn_box/area)
-        flux_source = source.sed * rel_area
+        flux_source = source.sed * encircled_energy
 
         sky = self.calc_zodi_flux(wave, sn_box, pixel_scale)
 
@@ -550,7 +782,7 @@ class SourceExposure(PersistentModel):
         # uniform
         # goes through the filter wheel and QE
         # accumulates over time
-        thermal = c_thermal(self.wave)
+        thermal = c_thermal(self.wave, sn_box)
 
 
         flux_source_before = sc.integrate.simpson(flux_source(flux_source.waveset), flux_source.waveset)
