@@ -68,8 +68,8 @@ class Instrument(PersistentModel):
                                                        'telescope.effective_diameter')
         diff_limit_wavelength = configuration["diffraction_limit"]
 
-        #result = (1.22 * u.rad * diff_limit_wavelength / aperture).to(u.arcsec)
-        result = (1.03 * u.rad * diff_limit_wavelength / effective_diameter).to(u.arcsec)
+        result = (1.22 * u.rad * diff_limit_wavelength / effective_diameter).to(u.arcsec)
+        #result = (1.03 * u.rad * diff_limit_wavelength / effective_diameter).to(u.arcsec)
         return result
 
     # UNFINISHED
@@ -89,10 +89,10 @@ class Instrument(PersistentModel):
         configuration, diff_fwhm = self.recover('configuration',
                                              'diff_limit_fwhm')
 
-        diff_limit = configuration["diffraction_limit"]
+        diff_limit = configuration["diffraction_limit"].to(u.AA)
 
-        #fwhm = (1.22 * u.rad * wave / aperture).to(u.arcsec)
-        fwhm = (1.03 * u.rad * wave / effective_aperture).to(u.arcsec)
+        fwhm = (1.22 * u.rad * wave / effective_aperture).to(u.arcsec)
+        #fwhm = (1.03 * u.rad * wave / effective_aperture).to(u.arcsec)
         
         #only use these values where the wavelength is greater than the diffraction limit
         fwhm = np.where(wave > diff_limit, fwhm.value, diff_fwhm.value) * u.arcsec
@@ -100,7 +100,7 @@ class Instrument(PersistentModel):
         return fwhm
 
 
-    def _c_thermal(self, wave, verbose=False):
+    def _c_thermal(self, wave, sn_box, verbose=False):
         """
         Calculate the thermal emission counts for the telescope.
         """
@@ -111,8 +111,6 @@ class Instrument(PersistentModel):
         total_qe = configuration["detector"]["total_qe"]
         pixel_scale = configuration["pixel_scale"]
 
-
-        box = self._sn_box(wave, verbose)
 
         h = const.h.to(u.erg * u.s) # Planck's constant erg s
         c = const.c.to(u.cm / u.s) # speed of light [cm / s]
@@ -135,7 +133,7 @@ class Instrument(PersistentModel):
     			(np.pi / 4. * D**2 * u.AA**-1))
 
         # omega is the size of the extraction box in steradians
-        Omega = (pixel_scale**2 * self._sn_box(wave, False)).to(u.sr)
+        Omega = (pixel_scale**2 * sn_box).to(u.sr)
         thermal *= Omega
 
         thermal = syn.spectrum.SourceSpectrum(Empirical1D, points=wave, lookup_table=thermal.value * syn.units.PHOTLAM)
@@ -199,7 +197,7 @@ class Instrument(PersistentModel):
             channel_filters = list(channel_data.Filter.name.keys())
         except TypeError:
             channel_filters = [channel_data.Filter.name.value]
-        self.configuration["band"] = {}
+        self.configuration["bands"] = {}
         self.configuration["channel_filters"] = []
 
         for channel_filter in channel_filters:
@@ -231,12 +229,15 @@ class Instrument(PersistentModel):
             band = self.load_throughput(thru.w, total_throughput)
             wavemin = band.avgwave() - band.rectwidth()/2
             wavemax = band.avgwave() + band.rectwidth()/2
-            self.configuration["band"][fancy_name] = {"internal_name": filter_name, "bandpass": band, "original_wave": thru.w, "original_thru": total_throughput, "effective_wavelength": band.avgwave(), 
+            self.configuration["bands"][fancy_name] = {"internal_name": filter_name, "bandpass": band, "original_wave": thru.w, "original_thru": total_throughput, "effective_wavelength": band.avgwave(), 
                                                     "wave_min": wavemin, "bandwidth": band.equivwidth(), "wave_max": wavemax, "optics": len(thru.value.keys())}
             if kind in ("disperser", "ifs"):
                 grating_resolution = channel_data[filter_name].Grating.spectral_resolution.q
-                self.configuration["band"][fancy_name]["resolution"] = float(grating_resolution)
-            self.configuration["band"][fancy_name]["kind"] = kind
+                self.configuration["bands"][fancy_name]["resolution"] = float(grating_resolution)
+            self.configuration["bands"][fancy_name]["kind"] = kind
+        # temporary deprecated name to maintain old software.
+        # To be removed in SYOTools 1.5
+        self.configuration["band"] = self.configuration["bands"]
 
         self.configuration["diffraction_limit"] = channel_data.diffraction_limited.q
         self.configuration["pixel_scale"] = channel_data.plate_scale.q
@@ -248,12 +249,23 @@ class Instrument(PersistentModel):
             self.configuration["detector"]["internal_name"] = detector.name
             self.configuration["detector"]["read_noise"] = detector.read_noise.q
             self.configuration["detector"]["thermal"] = detector.temperature.q
+            self.configuration["detector"]["pixel_pitch"] = detector.pixel_pitch.q
             self.configuration["detector"]["dark_current"] = detector.dark_current.q / u.pix #* u.electron / u.pix**2 / u.ct # needs to be electrons per pixel per second
             w = detector.qe.w
             t = detector.qe.q
             self.configuration["detector"]["total_qe"] = self.load_throughput(w, t)
             self.configuration["detector"]["original_qe_wave"] = w
             self.configuration["detector"]["original_qe_thru"] = t
+
+        if kind in ("ifs"):
+            self.configuration["image_slicer"] = {}
+            for slicer in channel_data.ImageSlicer:
+                self.configuration["image_slicer"]["spaxel_angle"] = slicer.spaxel_angle.q
+        if "MicroShutter" in channel_data:
+            self.configuration["microshutter"] = {}
+            for microshutter in channel_data.MicroShutter:
+                self.configuration["microshutter"]["microshutter_width"] = microshutter.opening_x.q / self.configuration["detector"]["pixel_pitch"] * self.configuration["pixel_scale"]
+                self.configuration["microshutter"]["microshutter_height"] = microshutter.opening_y.q / self.configuration["detector"]["pixel_pitch"] * self.configuration["pixel_scale"]
 
     def load_throughput(self, wave, thru):
         return syn.spectrum.SpectralElement(Empirical1D, points=wave, lookup_table=thru)
@@ -264,10 +276,16 @@ class Instrument(PersistentModel):
         """
         config = complexify_data(config)
 
-        for band in config["band"]:
-            config["band"][band]["bandpass"] = self.load_throughput(config["band"][band]["original_wave"], config["band"][band]["original_thru"])
+        for band in config["bands"]:
+            config["bands"][band]["bandpass"] = self.load_throughput(config["bands"][band]["original_wave"], config["bands"][band]["original_thru"])
 
         config["detector"]["total_qe"] = self.load_throughput(config["detector"]["original_qe_wave"], config["detector"]["original_qe_thru"])
+
+        # These are cached properties; deleting them will allow them to be recreated on next access
+        if hasattr(self, "n_bands"): del(self.n_bands) # only camera
+        if hasattr(self, "bandnames"): del(self.bandnames) # only camera
+        if hasattr(self, "n_channels"): del(self.n_channels) # only camera
+        if hasattr(self, "bands"): del(self.bands) # only camera
 
         self.configuration = config
 
@@ -281,8 +299,8 @@ class Instrument(PersistentModel):
             A configuration dictionary
         """
         config = copy.deepcopy(self.configuration)
-        for band in config["band"]:
-            del config["band"][band]["bandpass"]
+        for band in config["bands"]:
+            del config["bands"][band]["bandpass"]
         
         del config["detector"]["total_qe"]
 

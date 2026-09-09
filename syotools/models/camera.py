@@ -3,12 +3,14 @@
 Created on Fri Oct 14 21:31:18 2016
 @author: gkanarek, tumlinson
 """
+from functools import cached_property
 import numpy as np
 import astropy.constants as const
 import astropy.units as u
 import synphot as syn
 import stsynphot as stsyn
 from synphot.models import Empirical1D
+from photutils.geometry import circular_overlap_grid
 
 from .instrument import Instrument
 from syotools.models.source_exposure import SourcePhotometricExposure
@@ -65,22 +67,22 @@ class Camera(Instrument):
         self.sky = self.sky.normalize(24 * u.ABmag, stsyn.spectrum.band("johnson,v"))
         #super().__init__(default_camera, **kw)
 
-    @property
+    @cached_property
     def n_bands(self):
         return len(self.bands)
 
-    @property
+    @cached_property
     def n_channels(self):
         # this has always referred to the filters
-        return len(self.configuration["channel_filters"])
+        return len(self.bands.keys())
 
-    @property
+    @cached_property
     def bandnames(self):
-        return self.configuration["channel_filters"]
+        return list(self.bands.keys())
 
-    @property
+    @cached_property
     def bands(self):
-        return [x for x in self.configuration["band"] if self.configuration["band"][x]["kind"] == "filter"]
+        return {x: self.configuration["bands"][x] for x in self.configuration["bands"] if self.configuration["bands"][x]["kind"] == "filter"}
 
 
     @property
@@ -97,8 +99,8 @@ class Camera(Instrument):
     @property
     def pivotwave(self):
         pivot = []
-        for bpass in self.configuration["band"]:
-            band = self.configuration["band"][bpass]
+        for bpass in self.bands:
+            band = self.bands[bpass]
             pivotval = band["bandpass"].pivot()
             pivotunit = pivotval.unit
             pivot.append(pivotval.value)
@@ -113,8 +115,8 @@ class Camera(Instrument):
         """
         pivotwave = self.recover('pivotwave')
         width = []
-        for bpass in self.configuration["band"]:
-            band = self.configuration["band"][bpass]
+        for bpass in self.bands:
+            band = self.bands[bpass]
             widthval = band["bandpass"].equivwidth()
             widthunit = widthval.unit
             width.append(widthval.value)
@@ -132,6 +134,25 @@ class Camera(Instrument):
         abzp = 5509900. * (u.photon / u.s / u.cm**2) / pivot
 
         return abzp# << abunit
+
+    def extraction_mask(self, x, y, band):
+        """
+        Draw an extraction mask.
+        For cameras, this is circular
+
+        Parameters
+        ----------
+        mask : np.ndarray
+            a 2D mask that draws the extraction aperture
+        """
+        wave = band["effective_wavelength"]
+        radius = 3 * self.fwhm_psf(wave).to_value(u.arcsec)
+        #print(radius)
+
+        mask = circular_overlap_grid(np.min(x), np.max(x), np.min(y), np.max(y), x.shape[1], y.shape[0], radius, 1, 1)
+
+        return mask
+
 
     def _sn_box(self, wave, verbose):
         """
