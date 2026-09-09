@@ -4,6 +4,7 @@ Created on Fri Oct 14 20:28:51 2016
 @authors: gkanarek, tumlinson
 """
 import os, yaml
+import copy
 import math
 from collections import defaultdict
 from importlib import metadata
@@ -188,16 +189,17 @@ class Telescope(PersistentModel):
         self._effective_diameter = new_diameter
         self._effective_area = (np.pi * (new_diameter/2.)**2).to(u.cm**2)
 
-    def find_instrument_with(self, kind, wavelength=None, resolution=):
+    def find_instrument_with(self, kind=None, wavelength=None, resolution=None):
         """
         Convenience function to find an instrument with specific wavelength coverage
 
         Parameters
         ----------
-        kind : str
+        kind : str, optional
             "filter" or "disperser", as desired.
-        wavelength : float, optional
+        wavelength : float or list, optional
             specific wavelength to search for, by default None
+        resolution : float or list, optional
 
         Returns
         -------
@@ -207,30 +209,83 @@ class Telescope(PersistentModel):
             A dictionary of suitable bands, each value is the instrument
         """
 
-        options = search_configuration(channel_type='mos',
-        wavelength_range_nm=[wave_minmin/10, wave_maxmax/10],
-        resolution_range = [8000, 20000],
-        center_nm=None)
+        # options = search_configuration(channel_type='mos',
+        # wavelength_range_nm=[wave_minmin/10, wave_maxmax/10],
+        # resolution_range = [8000, 20000],
+        # center_nm=None)
 
-        fbyctr = {}
-        for chan_name, cdict in options.items():
-            for filt_name, fdict in cdict.items():
-                print(f"Found {chan_name}.{filt_name}, center={fdict['center']}, width={fdict['width']}, R={fdict['spectral_resolution']}")
-                fbyctr[fdict['center'].to('nm').value] = fdict
+        # fbyctr = {}
+        # for chan_name, cdict in options.items():
+        #     for filt_name, fdict in cdict.items():
+        #         print(f"Found {chan_name}.{filt_name}, center={fdict['center']}, width={fdict['width']}, R={fdict['spectral_resolution']}")
+        #         fbyctr[fdict['center'].to('nm').value] = fdict
 
         suitable_instruments = defaultdict(list)
         suitable_bands = {}
+
+        # set up some lists for progressive filtering
+        filter_list = []
+        temp_filter_list = []
+
+        # the initial sift - literally everything
         for insname in self.telescope_bands:
             for band in self.telescope_bands[insname]:
-                item = self.telescope_bands[insname][band]
+                filter_list.append([insname, band, self.telescope_bands[insname][band]])
+        # filter 1: the kind of band
+        if kind is not None:
+            for entry in filter_list:
+                insname = entry[0]
+                band = entry[1]
+                item = entry[2]
                 if item["kind"] == kind.lower():
-                    if wavelength is not None:
-                        if (wavelength >= item["wave_min"]) and (wavelength <= item["wave_max"]):
-                            suitable_bands[band] = insname
-                            suitable_instruments[insname].append(band)
-                    else:
-                        suitable_bands[band] = insname
-                        suitable_instruments[insname].append(band)
+                    temp_filter_list.append((insname, band, item))
+            filter_list = copy.deepcopy(temp_filter_list)
+            temp_filter_list = []
+
+        # filter 2: the wavelength of the band
+        if wavelength is not None:
+            for entry in filter_list:
+                insname = entry[0]
+                band = entry[1]
+                item = entry[2]        
+                if isinstance(wavelength, (int, float)):
+                    if (wavelength * u.AA >= item["wave_min"]) and (wavelength * u.AA <= item["wave_max"]):
+                        temp_filter_list.append((insname, band, item))
+                elif isinstance(wavelength, (tuple, list)):
+                    if (wavelength[0] * u.AA >= item["wave_min"]) and (wavelength[1] * u.AA <= item["wave_max"]):
+                        temp_filter_list.append((insname, band, item))
+                elif isinstance(wavelength, dict):
+                    if (wavelength["wave_min"] * u.AA >= item["wave_min"]) and (wavelength["wave_max"] * u.AA <= item["wave_max"]):
+                        temp_filter_list.append((insname, band, item))
+            filter_list = copy.deepcopy(temp_filter_list)
+            temp_filter_list = []
+
+
+        # filter 3: the resolution of the band
+        if resolution is not None:
+            for entry in filter_list:
+                insname = entry[0]
+                band = entry[1]
+                item = entry[2]
+                if "resolution" in item:
+                    if isinstance(resolution, (int, float)):
+                        if (resolution <= item["resolution"]):
+                            print(band, item["resolution"])
+                            temp_filter_list.append((insname, band, item))
+                    elif isinstance(resolution, (tuple, list)):
+                        if (resolution[0] <= item["resolution"]) and (resolution[1] >= item["resolution"]):
+                            temp_filter_list.append((insname, band, item))
+                    elif isinstance(resolution, dict):
+                        if (resolution["min"] <= item["resolution"]) and (resolution["max"] >= item["resolution"]):
+                            temp_filter_list.append((insname, band, item))
+            filter_list = temp_filter_list
+            temp_filter_list = []
+
+        for item in filter_list:
+            insname = item[0]
+            band = item[1]
+            suitable_bands[band] = insname
+            suitable_instruments[insname].append(band)
 
         return suitable_instruments, suitable_bands
 
