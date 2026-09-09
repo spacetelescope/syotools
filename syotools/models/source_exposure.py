@@ -764,9 +764,6 @@ class SourceExposure(PersistentModel):
 
         sky = self.calc_zodi_flux(wave, sn_box, pixel_scale)
 
-        #print(sky)
-        #print(self.instrument.sky(wave))
-
 
         # fsky is:
         # uniform
@@ -785,14 +782,14 @@ class SourceExposure(PersistentModel):
         thermal = c_thermal(self.wave, sn_box)
 
 
-        flux_source_before = sc.integrate.simpson(flux_source(flux_source.waveset), flux_source.waveset)
+        #flux_source_before = sc.integrate.simpson(flux_source(flux_source.waveset), flux_source.waveset)
 
         # apply internal effects within telescope & instrument
         fsource = syn.observation.Observation(flux_source, band["bandpass"] * qe, binset=self.wave, force="taper")
         fsky = syn.observation.Observation(flux_sky, band["bandpass"] * qe, binset=self.wave, force="taper")
         self.thermal = syn.observation.Observation(thermal, band["bandpass"] * qe, binset=self.wave, force="taper")
 
-        flux_source_after = sc.integrate.simpson(fsource(fsource.waveset), fsource.waveset)
+        #flux_source_after = sc.integrate.simpson(fsource(fsource.waveset), fsource.waveset)
 
         # dark is:
         # uniform
