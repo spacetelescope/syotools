@@ -10,11 +10,13 @@ from scipy.interpolate import interp1d
 import scipy.special as sp
 import astropy.units as u
 import astropy.constants as const
+import scipy as sc
 from astropy.modeling.functional_models import AiryDisk2D
 from photutils.geometry import elliptical_overlap_grid, rectangular_overlap_grid
 
 import synphot as syn
-from synphot.models import Empirical1D
+from synphot.models import Empirical1D, ConstFlux1D
+import stsynphot as stsyn
 
 from syotools.models.base import PersistentModel
 
@@ -782,25 +784,15 @@ class SourceExposure(PersistentModel):
         # accumulates over time
         thermal = c_thermal(self.wave, sn_box)
 
-        # print("Source", flux_source.waveset)
-        # print("Sky", flux_sky.waveset)
-        # print("Thermal", thermal.waveset)
-        # total_band = band["bandpass"] * qe
-        # total_flux = total_band(total_band.waveset)
-        # b1, b2 = total_band.waveset.min(), total_band.waveset.max()
-        # a1, a2 = flux_source.waveset.min(), flux_source.waveset.max()
-        # print("WAVE EDGES", a1, b1, a2, b2, a2 < b1, b2 < a1)
-        # print("Disjoint", total_band.check_overlap(flux_source))
-        # print("Valid band", total_band.waveset[total_flux > 0])
-        # print("Band", (band["bandpass"]* qe).waveset)
-        # print("QE", qe.waveset)
 
-
+        flux_source_before = sc.integrate.simpson(flux_source(flux_source.waveset), flux_source.waveset)
 
         # apply internal effects within telescope & instrument
         fsource = syn.observation.Observation(flux_source, band["bandpass"] * qe, binset=self.wave, force="taper")
         fsky = syn.observation.Observation(flux_sky, band["bandpass"] * qe, binset=self.wave, force="taper")
         self.thermal = syn.observation.Observation(thermal, band["bandpass"] * qe, binset=self.wave, force="taper")
+
+        flux_source_after = sc.integrate.simpson(fsource(fsource.waveset), fsource.waveset)
 
         # dark is:
         # uniform
@@ -926,7 +918,9 @@ class SourceExposure(PersistentModel):
             self._exptime = _exptime_temp[idx]
             self._snr = _snr_temp[idx]
             self.instrument.band = band
-            result = self._update_magnitude(self.source, configuration["bands"][band])
+            # The analytic solution is having problems right now
+            # result = self._update_magnitude(self.source, configuration["bands"][band])
+            result = self._do_update_magnitude(self.source, configuration["bands"][band])
             self._magnitude.append(result)
 
         self._exptime = _exptime_temp
@@ -967,35 +961,122 @@ class SourceExposure(PersistentModel):
         """
         Calculate the limiting magnitude given the desired S/N and exposure
         time.
+        As of 2026-09-08, this does not work as reliably as it should. It still
+        produces usually-decent first guesses.
         """
         self.instrument._print_initcon(self.verbose)
 
         (_snr, _exptime, _nexp) = self.recover('snr', 'exptime', 'n_exp')
         effective_area = self.recover("telescope.effective_area")
-        configuration = self.recover("instrument.configuration")
+        configuration, ab_zeropoint = self.recover("instrument.configuration", "instrument.ab_zeropoint")
         qe = configuration["detector"]["total_qe"]
 
         # all of these are now rates, in the extraction aperture (except read_noise)
         fsource_countrate, fsky_countrate, thermal_countrate, dark_current, read_noise = self.process_observation(source, band)
 
+        # print("Fsource", fsource_countrate)
+
+
         read_noise /= u.ct**0.5
         _exptime = _exptime.to(u.s)
 
         snr2 = -(_snr ** 2)
-        f0 = 5509900. * (u.photon / u.s / u.cm**2) / band["bandpass"].pivot()
+        f0 = ab_zeropoint(band)
+        #5509900. * (u.photon / u.s / u.cm**2) / band["bandpass"].pivot().to_value(u.nm)
+        eff = 1/(band["bandpass"]*qe).efficiency()
+        #eff = 1
 
-        a0 = (_exptime)**2
-        b0 = snr2 * _exptime
-        c0 = snr2 * ((fsky_countrate + thermal_countrate + dark_current) * _exptime + (read_noise**2 * _nexp)) / u.ct
+        # bandwave = (band["bandpass"]*qe).waveset
+        # bandpass = (band["bandpass"]*qe)(bandwave)
+        # effband = sc.integrate.simpson(bandpass, bandwave)
+        # fullband = sc.integrate.simpson(np.ones_like(bandpass), bandwave)
+        # eff = effband/fullband
+
+        a0 = (eff * _exptime)**2
+        b0 = snr2 * eff * _exptime
+        c0 = snr2 * ((eff * fsky_countrate + thermal_countrate + dark_current) * _exptime + (read_noise**2 * _nexp)) / u.ct
         k = (-b0 + np.sqrt(b0**2 - 4. * a0 * c0)) / (2. * a0)
 
-        flux = (4. * k) / (f0 * effective_area * (band["bandpass"]*qe).equivwidth().to(u.nm))
+        obs = syn.observation.Observation(source.sed, band["bandpass"] * qe, force="taper")
 
-        flux *= band["bandpass"].tlambda()
+        phot_energy = const.h.to(u.erg * u.s) * const.c.to(u.cm / u.s) / obs.effective_wavelength().to(u.cm)
+
+        #flux = k * phot_energy / effective_area
+
+        flux = (4. * k) / (f0 * effective_area * (band["bandpass"]*qe).equivwidth().to(u.AA))
+        # #flux = flux.value
+        # #flux /= (band["bandpass"]*qe).efficiency()# /  3.3244442805918006
+        # print("Flux/initial", fsource_countrate / (k * u.ct))
+        # print("Flux/initial", fsource_countrate / flux)
+
+        # #flux *= 45.08873273293901
+
+        # bandwave = (band["bandpass"]*qe).waveset
+        # bandpass = (band["bandpass"]*qe)(bandwave)
+        # effband = sc.integrate.simpson(bandpass, bandwave)
+        # fullband = sc.integrate.simpson(np.ones_like(bandpass), bandwave)
+        # print((band["bandpass"]*qe).rectwidth().to(u.nm))
+        # print((band["bandpass"]*qe).equivwidth().to(u.nm))
+                
+
+        # print(effband/fullband, (band["bandpass"]*qe).efficiency())
+        # #sourceElement = syn.spectrum.SpectralElement(Empirical1D, points=source.sed.waveset, lookup_table=source.sed(source.sed.waveset)/np.max(source.sed(source.sed.waveset)))
+        # #flux /= effband/fullband
+
+        # #from matplotlib import pyplot as plt
+        # #plt.plot((band["bandpass"]*qe).waveset, (band["bandpass"]*qe)((band["bandpass"]*qe).waveset))
+        # #plt.show()
 
         _magnitude = -2.5 * np.log10(np.array(flux)) * u.mag('AB')
 
+        # print("eff", eff)
+        # print("readnoise", read_noise**2)
+        # print("dark_current", dark_current)
+        # print("fsky", fsky_countrate)
+        # print("Flux", flux)
+        # print("Flux FNU", syn.units.convert_flux((band["bandpass"]*qe).pivot(), _magnitude, syn.units.PHOTNU))
+        # print("K", k)
+        # print("SNR", _snr)
+        # print("A0:", a0)
+        # print("B0:", b0)
+        # print("C0:", c0)
+        # print("F0:", f0)
+        # print("Mag:", _magnitude)
+
         return _magnitude
+
+    def _do_update_magnitude(self, source, band):
+        """
+        This stopgap calc-for-magnitude works differently: It sets up a range of magnitudes and modifies the source for each one.
+
+        This is obviously super slow, as it requires computing a grid.
+
+        Parameters
+        ----------
+        source : Source
+            A configured source intended to be used in the calculation
+        band : dict
+            A bandpass dictionary
+        """
+        (_snr, _exptime, _nexp) = self.recover('snr', 'exptime', 'n_exp')
+
+        temp_magnitudes = []
+        temp_snrs = []
+        # make a grid of potential magnitudes covering a nice wide range
+        _magnitude = self._update_magnitude(source, band).to_value(u.ABmag)
+        for temp_magnitude in np.linspace(_magnitude+4, _magnitude-2, 15):
+            sp_norm = source.sed.normalize(temp_magnitude * u.ABmag, stsyn.spectrum.band(source.renorm_band))
+            
+            source.sed = sp_norm
+            temp_snr = self._update_snr(source, band)
+            temp_snrs.append(temp_snr)
+            temp_magnitudes.append(temp_magnitude)
+        
+        maginterp = sc.interpolate.make_interp_spline(temp_snrs, temp_magnitudes, k=3)
+
+        magnitude = maginterp(_snr) * u.ABmag
+
+        return magnitude
 
     def _update_snr(self, source, band):
         """
@@ -1008,6 +1089,12 @@ class SourceExposure(PersistentModel):
 
         # all of these are now rates, in the extraction aperture (except read_noise)
         fsource_countrate, fsky_countrate, thermal_countrate, dark_current, read_noise = self.process_observation(source, band)
+
+        # print("Fsource", fsource_countrate)
+        # print("Fsky", fsky_countrate)
+        # print("Thermal", thermal_countrate)
+        # print("Dark", dark_current)
+        # print("Readnoise", read_noise)
 
         time_per_exposure = _exptime / _nexp
 
@@ -1045,6 +1132,7 @@ class SourceExposure(PersistentModel):
         self.source = new_source
 
 class SourcePhotometricExposure(SourceExposure):
+
     """ A subclass of the base Exposure model, for photometric ETC calculations """
     pass
 

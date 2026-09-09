@@ -99,6 +99,18 @@ class Instrument(PersistentModel):
 
         return fwhm
 
+    def ab_zeropoint(self, band):
+        """
+        AB-magnitude zero points as per Marc Postman's equation.
+        """
+        source = syn.spectrum.SourceSpectrum(syn.models.ConstFlux1D, amplitude=0 * u.ABmag)
+        obs = syn.observation.Observation(source, band["bandpass"])
+        abzp = syn.units.convert_flux(obs.pivot().to(u.AA), obs(obs.pivot()), u.ph / (u.AA * u.s * u.cm**2))
+        #pivotwave = self.recover('pivotwave')
+        #pivot = pivotwave.to(u.nm)
+        #abzp = 5509900. * (u.photon / u.s / u.cm**2) / pivot
+
+        return abzp# << abunit
 
     def _c_thermal(self, wave, sn_box, verbose=False):
         """

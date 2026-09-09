@@ -124,16 +124,16 @@ class Camera(Instrument):
 
         return np.array(pivotwave/width)
 
-    @property
-    def ab_zeropoint(self):
-        """
-        AB-magnitude zero points as per Marc Postman's equation.
-        """
-        pivotwave = self.recover('pivotwave')
-        pivot = pivotwave.to(u.nm)
-        abzp = 5509900. * (u.photon / u.s / u.cm**2) / pivot
+    # @property
+    # def ab_zeropoint(self):
+    #     """
+    #     AB-magnitude zero points as per Marc Postman's equation.
+    #     """
+    #     pivotwave = self.recover('pivotwave')
+    #     pivot = pivotwave.to(u.nm)
+    #     abzp = 5509900. * (u.photon / u.s / u.cm**2) / pivot
 
-        return abzp# << abunit
+    #     return abzp# << abunit
 
     def extraction_mask(self, x, y, band):
         """

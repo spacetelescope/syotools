@@ -9,9 +9,14 @@
     - Thermal, dark, and zodi contributions now correspond to the 2D 
       aperture mask dimensions
     - configuration["band"] is now configuration["bands"] but you should
-      use instrument.bands
+      use instrument.bands anyway.
     - mirror area is now the real area; for EAC5 that means hexagons with
       gaps. Diameter is now the effective diameter.
+    - solving for magnitude works again (to ~0.1 magnitude accuracy), with
+      some performance cost
+    - improved find_instrument_with can also search for specific wavelength
+      coverage, a specific wavelength band, or resolving power (either
+      greater-than-x, or a range)
 1.4.2
     - Fix SNR bug
     - New Zodi function from pyEDITH
