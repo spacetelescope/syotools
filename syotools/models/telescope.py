@@ -191,7 +191,8 @@ class Telescope(PersistentModel):
 
     def find_instrument_with(self, kind=None, wavelength=None, resolution=None):
         """
-        Convenience function to find an instrument with specific wavelength coverage
+        Convenience function to find a band (and its instrument) that meets specific
+        criteria.
 
         Parameters
         ----------
@@ -270,7 +271,6 @@ class Telescope(PersistentModel):
                 if "resolution" in item:
                     if isinstance(resolution, (int, float)):
                         if (resolution <= item["resolution"]):
-                            print(band, item["resolution"])
                             temp_filter_list.append((insname, band, item))
                     elif isinstance(resolution, (tuple, list)):
                         if (resolution[0] <= item["resolution"]) and (resolution[1] >= item["resolution"]):
