@@ -197,7 +197,6 @@ class Instrument(PersistentModel):
 
         self.name = channel
         self.configuration["ins_type"] = ins_type
-        instrument_data.Channel
         try:
             channel_data = getattr(instrument_data, channel)
         except KeyError:
@@ -259,7 +258,7 @@ class Instrument(PersistentModel):
             self.configuration["detector"]["internal_name"] = detector.name
             self.configuration["detector"]["read_noise"] = detector.read_noise.q
             self.configuration["detector"]["thermal"] = detector.temperature.q
-            self.configuration["detector"]["pixel_pitch"] = detector.pixel_pitch.q
+            self.configuration["detector"]["pixel_pitch"] = detector.pixel_pitch.q / u.pix
             self.configuration["detector"]["dark_current"] = detector.dark_current.q / u.pix #* u.electron / u.pix**2 / u.ct # needs to be electrons per pixel per second
             w = detector.qe.w
             t = detector.qe.q
@@ -267,15 +266,19 @@ class Instrument(PersistentModel):
             self.configuration["detector"]["original_qe_wave"] = w
             self.configuration["detector"]["original_qe_thru"] = t
 
-        if "ImageSlicer" in channel_data:
-            self.configuration["image_slicer"] = {}
-            for slicer in channel_data.ImageSlicer:
-                self.configuration["image_slicer"]["spaxel_angle"] = slicer.spaxel_angle.q
-        if "MicroShutter" in channel_data:
-            self.configuration["microshutter"] = {}
-            for microshutter in channel_data.MicroShutter:
-                self.configuration["microshutter"]["microshutter_width"] = microshutter.opening_x.q / self.configuration["detector"]["pixel_pitch"] * self.configuration["pixel_scale"]
-                self.configuration["microshutter"]["microshutter_height"] = microshutter.opening_y.q / self.configuration["detector"]["pixel_pitch"] * self.configuration["pixel_scale"]
+        try:
+            for slicer in instrument_data.ImageSlicer:
+                spaxel_angle = slicer.spaxel_angle.q
+            self.configuration["image_slicer"] = {"spaxel_angle": spaxel_angle}
+        except KeyError:
+            pass
+        try:
+            for microshutter in instrument_data.MicroShutter:
+                microshutter_width = microshutter.opening_x.q / self.configuration["detector"]["pixel_pitch"] * self.configuration["pixel_scale"]
+                microshutter_height = microshutter.opening_y.q / self.configuration["detector"]["pixel_pitch"] * self.configuration["pixel_scale"]
+            self.configuration["microshutter"] = {"microshutter_width": microshutter_width, "microshutter_height": microshutter_height}
+        except KeyError:
+            pass
 
     def load_throughput(self, wave, thru):
         return syn.spectrum.SpectralElement(Empirical1D, points=wave, lookup_table=thru)

@@ -195,13 +195,15 @@ class Telescope(PersistentModel):
         self._effective_diameter = new_diameter
         self._effective_area = (np.pi * (new_diameter/2.)**2).to(u.cm**2)
 
-    def find_instrument_with(self, kind=None, wavelength=None, resolution=None):
+    def find_instrument_with(self, instrument=None, kind=None, wavelength=None, resolution=None):
         """
         Convenience function to find a band (and its instrument) that meets specific
         criteria.
 
         Parameters
         ----------
+        instrument: str, optional
+            Name string found in an instrument
         kind : str, optional
             "filter" or "disperser", as desired.
         wavelength : float or list, optional
@@ -284,6 +286,17 @@ class Telescope(PersistentModel):
                     elif isinstance(resolution, dict):
                         if (resolution["min"] <= item["resolution"]) and (resolution["max"] >= item["resolution"]):
                             temp_filter_list.append((insname, band, item))
+            filter_list = temp_filter_list
+            temp_filter_list = []
+
+        # filter 4: the instrument
+        if instrument is not None:
+            for entry in filter_list:
+                insname = entry[0]
+                band = entry[1]
+                item = entry[2]
+                if instrument in insname:
+                    temp_filter_list.append((insname, band, item))
             filter_list = temp_filter_list
             temp_filter_list = []
 
