@@ -54,3 +54,7 @@ def test_waveres():
     # for x in suitable_filters:
     #     print(x)
     assert len(suitable_filters) > 0
+
+def test_instrument():
+    suitable_instruments, suitable_filters = tel.find_instrument_with(instrument="IFS")
+    assert len(suitable_filters) > 3

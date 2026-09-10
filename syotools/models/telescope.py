@@ -20,7 +20,7 @@ import scipy as sc
 import synphot as syn
 from hwome.core.navigator import DataModel
 from syotools.models.camera import Camera
-from syotools.models.ifs import IFS
+from syotools.models.multispec import MultiSpec
 from syotools.models.spectrograph import Spectrograph
 
 class Telescope(PersistentModel):
@@ -95,12 +95,18 @@ class Telescope(PersistentModel):
                 except (KeyError, TypeError):
                     modenames = [f"{instrument.name.value}.HRI_A_VIS"]
                 for modename in modenames:
-                    if "IFU" in modename or "IFS" in modename:
-                        tel_instrument = IFS(self)
+                    if "IFU" in modename.upper() or "IFS" in modename.upper():
+                        tel_instrument = MultiSpec(self)
                         tel_instrument.set_from_hwome(modename, "ifs")
                         if tel_instrument.configuration["channel_filters"] != []:
                             self.instruments[f"{modename}_IFS"] = tel_instrument
                             self.telescope_bands[f"{modename}_IFS"] = tel_instrument.bands
+                    elif "MOS" in modename.upper():
+                        tel_instrument = MultiSpec(self)
+                        tel_instrument.set_from_hwome(modename, "mos")
+                        if tel_instrument.configuration["channel_filters"] != []:
+                            self.instruments[f"{modename}_MOS"] = tel_instrument
+                            self.telescope_bands[f"{modename}_MOS"] = tel_instrument.bands
                     else:
                         tel_instrument = Camera(self)
                         tel_instrument.set_from_hwome(modename, "imager")
@@ -189,13 +195,15 @@ class Telescope(PersistentModel):
         self._effective_diameter = new_diameter
         self._effective_area = (np.pi * (new_diameter/2.)**2).to(u.cm**2)
 
-    def find_instrument_with(self, kind=None, wavelength=None, resolution=None):
+    def find_instrument_with(self, instrument=None, kind=None, wavelength=None, resolution=None):
         """
         Convenience function to find a band (and its instrument) that meets specific
         criteria.
 
         Parameters
         ----------
+        instrument: str, optional
+            Name string found in an instrument
         kind : str, optional
             "filter" or "disperser", as desired.
         wavelength : float or list, optional
@@ -278,6 +286,17 @@ class Telescope(PersistentModel):
                     elif isinstance(resolution, dict):
                         if (resolution["min"] <= item["resolution"]) and (resolution["max"] >= item["resolution"]):
                             temp_filter_list.append((insname, band, item))
+            filter_list = temp_filter_list
+            temp_filter_list = []
+
+        # filter 4: the instrument
+        if instrument is not None:
+            for entry in filter_list:
+                insname = entry[0]
+                band = entry[1]
+                item = entry[2]
+                if instrument in insname:
+                    temp_filter_list.append((insname, band, item))
             filter_list = temp_filter_list
             temp_filter_list = []
 

@@ -42,11 +42,6 @@ class SourceExposure(PersistentModel):
 
     Attributes:
         telescope    - the Telescope model instance associated with this exposure
-        camera       - the Camera model instance associated with this exposure
-        spectrograph - the Spectrograph model instance (if applicable) associated
-                       with this exposure
-        ifs          - the IFS model instance (if applicable) associated with this exposure
-
         exp_id       - a unique exposure ID, used for save/load purposes (string)
                         NOTE: THIS HAS NO DEFAULT, A NEW EXP_ID IS CREATED
                         WHENEVER A NEW CALCULATION IS SAVED.
@@ -77,6 +72,7 @@ class SourceExposure(PersistentModel):
         self.n_exp = 1
         self._exptime = np.ones(1, dtype=float) * u.h
         self._snr = np.zeros(1, dtype=float)
+        self.wave = [np.zeros(1, dtype=float) * u.AA]
         self._magnitude = np.zeros(1, dtype=float) * u.ABmag
         self._unknown = "" # one of 'snr', 'magnitude', 'exptime'
         self._interp_flux = np.zeros(1, dtype=float) * u.dimensionless_unscaled # the source SED interpolated to the Spectrograph wavelength grid
@@ -683,43 +679,30 @@ class SourceExposure(PersistentModel):
         Process the entire observation, up through the point we compute SNR/Exptime/Mag
         
         The components of flux in the observation are: 
-        1. The source (assumed to be a point, but let's give it a size 
-           parameter) 
+        1. The source 
         2. Sky background (assumed uniform across the aperture) 
-        3. Thermal self-emission (assumed uniform across the aperture).
-        At the moment we only model the heat of the detector itself
+        3. Thermal self-emission (assumed uniform across the aperture). 
+           At the moment we only model the heat of the detector itself
 
         4. Dark current (assumed uniform across the aperture).
-        This is the additional current flowing regardless of photons hitting
-        the detector. It doesn't care about the detector QE or filter wheel.
+        This is the additional current flowing regardless of photons hitting the detector.
+        It doesn't care about the detector QE or filter wheel.
 
         5. Read noise (assumed uniform across the aperture)
-        The previous terms were all signal that accumulates with time. Read
-        noise is the uncertainty introduced by the detector readout process 
-        itself; a fixed value per exposure.
+        The previous terms were all signal that accumulates with time. Read noise is the
+        uncertainty introduced by the detector readout process itself; a fixed value per
+        exposure.
 
-        Once we've computed all of these values, we can proceed to the
-        exposure time/SNR/magnitude calculations.
+        Once we've computed all of these values, we can proceed to the exposure
+        time/SNR/magnitude calculations.
 
         At that point, the difference between imaging and spectroscopy matter.
         
-        For imaging:
-        * All non-spatially-uniform components have (size * psf size) 
-        compared to (aperture size), light losses adjusted accordingly, and 
-        integrated over the bandpass + QE (source, sky) or QE (thermal) to be 
-        single value(s)
-        * All uniform components processed for the aperture size
-
-        For spectroscopy:
-        * All non-spatially-uniform components are convolved with a 
-        response function equal to the resolving power of the instrument
-        and then have their (size * psf size) compared to slit size 
-        (width * height, if applicable), light losses adjusted accordingly, 
-        and convolved with the bandpass+QE (source, sky) or QE (thermal), 
-        then convolved with a response function equal to the resolving power 
-        of the instrument.
-        * All uniform components processed for the height of the slit * 
-        resolving power.
+        * All non-spatially-uniform components have their flux adjusted for the amount of
+          the source's flux that passes through the extraction aperture (as computed by
+          SourceExposure.sn_box)
+        * All spatially uniform components have their flux adjusted for the number of
+          pixels in the extraction box (as computed by SourceExposure.sn_box)
         """
 
         configuration, c_thermal, transform_flux = self.recover("instrument.configuration", "instrument._c_thermal", "instrument.transform_flux")
@@ -729,7 +712,7 @@ class SourceExposure(PersistentModel):
             qe = configuration["detector"]["total_qe"]
             read_noise = configuration["detector"]["read_noise"]
 
-        if band["kind"] in ("disperser", "ifs"):
+        if band["kind"] in ("disperser"):
             R = band["resolution"]
             waveunit = band["bandpass"].waveset.unit
             wavepix = np.linspace(band["bandpass"].waveset[0], band["bandpass"].waveset[-1], 1000) # using the bandpass wavelengths leads to weird fringing
@@ -749,7 +732,6 @@ class SourceExposure(PersistentModel):
             dw = 1
             wave = source.sed.waveset
         syn.utils.validate_wavelengths(wave)
-        self.wave = wave
 
         # set up an appropriately sized aperture
         encircled_energy, sn_box = self.sn_box(band)
@@ -762,7 +744,7 @@ class SourceExposure(PersistentModel):
         # accumulates over time
         flux_source = source.sed * encircled_energy
 
-        sky = self.calc_zodi_flux(wave, sn_box, pixel_scale)
+        self.sky = self.calc_zodi_flux(wave, sn_box, pixel_scale)
 
 
         # fsky is:
@@ -772,22 +754,22 @@ class SourceExposure(PersistentModel):
         # Synphot doesn't like dividing a spectrum by an area unit. 
         # Rest assured, sky was supposed to be in ABMag/arcsec**2, so 
         # ABMag/arcsec**2 * pixels**2 * arcsec**2/pixel**2 is flux.
-        flux_sky = sky * (sn_box * pixel_scale**2).value
+        flux_sky = self.sky * (sn_box * pixel_scale**2).value
         #print("Skyflux", flux_sky(flux_sky.waveset))
 
         # thermal is:
         # uniform
         # goes through the filter wheel and QE
         # accumulates over time
-        thermal = c_thermal(self.wave, sn_box)
+        thermal = c_thermal(wave, sn_box)
 
 
         #flux_source_before = sc.integrate.simpson(flux_source(flux_source.waveset), flux_source.waveset)
 
         # apply internal effects within telescope & instrument
-        fsource = syn.observation.Observation(flux_source, band["bandpass"] * qe, binset=self.wave, force="taper")
-        fsky = syn.observation.Observation(flux_sky, band["bandpass"] * qe, binset=self.wave, force="taper")
-        self.thermal = syn.observation.Observation(thermal, band["bandpass"] * qe, binset=self.wave, force="taper")
+        fsource = syn.observation.Observation(flux_source, band["bandpass"] * qe, binset=wave, force="taper")
+        fsky = syn.observation.Observation(flux_sky, band["bandpass"] * qe, binset=wave, force="taper")
+        self.thermal = syn.observation.Observation(thermal, band["bandpass"] * qe, binset=wave, force="taper")
 
         #flux_source_after = sc.integrate.simpson(fsource(fsource.waveset), fsource.waveset)
 
@@ -807,13 +789,13 @@ class SourceExposure(PersistentModel):
         fsky_countrate = transform_flux(fsky, wave) * dw
         thermal_countrate = transform_flux(self.thermal, wave) * dw
         if dw == 1:
-            self.wave = band["bandpass"].pivot()
+            wave = band["bandpass"].pivot()
 
-        return fsource_countrate, fsky_countrate, thermal_countrate, dark, read_noise
+        return wave, fsource_countrate, fsky_countrate, thermal_countrate, dark, read_noise
 
     def calculate(self, custom_band=None):
         """
-        Wrapper to calculate the exposure time, SNR, or limiting magnitude,
+        Wrapper to calculate the exposure time, SNR, or limiting magnitude
         based on the other two. The "unknown" attribute controls which of these
         parameters is calculated.
         """
@@ -829,12 +811,13 @@ class SourceExposure(PersistentModel):
 
     def calculate_exptime(self, custom_band=None):
         """
-        Calculate for exposure times. If a band has been passed in, do that. Otherwise, do all of them in the channel.
+        Calculate for exposure times. If a custom_band has been passed in, use that.
+        Otherwise, use all the bands in the channel.
 
         Parameters
         ----------
-        band : _type_, optional
-            _description_, by default None
+        custom_band : str
+            Name of a band. Defaults to none.
         """
         configuration, band, all_bands = self.recover("instrument.configuration", "instrument.band", "instrument.bands")
         if custom_band is not None:
@@ -845,14 +828,16 @@ class SourceExposure(PersistentModel):
             else:
                 bands = [band]
         self._exptime = []
+        self.wave = []
         _initial_band = self.instrument.band
         _snr_temp = self._ensure_quantity(self._snr, u.dimensionless_unscaled, len(bands))
         for idx, band in enumerate(bands):
             # because a multiple-in, multiple-out is a valid use case
             self._snr = _snr_temp[idx]
             self.instrument.band = band
-            result = self._update_exptime(self.source, configuration["bands"][band])
+            wave, result = self._update_exptime(self.source, configuration["bands"][band])
             self._exptime.append(result)
+            self.wave.append(wave)
         self._snr = _snr_temp
         self.instrument.band = _initial_band
 
@@ -860,12 +845,13 @@ class SourceExposure(PersistentModel):
 
     def calculate_snr(self, custom_band=None):
         """
-        Calculate for SNR. If a band has been passed in, do that. Otherwise, do all of them in the channel.
+        Calculate for SNR. If a custom_band has been passed in, use that.
+        Otherwise, use all the bands in the channel.
 
         Parameters
         ----------
-        band : _type_, optional
-            _description_, by default None
+        custom_band : str
+            Name of a band. Defaults to none.
         """
         configuration, band, all_bands = self.recover("instrument.configuration", "instrument.band", "instrument.bands")
         if custom_band is not None:
@@ -876,14 +862,16 @@ class SourceExposure(PersistentModel):
             else:
                 bands = [band]
         self._snr = []
+        self.wave = []
         _initial_band = self.instrument.band
         _exptime_temp = self._ensure_quantity(self._exptime, u.s, len(bands))
         for idx, band in enumerate(bands):
             # because a multiple-in, multiple-out is a valid use case
             self._exptime = _exptime_temp[idx]
             self.instrument.band = band
-            result = self._update_snr(self.source, configuration["bands"][band])
+            wave, result = self._update_snr(self.source, configuration["bands"][band])
             self._snr.append(result)
+            self.wave.append(wave)
         self._exptime = _exptime_temp
         self.instrument.band = _initial_band
 
@@ -891,12 +879,13 @@ class SourceExposure(PersistentModel):
 
     def calculate_magnitude(self, custom_band=None):
         """
-        Calculate for magnitudes. If a band has been passed in, do that. Otherwise, do all of them in the channel.
+        Calculate for magnitudes. If a custom_band has been passed in, use that.
+        Otherwise, use all the bands in the channel.
 
         Parameters
         ----------
-        band : _type_, optional
-            _description_, by default None
+        custom_band : str
+            Name of a band. Defaults to none.
         """
         configuration, band, all_bands = self.recover("instrument.configuration", "instrument.band", "instrument.bands")
         if custom_band is not None:
@@ -907,6 +896,7 @@ class SourceExposure(PersistentModel):
             else:
                 bands = [band]
         self._magnitude = []
+        self.wave = []
         _initial_band = self.instrument.band
         _exptime_temp = self._ensure_quantity(self._exptime, u.s, len(bands))
         _snr_temp = self._ensure_quantity(self._snr, u.dimensionless_unscaled, len(bands))
@@ -917,8 +907,9 @@ class SourceExposure(PersistentModel):
             self.instrument.band = band
             # The analytic solution is having problems right now
             # result = self._update_magnitude(self.source, configuration["bands"][band])
-            result = self._do_update_magnitude(self.source, configuration["bands"][band])
+            wave, result = self._do_update_magnitude(self.source, configuration["bands"][band])
             self._magnitude.append(result)
+            self.wave.append(wave)
 
         self._exptime = _exptime_temp
         self._snr = _snr_temp
@@ -936,7 +927,7 @@ class SourceExposure(PersistentModel):
         (_snr, _nexp) = self.recover('_snr', 'n_exp')
 
         # all of these are now rates, in the extraction aperture (except read_noise)
-        fsource_countrate, fsky_countrate, thermal_countrate, dark_current, read_noise = self.process_observation(source, band)
+        wave, fsource_countrate, fsky_countrate, thermal_countrate, dark_current, read_noise = self.process_observation(source, band)
 
         snr2 = -(_snr**2)
 
@@ -950,9 +941,9 @@ class SourceExposure(PersistentModel):
             print("Texp:", texp)
 
 
-        _exptime = texp
+        exptime = texp
 
-        return _exptime
+        return wave, exptime
 
     def _update_magnitude(self, source, band):
         """
@@ -969,7 +960,7 @@ class SourceExposure(PersistentModel):
         qe = configuration["detector"]["total_qe"]
 
         # all of these are now rates, in the extraction aperture (except read_noise)
-        fsource_countrate, fsky_countrate, thermal_countrate, dark_current, read_noise = self.process_observation(source, band)
+        wave, fsource_countrate, fsky_countrate, thermal_countrate, dark_current, read_noise = self.process_observation(source, band)
 
         # print("Fsource", fsource_countrate)
 
@@ -1024,7 +1015,7 @@ class SourceExposure(PersistentModel):
         # #plt.plot((band["bandpass"]*qe).waveset, (band["bandpass"]*qe)((band["bandpass"]*qe).waveset))
         # #plt.show()
 
-        _magnitude = -2.5 * np.log10(np.array(flux)) * u.mag('AB')
+        magnitude = -2.5 * np.log10(np.array(flux)) * u.mag('AB')
 
         # print("eff", eff)
         # print("readnoise", read_noise**2)
@@ -1040,7 +1031,7 @@ class SourceExposure(PersistentModel):
         # print("F0:", f0)
         # print("Mag:", _magnitude)
 
-        return _magnitude
+        return wave, magnitude
 
     def _do_update_magnitude(self, source, band):
         """
@@ -1060,12 +1051,12 @@ class SourceExposure(PersistentModel):
         temp_magnitudes = []
         temp_snrs = []
         # make a grid of potential magnitudes covering a nice wide range
-        _magnitude = self._update_magnitude(source, band).to_value(u.ABmag)
+        wave, _magnitude = self._update_magnitude(source, band).to_value(u.ABmag)
         for temp_magnitude in np.linspace(_magnitude+4, _magnitude-2, 15):
             sp_norm = source.sed.normalize(temp_magnitude * u.ABmag, stsyn.spectrum.band(source.renorm_band))
             
             source.sed = sp_norm
-            temp_snr = self._update_snr(source, band)
+            dummy, temp_snr = self._update_snr(source, band)
             temp_snrs.append(temp_snr)
             temp_magnitudes.append(temp_magnitude)
         
@@ -1073,7 +1064,7 @@ class SourceExposure(PersistentModel):
 
         magnitude = maginterp(_snr) * u.ABmag
 
-        return magnitude
+        return wave, magnitude
 
     def _update_snr(self, source, band):
         """
@@ -1085,7 +1076,7 @@ class SourceExposure(PersistentModel):
         (_exptime, _nexp) = self.recover('_exptime', 'n_exp')
 
         # all of these are now rates, in the extraction aperture (except read_noise)
-        fsource_countrate, fsky_countrate, thermal_countrate, dark_current, read_noise = self.process_observation(source, band)
+        wave, fsource_countrate, fsky_countrate, thermal_countrate, dark_current, read_noise = self.process_observation(source, band)
 
         # print("Fsource", fsource_countrate)
         # print("Fsky", fsky_countrate)
@@ -1107,9 +1098,9 @@ class SourceExposure(PersistentModel):
 
         thermal_counts = (thermal_countrate * _exptime).to(u.ct)
 
-        snr = signal_counts / np.sqrt(signal_counts + sky_counts + read_counts
+        tsnr = signal_counts / np.sqrt(signal_counts + sky_counts + read_counts
                                       + dark_counts + thermal_counts)
-        _snr = snr.value * u.dimensionless_unscaled
+        snr = tsnr.value * u.dimensionless_unscaled
 
         if self.verbose:
             print('# of exposures: {}'.format(_nexp))
@@ -1123,7 +1114,7 @@ class SourceExposure(PersistentModel):
             print('Thermal counts: {}'.format(self.nice_print(thermal_counts)))
             print('SNR: {}'.format(snr))
             
-        return _snr
+        return wave, snr
 
     def add_source(self, new_source):
         self.source = new_source
@@ -1146,7 +1137,7 @@ class SourceSpectrographicExposure(SourceExposure):
         """
         raise ValueError("Magnitude calculation not supported for Spectroscopy")
 
-class SourceIFSExposure(SourceExposure):
+class SourceMultiSpecExposure(SourceExposure):
     """ 
     This is currently a subclass of Spectrographic exposure that accepts multiple
     sources and produces multiple returns. 
@@ -1199,8 +1190,8 @@ class SourceIFSExposure(SourceExposure):
 
     def calculate_exptime(self, custom_band=None):
         """
-        Calculate for exposure times. If a band has been passed in, do that. 
-        Otherwise, do all of the bands in the channel.
+        Calculate for exposure times. If a custom_band has been passed in, use that. 
+        Otherwise, use all of the bands in the channel.
 
 
         Parameters
@@ -1218,27 +1209,36 @@ class SourceIFSExposure(SourceExposure):
                 bands = [band]
         self._exptime = []
         self._exptimes = []
+        self.wave = []
+        self.waves = []
         _snr_temp = self._ensure_array(self._snr, len(bands))
-        # The unique thing about IFS is it has multiple sources
-        for source in self.sources:
+        # IFS and MOS instruments are valuable because they can observe multiple sources simultaneously.
+        for idx,band in enumerate(bands):
+            # because a multiple-in, multiple-out is a valid use case
             _single_exptime = []
-            for idx,band in enumerate(bands):
-                # because a multiple-in, multiple-out is a valid use case
+            _single_exptimemax = []
+            _single_wave = []
+            for source in self.sources:
                 self._snr = _snr_temp[idx]
-                result = self._update_exptime(source, configuration["bands"][band])
+                wave, result = self._update_exptime(source, configuration["bands"][band])
                 _single_exptime.append(result)
+                _single_exptimemax.append(np.max(result))  # boil it down to a single number to avoid numpy inhomogenous array issues
+                _single_wave.append(wave)
             self._exptimes.append(_single_exptime)
-        # find the highest exposure time amongst the set of sources
-        self._exptime = np.max(self._exptimes,axis=0)
-        
+            self.waves.append(_single_wave)
+            # find the highest exposure time amongst the set of sources
+            maxidx = np.argmax(_single_exptimemax)
+            self._exptime.append(_single_exptime[maxidx])
+            self.wave.append(_single_wave[maxidx])
+
         self._snr = _snr_temp
 
         return True
 
     def calculate_snr(self, custom_band=None):
         """
-        Calculate for SNR. If a band has been passed in, do that. 
-        Otherwise, do all of the bands in the channel.
+        Calculate for SNR. If a custom_band has been passed in, use that. 
+        Otherwise, use all of the bands in the channel.
 
         Parameters
         ----------
@@ -1255,18 +1255,27 @@ class SourceIFSExposure(SourceExposure):
                 bands = [band]
         self._snr = []
         self._snrs = []
+        self.wave = []
+        self.waves = []
         _exptime_temp =  self._ensure_array(self._exptime, len(bands))
-        # The unique thing about IFS is it has multiple sources
-        for source in self.sources:
+        # IFS and MOS instruments are valuable because they can observe multiple sources simultaneously.
+        for idx, band in enumerate(bands):
+            # because a multiple-in, multiple-out is a valid use case
             _single_snr = []
-            for idx, band in enumerate(bands):
-                # because a multiple-in, multiple-out is a valid use case
+            _single_snrmax = []
+            _single_wave = []
+            for source in self.sources:
                 self._exptime = _exptime_temp[idx]
-                result = self._update_snr(source, configuration["bands"][band])
+                wave, result = self._update_snr(source, configuration["bands"][band])
                 _single_snr.append(result)
+                _single_snrmax.append(np.max(result)) # boil it down to a single number to avoid numpy inhomogenous array issues
+                _single_wave.append(wave)
             self._snrs.append(_single_snr)
-        # find the highest exposure time amongst the set of sources
-        self._snr = np.max(self._snrs,axis=0)
+            self.waves.append(_single_wave)
+            # find the highest exposure time amongst the set of sources
+            maxidx = np.argmax(_single_snrmax)
+            self._snr.append(_single_snr[maxidx])
+            self.wave.append(_single_wave[maxidx])
 
         self._exptime = _exptime_temp
 
@@ -1276,7 +1285,7 @@ class SourceIFSExposure(SourceExposure):
         """
         Not supported, make this an error
         """
-        raise ValueError("Magnitude calculation not supported for IFS Spectroscopy")
+        raise ValueError("Magnitude calculation not supported for MultiSpec Spectroscopy")
 
 class SourceCoronagraphicExposure(SourceExposure):
     """

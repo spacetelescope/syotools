@@ -1,7 +1,26 @@
+1.4.4
+    - IFS Instrument is renamed MultiSpec
+    - UV MOS and UV IFS are now BOTH MultiSpec instruments
+    - The type appended to the instrument name for UV MOS is now "MOS",
+      not "Spectrograph".
+    - The special "ifs" band type is no more, they are "disperser" now.
+      In its place, Telescope.find_instrument_with() now allows a search
+      for "instrument" (using a string that contains at least a fragment of
+      the name, e.g. "MOS")
+    - Bug fix: The extraction box sizes in 1.4.3 were both actually the
+      Spectroscopy aperture (3x the PSF FWHM height by 2 pixel width).
+      These have now been corrected to actually use the MOS slitlet size
+      or the width of the IFU slicer.
+    - Bug fix: The SourceExposure.wave object now parallels the construction
+      of the SNR, exptime, or magnitude outputs. Previously, in a multi-band 
+      (or multi-source, for what is now MultiSpec) situation, the wavelength
+      array was not necessarily matched to the SNR or exptime array and
+      attempting to plot the result might fail.
 1.4.3
     - New extended source support, paralleling the JWST Pandeia Engine
     - Sources have an additional parameter, geometry; format is the same
       as the JWST ETC's Pandeia Engine
+    - New dependency on `photutils`
     - Now reads the MOS slitlet config and IFS Image Slicer config to get
       aperture widths for slitlets and IFS.
     - New computation of flux within aperture using 2D profiles and 

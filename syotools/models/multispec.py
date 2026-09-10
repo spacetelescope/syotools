@@ -15,14 +15,13 @@ from synphot.models import Empirical1D
 from photutils.geometry import rectangular_overlap_grid
 
 from syotools.models.base import PersistentModel
-from syotools.models.source_exposure import SourceIFSExposure
+from syotools.models.source_exposure import SourceMultiSpecExposure
 from syotools.models.spectrograph import Spectrograph
 from syotools.spectra.utils import mirror_efficiency, set_coating
-from syotools.defaults import default_ifs
 
-class IFS(Spectrograph):
+class MultiSpec(Spectrograph):
     """
-    The basic IFS class, which provides parameter storage for
+    The basic MultiSpec class, which provides parameter storage for
     optimization.
 
     Attributes: #adapted from the original in Telescope.py
@@ -45,11 +44,11 @@ class IFS(Spectrograph):
         _default_model - used by PersistentModel
     """
 
-    def __init__(self, telescope, default_model = default_ifs, **kw):
+    def __init__(self, telescope, **kw):
         self.telescope = telescope
         self.exposures = []
 
-        self._ifs_default_file = ''
+        self._multispec_default_file = ''
 
         self.name = ''
         self.descriptions = {}
@@ -75,7 +74,7 @@ class IFS(Spectrograph):
 
     @cached_property
     def bands(self):
-        return {x: self.configuration["bands"][x] for x in self.configuration["bands"] if self.configuration["bands"][x]["kind"] == "ifs"}
+        return {x: self.configuration["bands"][x] for x in self.configuration["bands"] if self.configuration["bands"][x]["kind"] == "disperser"}
 
     @property
     def band(self):
@@ -117,7 +116,8 @@ class IFS(Spectrograph):
     def extraction_mask(self, x, y, band):
         """
         Draw an extraction mask.
-        For ifus, this is a spaxel-wide slit
+        For IFUs, this is a spaxel-wide slit
+        For MOSes, this is the size of the microshutter
 
         Parameters
         ----------
@@ -125,8 +125,14 @@ class IFS(Spectrograph):
             a 2D mask that draws the extraction aperture
         """
         wave = band["effective_wavelength"]
-        height = 3 * self.fwhm_psf(wave).to_value(u.arcsec)
-        width = self.configuration["image_slicer"]["spaxel_angle"].to_value(u.arcsec)
+        if "image_slicer" in self.configuration:
+            height = 3 * self.fwhm_psf(wave).to_value(u.arcsec)
+            width = self.configuration["image_slicer"]["spaxel_angle"].to_value(u.arcsec)
+        elif "microshutter" in self.configuration:
+            height = self.configuration["microshutter"]["microshutter_height"].to_value(u.arcsec)
+            width = self.configuration["microshutter"]["microshutter_width"].to_value(u.arcsec)
+        else:
+            raise ValueError("Incomplete instrument slit specification.")
         
         mask = rectangular_overlap_grid(np.min(x), np.max(x), np.min(y), np.max(y), x.shape[1], y.shape[0], width, height, 0, 0, 2)
 
@@ -150,7 +156,7 @@ class IFS(Spectrograph):
         return sn_box * spaxel_width
 
     def create_exposure(self, source=None):
-        new_exposure = SourceIFSExposure()
+        new_exposure = SourceMultiSpecExposure()
         if source is not None:
             new_exposure.source = source
         self.add_exposure(new_exposure)

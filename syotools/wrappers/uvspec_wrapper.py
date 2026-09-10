@@ -87,7 +87,7 @@ def uvspec_snr(telescope, band, template, fuvmag, exptime, silent=False):
 
     uvi_snr = uvi_exp.recover('snr')
 
-    wave, snr =  uvi_exp.wave, uvi_exp.snr[0]
+    wave, snr =  uvi_exp.wave[0], uvi_exp.snr[0]
 
 
     return wave, snr, inst
@@ -177,7 +177,7 @@ def uvspec_exptime(telescope, band, template, fuvmag, snr, silent=False):
 
     uvi_exptime = uvi_exp.recover('exptime')
 
-    wave, exptime =  uvi_exp.wave, uvi_exp.exptime[0]
+    wave, exptime =  uvi_exp.wave[0], uvi_exp.exptime[0]
 
 
     return wave, exptime, inst
