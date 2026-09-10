@@ -20,6 +20,7 @@
     - New extended source support, paralleling the JWST Pandeia Engine
     - Sources have an additional parameter, geometry; format is the same
       as the JWST ETC's Pandeia Engine
+    - New dependency on `photutils`
     - Now reads the MOS slitlet config and IFS Image Slicer config to get
       aperture widths for slitlets and IFS.
     - New computation of flux within aperture using 2D profiles and 
