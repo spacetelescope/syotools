@@ -1,6 +1,8 @@
 1.4.4
     - IFS Instrument is renamed MultiSpec
     - UV MOS and UV IFS are now BOTH MultiSpec instruments
+    - The type appended to the instrument name for UV MOS is now "MOS",
+      not "Spectrograph".
     - The special "ifs" band type is no more, they are "disperser" now.
       In its place, Telescope.find_instrument_with() now allows a search
       for "instrument" (using a string that contains at least a fragment of
@@ -12,7 +14,8 @@
     - Bug fix: The SourceExposure.wave object now parallels the construction
       of the SNR, exptime, or magnitude outputs. Previously, in a multi-band 
       (or multi-source, for what is now MultiSpec) situation, the wavelength
-      array was not necessarily matched to the SNR or exptime array
+      array was not necessarily matched to the SNR or exptime array and
+      attempting to plot the result might fail.
 1.4.3
     - New extended source support, paralleling the JWST Pandeia Engine
     - Sources have an additional parameter, geometry; format is the same
