@@ -1,6 +1,8 @@
 1.4.5
     - Fixed a bug in SourceExposure._do_update_magnitude() that stopped 
       calcs-for-magnitude from actually running
+    - Fixed a bug in SourceMultiSpecExposure.calculate_exptime() that
+      stopped calcs-for-exptime from running
     - Updated the wrappers to use the new 
       Telescope.find_instrument_with() API
     - Zodi background generation has been moved to its own file
