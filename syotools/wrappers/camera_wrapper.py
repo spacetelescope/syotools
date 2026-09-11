@@ -32,7 +32,7 @@ def camera_snr(telescope, template, magnitude, exptime, silent=False):
       
 	tel = Telescope()   # create a Telescope, Camera, and Exposure 
 	tel.set_from_hwome(telescope)
-	suitable_instruments, suitable_filters = tel.find_instrument_with("filter")
+	suitable_instruments, suitable_filters = tel.find_instrument_with(kind="filter")
 	
 	source = Source() 
 	redshift = 0. # changes to these are not implemented yet 
@@ -99,7 +99,7 @@ def camera_exptime(telescope, template, magnitude, snr, silent=False):
 	# create a Telescope, Camera, and Exposure 
 	tel = Telescope()
 	tel.set_from_hwome(telescope)
-	suitable_instruments, suitable_filters = tel.find_instrument_with("filter")
+	suitable_instruments, suitable_filters = tel.find_instrument_with(kind="filter")
 	
 	source = Source()
 	redshift = 0. # changes to these are not implemented yet 
@@ -164,7 +164,7 @@ def camera_magnitude(telescope, template, snr, exptime, silent=False):
 	tel = Telescope()
 	# create a Telescope, Camera, and Exposure 
 	tel.set_from_hwome(telescope)
-	suitable_instruments, suitable_filters = tel.find_instrument_with("filter")
+	suitable_instruments, suitable_filters = tel.find_instrument_with(kind="filter")
 	
 	source = Source() 
 	redshift = 0. # changes to these are not implemented yet 

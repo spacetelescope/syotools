@@ -1,3 +1,12 @@
+1.4.5
+    - Fixed a bug in SourceExposure._do_update_magnitude() that stopped 
+      calcs-for-magnitude from actually running
+    - Updated the wrappers to use the new 
+      Telescope.find_instrument_with() API
+    - Zodi background generation has been moved to its own file
+    - Profile generation has been moved to its own file and class
+    - Telescope.save_to_dict() and Instrument.save_to_dict() now contain
+      the hwome-core version and hwome_data commit as well
 1.4.4
     - IFS Instrument is renamed MultiSpec
     - UV MOS and UV IFS are now BOTH MultiSpec instruments

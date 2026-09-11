@@ -8,6 +8,8 @@ import copy
 import math
 from collections import defaultdict
 from importlib import metadata
+from importlib import metadata
+import subprocess
 
 from syotools.models.base import PersistentModel
 from syotools.defaults import default_telescope
@@ -135,7 +137,9 @@ class Telescope(PersistentModel):
         output["effective_diameter"] = self.effective_diameter
 
         # tag the software version the dict was created with, too
-        output["version"] = metadata.version('syotools')
+        output["syotools_version"] = metadata.version('syotools')
+        output["hwome_version"] = metadata.version('hwome-core')
+        output["data_version"] = subprocess.run(["git", "-C", os.environ["HWOME_DATA_PATH"], "rev-parse", "HEAD"])
 
         output = simplify_data(output)
 
