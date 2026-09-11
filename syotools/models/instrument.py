@@ -3,8 +3,10 @@
 Created on Fri Oct 14 21:31:18 2016
 @author: gkanarek, tumlinson
 """
+import os
 import copy
 from importlib import metadata
+import subprocess
 
 import numpy as np
 import astropy.constants as const
@@ -318,7 +320,9 @@ class Instrument(PersistentModel):
         del config["detector"]["total_qe"]
 
         # tag the software version the dict was created with, too
-        config["version"] = metadata.version('syotools')
+        config["syotools_version"] = metadata.version('syotools')
+        config["hwome_version"] = metadata.version('hwome-core')
+        config["data_version"] = subprocess.run(["git", "-C", os.environ["HWOME_DATA_PATH"], "rev-parse", "HEAD"])
         config = simplify_data(config)
 
         return config

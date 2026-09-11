@@ -44,7 +44,7 @@ def uvspec_snr(telescope, band, template, fuvmag, exptime, silent=False):
     # create the basic objects 
     tel = Telescope()
     tel.set_from_hwome(telescope)
-    suitable_instruments, suitable_bands = tel.find_instrument_with("disperser")
+    suitable_instruments, suitable_bands = tel.find_instrument_with(kind="disperser")
     instrument = None
     # this code demonstrates how to find a band with a partial name
     for test_band in suitable_bands:
@@ -137,7 +137,7 @@ def uvspec_exptime(telescope, band, template, fuvmag, snr, silent=False):
     # create the basic objects
     tel = Telescope()
     tel.set_from_hwome(telescope)
-    suitable_instruments, suitable_bands = tel.find_instrument_with("disperser")
+    suitable_instruments, suitable_bands = tel.find_instrument_with(kind="disperser")
     instrument = None
     # this code demonstrates how to find a band with a partial name
     for test_band in suitable_bands:

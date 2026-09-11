@@ -6,27 +6,22 @@ Created on Mon Oct 30 12:31:11 2017
 """
 import copy
 import numpy as np
-from scipy.interpolate import interp1d
-import scipy.special as sp
+
 import astropy.units as u
 import astropy.constants as const
 import scipy as sc
-from astropy.modeling.functional_models import AiryDisk2D
-from photutils.geometry import elliptical_overlap_grid, rectangular_overlap_grid
 
 import synphot as syn
 from synphot.models import Empirical1D, ConstFlux1D
 import stsynphot as stsyn
 
 from syotools.models.base import PersistentModel
+from syotools.models.background import calc_zodi_flux
+from syotools.models.profile import Profile
 
 from syotools.defaults import default_exposure
 from syotools.models.source import Source
 
-SPECTRAL_RADIANCE = u.W / (u.m**2 * u.sr * u.um)
-PHOTON_SPECTRAL_RADIANCE = u.photon / (u.cm**2 * u.s * u.nm * u.arcsec**2)
-SPECTRAL_RADIANCE_CGS = u.erg / (u.s * u.cm**2 * u.arcsec**2 * u.nm)
-MIN_CLIP = 1e-10
 
 class SourceExposure(PersistentModel):
     """
@@ -182,279 +177,6 @@ class SourceExposure(PersistentModel):
         self._magnitude = self._ensure_quantity(new_magnitude, u.ABmag)
         self.calculate()
 
-    # Code from pyEDITH, astrophysical_scene.py calc_zodi_flux
-    # Courtesy of Eleonora Alei
-    def calc_zodi_flux(
-        self,
-        wave: u.Quantity,
-        sn_box: u.Quantity,
-        pixel_scale: u.Quantity,
-        # starshade: bool = False,
-        # ss_elongation: u.Quantity = None,
-    ) -> u.Quantity:
-        """
-
-        Calculate the zodiacal light flux for given celestial coordinates and wavelengths.
-
-        This function computes the zodiacal light flux based on the target's position in the sky,
-        observation wavelengths, and whether a starshade is used. It uses the model from
-        Leinert et al. (1998) to calculate the zodiacal light intensity.
-
-        Parameters
-        ----------
-        wave : Quantity
-            Wavelengths in microns (vector of length nlambda).
-        sn_box : Quantity
-            Size of the extraction aperture in pixels squared
-        pixel_scale : QUANTITY
-            Dimensions of a single pixel (assumed to be square) in arcseconds.
-
-        Returns
-        -------
-        np.ndarray
-            Zodi surface brightness in units of photons s^-1 cm^-2 arcsec^-2 nm^-1 / F0.
-            This is equivalent to 10^(-0.4*magOmega_ZL).
-            - Multiply by F0 to get photons s^-1 cm^-2 arcsec^-2 nm^-1
-            - Multiply by energy of photons to get erg s^-1 cm^-2 arcsec^-2 nm^-1
-            The output array has dimensions (nlambda, nstars).
-
-        Raises
-        ------
-        ValueError
-            If F0 and lambd have different lengths, or if starshade mode is inconsistent with ss_elongation.
-
-        Note
-        ----
-        - The function uses the zodiacal light model from Leinert et al. (1998).
-        - For coronagraph mode, it assumes observations near solar longitude of 135 degrees.
-        - Starshade functionality is currently not fully implemented.
-
-        References:
-
-        Leinert, C., et al. (1998). The 1997 reference of diffuse night sky brightness.
-        Astronomy and Astrophysics Supplement Series, 127(1), 1-99.
-        """
-
-        # if starshade and ss_elongation is None:
-        #     raise ValueError(
-        #         "ERROR. You have set the STARSHADE flag. Must specify SS_ELONGATION in degrees."
-        #     )
-        # if not starshade and ss_elongation is not None:
-        #     raise ValueError(
-        #         "ERROR. You must enable STARSHADE mode if you are setting SS_ELONGATION in degrees."
-        #     )
-
-        # This code is in nanometers
-        wave = wave.to(u.nm)
-
-        # Convert equatorial coordinates to ecliptic coordinates
-        coords = self.source.coords
-        ecl_coords = coords.barycentrictrueecliptic
-        beta = ecl_coords.lat.rad
-
-        # all we need is the sine of the latitude
-        # Use absolute value of the sin of beta (symmetry about ecliptic plane)
-        sinbeta = np.abs(np.sin(beta))
-
-        # SOURCE: Leinert et al. (1998)
-        # Define solar longitude and beta values for interpolation
-        beta_vector = np.array([0.0, 5, 10, 15, 20, 25, 30, 45, 60, 75]) * u.deg
-        sollong_vector = (
-            np.array(
-                [
-                    0,
-                    5,
-                    10,
-                    15,
-                    20,
-                    25,
-                    30,
-                    35,
-                    40,
-                    45,
-                    60,
-                    75,
-                    90,
-                    105,
-                    120,
-                    135,
-                    150,
-                    165,
-                    180.0,
-                ]
-            )
-            * u.deg
-        )
-
-        # Table 17 values (assumed to be in some brightness units)
-        table17 = (
-            np.array(
-                [
-                    [-1, -1, -1, 3140, 1610, 985, 640, 275, 150, 100],
-                    [-1, -1, -1, 2940, 1540, 945, 625, 271, 150, 100],
-                    [-1, -1, 4740, 2470, 1370, 865, 590, 264, 148, 100],
-                    [11500, 6780, 3440, 1860, 1110, 755, 525, 251, 146, 100],
-                    [6400, 4480, 2410, 1410, 910, 635, 454, 237, 141, 99],
-                    [3840, 2830, 1730, 1100, 749, 545, 410, 223, 136, 97],
-                    [2480, 1870, 1220, 845, 615, 467, 365, 207, 131, 95],
-                    [1650, 1270, 910, 680, 510, 397, 320, 193, 125, 93],
-                    [1180, 940, 700, 530, 416, 338, 282, 179, 120, 92],
-                    [910, 730, 555, 442, 356, 292, 250, 166, 116, 90],
-                    [505, 442, 352, 292, 243, 209, 183, 134, 104, 86],
-                    [338, 317, 269, 227, 196, 172, 151, 116, 93, 82],
-                    [259, 251, 225, 193, 166, 147, 132, 104, 86, 79],
-                    [212, 210, 197, 170, 150, 133, 119, 96, 82, 77],
-                    [188, 186, 177, 154, 138, 125, 113, 90, 77, 74],
-                    [179, 178, 166, 147, 134, 122, 110, 90, 77, 73],
-                    [179, 178, 165, 148, 137, 127, 116, 96, 79, 72],
-                    [196, 192, 179, 165, 151, 141, 131, 104, 82, 72],
-                    [230, 212, 195, 178, 163, 148, 134, 105, 83, 72],
-                ]
-            )
-            * SPECTRAL_RADIANCE
-        )
-        # For coronagraph, assume observations near solar longitude of 135 degrees
-        j = np.argmin(np.abs(sollong_vector - 135 * u.deg))
-        k = np.argmin(np.abs(sollong_vector - 90 * u.deg))
-
-        # Interpolate to get zodi brightness factor
-
-
-        interp = interp1d(
-            np.sin(beta_vector),
-            table17[j] / table17[k, 0],
-            kind="cubic",
-            fill_value="extrapolate",
-        )
-        # this specifically selects the 135 degree longitude, and interpolates to the chosen ecliptic latitude
-        f = interp(sinbeta) * u.dimensionless_unscaled
-
-        # Wavelength dependence (fits to Table 19 in Leinert et al 1998)
-        zodi_lambd = (
-            np.array(
-                [
-                    0.2,
-                    0.3,
-                    0.4,
-                    0.5,
-                    0.7,
-                    0.9,
-                    1.0,
-                    1.2,
-                    2.2,
-                    3.5,
-                    4.8,
-                    12,
-                    25,
-                    60,
-                    100,
-                    140,
-                ]
-            )
-            * u.micron
-        )
-        zodi_blambd = (
-            np.array(
-                [
-                    2.5e-8,
-                    5.3e-7,
-                    2.2e-6,
-                    2.6e-6,
-                    2.0e-6,
-                    1.3e-6,
-                    1.2e-6,
-                    8.1e-7,
-                    1.7e-7,
-                    5.2e-8,
-                    1.2e-7,
-                    7.5e-7,
-                    3.2e-7,
-                    1.8e-8,
-                    3.2e-9,
-                    6.9e-10,
-                ]
-            )
-            * SPECTRAL_RADIANCE
-        )
-
-        # Convert to erg s^-1 cm^-2 arcsec^-2 angstrom^-1
-        zodi_blambd = zodi_blambd.to(SPECTRAL_RADIANCE_CGS)
-        zodi_lambd = zodi_lambd.to(u.nm)
-
-        # SYOTools actually needs the zodi in flux units (syn.units.PHOTLAM)
-        # so we do not need to call out for a magnitude calculation here.
-        interp = interp1d(zodi_lambd.value, zodi_blambd.value, kind="cubic", bounds_error=False, fill_value=0.0)
-        # flux is an array in SPECTRAL_RADIANCE_CGS units
-        flux = interp(wave) << SPECTRAL_RADIANCE_CGS
-        flux_zodi = f * flux # apply the scaling relative to 90 degrees ecliptic (f)
-
-        # # Interpolate to get zodi brightness at desired wavelengths
-        # interp = interp1d(
-        #     np.log10(zodi_lambd.value), np.log10(zodi_blambd.value), kind="cubic"
-        # )
-        # blambd = 10 ** interp(np.log10(wave.to_value(u.nm))) * zodi_blambd.unit
-
-        # # Convert to photon flux
-        # # I90fabsfco = blambd / (u.h * u.c / lambd)
-
-        # I90fabsfco = blambd.to(
-        #     PHOTON_SPECTRAL_RADIANCE,
-        #     equivalencies=u.spectral_density(wave),
-        # )
-        # # Divide by F0
-        # I90fabsfco = I90fabsfco / F0
-
-        # # Calculate final zodi flux
-        # nlambda = len(wave)
-        # flux_zodi = f * I90fabsfco
-
-        # omega is the size of the extraction box in steradians
-        Omega = (pixel_scale**2 * sn_box).to(u.sr)
-        flux_zodi *= Omega
-
-        # from matplotlib import pyplot as plt
-        # print(flux)
-        # print(f)
-        # print(flux_zodi)
-        # print("Omega", Omega)
-        # print(zodi_blambd)
-        # print(zodi_lambd.to_value(u.nm))
-        # print(wave)
-        # plt.plot(wave, flux_zodi)
-        # plt.plot(zodi_lambd.to_value(u.nm), zodi_blambd)
-        # plt.show()
-
-        # now convert to PHOTLAM
-        sky = syn.spectrum.SourceSpectrum(Empirical1D, points=wave, lookup_table=syn.units.convert_flux(wave, flux_zodi, syn.units.PHOTLAM))
-
-        return sky  # 1/arcsec^2 (UNITS OF SPECTRAL RADIANCE) - original, now PHOTLAM
-
-    def pixelscale(self):
-        """
-        Return a per-pixel normalization factor for the appropriate area unit.
-
-        Returns
-        -------
-        normfactor: float
-            Normalization factor, unitless
-
-        Raises
-        ------
-        ValueError
-            Raised on invalid area unit
-        """
-        if self.source.geometry["surf_area_units"] in ['sr']:
-            arcsec2 = u.arcsec * u.arcsec
-            normfactor = self.pix_area_sqarcsec / u.sr.to(arcsec2)  # convert area in steradians to area in pixels
-        elif self.source.geometry["surf_area_units"] in ['arcsec^2', None]: # 'None' should be an option because integrated flux
-                                                        # shouldn't have units (internally, the grid is arcsec)
-            normfactor = self.pix_area_sqarcsec
-        else:
-            msg = f"Unsupported surface area unit: {self.source.geometry['surf_area_units']}"
-            raise ValueError(msg)
-
-        return normfactor
-
     def sn_box(self, band):
         """
         Function to set the percentage of flux going through an SN box of various sizes
@@ -468,200 +190,24 @@ class SourceExposure(PersistentModel):
             The number of pixels in the aperture (for correcting other properties)
         """
 
-        self.wavelen = band["effective_wavelength"]
+        wavelen = band["effective_wavelength"]
         geometry = self.source.geometry
         shape = geometry.get("geometry", "point")
+
+        profile = Profile(self.telescope, self.instrument, geometry, wavelen)
         
-        geometry_creator = {"point": self.point_profile, "gaussian2d": self.gaussian_profile, 
-                            "sersic": self.sersic_profile, "sersic_scale": self.sersic_scale_profile,
-                            "flat": self.flat_profile, "power": self.power_profile}
+        geometry_creator = {"point": profile.point_profile, "gaussian2d": profile.gaussian_profile, 
+                            "sersic": profile.sersic_profile, "sersic_scale": profile.sersic_scale_profile,
+                            "flat": profile.flat_profile, "power": profile.power_profile}
 
 
-        x_rot, y_rot, x, y, xsamp, ysamp = self.generate_profile(geometry)
-        profile = geometry_creator[shape](geometry, x_rot, y_rot)
+        x_rot, y_rot, x, y, xsamp, ysamp = profile.generate_profile()
+        profile = geometry_creator[shape]()
 
         # now the extraction mask
         mask = self.instrument.extraction_mask(x,y, band)
 
         return np.sum(mask*profile), np.sum(mask)* u.pix**2
-
-
-    def generate_profile(self, geometry):
-        """
-        Make a 2D grid to add the profile to
-        """
-        configuration = self.recover("instrument.configuration")
-        pixel_scale = configuration["pixel_scale"].to_value(u.arcsec/u.pix)
-        self.pix_area_sqarcsec = pixel_scale**2
-
-        pa_radians = (geometry.get("pa", 0) * u.deg).to(u.rad)
-
-        xval = np.arange(-50,51,1) * pixel_scale
-        yval = np.arange(-50,51,1) * pixel_scale
-
-        x,y = np.meshgrid(xval,yval)
-
-        x_rot = x * np.cos(pa_radians) + y * np.sin(pa_radians)
-        y_rot = -x * np.sin(pa_radians) + y * np.cos(pa_radians)
-
-        xsamp = ysamp = pixel_scale
-
-        return x_rot, y_rot, x, y, xsamp, ysamp
-
-    def point_profile(self, geometry, x, y):
-        effective_diameter = self.recover("telescope.effective_diameter")
-
-        Rz = 1.2196698912665045 * u.rad
-        radius = (Rz * self.wavelen.to(u.AA)/effective_diameter.to(u.m))
-        #print("Radius", radius)
-        airymodel = AiryDisk2D(amplitude=1, x_0=0, y_0=0, radius=radius.to_value(u.arcsec))
-
-        profile = airymodel(x,y)
-
-        # # dist is in arcsec and actually an angle
-        # dist = np.sqrt(x**2.0 + y**2.0)
-        
-        # print(effective_diameter)
-        # x = 2*np.pi/wavelen.to_value(u.m) * effective_diameter/2.0 * np.sin(dist * u.arcsec)
-        # print(x)
-        # x = x.value
-        # profile = (2 * sp.j1(x)/x)**2
-        # # The Bessel Function of the first kind first order is 0 at r=0, so the middle is inf.
-        # profile[50,50] = 1
-
-        norm_method = geometry.get("norm_method", "integ_infinity")
-
-        if norm_method == "surf_scale":
-            norm_val = 1
-        elif norm_method == "surf_center":
-            norm_val = 1
-        elif norm_method == "integ_infinity":
-            #print("Profilesum", np.sum(profile))
-            #print("Integration", ((4 * radius.to(u.arcsec)**2)/(np.pi * Rz.to(u.arcsec)**2)).to(u.dimensionless_unscaled)) # from Astropy
-            norm_val = 1/np.sum(profile)
-
-        profile = profile * norm_val
-
-        return profile
-
-    def sersic_profile(self, geometry, x, y):
-        major = self.quant_to_val(geometry["major"], unit=u.arcsec)
-        minor = self.quant_to_val(geometry["minor"], unit=u.arcsec)
-        index = geometry["sersic_index"]
-
-        # the actual value of b. Formula taken from astropy's sersic2d shape.
-        b = sp.gammaincinv(2*index,0.5)
-
-        dist = np.sqrt((x / major)**2.0 + (y / minor)**2.0)
-        # This is Equation 1 of Graham & Driver (2005) 2005PASA...22..118G
-        profile = np.exp( -b * (dist**(1.0 / index) - 1) )
-
-        # Sersic profiles are highly centralized, so we need to oversample the central pixel
-        # to get the appropriate flux. This is the difference between sampling
-        # and integrating, and unfortunately we're sampling this function.
-        dist = np.sqrt((x/101. / major)**2.0 + (y/101. / minor)**2.0)
-        central_pixel = np.exp( -b * (dist**(1.0 / index) - 1) )
-
-        profile[50,50] = np.sum(central_pixel) / 101**2
-
-        if geometry["norm_method"] == "surf_scale":
-            norm_val = self.pixelscale()
-        elif geometry["norm_method"] == "surf_center":
-            norm_val = self.pixelscale() * np.e**(-1*b)
-        elif geometry["norm_method"] == "integ_infinity":
-            # integrate the Sersic profile to get the total flux for normalization, including flux outside the FOV
-            # http://ned.ipac.caltech.edu/level5/March05/Graham/Graham2.html
-            integral = major * minor * 2 * np.pi * index * np.exp(b)/(b**(2*index))* sp.gamma(2 * index)
-            norm_val = self.pixelscale() / integral
-
-        profile = profile * norm_val
-
-        return profile
-
-    def gaussian_profile(self, geometry, x, y):
-        # The gaussian profile is actually a scale-sersic of index 0.5
-        sersic_geometry = copy.deepcopy(geometry)
-
-        sersic_geometry["major"] = self.quant_to_val(geometry["major"], unit=u.arcsec) * np.sqrt(2.0) # to match the usual definition of a Gaussian
-        sersic_geometry["minor"] = self.quant_to_val(geometry["minor"], unit=u.arcsec) * np.sqrt(2.0) # to match the usual definition of a Gaussian
-        sersic_geometry["shape"] = "sersic_scale"
-        sersic_geometry["sersic_index"] = 0.5
-
-        return self.sersic_scale_profile(sersic_geometry, x, y)
-
-    def sersic_scale_profile(self, geometry, x, y):
-        major = self.quant_to_val(geometry["major"], unit=u.arcsec)
-        minor = self.quant_to_val(geometry["minor"], unit=u.arcsec)
-        index = geometry["sersic_index"]
-
-        dist = np.sqrt((x / major) ** 2.0 + (y / minor) ** 2.0)
-        # This is Equation 14 of Graham & Driver (2005) 2005PASA...22..118G
-        profile = np.exp(-dist ** (1.0 / index))
-
-        # Sersic profiles are highly centralized, so we need to oversample the central pixel
-        # to get the appropriate flux. This is the difference between sampling
-        # and integrating, and unfortunately we're sampling this function.
-        dist = np.sqrt((x/101. / major)**2.0 + (y/101. / minor)**2.0)
-        central_pixel = np.exp(-dist ** (1.0 / index))
-
-        profile[50,50] = np.sum(central_pixel) / 101**2
-
-        if geometry["norm_method"] == "surf_scale":
-            norm_val = self.pixelscale() * np.e
-        elif geometry["norm_method"] == "surf_center":
-            norm_val = self.pixelscale()
-        elif geometry["norm_method"] == "integ_infinity":
-            # integrate the Sersic profile to get the total flux for normalization, including flux outside the FOV
-            # http://ned.ipac.caltech.edu/level5/March05/Graham/Graham2.html
-            integral = major * minor * 2 * np.pi * index * sp.gamma(2 * index)
-            norm_val = self.pixelscale() / integral
-
-        profile = profile * norm_val
-
-        return profile
-
-    def flat_profile(self, geometry, x, y):
-
-        major = self.quant_to_val(geometry["major"], unit=u.arcsec)
-        minor = self.quant_to_val(geometry["minor"], unit=u.arcsec)
-
-        profile = elliptical_overlap_grid(np.min(x), np.max(x), np.min(y), np.max(y), x.shape[1], y.shape[0], major, minor, 0, 1, 1)
-
-        # dist = np.sqrt((x / major) ** 2.0 + (y / minor) ** 2.0)
-
-        # profile[dist < 1] = 1.0
-        if geometry["norm_method"] in ("surf_scale", "surf_center"):
-            norm_val = self.pixelscale()
-        elif geometry["norm_method"] == "integ_infinity":
-            norm_val = self.pixelscale() / np.sum(profile)
-
-        profile = profile * norm_val
-
-        return profile
-
-    def power_profile(self, geometry, x, y):
-        power_index = geometry['power_index']
-        r_core = self.quant_to_val(geometry["r_core"], unit=u.arcsec)
-
-        if power_index <= 0:
-            raise ValueError('Power Law Index must be positive, not {}'.format(power_index))
-
-        dist = np.sqrt((x/r_core)**2.0 + (y/r_core)**2.0).value
-        profile = (dist.clip(MIN_CLIP, np.max(dist)))**(-1*power_index)
-        # flatten the central portion. Everything within the core radius is set to 1.
-        profile[np.where(dist <= 1.0)] = 1.0
-
-        if geometry["norm_method"] in ["surf_scale", "surf_center"]:
-            norm_val = self.pixelscale()
-        elif geometry["norm_method"] in ["integ_infinity"]:
-            integral = np.pi * r_core**2 + 2* np.pi * r_core**2/(power_index - 2)
-            norm_val = self.pixelscale()/integral
-
-        profile = profile * norm_val
-
-        return profile
-
-
 
 
     @property
@@ -744,7 +290,7 @@ class SourceExposure(PersistentModel):
         # accumulates over time
         flux_source = source.sed * encircled_energy
 
-        self.sky = self.calc_zodi_flux(wave, sn_box, pixel_scale)
+        self.sky = calc_zodi_flux(source, wave, sn_box, pixel_scale)
 
 
         # fsky is:
@@ -1051,7 +597,8 @@ class SourceExposure(PersistentModel):
         temp_magnitudes = []
         temp_snrs = []
         # make a grid of potential magnitudes covering a nice wide range
-        wave, _magnitude = self._update_magnitude(source, band).to_value(u.ABmag)
+        wave, _magnitude = self._update_magnitude(source, band)
+        _magnitude = _magnitude.to_value(u.ABmag)
         for temp_magnitude in np.linspace(_magnitude+4, _magnitude-2, 15):
             sp_norm = source.sed.normalize(temp_magnitude * u.ABmag, stsyn.spectrum.band(source.renorm_band))
             
@@ -1222,7 +769,7 @@ class SourceMultiSpecExposure(SourceExposure):
                 self._snr = _snr_temp[idx]
                 wave, result = self._update_exptime(source, configuration["bands"][band])
                 _single_exptime.append(result)
-                _single_exptimemax.append(np.max(result))  # boil it down to a single number to avoid numpy inhomogenous array issues
+                _single_exptimemax.append(np.max(result).to_value(u.s))  # boil it down to a single scalar number to avoid numpy inhomogenous array issues
                 _single_wave.append(wave)
             self._exptimes.append(_single_exptime)
             self.waves.append(_single_wave)
