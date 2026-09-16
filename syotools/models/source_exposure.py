@@ -70,7 +70,7 @@ class SourceExposure(PersistentModel):
         self._snr = np.zeros(1, dtype=float)
         self.wave = [np.zeros(1, dtype=float) * u.AA]
         self._magnitude = np.zeros(1, dtype=float) * u.ABmag
-        self._extraction_aperture = 0. * u.pix**2
+        self._extraction_aperture = None
         self._unknown = "" # one of 'snr', 'magnitude', 'exptime'
         self._interp_flux = np.zeros(1, dtype=float) * u.dimensionless_unscaled # the source SED interpolated to the Spectrograph wavelength grid
 
@@ -202,18 +202,18 @@ class SourceExposure(PersistentModel):
     def extraction_aperture(self) -> u.Quantity:
         return self._extraction_aperture
     
-    @magnitude.setter
-    def extraction_aperture(self, new_aperture) -> u.Quantity:
+    @extraction_aperture.setter
+    def extraction_pixels(self, new_aperture) -> u.Quantity:
         if isinstance(new_aperture, u.Quantity):
             try:
-                new_aperture.to(u.pix**2)
+                new_aperture.to(u.arcsec)
                 self._extraction_aperture = new_aperture
-            except ValueError:
-                raise ValueError("Incorrect unit!")
-        else:
-            self._extraction_aperture = new_aperture * u.pix**2
 
-        self._extraction_aperture = new_aperture
+            except ValueError:
+                raise ValueError("Incorrect aperture unit!")
+        else:
+            self._extraction_aperture = new_aperture * u.arcsec
+
 
     def sn_box(self, band:dict ) -> (float, u.Quantity):
         """
@@ -248,11 +248,11 @@ class SourceExposure(PersistentModel):
         profile = geometry_creator[shape]()
 
         # now the extraction mask
-        self.extraction_mask = self.instrument.extraction_mask(x,y, band, xsamp, ysamp, self.extraction_aperture)
-        # save the extraction aperture size (in case it's not one someone entered)
-        self.extraction_aperture = np.sum(self.extraction_mask) * u.pix**2
+        self.extraction_mask, height = self.instrument.extraction_mask(x, y, band, xsamp, ysamp, self.extraction_aperture)
+  
+        mask_area = np.sum(self.extraction_mask) * u.pix**2
 
-        return np.sum(mask*profile), self.extraction_aperture
+        return np.sum(self.extraction_mask*profile), mask_area
 
 
     @property
@@ -1008,7 +1008,15 @@ class SourceMultiSpecExposure(SourceExposure):
 
 class SourceIFSExposure(SourceMultiSpecExposure):
     """
-    Backwards compatibility convenience for the IFS.
+    Subclass for IFS Exposures.
+    There is no difference between that and the current SourceMultiSpecExposure
+
+    """
+    pass
+
+class SourceMOSExposure(SourceMultiSpecExposure):
+    """
+    Subclass for MOS Exposures.
     There is no difference between that and the current SourceMultiSpecExposure
 
     """

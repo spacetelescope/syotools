@@ -117,7 +117,7 @@ class Spectrograph(Instrument):
         R = R << u.pix # HWOME's definition is unitless
         return wave / R
 
-    def extraction_mask(self, x, y, band, xsamp, ysamp, extraction_area):
+    def extraction_mask(self, x, y, band, xsamp, ysamp, extraction_aperture):
         """
         Draw an extraction mask.
         The default height is 3x the PSF size
@@ -136,11 +136,11 @@ class Spectrograph(Instrument):
         else:
             # We assume it's 2 pixels wide by N pixels high
             width = (xsamp * 2 * u.pix).to_value(u.arcsec)
-            height = (ysamp * (extraction_aperture/ (2 * u.pix))).to_value(u.arcsec)
+            height = extraction_aperture.to_value(u.arcsec) * 2
 
         mask = rectangular_overlap_grid(np.min(x), np.max(x), np.min(y), np.max(y), x.shape[1], y.shape[0], width, height, 0, 0, 2)
 
-        return mask
+        return mask, height
 
     def _sn_box(self, wave, verbose=False):
         """
@@ -177,12 +177,6 @@ class Spectrograph(Instrument):
             new_exposure.source = source
         self.add_exposure(new_exposure)
         return new_exposure
-
-    def add_exposure(self, exposure):
-        self.exposures.append(exposure)
-        exposure.instrument = self
-        exposure.telescope = self.telescope
-        exposure.calculate()
 
     def transform_flux(self, spectrum, wave):
         effective_area = self.recover("telescope.effective_area")

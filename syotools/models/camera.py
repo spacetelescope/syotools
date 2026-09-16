@@ -145,17 +145,18 @@ class Camera(Instrument):
         mask : np.ndarray
             a 2D mask that draws the extraction aperture
         """
+        print("Extraction", extraction_aperture)
         if extraction_aperture is None or np.isclose(extraction_aperture, 0*u.pix**2):
             wave = band["effective_wavelength"]
             radius = 3 * self.fwhm_psf(wave).to_value(u.arcsec)
+            print("mask", radius)
         else:
-            # we have a number of pixels, we need to translate that to
-            # sky area (arcsec^2), so multiply by the sampling size to 
-            radius = np.sqrt((extraction_aperture*xsamp*ysamp)/np.pi)
+            radius = extraction_aperture.to_value(u.arcsec)
+            print("Aperturesize", radius)
 
         mask = circular_overlap_grid(np.min(x), np.max(x), np.min(y), np.max(y), x.shape[1], y.shape[0], radius, 1, 1)
 
-        return mask
+        return mask, radius
 
 
     def _sn_box(self, wave, verbose):
@@ -207,12 +208,6 @@ class Camera(Instrument):
             new_exposure.source = source
         self.add_exposure(new_exposure)
         return new_exposure
-
-    def add_exposure(self, exposure):
-        self.exposures.append(exposure)
-        exposure.instrument = self
-        exposure.telescope = self.telescope
-        exposure.calculate()
 
     def transform_flux(self, spectrum, wave):
         effective_area = self.recover("telescope.effective_area")

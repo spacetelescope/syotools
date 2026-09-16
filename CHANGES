@@ -1,3 +1,19 @@
+1.4.6
+    - Telescope.set_from_hwome() can now accept a preconfigured 
+      DataModel, rather than just an EAC name
+    - IFS and MOS are now their own Instrument classes again, both 
+      subclasses of MultiSpec. They still operate on "disperser"
+      elements.
+    - Instrument.set_from_hwome() loader now trims spectra of any
+      red/blue leaks.
+    - Completely rewritten thermal emission handler, uses the OTA
+      temperature for now.
+    - You can now set SourceExposure.extraction_aperture in units of 
+      arcseconds. In the camera, it's the radius of the extraction 
+      aperture. If it's a spectrograph or IFS, it's the half-height
+      of the extraction box. If it's a MOS, it's ignored in favor
+      of the microshutter size. If unset, None, or 0, it defaults 
+      to the previous aperture behavior.
 1.4.5
     - Fixed a bug in SourceExposure._do_update_magnitude() that stopped 
       calcs-for-magnitude from actually running

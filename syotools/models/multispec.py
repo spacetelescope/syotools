@@ -114,9 +114,9 @@ class MultiSpec(Spectrograph):
         R = R << u.pix # HWOME's definition is unitless
         return wave / R
 
-    def extraction_mask(self, x, y, band, xsamp, ysamp, extraction_area):
+    def extraction_mask(self, x, y, band, xsamp, ysamp, extraction_aperture):
         """
-        Draw an extraction mask.
+        Draw an actual extraction mask.
         For IFUs, this is a spaxel-wide slit
         For MOSes, this is the size of the microshutter
 
@@ -132,9 +132,9 @@ class MultiSpec(Spectrograph):
                 width = self.configuration["image_slicer"]["spaxel_angle"].to_value(u.arcsec)
             else:
                 width = self.configuration["image_slicer"]["spaxel_angle"].to_value(u.arcsec)
-                height = extraction_area / (self.configuration["image_slicer"]["spaxel_angle"]/xsamp) * ysamp
+                height = extraction_aperture.to_value(u.arcsec) * 2
         elif "microshutter" in self.configuration:
-            if extraction_aperture not None or extraction_aperture > 0*u.pix**2:
+            if extraction_aperture is not None or extraction_aperture > 0*u.pix**2:
                 warnings.warn("Ignoring extraction aperture size for microshutter array")
             height = self.configuration["microshutter"]["microshutter_height"].to_value(u.arcsec)
             width = self.configuration["microshutter"]["microshutter_width"].to_value(u.arcsec)
@@ -143,7 +143,7 @@ class MultiSpec(Spectrograph):
         
         mask = rectangular_overlap_grid(np.min(x), np.max(x), np.min(y), np.max(y), x.shape[1], y.shape[0], width, height, 0, 0, 2)
 
-        return mask
+        return mask, height
 
     def _sn_box(self, wave, verbose):
         """
@@ -168,18 +168,6 @@ class MultiSpec(Spectrograph):
             new_exposure.source = source
         self.add_exposure(new_exposure)
         return new_exposure
-
-    def add_exposure(self, exposure):
-        self.exposures.append(exposure)
-        exposure.instrument = self
-        exposure.telescope = self.telescope
-        exposure.calculate()
-
-    def transform_flux(self, spectrum, wave):
-        effective_area = self.recover("telescope.effective_area")
-        flux = syn.units.convert_flux(wave, spectrum(wave), u.erg / u.s / u.cm**2 / u.AA)
-        phot_energy = const.h.to(u.erg * u.s) * const.c.to(u.cm / u.s) / wave.to(u.cm) / u.ct
-        return flux / phot_energy * effective_area
 
     def set_from_sei(self, name): 
 
