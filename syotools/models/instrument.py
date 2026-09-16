@@ -12,9 +12,10 @@ import numpy as np
 import astropy.constants as const
 import astropy.units as u
 import synphot as syn
-from synphot.models import Empirical1D
+from synphot.models import Empirical1D, BlackBody1D
 
 from syotools.models.base import PersistentModel
+from syotools.models.source_exposure import SourceExposure
 from syotools.spectra.utils import mag_from_sed, mirror_efficiency, set_coating
 from syotools.utils.yaml_utils import simplify_data, complexify_data
 from hwome.core.navigator import DataModel
@@ -53,7 +54,20 @@ class Instrument(PersistentModel):
 
     def diffraction_limit(self, wavelength: u.Quantity) -> u.Quantity:
         """
-        Calculate the diffraction limit for a given wavelength.
+        Calculate the diffraction limit for a given wavelength. This calculation uses only
+        the mirror diameter with an assumption of effevctively infinite distance to the
+        pupil.
+
+        Parameters:
+        -----------
+        wavelength : u.Quantity
+            input wavelengths in a unit convertible to nanometers
+
+        Returns:
+        --------
+        diff_limit_radians : u.Quantity
+            a diffraction limiting spot size in arcseconds
+
         """
         effective_diameter = self.recover('telescope.effective_diameter')
         ap_nm = effective_diameter.to(u.nm)
@@ -61,7 +75,7 @@ class Instrument(PersistentModel):
         return diff_limit_radians.to(u.arcsec)
 
     @property
-    def diff_limit_fwhm(self):
+    def diff_limit_fwhm(self) -> u.Quantity:
         """
         Diffraction-limited PSF FWHM.
         """
@@ -74,17 +88,19 @@ class Instrument(PersistentModel):
         #result = (1.03 * u.rad * diff_limit_wavelength / effective_diameter).to(u.arcsec)
         return result
 
-    # UNFINISHED
-    def ee(self,wavelength):
-        effective_aperture = self.recover('telescope.effective_aperture')
-        a = effective_radius
-        k = 2 * np.pi / wavelength
-        q = np.arange()
-        x = 1 - [J0(np.pi * r)]**2 - [J1(np.pi * r)]**2
-
-    def fwhm_psf(self, wave):
+    def fwhm_psf(self, wave: u.Quantity) -> u.Quantity:
         """
         Calculate the FWHM of the camera's PSF.
+
+        Parameters:
+        -----------
+        wave : u.Quantity
+            wavelength array in a unit convertible to Angstroms
+
+        Returns:
+        --------
+        fwhm : u.Quantity
+            FWHM of a PSF, in arcseconds.
         """
         #Convert to Quantity for calculations.
         effective_aperture = self.recover('telescope.effective_diameter')
@@ -101,9 +117,19 @@ class Instrument(PersistentModel):
 
         return fwhm
 
-    def ab_zeropoint(self, band):
+    def ab_zeropoint(self, band: dict) -> u.Quantity:
         """
-        AB-magnitude zero points as per Marc Postman's equation.
+        AB-magnitude zero points as per Synphot's AB Mag conversion math
+
+        Parameters:
+        -----------
+        band : dict
+            A bandpass dictionary
+
+        Returns:
+        --------
+        abzp : Quantity
+            The AB Zeropoint of the filter, in syn.units.PHOTLAM
         """
         source = syn.spectrum.SourceSpectrum(syn.models.ConstFlux1D, amplitude=0 * u.ABmag)
         obs = syn.observation.Observation(source, band["bandpass"])
@@ -114,9 +140,100 @@ class Instrument(PersistentModel):
 
         return abzp# << abunit
 
-    def _c_thermal(self, wave, sn_box, verbose=False):
+    def inst_thermal(self, wave: u.Quantity, sn_box: u.Quantity, verbose=False) -> u.Quantity:
         """
         Calculate the thermal emission counts for the telescope.
+
+        We use Synphot's BlackBody1D function to get the blackbody
+        flux in PHOTLAM/sr, and then use the instrument's focal
+        length and pixel pitch to determine what fraction of thermal
+        self-emission lands on the detector from that distance.
+
+        Beyond the primary mirror, the detector itself also contributes
+        to the temperature. 
+
+        Parameters:
+        -----------
+        wave : u.Quantity
+            A wavelength array in a unit convertible to Angstroms
+        sn_box : u.Quantity
+            The size of the extraction box in pixels^2
+
+        Returns:
+        --------
+        thermal : u.Quantity
+            The total thermal self-emission per wavelength bin, given the spatial size of
+            the extraction box.
+        """
+        (area, ota_emissivity, focal_length, ota_temperature, configuration) = self.recover(
+            'telescope.effective_area',  'telescope.ota_emissivity', 'telescope.focal_length', 
+            'telescope.ota_temperature', 'configuration')
+        pixel_pitch = configuration["detector"]["pixel_pitch"]
+        inst_temperature = configuration["detector"]["thermal"]
+
+        if verbose:
+            print("wave", wave)
+            print("pixel_pitch", pixel_pitch)
+            print("inst_temp", inst_temperature)
+
+
+        # The OTA mirror temperature
+        # the output of this function is PHOTLAM/steradian
+        #planck = models.BlackBody(temperature=ota_temperature, scale=1*syn.units.FLAM/u.sr)
+        planck = syn.spectrum.SourceSpectrum(BlackBody1D, temperature=ota_temperature)
+        # compute the solid angle omega of a single pixel, at the distance of the focus
+        _omega = np.arctan(pixel_pitch.to_value(u.m/u.pix)/focal_length.to_value(u.m)) ** 2 * u.sr/u.pix**2
+
+        # print(syn.units.convert_flux(5000*u.AA, planck(5000*u.AA), syn.units.FLAM))
+        # print(_omega)
+        # print("gradient", np.gradient(wave))
+
+        bbody = (planck(wave) / u.sr).to(syn.units.PHOTLAM/u.sr)
+
+        ota_thermal = bbody * (_omega * sn_box)
+        # uncomment these lines to demonstrate that the thermal flux is the same as pyEDITH, who reports in electrons/s
+
+        # thermal = ota_thermal.to(u.photon / (u.s * u.cm**2 * u.AA), equivalencies=u.spectral_density(wave))  * area * 1 * u.electron/u.photon
+        # electron_rate = thermal.to(u.electron/(u.AA * u.s))
+        # print(electron_rate)
+        # wave5000 = np.where(np.abs(wave - 5000*u.AA) < 1*u.AA)[0]
+        # print(electron_rate[wave5000])
+
+        # # The detector temperature
+        # # the output of this function is PHOTLAM/steradian
+        planck = syn.spectrum.SourceSpectrum(BlackBody1D, temperature=inst_temperature)
+        # there is no distance, the pixel itself is at this temperature
+        # # compute the solid angle omega of a single pixel, at the distance of the focus
+        #_omega = np.arctan(pixel_pitch.to_value(u.m/u.pix)/focal_length.to_value(u.m)) ** 2 / u.pix**2
+        _omega = 4 * np.pi / u.pix**2
+
+        bbody = (planck(wave) / u.sr).to(syn.units.PHOTLAM/u.sr)
+
+        inst_thermal = planck(wave) * (_omega * sn_box)
+        if verbose:
+            print("OTA_thermal", ota_thermal)
+            print("Inst_thermal", inst_thermal)
+
+        ota_thermal = syn.spectrum.SourceSpectrum(Empirical1D, points=wave, lookup_table=ota_thermal)
+
+        return ota_thermal
+        
+    def _c_thermal(self, wave: u.Quantity, sn_box: u.Quantity, verbose=False) -> u.Quantity:
+        """
+        Calculate the thermal emission counts for the telescope.
+
+        Parameters:
+        -----------
+        wave : u.Quantity
+            A wavelength array in a unit convertible to Angstroms
+        sn_box : u.Quantity
+            The size of the extraction box in pixels^2
+
+        Returns:
+        --------
+        thermal : u.Quantity
+            The total thermal self-emission per wavelength bin, given the spatial size of
+            the extraction box.
         """
 
         #Convert to Quantities for calculation.
@@ -124,7 +241,8 @@ class Instrument(PersistentModel):
                 'telescope.effective_diameter',  'telescope.ota_emissivity', 'configuration')
         total_qe = configuration["detector"]["total_qe"]
         pixel_scale = configuration["pixel_scale"]
-
+        configuration = self.recover('configuration')
+        temperature = configuration["detector"]["thermal"]
 
         h = const.h.to(u.erg * u.s) # Planck's constant erg s
         c = const.c.to(u.cm / u.s) # speed of light [cm / s]
@@ -133,18 +251,13 @@ class Instrument(PersistentModel):
 
         D = diameter.to(u.cm) # telescope diameter in cm
 
-        
-
-        pephot = self._planck(wave) / energy_per_photon
-
         if verbose:
             print('Planck spectrum: {}'.format(self.nice_print(self.planck(wave))))
             print('Planck / E_phot: {}'.format(self.nice_print(pephot)))
             print('E_phot: {}'.format(self.nice_print(energy_per_photon)))
             #print('Omega: {}'.format(self.nice_print(Omega)))
 
-        thermal = (ota_emissivity[0] * self._planck(wave) / energy_per_photon *
-    			(np.pi / 4. * D**2 * u.AA**-1))
+        omega = np.pi * focal_length**2 * u.sr
 
         # omega is the size of the extraction box in steradians
         Omega = (pixel_scale**2 * sn_box).to(u.sr)
@@ -154,7 +267,7 @@ class Instrument(PersistentModel):
 
         return thermal
 
-    def _planck(self, wave):
+    def _planck(self, wave: u.Quantity) -> u.Quantity:
         """
         Planck spectrum for the various wave bands.
         """
@@ -179,13 +292,45 @@ class Instrument(PersistentModel):
         return result
 
 
-    def add_exposure(self, exposure):
+    def add_exposure(self, exposure: SourceExposure):
+        """
+        Connect a predefined SourceExposure to this Instrument.
+
+        Parameters
+        ----------
+        exposure : SourceExposure
+            A SourceExposure that will do calculations.
+        """
         self.exposures.append(exposure)
         exposure.instrument = self
         exposure.telescope = self.telescope
         exposure.calculate()
 
-    def set_from_hwome(self, channelname, ins_type):
+    def set_from_hwome(self, channelname: str, ins_type: str):
+        """
+        Load instrument configuration from HWOME.
+
+        This function is not to be run directly; it should only be run by the
+        Telescope.set_from_hwome() method, which will have loaded the full telescope
+        definitions.
+
+        Parameters
+        ----------
+        channelname : str
+            The name of the channel (e.g. HRI_S.HRI_S_NIR_Imager) to be loaded
+        ins_type : str
+            The type of instrument-channel being loaded: imager, spectrograph, mos, ifs,
+            polarimeter.
+
+        Raises
+        ------
+        ValueError
+            If the instrument name is not valid or not recognized
+        KeyError
+            If the instrument name is not valid or not recognized
+        KeyError
+            If the channel name is not recognized.
+        """
         self.configuration = {}
         try:
             instrument, channel = channelname.split(".")
@@ -235,16 +380,28 @@ class Instrument(PersistentModel):
             thru = self.telescope.hwo_data.OpticalPath.select(instrument=instrument, channel=channel, filter = filter_name).throughput(include_detector=False)
             # then we multiply all of them together
             total_throughput = np.prod(thru.q, axis=0)
+            # now filter to just the bandpass (prevent light leaks)
+            good = np.where(total_throughput > np.max(total_throughput) * 1e-4)[0]
+            lower = np.min(good)
+            upper = np.max(good)
+            # throw that out and pull in a few pixels on either side as a taper
+            good = np.arange(np.max((lower-4, 0)), np.min((upper+4, len(total_throughput))), 1)
+            wave = thru.w[good]
+            total_thru = total_throughput[good]
+            # manually taper
+            total_thru[0] = 0
+            total_thru[-1] = 0
 
             # and store for later retrieval
-            band = self.load_throughput(thru.w, total_throughput)
+            band = self.load_throughput(wave, total_thru)
             wavemin = band.avgwave() - band.rectwidth()/2
             wavemax = band.avgwave() + band.rectwidth()/2
-            self.configuration["bands"][fancy_name] = {"internal_name": filter_name, "bandpass": band, "original_wave": thru.w, "original_thru": total_throughput, "effective_wavelength": band.avgwave(), 
+            self.configuration["bands"][fancy_name] = {"internal_name": filter_name, "bandpass": band, "original_wave": wave, "original_thru": total_thru, "effective_wavelength": band.avgwave(), 
                                                     "wave_min": wavemin, "bandwidth": band.equivwidth(), "wave_max": wavemax, "optics": len(thru.value.keys())}
             if kind in ("disperser"):
-                grating_resolution = channel_data[filter_name].Grating.spectral_resolution.q
-                self.configuration["bands"][fancy_name]["resolution"] = float(grating_resolution)
+                print(channel_data[filter_name].Grating.spectral_resolution.value, type(channel_data[filter_name].Grating.spectral_resolution.value))
+                grating_resolution = channel_data[filter_name].Grating.spectral_resolution
+                self.configuration["bands"][fancy_name]["resolution"] = grating_resolution
             self.configuration["bands"][fancy_name]["kind"] = kind
         # temporary deprecated name to maintain old software.
         # To be removed in SYOTools 1.5
@@ -282,12 +439,17 @@ class Instrument(PersistentModel):
         except KeyError:
             pass
 
-    def load_throughput(self, wave, thru):
+    def load_throughput(self, wave: u.Quantity, thru: u.Quantity) -> syn.spectrum.SpectralElement:
         return syn.spectrum.SpectralElement(Empirical1D, points=wave, lookup_table=thru)
 
-    def load_from_dict(self, config):
+    def load_from_dict(self, config: dict):
         """
         Restore an instrument from a stored dictionary
+
+        Parameters
+        ----------
+        config : dict
+            A saved configuration dictionary
         """
         config = complexify_data(config)
 
@@ -304,7 +466,7 @@ class Instrument(PersistentModel):
 
         self.configuration = config
 
-    def save_to_dict(self):
+    def save_to_dict(self) -> dict:
         """
         Save an instrument to a dictionary - scrub the Synphot objects so we don't have to flatten them
 

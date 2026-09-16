@@ -135,7 +135,7 @@ class Camera(Instrument):
 
     #     return abzp# << abunit
 
-    def extraction_mask(self, x, y, band):
+    def extraction_mask(self, x, y, band, xsamp, ysamp, extraction_aperture):
         """
         Draw an extraction mask.
         For cameras, this is circular
@@ -145,9 +145,13 @@ class Camera(Instrument):
         mask : np.ndarray
             a 2D mask that draws the extraction aperture
         """
-        wave = band["effective_wavelength"]
-        radius = 3 * self.fwhm_psf(wave).to_value(u.arcsec)
-        #print(radius)
+        if extraction_aperture is None or np.isclose(extraction_aperture, 0*u.pix**2):
+            wave = band["effective_wavelength"]
+            radius = 3 * self.fwhm_psf(wave).to_value(u.arcsec)
+        else:
+            # we have a number of pixels, we need to translate that to
+            # sky area (arcsec^2), so multiply by the sampling size to 
+            radius = np.sqrt((extraction_aperture*xsamp*ysamp)/np.pi)
 
         mask = circular_overlap_grid(np.min(x), np.max(x), np.min(y), np.max(y), x.shape[1], y.shape[0], radius, 1, 1)
 
@@ -212,7 +216,7 @@ class Camera(Instrument):
 
     def transform_flux(self, spectrum, wave):
         effective_area = self.recover("telescope.effective_area")
-        return spectrum.countrate(effective_area)
+        return spectrum.countrate(effective_area.to(u.cm**2))
 
     def set_to_dict(self, config):
         self.configuration = config

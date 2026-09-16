@@ -86,7 +86,7 @@ def camera_exptime(telescope, template, magnitude, snr, silent=False):
 	
 	3 - magnitude = V magnitude to normalize the template spectrum, a float.
 	
-	4 - snr = desired SNR, per pixel, for each band
+	4 - snr = desired SNR for each band
 	
 	outputs are dicts of the snrs, and of the instrument objects, keyed by the 
     filter name
@@ -150,7 +150,7 @@ def camera_magnitude(telescope, template, snr, exptime, silent=False):
 	    1068', 'Galaxy with f_esc, HI=1, HeI=1', 'Galaxy with f_esc, HI=0.001, HeI=1',
 	    'Blackbody5000', 'Blackbody100000' 
 
-	3 - snr = desired SNR, per pixel, for each band
+	3 - snr = desired SNR for each band
 
 	4 - exptime = desired exptime in hours 
 	

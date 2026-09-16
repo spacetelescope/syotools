@@ -4,6 +4,7 @@ Created on Sat Oct 15 16:56:40 2016
 
 @author: gkanarek, tumlinson
 """
+import warnings
 from functools import cached_property
 import numpy as np
 import astropy.units as u
@@ -113,7 +114,7 @@ class MultiSpec(Spectrograph):
         R = R << u.pix # HWOME's definition is unitless
         return wave / R
 
-    def extraction_mask(self, x, y, band):
+    def extraction_mask(self, x, y, band, xsamp, ysamp, extraction_area):
         """
         Draw an extraction mask.
         For IFUs, this is a spaxel-wide slit
@@ -126,9 +127,15 @@ class MultiSpec(Spectrograph):
         """
         wave = band["effective_wavelength"]
         if "image_slicer" in self.configuration:
-            height = 3 * self.fwhm_psf(wave).to_value(u.arcsec)
-            width = self.configuration["image_slicer"]["spaxel_angle"].to_value(u.arcsec)
+            if extraction_aperture is None or np.isclose(extraction_aperture, 0*u.pix**2):
+                height = 3 * self.fwhm_psf(wave).to_value(u.arcsec)
+                width = self.configuration["image_slicer"]["spaxel_angle"].to_value(u.arcsec)
+            else:
+                width = self.configuration["image_slicer"]["spaxel_angle"].to_value(u.arcsec)
+                height = extraction_area / (self.configuration["image_slicer"]["spaxel_angle"]/xsamp) * ysamp
         elif "microshutter" in self.configuration:
+            if extraction_aperture not None or extraction_aperture > 0*u.pix**2:
+                warnings.warn("Ignoring extraction aperture size for microshutter array")
             height = self.configuration["microshutter"]["microshutter_height"].to_value(u.arcsec)
             width = self.configuration["microshutter"]["microshutter_width"].to_value(u.arcsec)
         else:

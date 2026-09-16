@@ -117,7 +117,7 @@ class Spectrograph(Instrument):
         R = R << u.pix # HWOME's definition is unitless
         return wave / R
 
-    def extraction_mask(self, x, y, band):
+    def extraction_mask(self, x, y, band, xsamp, ysamp, extraction_area):
         """
         Draw an extraction mask.
         The default height is 3x the PSF size
@@ -128,10 +128,16 @@ class Spectrograph(Instrument):
         mask : np.ndarray
             a 2D mask that draws the extraction aperture
         """
-        wave = band["effective_wavelength"]
-        height = 3 * self.fwhm_psf(wave).to_value(u.arcsec)
-        width = (self.configuration["pixel_scale"] * 2 * u.pix).to_value(u.arcsec)
-        
+        # if the extraction_aperture is defined:
+        if extraction_aperture is None or np.isclose(extraction_aperture, 0*u.pix**2):
+            wave = band["effective_wavelength"]
+            height = 3 * self.fwhm_psf(wave).to_value(u.arcsec)
+            width = (xamp * 2 * u.pix).to_value(u.arcsec)
+        else:
+            # We assume it's 2 pixels wide by N pixels high
+            width = (xsamp * 2 * u.pix).to_value(u.arcsec)
+            height = (ysamp * (extraction_aperture/ (2 * u.pix))).to_value(u.arcsec)
+
         mask = rectangular_overlap_grid(np.min(x), np.max(x), np.min(y), np.max(y), x.shape[1], y.shape[0], width, height, 0, 0, 2)
 
         return mask

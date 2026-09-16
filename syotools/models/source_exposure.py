@@ -5,6 +5,7 @@ Created on Mon Oct 30 12:31:11 2017
 @author: gkanarek, jt
 """
 import copy
+from typing import Any
 import numpy as np
 
 import astropy.units as u
@@ -69,10 +70,11 @@ class SourceExposure(PersistentModel):
         self._snr = np.zeros(1, dtype=float)
         self.wave = [np.zeros(1, dtype=float) * u.AA]
         self._magnitude = np.zeros(1, dtype=float) * u.ABmag
+        self._extraction_aperture = 0. * u.pix**2
         self._unknown = "" # one of 'snr', 'magnitude', 'exptime'
         self._interp_flux = np.zeros(1, dtype=float) * u.dimensionless_unscaled # the source SED interpolated to the Spectrograph wavelength grid
 
-        self.verbose = False # set this to True for debugging purposes
+        self.verbose = True # set this to True for debugging purposes
         self._disable = True #set this to disable recalculating (when updating several attributes at the same time)
         #super().__init__(default_model, **kw)
 
@@ -100,9 +102,22 @@ class SourceExposure(PersistentModel):
         else:
             raise KeyError(f"Cannot solve for {new_unknown}, unrecognized unknown.")
 
-    def _ensure_array(self, quant, nb=None):
+    def _ensure_array(self, quant: u.Quantity, nb=None) -> u.Quantity:
         """
         Ensure that the given Quantity is an array, propagating if necessary.
+
+        Parameters:
+        -----------
+        quant : u.Quantity
+            a parameter that needs to be an array of the proper length
+        nb : int, optional
+            the number of bands long that the array needs to be. Otherwise
+            instrument.n_bands is used.
+
+        Returns:
+        --------
+        q : u.Quantity
+            a Quantity array of the proper length
         """
         if self.instrument is None:
             nb = 1
@@ -128,10 +143,16 @@ class SourceExposure(PersistentModel):
 
         return q
 
-    def _ensure_quantity(self, quant, unit, nb=None):
+    def _ensure_quantity(self, quant: Any, unit: u.Unit, nb: int=None) -> u.Quantity:
         """
-        Ensure given quantity is an astropy unit.Quantity
-        of appropriate type
+        Ensure given quantity is an astropy unit.Quantity of appropriate type
+
+        Parameters:
+        -----------
+        quant : int, float, np.ndarray, u.Quantity
+            An input value that needs to be a Quantity
+        unit : u.Unit
+            The unit that the quant is expected to be
         """
         if isinstance(quant, u.Quantity):
             # just see if this crashes.
@@ -145,7 +166,7 @@ class SourceExposure(PersistentModel):
         return quant
 
     @property
-    def exptime(self):
+    def exptime(self) -> u.Quantity:
         return self._exptime
 
     @exptime.setter
@@ -156,7 +177,7 @@ class SourceExposure(PersistentModel):
         self.calculate()
 
     @property
-    def snr(self):
+    def snr(self) -> u.Quantity:
         return self._snr
 
     @snr.setter
@@ -167,7 +188,7 @@ class SourceExposure(PersistentModel):
         self.calculate()
 
     @property 
-    def magnitude(self):
+    def magnitude(self) -> u.Quantity:
         return self._magnitude
 
     @magnitude.setter 
@@ -177,10 +198,32 @@ class SourceExposure(PersistentModel):
         self._magnitude = self._ensure_quantity(new_magnitude, u.ABmag)
         self.calculate()
 
-    def sn_box(self, band):
+    @property
+    def extraction_aperture(self) -> u.Quantity:
+        return self._extraction_aperture
+    
+    @magnitude.setter
+    def extraction_aperture(self, new_aperture) -> u.Quantity:
+        if isinstance(new_aperture, u.Quantity):
+            try:
+                new_aperture.to(u.pix**2)
+                self._extraction_aperture = new_aperture
+            except ValueError:
+                raise ValueError("Incorrect unit!")
+        else:
+            self._extraction_aperture = new_aperture * u.pix**2
+
+        self._extraction_aperture = new_aperture
+
+    def sn_box(self, band:dict ) -> (float, u.Quantity):
         """
         Function to set the percentage of flux going through an SN box of various sizes
         Used for extended sources
+
+        Parameters
+        ----------
+        band : dict
+            A bandpass dictionary
 
         Returns
         -------
@@ -205,9 +248,11 @@ class SourceExposure(PersistentModel):
         profile = geometry_creator[shape]()
 
         # now the extraction mask
-        mask = self.instrument.extraction_mask(x,y, band)
+        self.extraction_mask = self.instrument.extraction_mask(x,y, band, xsamp, ysamp, self.extraction_aperture)
+        # save the extraction aperture size (in case it's not one someone entered)
+        self.extraction_aperture = np.sum(self.extraction_mask) * u.pix**2
 
-        return np.sum(mask*profile), np.sum(mask)* u.pix**2
+        return np.sum(mask*profile), self.extraction_aperture
 
 
     @property
@@ -220,7 +265,7 @@ class SourceExposure(PersistentModel):
         sed = self.recover('sed')
         return self.camera.interpolate_at_bands(sed)
 
-    def process_observation(self, source, band, verbose=False):
+    def process_observation(self, source: Source, band: dict, verbose: bool=False) -> (u.Quantity, u.Quantity, u.Quantity, u.Quantity, u.Quantity, u.Quantity):
         """
         Process the entire observation, up through the point we compute SNR/Exptime/Mag
         
@@ -249,9 +294,33 @@ class SourceExposure(PersistentModel):
           SourceExposure.sn_box)
         * All spatially uniform components have their flux adjusted for the number of
           pixels in the extraction box (as computed by SourceExposure.sn_box)
+
+        Parameters
+        ----------
+        source : Source
+            The source to be observed
+        band : dict
+            The bandpass dictionary describing the band to be used in the observation
+        verbose : bool, optional
+            A boolean controlling additional informative output.
+
+        Returns
+        -------
+        wave : u.Quantity
+            The wavelength array associated with this observation
+        fsource_countrate : u.Quantity
+            The source flux through the bandpass and through the SN extraction box, transformed to a countrate.
+        fsky_countrate : u.Quantity
+            The zodi background flux through the bandpass and through the SN extraction box, transformed to a countrate.
+        thermal_countrate : u.Quantity
+            The thermal self-emission registered by the detector, through the SN extraction box, transformed to a countrate.
+        dark : u.Quantity
+            The detector dark current present within the SN extraction box, transformed to a countrate.
+        read_noise : u.Quantity
+            The detector read noise present within the SN extraction box, transformed to a countrate.
         """
 
-        configuration, c_thermal, transform_flux = self.recover("instrument.configuration", "instrument._c_thermal", "instrument.transform_flux")
+        configuration, inst_thermal, transform_flux = self.recover("instrument.configuration", "instrument.inst_thermal", "instrument.transform_flux")
         pixel_scale = configuration["pixel_scale"]
         for detector in configuration["detector"]:
             dark_current = configuration["detector"]["dark_current"]
@@ -307,7 +376,7 @@ class SourceExposure(PersistentModel):
         # uniform
         # goes through the filter wheel and QE
         # accumulates over time
-        thermal = c_thermal(wave, sn_box)
+        thermal = inst_thermal(wave, sn_box)
 
 
         #flux_source_before = sc.integrate.simpson(flux_source(flux_source.waveset), flux_source.waveset)
@@ -339,11 +408,22 @@ class SourceExposure(PersistentModel):
 
         return wave, fsource_countrate, fsky_countrate, thermal_countrate, dark, read_noise
 
-    def calculate(self, custom_band=None):
+    def calculate(self, custom_band:str=None) -> bool:
         """
         Wrapper to calculate the exposure time, SNR, or limiting magnitude
         based on the other two. The "unknown" attribute controls which of these
         parameters is calculated.
+
+        Parameters
+        ----------
+        custom_band : str, optional
+            Name of a band. Defaults to None.
+
+        Returns
+        -------
+        result : bool
+            A boolean that tracks whether a calculation was actually done when
+            this method was called.
         """
         if self._disable:
             return False
@@ -355,15 +435,21 @@ class SourceExposure(PersistentModel):
 
         return result
 
-    def calculate_exptime(self, custom_band=None):
+    def calculate_exptime(self, custom_band:str=None) -> bool:
         """
         Calculate for exposure times. If a custom_band has been passed in, use that.
         Otherwise, use all the bands in the channel.
 
         Parameters
         ----------
-        custom_band : str
-            Name of a band. Defaults to none.
+        custom_band : str, optional
+            Name of a band. Defaults to None.
+
+        Returns
+        -------
+        result : bool
+            A boolean that tracks whether a calculation was actually done when
+            this method was called.
         """
         configuration, band, all_bands = self.recover("instrument.configuration", "instrument.band", "instrument.bands")
         if custom_band is not None:
@@ -389,15 +475,21 @@ class SourceExposure(PersistentModel):
 
         return True
 
-    def calculate_snr(self, custom_band=None):
+    def calculate_snr(self, custom_band:str=None) -> bool:
         """
         Calculate for SNR. If a custom_band has been passed in, use that.
         Otherwise, use all the bands in the channel.
 
         Parameters
         ----------
-        custom_band : str
-            Name of a band. Defaults to none.
+        custom_band : str, optional
+            Name of a band. Defaults to None.
+
+        Returns
+        -------
+        result : bool
+            A boolean that tracks whether a calculation was actually done when
+            this method was called.
         """
         configuration, band, all_bands = self.recover("instrument.configuration", "instrument.band", "instrument.bands")
         if custom_band is not None:
@@ -423,7 +515,7 @@ class SourceExposure(PersistentModel):
 
         return True
 
-    def calculate_magnitude(self, custom_band=None):
+    def calculate_magnitude(self, custom_band:str=None) -> bool:
         """
         Calculate for magnitudes. If a custom_band has been passed in, use that.
         Otherwise, use all the bands in the channel.
@@ -431,7 +523,13 @@ class SourceExposure(PersistentModel):
         Parameters
         ----------
         custom_band : str
-            Name of a band. Defaults to none.
+            Name of a band. Defaults to None.
+
+        Returns
+        -------
+        result : bool
+            A boolean that tracks whether a calculation was actually done when
+            this method was called.
         """
         configuration, band, all_bands = self.recover("instrument.configuration", "instrument.band", "instrument.bands")
         if custom_band is not None:
@@ -463,10 +561,24 @@ class SourceExposure(PersistentModel):
 
         return True
 
-    def _update_exptime(self, source, band):
+    def _update_exptime(self, source: Source, band: dict) -> (u.Quantity, u.Quantity):
         """
         Calculate the exposure time to achieve the desired S/N for the
         given SED.
+
+        Parameters
+        ----------
+        source : Source
+            The source to be observed
+        band : dict
+            The bandpass to be used in the observation.
+
+        Returns
+        -------
+        wave : u.Quantity
+            The wavelength array of the observation
+        exptime : u.Quantity
+            The exposure time per wavelength, in seconds
         """
         self.instrument._print_initcon(self.verbose)
 
@@ -483,20 +595,34 @@ class SourceExposure(PersistentModel):
         texp = ((-b + np.sqrt(b**2 - 4*a*c)) / (2*a)).to(u.s)
 
         if self.verbose:
+            print(f"Band name: {band['internal_name']}" )
             print("Fstar:", fsource_countrate)
             print("Texp:", texp)
-
 
         exptime = texp
 
         return wave, exptime
 
-    def _update_magnitude(self, source, band):
+    def _update_magnitude(self, source: Source, band: dict) -> (u.Quantity, u.Quantity):
         """
         Calculate the limiting magnitude given the desired S/N and exposure
         time.
         As of 2026-09-08, this does not work as reliably as it should. It still
         produces usually-decent first guesses.
+
+        Parameters
+        ----------
+        source : Source
+            The source to be observed
+        band : dict
+            The bandpass to be used in the observation.
+
+        Returns
+        -------
+        wave : u.Quantity
+            The wavelength array of the observation
+        magnitude : u.Quantity
+            The magnitude per wavelength, in ABMags
         """
         self.instrument._print_initcon(self.verbose)
 
@@ -579,11 +705,11 @@ class SourceExposure(PersistentModel):
 
         return wave, magnitude
 
-    def _do_update_magnitude(self, source, band):
+    def _do_update_magnitude(self, source: Source, band: dict) -> (u.Quantity, u.Quantity):
         """
         This stopgap calc-for-magnitude works differently: It sets up a range of magnitudes and modifies the source for each one.
 
-        This is obviously super slow, as it requires computing a grid.
+        This is obviously slow, as it requires computing a grid.
 
         Parameters
         ----------
@@ -591,6 +717,13 @@ class SourceExposure(PersistentModel):
             A configured source intended to be used in the calculation
         band : dict
             A bandpass dictionary
+
+        Returns
+        -------
+        wave : u.Quantity
+            The wavelength array of the observation
+        magnitude : u.Quantity
+            The magnitude per wavelength, in ABMags
         """
         (_snr, _exptime, _nexp) = self.recover('snr', 'exptime', 'n_exp')
 
@@ -599,7 +732,7 @@ class SourceExposure(PersistentModel):
         # make a grid of potential magnitudes covering a nice wide range
         wave, _magnitude = self._update_magnitude(source, band)
         _magnitude = _magnitude.to_value(u.ABmag)
-        for temp_magnitude in np.linspace(_magnitude+4, _magnitude-2, 15):
+        for temp_magnitude in np.linspace(_magnitude+4, _magnitude-2, 12):
             sp_norm = source.sed.normalize(temp_magnitude * u.ABmag, stsyn.spectrum.band(source.renorm_band))
             
             source.sed = sp_norm
@@ -613,9 +746,23 @@ class SourceExposure(PersistentModel):
 
         return wave, magnitude
 
-    def _update_snr(self, source, band):
+    def _update_snr(self, source: Source, band: dict) -> (u.Quantity, u.Quantity):
         """
         Calculate the SNR for the given exposure time and source SED.
+
+        Parameters
+        ----------
+        source : Source
+            A configured source intended to be used in the calculation
+        band : dict
+            A bandpass dictionary
+
+        Returns
+        -------
+        wave : u.Quantity
+            The wavelength array of the observation
+        snr : u.Quantity
+            The SNR per wavelength, dimensionless
         """
 
         self.instrument._print_initcon(self.verbose)
@@ -650,6 +797,7 @@ class SourceExposure(PersistentModel):
         snr = tsnr.value * u.dimensionless_unscaled
 
         if self.verbose:
+            print(f"Band name: {band['internal_name']}" )
             print('# of exposures: {}'.format(_nexp))
             print('Time per exposure: {}'.format(time_per_exposure))
             print('Signal counts: {}'.format(self.nice_print(signal_counts)))
@@ -678,7 +826,7 @@ class SourceSpectrographicExposure(SourceExposure):
     A subclass of the base Exposure model, for spectroscopic ETC calculations.
     """
 
-    def calculate_magnitude(self, custom_band=None):
+    def calculate_magnitude(self, custom_band: dict=None):
         """
         Not supported, make this an error
         """
@@ -701,7 +849,16 @@ class SourceMultiSpecExposure(SourceExposure):
         # Do this after, because by default super().__init__ loads a default source
         self.sources = []
 
-    def add_source(self, source):
+    def add_source(self, source: Source):
+        """
+        Add a source; for MultiSpec modes you can add more than one to a list.
+
+
+        Parameters
+        ----------
+        source : Source
+            A configured Source
+        """
         # and now the magic: create a master wavelength array from all of the sources.
         self.sources.append(source)
         for source in self.sources:
@@ -713,6 +870,14 @@ class SourceMultiSpecExposure(SourceExposure):
 
     @property
     def source(self):
+        """
+        self.source will return the last source in the list.
+
+        Returns
+        -------
+        source : Source
+            A configured Source
+        """
         return self.sources[-1]
 
     @source.setter
@@ -735,16 +900,23 @@ class SourceMultiSpecExposure(SourceExposure):
     def snrs(self, new_snr):
         print("Did not set snrs")
 
-    def calculate_exptime(self, custom_band=None):
+    def calculate_exptime(self, custom_band:str=None) -> bool:
         """
         Calculate for exposure times. If a custom_band has been passed in, use that. 
         Otherwise, use all of the bands in the channel.
 
+        This function outputs two structures: All of the bands for all of the sources,
+        and just the source with the maximum exposure time for that band.
 
         Parameters
         ----------
-        band : _type_, optional
-            _description_, by default None
+        custom_band : str, optional
+            Name of a bandpass to use in the calculation, by default None
+        
+        Returns
+        -------
+        result : bool
+            A boolean that 
         """
         configuration, band, all_bands = self.recover("instrument.configuration", "instrument.band", "instrument.bands")
         if custom_band is not None:
@@ -782,15 +954,15 @@ class SourceMultiSpecExposure(SourceExposure):
 
         return True
 
-    def calculate_snr(self, custom_band=None):
+    def calculate_snr(self, custom_band: str=None):
         """
         Calculate for SNR. If a custom_band has been passed in, use that. 
         Otherwise, use all of the bands in the channel.
 
         Parameters
         ----------
-        band : _type_, optional
-            _description_, by default None
+        custom_band : str, optional
+            Name of a bandpass, by default None
         """
         configuration, band, all_bands = self.recover("instrument.configuration", "instrument.band", "instrument.bands")
         if custom_band is not None:
@@ -833,6 +1005,14 @@ class SourceMultiSpecExposure(SourceExposure):
         Not supported, make this an error
         """
         raise ValueError("Magnitude calculation not supported for MultiSpec Spectroscopy")
+
+class SourceIFSExposure(SourceMultiSpecExposure):
+    """
+    Backwards compatibility convenience for the IFS.
+    There is no difference between that and the current SourceMultiSpecExposure
+
+    """
+    pass
 
 class SourceCoronagraphicExposure(SourceExposure):
     """
