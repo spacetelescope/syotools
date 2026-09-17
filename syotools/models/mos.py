@@ -1,3 +1,9 @@
+import warnings
+import numpy as np
+import astropy.units as u
+
+from photutils.geometry import rectangular_overlap_grid
+
 from syotools.models.multispec import MultiSpec
 from syotools.models.source_exposure import SourceMOSExposure
 
@@ -15,8 +21,9 @@ class MOS(MultiSpec):
         """
         wave = band["effective_wavelength"]
         if "microshutter" in self.configuration:
-            if extraction_aperture is not  None or extraction_aperture > 0*u.pix**2:
-                warnings.warn("Ignoring extraction aperture size for microshutter array")
+            if extraction_aperture is not None:
+                if extraction_aperture > 0 * u.arcsec:
+                    warnings.warn("Ignoring extraction aperture size for microshutter array")
             height = self.configuration["microshutter"]["microshutter_height"].to_value(u.arcsec)
             width = self.configuration["microshutter"]["microshutter_width"].to_value(u.arcsec)
         else:

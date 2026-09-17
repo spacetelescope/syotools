@@ -49,7 +49,7 @@ class Instrument(PersistentModel):
         self.bandpass_r = np.zeros(1, dtype=float) * u.dimensionless_unscaled
         self.dark_current = np.zeros(1, dtype=float) * (u.electron / u.s / u.pixel)
         #self.detector_rn = np.zeros(1, dtype=float) * (u.electron / u.pixel)**0.5
-        self.sky = syn.spectrum.SourceSpectrum(Empirical1D, points=[0.1,10000, 20000] << u.AA, lookup_table=[22,22,22] << u.ABmag) # Hardcode a 22nd magnitude background
+        self.sky = syn.spectrum.SourceSpectrum(Empirical1D, points=[0.1,10000, 20000] << u.AA, lookup_table=[24,24,24] << u.ABmag) # Hardcode a 24th magnitude background
         #super().__init__(default_camera, **kw)
 
     def diffraction_limit(self, wavelength: u.Quantity) -> u.Quantity:
@@ -218,22 +218,9 @@ class Instrument(PersistentModel):
 
         return ota_thermal
         
-    def _c_thermal(self, wave: u.Quantity, sn_box: u.Quantity, verbose=False) -> u.Quantity:
+    def _c_thermal(self, wave, sn_box, verbose=False):
         """
         Calculate the thermal emission counts for the telescope.
-
-        Parameters:
-        -----------
-        wave : u.Quantity
-            A wavelength array in a unit convertible to Angstroms
-        sn_box : u.Quantity
-            The size of the extraction box in pixels^2
-
-        Returns:
-        --------
-        thermal : u.Quantity
-            The total thermal self-emission per wavelength bin, given the spatial size of
-            the extraction box.
         """
 
         #Convert to Quantities for calculation.
@@ -241,8 +228,7 @@ class Instrument(PersistentModel):
                 'telescope.effective_diameter',  'telescope.ota_emissivity', 'configuration')
         total_qe = configuration["detector"]["total_qe"]
         pixel_scale = configuration["pixel_scale"]
-        configuration = self.recover('configuration')
-        temperature = configuration["detector"]["thermal"]
+
 
         h = const.h.to(u.erg * u.s) # Planck's constant erg s
         c = const.c.to(u.cm / u.s) # speed of light [cm / s]
@@ -251,13 +237,18 @@ class Instrument(PersistentModel):
 
         D = diameter.to(u.cm) # telescope diameter in cm
 
+        
+
+        pephot = self._planck(wave) / energy_per_photon
+
         if verbose:
             print('Planck spectrum: {}'.format(self.nice_print(self.planck(wave))))
             print('Planck / E_phot: {}'.format(self.nice_print(pephot)))
             print('E_phot: {}'.format(self.nice_print(energy_per_photon)))
             #print('Omega: {}'.format(self.nice_print(Omega)))
 
-        omega = np.pi * focal_length**2 * u.sr
+        thermal = (ota_emissivity[0] * self._planck(wave) / energy_per_photon *
+    			(np.pi / 4. * D**2 * u.AA**-1))
 
         # omega is the size of the extraction box in steradians
         Omega = (pixel_scale**2 * sn_box).to(u.sr)
@@ -399,8 +390,14 @@ class Instrument(PersistentModel):
             self.configuration["bands"][fancy_name] = {"internal_name": filter_name, "bandpass": band, "original_wave": wave, "original_thru": total_thru, "effective_wavelength": band.avgwave(), 
                                                     "wave_min": wavemin, "bandwidth": band.equivwidth(), "wave_max": wavemax, "optics": len(thru.value.keys())}
             if kind in ("disperser"):
-                print(channel_data[filter_name].Grating.spectral_resolution.value, type(channel_data[filter_name].Grating.spectral_resolution.value))
                 grating_resolution = channel_data[filter_name].Grating.spectral_resolution
+                try:
+                    grating_resolution = float(grating_resolution.q)
+                except TypeError:
+                    output_resolution = list()
+                    for resolution in grating_resolution.q:
+                        output_resolution.append(float(resolution))
+                    grating_resolution = output_resolution
                 self.configuration["bands"][fancy_name]["resolution"] = grating_resolution
             self.configuration["bands"][fancy_name]["kind"] = kind
         # temporary deprecated name to maintain old software.

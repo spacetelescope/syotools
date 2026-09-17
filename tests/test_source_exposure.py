@@ -24,6 +24,7 @@ class Mock_SourceExposure(SourceExposure):
     def __init__(self, snr=10, exptime=30, nexp=1, fsource=10, fsky=1, thermal=0, dark=0, read_noise=0):
         self.snr = snr
         self.n_exp = nexp
+        self.wave = 5000
         self.exptime = exptime
         self.fsource = fsource
         self.fsky = fsky
@@ -58,13 +59,14 @@ class Mock_SourceExposure(SourceExposure):
         self._snr = new_snr * u.dimensionless_unscaled
 
     def process_observation(self, source, band):
+        wave = self.wave * u.AA
         fsource_countrate = self.fsource * u.ct/u.s
         fsky_countrate = self.fsky * u.ct/u.s
         thermal_countrate = self.thermal * u.ct / u.s
         dark_current = self.dark * u.ct / u.s
         read_noise = self.read_noise * u.ct
 
-        return fsource_countrate, fsky_countrate, thermal_countrate, dark_current, read_noise
+        return wave, fsource_countrate, fsky_countrate, thermal_countrate, dark_current, read_noise
 
 
 

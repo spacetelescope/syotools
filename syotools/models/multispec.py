@@ -94,16 +94,12 @@ class MultiSpec(Spectrograph):
 
             self.R = self.bands[nband]["resolution"]
             self.wave = self.bands[nband]["bandpass"].waveset
-            self.sky = syn.spectrum.SourceSpectrum(Empirical1D, points=self.wave, lookup_table=np.ones_like(self.wave.value) * 24 << u.ABmag)
-            self.sky = self.sky.normalize(24 * u.ABmag, stsyn.spectrum.band("johnson,v"))
             self.aeff = self.bands[nband]["bandpass"]
             wrange = np.array((np.min(self.wave.value), np.max(self.wave.value)))
             self.wrange = wrange
         else:
             self.R = 0. * u.dimensionless_unscaled
             self.wave = np.zeros(0, dtype=float) * u.AA
-            self.sky = syn.spectrum.SourceSpectrum(Empirical1D, points=[0.1,20000] << u.AA, lookup_table=[24,24] << u.ABmag)
-            self.sky = self.sky.normalize(24 * u.ABmag, stsyn.spectrum.band("johnson,v"))
             self.aeff = np.zeros(0, dtype=float) * u.cm**2
             self.wrange = np.zeros(2, dtype=float) * u.AA
             self._band = None
@@ -125,16 +121,17 @@ class MultiSpec(Spectrograph):
         mask : np.ndarray
             a 2D mask that draws the extraction aperture
         """
+        warnings.warn("Direct use of MultiSpec is deprecated and will be removed in a future version of SYOTools", DeprecationWarning)
         wave = band["effective_wavelength"]
         if "image_slicer" in self.configuration:
-            if extraction_aperture is None or np.isclose(extraction_aperture, 0*u.pix**2):
+            if extraction_aperture is None or np.isclose(extraction_aperture, 0*u.arcsec):
                 height = 3 * self.fwhm_psf(wave).to_value(u.arcsec)
                 width = self.configuration["image_slicer"]["spaxel_angle"].to_value(u.arcsec)
             else:
                 width = self.configuration["image_slicer"]["spaxel_angle"].to_value(u.arcsec)
-                height = extraction_aperture.to_value(u.arcsec) * 2
+                height = extraction_aperture.to_value(u.arcsec) * 2 # because it's a half-height
         elif "microshutter" in self.configuration:
-            if extraction_aperture is not None or extraction_aperture > 0*u.pix**2:
+            if extraction_aperture is not None or extraction_aperture > 0*u.arcsec:
                 warnings.warn("Ignoring extraction aperture size for microshutter array")
             height = self.configuration["microshutter"]["microshutter_height"].to_value(u.arcsec)
             width = self.configuration["microshutter"]["microshutter_width"].to_value(u.arcsec)

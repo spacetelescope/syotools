@@ -93,7 +93,7 @@ def test_save_instrument(verbose=False):
     pixel_scale_1 = instrument.configuration["pixel_scale"]
     mask, sn_box = exposure.sn_box(instrument.bands[instrument.band])
 
-    thermal_1 = instrument._c_thermal(wavelength, sn_box)
+    thermal_1 = instrument.inst_thermal(wavelength, sn_box)
 
     # Now let's dump it, and then blank it out.
     config = copy.deepcopy(instrument.save_to_dict())
@@ -109,12 +109,12 @@ def test_save_instrument(verbose=False):
     pixel_scale_2 = instrument.configuration["pixel_scale"]
 
     mask, sn_box = exposure.sn_box(instrument.bands[instrument.band])
-    thermal_2 = instrument._c_thermal(wavelength, sn_box)
+    thermal_2 = instrument.inst_thermal(wavelength, sn_box)
 
     # try putting the pixel scale back (and make sure thermal_3 matches thermal_1)
     instrument.configuration["pixel_scale"] = pixel_scale_1
     
-    thermal_3 = instrument._c_thermal(wavelength, sn_box)
+    thermal_3 = instrument.inst_thermal(wavelength, sn_box)
 
     if verbose:
         print("Save and Load an Instrument")

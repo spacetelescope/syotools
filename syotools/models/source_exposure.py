@@ -74,7 +74,7 @@ class SourceExposure(PersistentModel):
         self._unknown = "" # one of 'snr', 'magnitude', 'exptime'
         self._interp_flux = np.zeros(1, dtype=float) * u.dimensionless_unscaled # the source SED interpolated to the Spectrograph wavelength grid
 
-        self.verbose = True # set this to True for debugging purposes
+        self.verbose = False # set this to True for debugging purposes
         self._disable = True #set this to disable recalculating (when updating several attributes at the same time)
         #super().__init__(default_model, **kw)
 
@@ -203,7 +203,7 @@ class SourceExposure(PersistentModel):
         return self._extraction_aperture
     
     @extraction_aperture.setter
-    def extraction_pixels(self, new_aperture) -> u.Quantity:
+    def extraction_aperture(self, new_aperture) -> u.Quantity:
         if isinstance(new_aperture, u.Quantity):
             try:
                 new_aperture.to(u.arcsec)
@@ -248,7 +248,7 @@ class SourceExposure(PersistentModel):
         profile = geometry_creator[shape]()
 
         # now the extraction mask
-        self.extraction_mask, height = self.instrument.extraction_mask(x, y, band, xsamp, ysamp, self.extraction_aperture)
+        self.extraction_mask, self.height = self.instrument.extraction_mask(x, y, band, xsamp, ysamp, self.extraction_aperture)
   
         mask_area = np.sum(self.extraction_mask) * u.pix**2
 
@@ -331,6 +331,9 @@ class SourceExposure(PersistentModel):
             R = band["resolution"]
             waveunit = band["bandpass"].waveset.unit
             wavepix = np.linspace(band["bandpass"].waveset[0], band["bandpass"].waveset[-1], 1000) # using the bandpass wavelengths leads to weird fringing
+            if isinstance(R, list):
+                resolution = np.interp(wavepix, [band["bandpass"].waveset[0], band["bandpass"].waveset[-1]], R)
+                R = resolution
             delta_lambda = wavepix/R
             pixel = np.cumsum(1.0 / delta_lambda * np.gradient(wavepix))
             pixel_integer = np.arange(int(pixel[0]), int(pixel[-1]))

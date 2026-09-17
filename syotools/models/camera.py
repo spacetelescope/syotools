@@ -145,14 +145,11 @@ class Camera(Instrument):
         mask : np.ndarray
             a 2D mask that draws the extraction aperture
         """
-        print("Extraction", extraction_aperture)
-        if extraction_aperture is None or np.isclose(extraction_aperture, 0*u.pix**2):
+        if extraction_aperture is None or np.isclose(extraction_aperture, 0*u.arcsec):
             wave = band["effective_wavelength"]
             radius = 3 * self.fwhm_psf(wave).to_value(u.arcsec)
-            print("mask", radius)
         else:
             radius = extraction_aperture.to_value(u.arcsec)
-            print("Aperturesize", radius)
 
         mask = circular_overlap_grid(np.min(x), np.max(x), np.min(y), np.max(y), x.shape[1], y.shape[0], radius, 1, 1)
 

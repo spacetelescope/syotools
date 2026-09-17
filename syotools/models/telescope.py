@@ -113,7 +113,13 @@ class Telescope(PersistentModel):
                 except (KeyError, TypeError):
                     modenames = [f"{instrument.name.value}.HRI_A_VIS"]
                 for modename in modenames:
-                    if "IFU" in modename.upper() or "IFS" in modename.upper():
+                    if "PSS" in modename.upper(): # Catch the UV MOS echelle, which is not a MOS
+                        tel_instrument = Spectrograph(self)
+                        tel_instrument.set_from_hwome(modename, "spectrograph")
+                        if tel_instrument.configuration["channel_filters"] != []:
+                            self.instruments[f"{modename}_Spectrograph"] = tel_instrument
+                            self.telescope_bands[f"{modename}_Spectrograph"] = tel_instrument.bands
+                    elif "IFU" in modename.upper() or "IFS" in modename.upper():
                         tel_instrument = IFS(self)
                         tel_instrument.set_from_hwome(modename, "ifs")
                         if tel_instrument.configuration["channel_filters"] != []:
@@ -146,7 +152,7 @@ class Telescope(PersistentModel):
         self.effective_area = self.hwo_data.OTA.inscribed_aperture_area.q
 
         self.focal_length = self.hwo_data.OTA.focal_length.q
-        print(self.hwo_data.OTA.temperature, self.hwo_data.OTA.temperature.keys())
+        # for now, save the primary mirror temperature
         self.ota_temperature = self.hwo_data.OTA.temperature["OTA.OTA_M1"].q
 
     def save_to_dict(self):
@@ -205,9 +211,9 @@ class Telescope(PersistentModel):
             elif config[instrument]["ins_type"] == "spectrograph":
                 inst = Spectrograph(self)
             elif config[instrument]["ins_type"] == "ifs":
-                inst = MultiSpec(self)
+                inst = IFS(self)
             elif config[instrument]["ins_type"] == "mos":
-                inst = MultiSpec(self)
+                inst = MOS(self)
             inst.load_from_dictionary(config[instrument])
             self.instruments[instrument] = inst
 

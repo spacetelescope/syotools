@@ -95,17 +95,11 @@ class Spectrograph(Instrument):
             self._band = nband
 
             self.R = self.bands[nband]["resolution"]
-            self.wave = self.bands[nband]["bandpass"].waveset
-            self.sky = syn.spectrum.SourceSpectrum(Empirical1D, points=self.wave, lookup_table=np.ones_like(self.wave.value) * 24 << u.ABmag)
-            self.sky = self.sky.normalize(24 * u.ABmag, stsyn.spectrum.band("johnson,v"))
             self.aeff = self.bands[nband]["bandpass"]
             wrange = np.array((np.min(self.wave.value), np.max(self.wave.value)))
             self.wrange = wrange
         else:
             self.R = 0. * u.dimensionless_unscaled
-            self.wave = np.zeros(0, dtype=float) * u.AA
-            self.sky = syn.spectrum.SourceSpectrum(Empirical1D, points=[0.1,20000] << u.AA, lookup_table=[24,24] << u.ABmag)
-            self.sky = self.sky.normalize(24 * u.ABmag, stsyn.spectrum.band("johnson,v"))
             self.aeff = np.zeros(0, dtype=float) * u.cm**2
             self.wrange = np.zeros(2, dtype=float) * u.AA
             self._band = None
@@ -128,15 +122,16 @@ class Spectrograph(Instrument):
         mask : np.ndarray
             a 2D mask that draws the extraction aperture
         """
+        xsamp = xsamp * u.arcsec/u.pix
         # if the extraction_aperture is defined:
-        if extraction_aperture is None or np.isclose(extraction_aperture, 0*u.pix**2):
+        if extraction_aperture is None or np.isclose(extraction_aperture, 0*u.arcsec):
             wave = band["effective_wavelength"]
             height = 3 * self.fwhm_psf(wave).to_value(u.arcsec)
-            width = (xamp * 2 * u.pix).to_value(u.arcsec)
+            width = (xsamp * 2 * u.pix).to_value(u.arcsec)
         else:
             # We assume it's 2 pixels wide by N pixels high
             width = (xsamp * 2 * u.pix).to_value(u.arcsec)
-            height = extraction_aperture.to_value(u.arcsec) * 2
+            height = extraction_aperture.to_value(u.arcsec) * 2 # because it's a half-height
 
         mask = rectangular_overlap_grid(np.min(x), np.max(x), np.min(y), np.max(y), x.shape[1], y.shape[0], width, height, 0, 0, 2)
 
