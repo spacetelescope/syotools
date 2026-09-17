@@ -55,7 +55,7 @@ class Instrument(PersistentModel):
     def diffraction_limit(self, wavelength: u.Quantity) -> u.Quantity:
         """
         Calculate the diffraction limit for a given wavelength. This calculation uses only
-        the mirror diameter with an assumption of effevctively infinite distance to the
+        the mirror diameter with an assumption of effectively infinite distance to the
         pupil.
 
         Parameters:
