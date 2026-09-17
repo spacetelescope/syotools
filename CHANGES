@@ -16,6 +16,9 @@
       of the extraction box. If it's a MOS, it's ignored in favor
       of the microshutter size. If unset, None, or 0, it defaults 
       to the previous aperture behavior.
+    - The number of iterations in SouceExposure_do_update_magnitude
+      has been decreased from 15 to 12, in the hopes of not 
+      triggering the recursion threshold for some users.
     - Several docstrings
     - The new FUV_MOS echelle is NOT working yet.
 1.4.5
