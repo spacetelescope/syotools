@@ -16,6 +16,7 @@
       of the extraction box. If it's a MOS, it's ignored in favor
       of the microshutter size. If unset, None, or 0, it defaults 
       to the previous aperture behavior.
+    - Several docstrings
     - The new FUV_MOS echelle is NOT working yet.
 1.4.5
     - Fixed a bug in SourceExposure._do_update_magnitude() that stopped 

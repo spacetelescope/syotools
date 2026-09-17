@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "syotools"
-version = "1.4.5"
+version = "1.4.6"
 description = "Science Yield Optimization Tools (SYOTools)"
 authors = [
     {name = "Jason Tumlinson, STScI", email = "tumlinson@stsci.edu"},
@@ -21,7 +21,7 @@ classifiers = [
 ]
 dependencies = [
     "astropy>6",
-    "hwome-core @ git+ssh://git@github.com/HWO-Project/hwome-core@5b3ef3860c38feb38b36796c3f6fc3fed878cd3c",
+    "hwome-core @ git+ssh://git@github.com/HWO-Project/hwome-core@0b2fb33bc196ea2ae767f13637583b1a2db62504",
     "synphot",
     "stsynphot",
     "numpy",
