@@ -7,6 +7,7 @@ Created on Tue Nov  7 15:04:24 2017
 """
 import os
 import math
+import warnings
 from pathlib import Path
 
 import yaml
@@ -15,6 +16,7 @@ import astropy.units as u
 import synphot as syn
 import stsynphot as stsyn
 import astropy.io.ascii as asc
+from astropy.utils.exceptions import AstropyUserWarning
 
 #Define a new unit for spectral flux density
 flambda = u.def_unit(["flambda","flam"], (u.photon / u.s / u.cm**2 / u.nm))
@@ -57,8 +59,13 @@ def load_txtfile(spec):
         path = path / f
     abspath = str(path.resolve())
 
-    sp = syn.spectrum.SourceSpectrum.from_file(abspath)
-    sp = sp.normalize(30.0 * u.ABmag, stsyn.band(band))
+    with warnings.catch_warnings():
+        warnings.filterwarnings(
+            'ignore', message=r'.*contained negative flux or throughput.*',
+            category=AstropyUserWarning)
+
+        sp = syn.spectrum.SourceSpectrum.from_file(abspath)
+        sp = sp.normalize(30.0 * u.ABmag, stsyn.band(band))
     sp.__setattr__('band', band)
     return sp 
 
@@ -72,9 +79,15 @@ def load_fesc(spec):
         path = path / f
     abspath = str(path.resolve())
     tab = asc.read(abspath)
-    sp = syn.spectrum.SourceSpectrum(syn.models.Empirical1D, points=tab['lam'], lookup_table=tab['lh1=17.5'])
 
-    sp = sp.normalize(30. * u.ABmag, stsyn.band(band))
+    with warnings.catch_warnings():
+        warnings.filterwarnings(
+            'ignore', message=r'.*contained negative flux or throughput.*',
+            category=AstropyUserWarning)
+
+        sp = syn.spectrum.SourceSpectrum(syn.models.Empirical1D, points=tab['lam'], lookup_table=tab['lh1=17.5'])
+
+        sp = sp.normalize(30. * u.ABmag, stsyn.band(band))
     sp.__setattr__('band', band)
     return sp
 
@@ -86,8 +99,13 @@ def load_synfits(spec):
     for f in fname[1:]:
         path = path / f
     abspath = str(path.resolve())
-    sp = syn.spectrum.SourceSpectrum.from_file(abspath)
-    sp = sp.normalize(30.*u.ABmag, stsyn.band(band))
+    with warnings.catch_warnings():
+        warnings.filterwarnings(
+            'ignore', message=r'.*contained negative flux or throughput.*',
+            category=AstropyUserWarning)
+
+        sp = syn.spectrum.SourceSpectrum.from_file(abspath)
+        sp = sp.normalize(30.*u.ABmag, stsyn.band(band))
     sp.__setattr__('band', band)
     return sp
 
