@@ -24,6 +24,7 @@ class Mock_SourceExposure(SourceExposure):
     def __init__(self, snr=10, exptime=30, nexp=1, fsource=10, fsky=1, thermal=0, dark=0, read_noise=0):
         self.snr = snr
         self.n_exp = nexp
+        self.wave = 5000
         self.exptime = exptime
         self.fsource = fsource
         self.fsky = fsky
@@ -58,13 +59,14 @@ class Mock_SourceExposure(SourceExposure):
         self._snr = new_snr * u.dimensionless_unscaled
 
     def process_observation(self, source, band):
+        wave = self.wave * u.AA
         fsource_countrate = self.fsource * u.ct/u.s
         fsky_countrate = self.fsky * u.ct/u.s
         thermal_countrate = self.thermal * u.ct / u.s
         dark_current = self.dark * u.ct / u.s
         read_noise = self.read_noise * u.ct
 
-        return fsource_countrate, fsky_countrate, thermal_countrate, dark_current, read_noise
+        return wave, fsource_countrate, fsky_countrate, thermal_countrate, dark_current, read_noise
 
 
 
@@ -74,10 +76,10 @@ class Mock_SourceExposure(SourceExposure):
 
 def test_exptime(verbose=False):
     source_exposure = Mock_SourceExposure(snr=10)
-    exptime_1 = source_exposure._update_exptime(None, None)
+    wave, exptime_1 = source_exposure._update_exptime(None, None)
 
     source_exposure.snr = 20
-    exptime_2 = source_exposure._update_exptime(None, None)
+    wave, exptime_2 = source_exposure._update_exptime(None, None)
 
     if verbose:
         print("Exptime SNR=10:", exptime_1)
@@ -90,10 +92,10 @@ def test_exptime(verbose=False):
 def test_snr(verbose=False):
     exptime = 1
     source_exposure = Mock_SourceExposure(exptime=exptime)
-    snr_1 = source_exposure._update_snr(None, None)
+    wave, snr_1 = source_exposure._update_snr(None, None)
 
     source_exposure.exptime = 2
-    snr_2 = source_exposure._update_snr(None, None)
+    wave, snr_2 = source_exposure._update_snr(None, None)
 
     if verbose:
         print("SNR Exptime=1:", snr_1)
@@ -106,10 +108,10 @@ def test_snr(verbose=False):
 def test_snr_exptime(verbose=False):
     exptime_1 = 30 * u.s
     source_exposure = Mock_SourceExposure(exptime=exptime_1.value)
-    snr_1 = source_exposure._update_snr(None, None)
+    wave, snr_1 = source_exposure._update_snr(None, None)
 
     source_exposure.snr = snr_1
-    exptime_2 = source_exposure._update_exptime(None, None)
+    wave, exptime_2 = source_exposure._update_exptime(None, None)
 
     if verbose:
         print("Initial Exptime:", exptime_1)
@@ -123,10 +125,10 @@ def test_snr_exptime2(verbose=False):
     # This is a separate test to ensure conversions are being done correctly
     exptime_1 = 2.0 * u.h
     source_exposure = Mock_SourceExposure(exptime=exptime_1)
-    snr_1 = source_exposure._update_snr(None, None)
+    wave, snr_1 = source_exposure._update_snr(None, None)
 
     source_exposure.snr = snr_1
-    exptime_2 = source_exposure._update_exptime(None, None)
+    wave, exptime_2 = source_exposure._update_exptime(None, None)
 
     if verbose:
         print("Initial Exptime:", exptime_1)
@@ -140,10 +142,10 @@ def test_flux_snr(verbose=False):
     fsource = 10.0
     fsky = 0
     source_exposure = Mock_SourceExposure(fsource = fsource, fsky= fsky)
-    snr_1 = source_exposure._update_snr(None, None)
+    wave, snr_1 = source_exposure._update_snr(None, None)
 
     source_exposure.fsource = 20.0
-    snr_2 = source_exposure._update_snr(None, None)
+    wave, snr_2 = source_exposure._update_snr(None, None)
 
     if verbose:
         print("SNR Exptime=1:", snr_1)
@@ -160,10 +162,10 @@ def test_mag(verbose=False):
     snr = 10
     fsky = 0
     source_exposure = Mock_SourceExposure(snr=snr, fsky=fsky)
-    mag_1 = source_exposure._update_magnitude(None, band)
+    wave, mag_1 = source_exposure._do_update_magnitude(None, band)
 
     source_exposure.snr = 100
-    mag_2 = source_exposure._update_magnitude(None, band)
+    wave, mag_2 = source_exposure._do_update_magnitude(None, band)
 
     if verbose:
         print("Mag SNR=10:", mag_1)

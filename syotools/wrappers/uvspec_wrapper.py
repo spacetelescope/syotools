@@ -126,7 +126,7 @@ def uvspec_exptime(telescope, band, template, fuvmag, snr, silent=False):
 
     4 - fuvmag = FUV magnitude to normalize the template spectrum, a float.
 
-    5 - snr = desired SNR, per pixel
+    5 - snr = desired SNR per pixel
 
     outputs are two arrays of floats for wavelength and snr, and the Spectrograph
         object in case it is needed by other code.

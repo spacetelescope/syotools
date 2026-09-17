@@ -7,7 +7,7 @@ import numpy as np
 import astropy.units as u
 
 from syotools.spectra.spec_defaults import syn_spectra_library
-from syotools.models import Camera, Spectrograph, MultiSpec, Telescope, Source, SourcePhotometricExposure, SourceSpectrographicExposure, SourceMultiSpecExposure
+from syotools.models import Camera, Spectrograph, IFS, MOS, Telescope, Source, SourcePhotometricExposure, SourceSpectrographicExposure, SourceIFSExposure, SourceMOSExposure
 from syotools.utils.yaml_utils import read_yaml, write_yaml
 
 def _do_calculation(tel, inst, exp, band=None, source=None, snr=10.0, exptime=100, bandpass=None, target="magnitude", verbose=False):
@@ -20,7 +20,7 @@ def _do_calculation(tel, inst, exp, band=None, source=None, snr=10.0, exptime=10
         inst.band = band
 
     if target == "magnitude":
-        if isinstance(inst, (Spectrograph, MultiSpec)):
+        if isinstance(inst, (Spectrograph, IFS, MOS)):
             raise NotImplementedError("Spectrographs cannot currently solve for limiting magnitude")
         
         inst.add_exposure(exp)

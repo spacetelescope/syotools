@@ -135,7 +135,7 @@ class Camera(Instrument):
 
     #     return abzp# << abunit
 
-    def extraction_mask(self, x, y, band):
+    def extraction_mask(self, x, y, band, xsamp, ysamp, extraction_aperture):
         """
         Draw an extraction mask.
         For cameras, this is circular
@@ -145,13 +145,15 @@ class Camera(Instrument):
         mask : np.ndarray
             a 2D mask that draws the extraction aperture
         """
-        wave = band["effective_wavelength"]
-        radius = 3 * self.fwhm_psf(wave).to_value(u.arcsec)
-        #print(radius)
+        if extraction_aperture is None or np.isclose(extraction_aperture, 0*u.arcsec):
+            wave = band["effective_wavelength"]
+            radius = 3 * self.fwhm_psf(wave).to_value(u.arcsec)
+        else:
+            radius = extraction_aperture.to_value(u.arcsec)
 
         mask = circular_overlap_grid(np.min(x), np.max(x), np.min(y), np.max(y), x.shape[1], y.shape[0], radius, 1, 1)
 
-        return mask
+        return mask, radius
 
 
     def _sn_box(self, wave, verbose):
@@ -204,15 +206,9 @@ class Camera(Instrument):
         self.add_exposure(new_exposure)
         return new_exposure
 
-    def add_exposure(self, exposure):
-        self.exposures.append(exposure)
-        exposure.instrument = self
-        exposure.telescope = self.telescope
-        exposure.calculate()
-
     def transform_flux(self, spectrum, wave):
         effective_area = self.recover("telescope.effective_area")
-        return spectrum.countrate(effective_area)
+        return spectrum.countrate(effective_area.to(u.cm**2))
 
     def set_to_dict(self, config):
         self.configuration = config

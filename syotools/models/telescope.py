@@ -24,6 +24,8 @@ from hwome.core.navigator import DataModel
 from syotools.models.camera import Camera
 from syotools.models.multispec import MultiSpec
 from syotools.models.spectrograph import Spectrograph
+from syotools.models.ifs import IFS
+from syotools.models.mos import MOS
 
 class Telescope(PersistentModel):
     """
@@ -83,10 +85,24 @@ class Telescope(PersistentModel):
             print('We do not have SEI information for: ', name)
             raise NotImplementedError
 
-    def set_from_hwome(self,name):
-        self.name = name.lower()
-        self.hwo_data = DataModel()
-        self.hwo_data.load_hardware(f"{self.name}.yaml")
+    def set_from_hwome(self, name):
+        """
+        Load a telescope EAC setup from HWOME
+
+        Parameters
+        ----------
+        name : str or DataModel
+            if string, this is the name of the EAC DataModel to be loaded
+            if DataModel, use the preloaded DataModel instead
+        """
+
+        if isinstance(name, DataModel):
+            self.hwo_data = name
+            self.name = self.hwo_data._hardware_loader._config_path.stem
+        else:
+            self.name = name.lower()
+            self.hwo_data = DataModel()
+            self.hwo_data.load_hardware(f"{self.name}.yaml")
 
         self.telescope_bands = {}
 
@@ -97,14 +113,20 @@ class Telescope(PersistentModel):
                 except (KeyError, TypeError):
                     modenames = [f"{instrument.name.value}.HRI_A_VIS"]
                 for modename in modenames:
-                    if "IFU" in modename.upper() or "IFS" in modename.upper():
-                        tel_instrument = MultiSpec(self)
+                    if "PSS" in modename.upper(): # Catch the UV MOS echelle, which is not a MOS
+                        tel_instrument = Spectrograph(self)
+                        tel_instrument.set_from_hwome(modename, "spectrograph")
+                        if tel_instrument.configuration["channel_filters"] != []:
+                            self.instruments[f"{modename}_Spectrograph"] = tel_instrument
+                            self.telescope_bands[f"{modename}_Spectrograph"] = tel_instrument.bands
+                    elif "IFU" in modename.upper() or "IFS" in modename.upper():
+                        tel_instrument = IFS(self)
                         tel_instrument.set_from_hwome(modename, "ifs")
                         if tel_instrument.configuration["channel_filters"] != []:
                             self.instruments[f"{modename}_IFS"] = tel_instrument
                             self.telescope_bands[f"{modename}_IFS"] = tel_instrument.bands
                     elif "MOS" in modename.upper():
-                        tel_instrument = MultiSpec(self)
+                        tel_instrument = MOS(self)
                         tel_instrument.set_from_hwome(modename, "mos")
                         if tel_instrument.configuration["channel_filters"] != []:
                             self.instruments[f"{modename}_MOS"] = tel_instrument
@@ -129,12 +151,30 @@ class Telescope(PersistentModel):
         # The effective diameter within is based off this value assuming a perfect circle.
         self.effective_area = self.hwo_data.OTA.inscribed_aperture_area.q
 
+        self.focal_length = self.hwo_data.OTA.focal_length.q
+        # for now, save the primary mirror temperature
+        self.ota_temperature = self.hwo_data.OTA.temperature["OTA.OTA_M1"].q
+
     def save_to_dict(self):
+        """
+        Save a serializable ETC configuration. This will preserve any modifications made
+        to the EAC.
+        
+        For traceability, these modifications are saved with version stamps for SYOTools,
+        hwome-core, and hwome-data.
+
+        Returns
+        -------
+        output : dict
+            heirarchical dictionary of the entire loaded telescope configuration
+        """
         output = {}
         for instrument in self.instruments:
             output[instrument] = self.instruments[instrument].save_to_dict()
         output["name"] = self.name
-        output["effective_diameter"] = self.effective_diameter
+        output["effective_area"] = self.effective_area
+        output["focal_length"] = self.focal_length
+        output["ota_temperature"] = self.temperature
 
         # tag the software version the dict was created with, too
         output["syotools_version"] = metadata.version('syotools')
@@ -148,14 +188,23 @@ class Telescope(PersistentModel):
     def load_from_dict(self, config):
         """
         Restore a telescope from a stored dictionary
+
+        Parameters
+        ----------
+        config : dict
+            A saved configuration dictionary
         """
         config = complexify_data(config)
 
         self.name = config.pop("name")
-        self.effective_diameter = config.pop("effective_diameter")
+        self.effective_area = config.pop("effective_area")
+        self.focal_length = config.pop("focal_length")
+        self.ota_temperature = config.pop("ota_temperature")
 
+        # start the instruments list from scratch
         self.instruments = {}
 
+        # iteratively load all of the instruments with their own function
         for instrument in config:
             if config[instrument]["ins_type"] == "imager":
                 inst = Camera(self)
@@ -163,6 +212,8 @@ class Telescope(PersistentModel):
                 inst = Spectrograph(self)
             elif config[instrument]["ins_type"] == "ifs":
                 inst = IFS(self)
+            elif config[instrument]["ins_type"] == "mos":
+                inst = MOS(self)
             inst.load_from_dictionary(config[instrument])
             self.instruments[instrument] = inst
 
@@ -207,7 +258,7 @@ class Telescope(PersistentModel):
         Parameters
         ----------
         instrument: str, optional
-            Name string found in an instrument
+            Name string found in an instrument ("mos", "ifs", and so on)
         kind : str, optional
             "filter" or "disperser", as desired.
         wavelength : float or list, optional
@@ -299,7 +350,7 @@ class Telescope(PersistentModel):
                 insname = entry[0]
                 band = entry[1]
                 item = entry[2]
-                if instrument in insname:
+                if instrument.lower() in insname.lower():
                     temp_filter_list.append((insname, band, item))
             filter_list = temp_filter_list
             temp_filter_list = []

@@ -191,14 +191,14 @@ class PersistentModel(object):
         if isinstance(arr, u.Quantity):
             if arr.isscalar:
                 l = arr.value
-                unit = str(arr.unit)
+                unit = arr.unit.to_string()
             else:
                 if len(arr) < 20:
                     l = ['{:.2f}'.format(i) for i in arr.value]
-                    unit = str(arr.unit)
+                    unit = arr.unit.to_string()
                 else:
                     l = ['mean={:.2f}'.format(np.mean(arr.value)), 'median={:.2f}'.format(np.median(arr.value)), 'max={:.2f}'.format(np.max(arr.value)), 'std={:.2f}'.format(np.std(arr.value)), 'len={}'.format(len(arr.value))]
-                    unit = str(arr.unit)
+                    unit = arr.unit.to_string()
                 scalar = False
         else:
             if isinstance(arr, Iterable):
