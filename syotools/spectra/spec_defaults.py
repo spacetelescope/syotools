@@ -40,6 +40,18 @@ specs = {'Classical T Tauri': {'desc': 'Classical T-Tauri Star',
          'G Dwarf': {'desc': 'G Dwarf',
                     'file': [data_path, 'dG_d5pc_pollux.txt'],
                     'band': 'galex,fuv'},
+         "TLUSTY O2V (Teff=50000K)": {
+                    "file": [data_path, "hlsp_nlte-obgrid_tlusty208_model_z05t50000g400v10_r5000_v1_spec.fits"],
+                    "desc": "O2V-like TLUSTY model (Teff=50000K, logg=4.0, Z=0.5 Zsun)",
+                    "band": "galex,fuv"},
+         "TLUSTY O4V (Teff=42500K)": {
+                    "file": [data_path, "hlsp_nlte-obgrid_tlusty208_model_z02t42500g400v10_r5000_v1_spec.fits"],
+                    "desc": "O4V-like TLUSTY model (Teff=42500K, logg=4.0, Z=0.2 Zsun)",
+                    "band": "galex,fuv",},
+         "TLUSTY O5V (Teff=40000K)": {
+                    "file": [data_path, "hlsp_nlte-obgrid_tlusty208_model_z02t40000g400v10_r5000_v1_spec.fits"],
+                    "desc": "O5V-like TLUSTY model (Teff=40000K, logg=4.0, Z=0.2 Zsun)",
+                    "band": "galex,fuv"},
          'O5V Star': {'desc': 'O5V Star', 
                  'file': [pysyn_path, 'grid', 'pickles', 'dat_uvk', 
                           'pickles_uk_1.fits']},
