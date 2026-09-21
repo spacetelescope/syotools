@@ -103,6 +103,9 @@ def load_synfits(spec):
         warnings.filterwarnings(
             'ignore', message=r'.*contained negative flux or throughput.*',
             category=AstropyUserWarning)
+        warnings.filterwarnings(
+            'ignore', message=r'.*contains multiple slashes.*',
+            category=AstropyUserWarning)
 
         sp = syn.spectrum.SourceSpectrum.from_file(abspath)
         sp = sp.normalize(30.*u.ABmag, stsyn.band(band))
