@@ -14,11 +14,11 @@ telescope = Telescope()
 telescope.set_from_hwome("EAC5")
 instruments = list(telescope.instruments.keys())
 seds = syn_spectra_library
-redshifts = np.logspace(0,5,20)
+redshifts = np.logspace(0,5,10)
 extinctions = np.linspace(0,6,10)
-snrs = np.linspace(0.01,1e2,20)
-exptimes = np.linspace(0.1,1e5,30)
-magnitudes = np.linspace(5, 30, 20)
+snrs = np.linspace(0.01,1e2,10)
+exptimes = np.linspace(0.1,1e5,10)
+magnitudes = np.linspace(5, 30, 10)
 bandpasses = ["johnson,v", "galex,fuv", "2mass,j"]
 targets = ["exptime", "snr", "magnitude"]
 

@@ -207,8 +207,12 @@ class Camera(Instrument):
         return new_exposure
 
     def transform_flux(self, spectrum, wave):
-        effective_area = self.recover("telescope.effective_area")
-        return spectrum.countrate(effective_area.to(u.cm**2))
+        try:
+            effective_area = self.recover("telescope.effective_area")
+            countrate = spectrum.countrate(effective_area.to(u.cm**2))
+        except syn.exceptions.SynphotError: # catch cases where there is 0 flux within a margin of error
+            countrate = 0 * u.ct/u.s
+        return countrate
 
     def set_to_dict(self, config):
         self.configuration = config

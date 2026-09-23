@@ -1,4 +1,10 @@
 1.4.7
+    - Warnings squashed!
+    - UV MOS Imager recognized as an imaging channel again
+    - Increased rectangular aperture subsampling until the echelle
+      (with its enormous pixels) works again.
+    - Setups that result in zero source/sky/thermal flux in the
+      calculation no longer crash. (e.g. UV_MOS.FUV_IMG_Imager)
     - New normalization bandpasses from STScI's public TRDS library:
        * 2MASS J H Ks
        * Cousins R I
@@ -14,9 +20,7 @@
       spectra that cover a broader wavelength range
     - Added three new HLSP spectra for O2V, O4V, O5V courtesy of 
       Leonardo Ubeda
-    - Warnings squashed
-    - UV MOS Imager recognized as an imaging channel again
-
+    - EAC1 (partially) works again
 1.4.6
     - Completely rewritten thermal emission handler, uses the OTA
       temperature for now instead of the detector temperature.
