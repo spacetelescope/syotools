@@ -113,7 +113,6 @@ class Telescope(PersistentModel):
                 except (KeyError, TypeError):
                     modenames = [f"{instrument.name.value}.HRI_A_VIS"]
                 for modename in modenames:
-                    print(modename)
                     if "PSS" in modename.upper(): # Catch the UV MOS echelle, which is not a MOS
                         tel_instrument = Spectrograph(self)
                         tel_instrument.set_from_hwome(modename, "spectrograph")

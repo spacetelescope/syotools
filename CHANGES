@@ -1,3 +1,22 @@
+1.4.7
+    - New normalization bandpasses from STScI's public TRDS library:
+       * 2MASS J H Ks
+       * Cousins R I
+       * Gaia G Gbp GRp
+       * Galex NUV (FUV already existed)
+       * Johnson U B R I J K (V already existed)
+       * Landolt U B V R I
+       * SDSS u g r i z
+       * Spitzer irac,3_6um irac,4_5um irac,5_8um irac,8_0um mips,24um
+       * Stromgren u v b y
+       * WISE W1 W2 W3 W4
+    - Replaced default spectra of GD71 and GD153 with new TRDS
+      spectra that cover a broader wavelength range
+    - Added three new HLSP spectra for O2V, O4V, O5V courtesy of 
+      Leonardo Ubeda
+    - Warnings squashed
+    - UV MOS Imager recognized as an imaging channel again
+
 1.4.6
     - Completely rewritten thermal emission handler, uses the OTA
       temperature for now instead of the detector temperature.
