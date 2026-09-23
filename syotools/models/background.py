@@ -1,9 +1,12 @@
+import warnings
 import numpy as np
 from scipy.interpolate import interp1d
 import astropy.units as u
 import astropy.constants as const
 import synphot as syn
 from synphot.models import Empirical1D, ConstFlux1D
+
+from astropy.utils.exceptions import AstropyUserWarning
 
 SPECTRAL_RADIANCE = u.W / (u.m**2 * u.sr * u.um)
 PHOTON_SPECTRAL_RADIANCE = u.photon / (u.cm**2 * u.s * u.nm * u.arcsec**2)
@@ -252,6 +255,10 @@ def calc_zodi_flux(
     # plt.show()
 
     # now convert to PHOTLAM
-    sky = syn.spectrum.SourceSpectrum(Empirical1D, points=wave, lookup_table=syn.units.convert_flux(wave, flux_zodi, syn.units.PHOTLAM))
+    with warnings.catch_warnings():
+        warnings.filterwarnings(
+            'ignore', message=r'.*contained negative flux or throughput.*',
+            category=AstropyUserWarning)
+        sky = syn.spectrum.SourceSpectrum(Empirical1D, points=wave, lookup_table=syn.units.convert_flux(wave, flux_zodi, syn.units.PHOTLAM))
 
     return sky  # 1/arcsec^2 (UNITS OF SPECTRAL RADIANCE) - original, now PHOTLAM

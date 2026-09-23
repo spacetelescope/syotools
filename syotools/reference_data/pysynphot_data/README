@@ -1,0 +1,12 @@
+The files in this directory are a small subset of STScI's public Tools Reference Data System (TRDS) spectral library, intended for 
+use with the STSynphot package.
+For more details about TRDS:
+https://www.stsci.edu/hst/instrumentation/reference-data-for-calibration-and-tools/astronomical-catalogs
+The full archive can be found here:
+https://archive.stsci.edu/hlsp/reference-atlases
+
+It is intended that this directory be set as the environment variable $PYSYN_CDBS.
+SYOTools will also function with a complete TRDS library.
+
+Last update of grid-table files: 2026-09-23
+

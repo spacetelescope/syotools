@@ -133,7 +133,7 @@ class Spectrograph(Instrument):
             width = (xsamp * 2 * u.pix).to_value(u.arcsec)
             height = extraction_aperture.to_value(u.arcsec) * 2 # because it's a half-height
 
-        mask = rectangular_overlap_grid(np.min(x), np.max(x), np.min(y), np.max(y), x.shape[1], y.shape[0], width, height, 0, 0, 2)
+        mask = rectangular_overlap_grid(np.min(x), np.max(x), np.min(y), np.max(y), x.shape[1], y.shape[0], width, height, 0, 0, 256)
 
         return mask, height
 
@@ -175,12 +175,15 @@ class Spectrograph(Instrument):
 
     def transform_flux(self, spectrum, wave):
         effective_area = self.recover("telescope.effective_area")
+        try:
+            #flux = syn.units.convert_flux(wave, spectrum(wave), u.ct, area=effective_area)
+            flux = syn.units.convert_flux(wave, spectrum(wave), u.erg / u.s / u.cm**2 / u.AA)
+            phot_energy = const.h.to(u.erg * u.s) * const.c.to(u.cm / u.s) / wave.to(u.cm) / u.ct
 
-        #flux = syn.units.convert_flux(wave, spectrum(wave), u.ct, area=effective_area)
-        flux = syn.units.convert_flux(wave, spectrum(wave), u.erg / u.s / u.cm**2 / u.AA)
-        phot_energy = const.h.to(u.erg * u.s) * const.c.to(u.cm / u.s) / wave.to(u.cm) / u.ct
-
-        return flux / phot_energy * effective_area
+            countrate = flux / phot_energy * effective_area
+        except syn.exceptions.SynphotError: # catch cases where there is 0 flux within a margin of error
+            countrate = np.zeros_like(wave.value) * u.ct/u.s
+        return countrate
 
     def set_from_sei(self, name):
 

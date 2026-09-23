@@ -17,6 +17,7 @@ import synphot as syn
 import stsynphot as stsyn
 import astropy.io.ascii as asc
 from astropy.utils.exceptions import AstropyUserWarning
+from astropy.units import UnitsWarning
 
 #Define a new unit for spectral flux density
 flambda = u.def_unit(["flambda","flam"], (u.photon / u.s / u.cm**2 / u.nm))
@@ -103,6 +104,9 @@ def load_synfits(spec):
         warnings.filterwarnings(
             'ignore', message=r'.*contained negative flux or throughput.*',
             category=AstropyUserWarning)
+        warnings.filterwarnings(
+            'ignore', message=r'.*contains multiple slashes.*',
+            category=UnitsWarning)
 
         sp = syn.spectrum.SourceSpectrum.from_file(abspath)
         sp = sp.normalize(30.*u.ABmag, stsyn.band(band))

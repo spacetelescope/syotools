@@ -125,13 +125,19 @@ class Telescope(PersistentModel):
                         if tel_instrument.configuration["channel_filters"] != []:
                             self.instruments[f"{modename}_IFS"] = tel_instrument
                             self.telescope_bands[f"{modename}_IFS"] = tel_instrument.bands
+                    elif "IMG" in modename.upper(): # Catch the UV MOS Imager channel
+                        tel_instrument = Camera(self)
+                        tel_instrument.set_from_hwome(modename, "imager")
+                        if tel_instrument.configuration["channel_filters"] != []:
+                            self.instruments[f"{modename}_Imager"] = tel_instrument
+                            self.telescope_bands[f"{modename}_Imager"] = tel_instrument.bands
                     elif "MOS" in modename.upper():
                         tel_instrument = MOS(self)
                         tel_instrument.set_from_hwome(modename, "mos")
                         if tel_instrument.configuration["channel_filters"] != []:
                             self.instruments[f"{modename}_MOS"] = tel_instrument
                             self.telescope_bands[f"{modename}_MOS"] = tel_instrument.bands
-                    else:
+                    else: # As of 2026-09-21, this case is only HRI now
                         tel_instrument = Camera(self)
                         tel_instrument.set_from_hwome(modename, "imager")
                         if tel_instrument.configuration["channel_filters"] != []:
