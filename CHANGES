@@ -1,8 +1,14 @@
 1.4.7.1
-    - Source.set_sed() can now accept Synphot kwargs
+    - Source.set_sed() can now accept Synphot kwargs.
+    ! Note: the bandpass argument MUST now be a keyword argument.
     - Updated the number of iterations in 
       SourceExposure_do_update_magnitude() so it passes unit testing
       again.
+    - Bug: the Instrument.save_to_dict() function wasn't actually
+      saving the hwome_data commit ID
+    - Bug: the Instrument.set_from_hwome() function wasn't actually
+      extracting everything from Datum objects
+    - A few more annotations.
 1.4.7
     - Warnings squashed!
     - UV MOS Imager recognized as an imaging channel again

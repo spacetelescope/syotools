@@ -411,7 +411,7 @@ class Instrument(PersistentModel):
 
         self.configuration["detector"] = {}
         for detector in channel_data.Detector:
-            self.configuration["detector"]["internal_name"] = detector.name
+            self.configuration["detector"]["internal_name"] = detector.name.value
             self.configuration["detector"]["read_noise"] = detector.read_noise.q
             self.configuration["detector"]["thermal"] = detector.temperature.q
             self.configuration["detector"]["pixel_pitch"] = detector.pixel_pitch.q / u.pix
@@ -481,7 +481,7 @@ class Instrument(PersistentModel):
         # tag the software version the dict was created with, too
         config["syotools_version"] = metadata.version('syotools')
         config["hwome_version"] = metadata.version('hwome-core')
-        config["data_version"] = subprocess.run(["git", "-C", os.environ["HWOME_DATA_PATH"], "rev-parse", "HEAD"])
+        config["data_version"] = subprocess.getoutput(f"git -C {os.environ["HWOME_DATA_PATH"]} rev-parse HEAD")
         config = simplify_data(config)
 
         return config
