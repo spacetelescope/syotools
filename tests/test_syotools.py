@@ -112,8 +112,6 @@ def test_files(inputs):
 if __name__ == "__main__":
     if len(sys.argv) > 0:
         additional = sys.argv[1]
-        print(additional)
-        print(test_setups)
         if additional in ["set", "reset"]:
             for test in test_setups:
                 test[sys.argv[1]] = True
