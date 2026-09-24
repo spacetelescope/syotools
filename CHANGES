@@ -1,9 +1,9 @@
 1.4.7.1
-    - Source.set_sed() can now accept Synphot kwargs.
+    - Source.set_sed() can now accept Synphot keyword arguments.
     ! Note: the bandpass argument MUST now be a keyword argument.
     - Updated the number of iterations in 
-      SourceExposure_do_update_magnitude() so it passes unit testing
-      again.
+      SourceExposure_do_update_magnitude() to 13 so it passes unit
+      testing again.
     - Bug: the Instrument.save_to_dict() function wasn't actually
       saving the hwome_data commit ID
     - Bug: the Instrument.set_from_hwome() function wasn't actually
