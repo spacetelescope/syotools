@@ -1,9 +1,12 @@
-1.4.7.1
+1.4.8
     - Source.set_sed() can now accept Synphot keyword arguments.
     ! Note: the bandpass argument MUST now be a keyword argument.
     - Updated the number of iterations in 
-      SourceExposure_do_update_magnitude() to 13 so it passes unit
+      SourceExposure._do_update_magnitude() to 13 so it passes unit
       testing again.
+    - SouceExposure._do_update_magnitude() temporarily sets the
+      recursion limit to 1100 if it's less than 1100.
+    - HRI_A is now called "HRI_A", not "High Resolution Astrometry"
     - Bug: the Instrument.save_to_dict() function wasn't actually
       saving the hwome_data commit ID
     - Bug: the Instrument.set_from_hwome() function wasn't actually

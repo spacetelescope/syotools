@@ -4,6 +4,7 @@
 Created on Mon Oct 30 12:31:11 2017
 @author: gkanarek, jt
 """
+import sys
 import copy
 from typing import Any
 import numpy as np
@@ -735,6 +736,12 @@ class SourceExposure(PersistentModel):
         # make a grid of potential magnitudes covering a nice wide range
         wave, _magnitude = self._update_magnitude(source, band)
         _magnitude = _magnitude.to_value(u.ABmag)
+
+        # this loop slightly exceeds the ordinary recursion limit
+        oldrecursion = sys.getrecursionlimit()
+        if oldrecursion < 1100:
+            sys.setrecursionlimit(1100)
+
         for temp_magnitude in np.linspace(_magnitude+4, _magnitude-2, 13):
             sp_norm = source.sed.normalize(temp_magnitude * u.ABmag, stsyn.spectrum.band(source.renorm_band))
             
@@ -742,7 +749,10 @@ class SourceExposure(PersistentModel):
             dummy, temp_snr = self._update_snr(source, band)
             temp_snrs.append(temp_snr)
             temp_magnitudes.append(temp_magnitude)
-        
+
+        # reset the old recursion limit
+        sys.setrecursionlimit(oldrecursion)
+
         maginterp = sc.interpolate.make_interp_spline(temp_snrs, temp_magnitudes, k=3)
 
         magnitude = maginterp(_snr) * u.ABmag

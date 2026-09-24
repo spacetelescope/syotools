@@ -37,7 +37,7 @@ result = compute_observation("EAC5", instrument="HRI_S.HRI_S_UVIS_Imager", sed="
 print(result)
 result = compute_observation("EAC5", instrument="HRI_S.HRI_S_NIR_Imager", sed="Flat (AB)", magnitude=25.0, exptime=1, redshift=0, extinction=0, bandpass="galex,fuv", target="snr", verbose=False)
 print(result)
-result = compute_observation("EAC5", instrument="High Resolution Astrometry.HRI_A_VIS_Imager", sed="Flat (AB)", exptime=1, snr=10, redshift=0, extinction=0, bandpass="galex,fuv", target="magnitude", verbose=False)
+result = compute_observation("EAC5", instrument="HRI_A.HRI_A_VIS_Imager", sed="Flat (AB)", exptime=1, snr=10, redshift=0, extinction=0, bandpass="galex,fuv", target="magnitude", verbose=False)
 print(result)
 print("---- Spectroscopy Common Exptime -----")
 result = compute_observation("EAC5", instrument="UV_MOS.NUV_MOS_MOS", sed="Flat (AB)", magnitude=25.0, snr=10, redshift=0, extinction=0, bandpass="galex,fuv", target="exptime", verbose=False)
