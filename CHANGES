@@ -4,7 +4,7 @@
     - Updated the number of iterations in 
       SourceExposure._do_update_magnitude() to 13 so it passes unit
       testing again.
-    - SouceExposure._do_update_magnitude() temporarily sets the
+    - SourceExposure._do_update_magnitude() temporarily sets the
       recursion limit to 1100 if it's less than 1100.
     - HRI_A is now called "HRI_A", not "High Resolution Astrometry"
     - Bug: the Instrument.save_to_dict() function wasn't actually
