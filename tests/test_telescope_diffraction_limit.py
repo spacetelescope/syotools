@@ -8,5 +8,5 @@ def test_spatial_resolution():
     tel: Telescope = Telescope()
     tel.set_from_hwome('EAC5')
     expected = (1.22 * u.rad * 500 * u.nm / tel.effective_diameter.to(u.nm)).to(u.arcsec)
-    actual = tel.diffraction_limit(500 * u.nm).value
+    actual = tel.instruments["HRI_S.HRI_S_NIR_Imager"].diffraction_limit(500 * u.nm).value
     assert actual == pytest.approx(expected.value)

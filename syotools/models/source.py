@@ -99,7 +99,48 @@ class Source(PersistentModel):
     def coordinates(self):
         pass
 
-    def set_sed(self, source_name, magnitude, redshift, extinction, bandpass=None, radius=0, ra=135.0, dec=20.0, geometry={"shape": "point"}, library=syn_spectra_library):
+    def set_sed(self, source_name, magnitude, redshift, extinction, **kwargs):
+        # parse the keyword arguments
+        if "bandpass" in kwargs:
+            bandpass = kwargs["bandpass"]
+            del kwargs["bandpass"]
+        else:
+            bandpass = None
+
+        if "radius" in kwargs:
+            warnings.warn("Deprecated radius argument, use a geometry dictionary instead.")
+            del kwargs["radius"]
+
+        if "ra" in kwargs:
+            ra = kwargs["ra"]
+            if "dec" not in kwargs:
+                warnings.warn("Set RA without Dec!")
+        else:
+            ra=135.0
+        if "dec" in kwargs:
+            dec = kwargs["dec"]
+            if "ra" not in kwargs:
+                warnings.warn("Set Dec without RA!")
+        else:
+            dec=20.0
+        if "ra" in kwargs: # had to keep them around to check on each other
+            del kwargs["ra"]
+        if "dec" in kwargs:
+            del kwargs["dec"]
+
+        if "geometry" in kwargs:
+            geometry = kwargs["geometry"]
+            del kwargs["geometry"]
+        else:
+            geometry={"shape": "point"}
+
+        if "library" in kwargs:
+            library = kwargs["library"]
+            del kwargs["library"]
+        else:
+            library=syn_spectra_library
+        
+
         self.name = source_name  
         self.sed = library[source_name]
         self.magnitude = magnitude
@@ -111,22 +152,16 @@ class Source(PersistentModel):
         else:
             self.renorm_band = bandpass
 
-        # Set a radius for extended sources. 0 = unresolved point source.
-        self.radius = radius
-
         self.ra = ra
         self.dec = dec
 
-        # one of "point", "flat", "gaussian2d", "sersic"
+        # one of "point", "flat", "gaussian2d", "sersic", "sersic_scale", "power"
         self.geometry = geometry
         #{"shape": "point", "major": 0.2 * u.arcsec, "minor": 0.1 * u.arcsec,
         #                "norm_method": "integ_infinity", "sersic_index": 2, "angle": 30*u.deg, "surf_area_units": "arcsec^2"}
         # shape is one of "point" or "gaussian2d" or "flat"
         # norm_method is one of "surf_center", "surf_scale", "integ_infinity"
         # surf_area_units is one of "arcsec^2" or "sr"
-
-        #print("SET SED:", bandpass, library[source_name].band, self.renorm_band, stsyn.band(self.renorm_band).waveset)
-        #print("SED_INFO:", self.name, self.sed.waveset, self.renorm_band, self.redshift, self.extinction)
 
         new_sed = library[source_name]
 
@@ -136,7 +171,7 @@ class Source(PersistentModel):
 
         #print("Actual norm:", sp_ext.waveset)
 
-        sp_norm = sp_ext.normalize(self.magnitude * u.ABmag, stsyn.spectrum.band(self.renorm_band))
+        sp_norm = sp_ext.normalize(self.magnitude * u.ABmag, stsyn.spectrum.band(self.renorm_band), **kwargs)
         
 
         self.sed = sp_norm

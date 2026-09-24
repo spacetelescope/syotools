@@ -8,7 +8,6 @@ import copy
 import math
 from collections import defaultdict
 from importlib import metadata
-from importlib import metadata
 import subprocess
 
 from syotools.models.base import PersistentModel
@@ -26,6 +25,7 @@ from syotools.models.multispec import MultiSpec
 from syotools.models.spectrograph import Spectrograph
 from syotools.models.ifs import IFS
 from syotools.models.mos import MOS
+from syotools.models.instrument import Instrument
 
 class Telescope(PersistentModel):
     """
@@ -71,7 +71,7 @@ class Telescope(PersistentModel):
     #     unobscured, aper = self.recover('unobscured_fraction', 'aperture')
     #     return np.sqrt(unobscured) * aper
 
-    def add_instrument(self, instrument):
+    def add_instrument(self, instrument: Instrument) -> None:
         self.instruments[instrument.name] = instrument
         instrument.telescope = self
 
@@ -85,7 +85,7 @@ class Telescope(PersistentModel):
             print('We do not have SEI information for: ', name)
             raise NotImplementedError
 
-    def set_from_hwome(self, name):
+    def set_from_hwome(self, name: [str, DataModel]) -> None:
         """
         Load a telescope EAC setup from HWOME
 
@@ -111,7 +111,7 @@ class Telescope(PersistentModel):
                 try:
                     modenames = list(instrument.Channel.name.keys())
                 except (KeyError, TypeError):
-                    modenames = [f"{instrument.name.value}.HRI_A_VIS"]
+                    modenames = ["HRI_A.HRI_A_VIS"]
                 for modename in modenames:
                     if "PSS" in modename.upper(): # Catch the UV MOS echelle, which is not a MOS
                         tel_instrument = Spectrograph(self)
@@ -161,7 +161,7 @@ class Telescope(PersistentModel):
         # for now, save the primary mirror temperature
         self.ota_temperature = self.hwo_data.OTA.temperature["OTA.OTA_M1"].q
 
-    def save_to_dict(self):
+    def save_to_dict(self) -> dict:
         """
         Save a serializable ETC configuration. This will preserve any modifications made
         to the EAC.
@@ -185,13 +185,13 @@ class Telescope(PersistentModel):
         # tag the software version the dict was created with, too
         output["syotools_version"] = metadata.version('syotools')
         output["hwome_version"] = metadata.version('hwome-core')
-        output["data_version"] = subprocess.run(["git", "-C", os.environ["HWOME_DATA_PATH"], "rev-parse", "HEAD"])
+        config["data_version"] = subprocess.getoutput(f"git -C {os.environ["HWOME_DATA_PATH"]} rev-parse HEAD")
 
         output = simplify_data(output)
 
         return output
 
-    def load_from_dict(self, config):
+    def load_from_dict(self, config: dict) -> None:
         """
         Restore a telescope from a stored dictionary
 
@@ -256,7 +256,7 @@ class Telescope(PersistentModel):
         self._effective_diameter = new_diameter
         self._effective_area = (np.pi * (new_diameter/2.)**2).to(u.cm**2)
 
-    def find_instrument_with(self, instrument=None, kind=None, wavelength=None, resolution=None):
+    def find_instrument_with(self, instrument: str=None, kind: str=None, wavelength: str=None, resolution: str=None) -> (dict, dict):
         """
         Convenience function to find a band (and its instrument) that meets specific
         criteria.

@@ -21,7 +21,7 @@ def simplify_data(data):
         for item in data:
             data[item] = simplify_data(data[item])
     else:
-        print("uncertain data format")
+        print("uncertain data format", type(data))
 
     return(data)
 

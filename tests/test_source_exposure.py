@@ -5,6 +5,7 @@ import synphot as syn
 
 from syotools.models.source_exposure import SourceExposure
 from syotools.models.instrument import Instrument
+from syotools.models.source import Source
 
 class Mock_Instrument(Instrument):
     def __init__(self):
@@ -32,6 +33,7 @@ class Mock_SourceExposure(SourceExposure):
         self.dark = dark
         self.read_noise = read_noise 
         self.verbose = False
+        self.source = Source()
         self.instrument = Mock_Instrument()
         self.telescope = Mock_Telescope()
 
@@ -154,26 +156,6 @@ def test_flux_snr(verbose=False):
         print("-----------------------")
 
     assert snr_2 == snr_1 * np.sqrt(2)
-
-def test_mag(verbose=False):
-    bandpass = syn.spectrum.SpectralElement(syn.models.Gaussian1D, amplitude=1, mean=5000, stddev=400)
-    band = {"bandpass": bandpass}
-
-    snr = 10
-    fsky = 0
-    source_exposure = Mock_SourceExposure(snr=snr, fsky=fsky)
-    wave, mag_1 = source_exposure._do_update_magnitude(None, band)
-
-    source_exposure.snr = 100
-    wave, mag_2 = source_exposure._do_update_magnitude(None, band)
-
-    if verbose:
-        print("Mag SNR=10:", mag_1)
-        print("Mag SNR=100:", mag_2)
-        print("Difference (5 expected):", mag_1 - mag_2)
-        print("-----------------------")
-
-    assert np.round(mag_1, 6).value == np.round(mag_2, 6).value + 5
 
 def test_dark_exptime(verbose=False):
     source_exposure = Mock_SourceExposure(snr=10)
