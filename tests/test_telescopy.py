@@ -94,19 +94,15 @@ def check_relative_diff(actual, expected, rel_tol=0.001):
 
 def test_telescope_json():
     tel1, tel2 = Telescope(), Telescope()
-    tel1.add_camera(Camera())
-    print(tel1.cameras)
-    tel2.add_camera(Camera())
-    print(tel1.cameras)
-    tel1.set_from_sei("EAC1")
-    tel2.set_from_sei("EAC2")
-    tel1.cameras[0].set_from_sei('HRI')
-    tel2.cameras[0].set_from_sei('HRI')
+    tel1.set_from_hwome("EAC1")
+    tel2.set_from_hwome("EAC5")
+    print(tel1.instruments["HRI_S.HRI_S_UVIS_Imager"])
+    print(tel2.instruments["HRI_S.HRI_S_UVIS_Imager"])
 
     assert tel1.name != tel2.name
-    assert tel1.effective_aperture != tel2.effective_aperture
-    assert all([c.telescope == tel1 for c in tel1.cameras])
-    assert tel1.cameras != tel2.cameras
+    assert tel1.effective_diameter != tel2.effective_diameter
+    assert all([tel1.instruments[c].telescope == tel1 for c in tel1.instruments])
+    assert tel1.instruments != tel2.instruments
 
 
 

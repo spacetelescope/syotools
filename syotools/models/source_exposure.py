@@ -735,7 +735,7 @@ class SourceExposure(PersistentModel):
         # make a grid of potential magnitudes covering a nice wide range
         wave, _magnitude = self._update_magnitude(source, band)
         _magnitude = _magnitude.to_value(u.ABmag)
-        for temp_magnitude in np.linspace(_magnitude+4, _magnitude-2, 12):
+        for temp_magnitude in np.linspace(_magnitude+4, _magnitude-2, 13):
             sp_norm = source.sed.normalize(temp_magnitude * u.ABmag, stsyn.spectrum.band(source.renorm_band))
             
             source.sed = sp_norm

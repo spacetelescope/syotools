@@ -5,6 +5,7 @@ import synphot as syn
 
 from syotools.models.source_exposure import SourceExposure
 from syotools.models.instrument import Instrument
+from syotools.models.source import Source
 
 class Mock_Instrument(Instrument):
     def __init__(self):
@@ -32,6 +33,7 @@ class Mock_SourceExposure(SourceExposure):
         self.dark = dark
         self.read_noise = read_noise 
         self.verbose = False
+        self.source = Source()
         self.instrument = Mock_Instrument()
         self.telescope = Mock_Telescope()
 
@@ -159,13 +161,13 @@ def test_mag(verbose=False):
     bandpass = syn.spectrum.SpectralElement(syn.models.Gaussian1D, amplitude=1, mean=5000, stddev=400)
     band = {"bandpass": bandpass}
 
-    snr = 10
+    exptime = 10
     fsky = 0
-    source_exposure = Mock_SourceExposure(snr=snr, fsky=fsky)
-    wave, mag_1 = source_exposure._do_update_magnitude(None, band)
+    source_exposure = Mock_SourceExposure(exptime=exptime, fsky=fsky)
+    wave, mag_1 = source_exposure._do_update_magnitude(source_exposure.source, band)
 
     source_exposure.snr = 100
-    wave, mag_2 = source_exposure._do_update_magnitude(None, band)
+    wave, mag_2 = source_exposure._do_update_magnitude(source_exposure.source, band)
 
     if verbose:
         print("Mag SNR=10:", mag_1)

@@ -1,3 +1,8 @@
+1.4.7.1
+    - Source.set_sed() can now accept Synphot kwargs
+    - Updated the number of iterations in 
+      SourceExposure_do_update_magnitude() so it passes unit testing
+      again.
 1.4.7
     - Warnings squashed!
     - UV MOS Imager recognized as an imaging channel again
