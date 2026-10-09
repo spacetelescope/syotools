@@ -115,7 +115,7 @@ class Telescope(PersistentModel):
                 for modename in modenames:
                     if "PSS" in modename.upper(): # Catch the UV MOS echelle, which is not a MOS
                         tel_instrument = Spectrograph(self)
-                        tel_instrument.set_from_hwome(modename, "spectrograph")
+                        tel_instrument.set_from_hwome(modename, "echelle")
                         if tel_instrument.configuration["channel_filters"] != []:
                             self.instruments[f"{modename}_Spectrograph"] = tel_instrument
                             self.telescope_bands[f"{modename}_Spectrograph"] = tel_instrument.bands
@@ -209,6 +209,7 @@ class Telescope(PersistentModel):
 
         # start the instruments list from scratch
         self.instruments = {}
+        selector = {""}
 
         # iteratively load all of the instruments with their own function
         for instrument in config:
@@ -256,7 +257,7 @@ class Telescope(PersistentModel):
         self._effective_diameter = new_diameter
         self._effective_area = (np.pi * (new_diameter/2.)**2).to(u.cm**2)
 
-    def find_instrument_with(self, instrument: str=None, kind: str=None, wavelength: str=None, resolution: str=None) -> (dict, dict):
+    def find_instrument_with(self, instrument: str=None, kind: str=None, wavelength: str=None, category: str=None, resolution: str=None) -> (dict, dict):
         """
         Convenience function to find a band (and its instrument) that meets specific
         criteria.
@@ -359,6 +360,17 @@ class Telescope(PersistentModel):
                 if instrument.lower() in insname.lower():
                     temp_filter_list.append((insname, band, item))
             filter_list = temp_filter_list
+            temp_filter_list = []
+
+        # filter 5: the category of band/instrument
+        if category is not None:
+            for entry in filter_list:
+                insname = entry[0]
+                band = entry[1]
+                item = entry[2]
+                if item["category"] == category.lower():
+                    temp_filter_list.append((insname, band, item))
+            filter_list = copy.deepcopy(temp_filter_list)
             temp_filter_list = []
 
         for item in filter_list:

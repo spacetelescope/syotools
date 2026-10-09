@@ -388,7 +388,7 @@ class Instrument(PersistentModel):
             wavemin = band.avgwave() - band.rectwidth()/2
             wavemax = band.avgwave() + band.rectwidth()/2
             self.configuration["bands"][fancy_name] = {"internal_name": filter_name, "bandpass": band, "original_wave": wave, "original_thru": total_thru, "effective_wavelength": band.avgwave(), 
-                                                    "wave_min": wavemin, "bandwidth": band.equivwidth(), "wave_max": wavemax, "optics": len(thru.value.keys())}
+                                                    "wave_min": wavemin, "bandwidth": band.equivwidth(), "wave_max": wavemax, "optics": len(thru.value.keys()), "category": ins_type.lower()}
             if kind in ("disperser"):
                 grating_resolution = channel_data[filter_name].Grating.spectral_resolution
                 try:

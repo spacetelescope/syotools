@@ -335,7 +335,7 @@ class SourceExposure(PersistentModel):
             if isinstance(R, list):
                 resolution = np.interp(wavepix, [band["bandpass"].waveset[0], band["bandpass"].waveset[-1]], R)
                 R = resolution
-            delta_lambda = wavepix/R
+            delta_lambda = wavepix/R/2 # for nyquist sampling, 2 pixels per resolution element.
             pixel = np.cumsum(1.0 / delta_lambda * np.gradient(wavepix))
             pixel_integer = np.arange(int(pixel[0]), int(pixel[-1]))
             wave = np.interp(pixel_integer, pixel, wavepix) << waveunit
