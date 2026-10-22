@@ -386,6 +386,9 @@ class SourceExposure(PersistentModel):
         #flux_source_before = sc.integrate.simpson(flux_source(flux_source.waveset), flux_source.waveset)
 
         # apply internal effects within telescope & instrument
+        # I don't know why this is needed, but one of the inputs to the fsource line is not "strictly ascending or descending"
+        # and just calling one of them fixes it.
+        qe.waveset
         fsource = syn.observation.Observation(flux_source, band["bandpass"] * qe, binset=wave, force="taper")
         fsky = syn.observation.Observation(flux_sky, band["bandpass"] * qe, binset=wave, force="taper")
         self.thermal = syn.observation.Observation(thermal, band["bandpass"] * qe, binset=wave, force="taper")
