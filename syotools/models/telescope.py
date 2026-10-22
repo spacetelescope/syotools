@@ -185,7 +185,7 @@ class Telescope(PersistentModel):
         # tag the software version the dict was created with, too
         output["syotools_version"] = metadata.version('syotools')
         output["hwome_version"] = metadata.version('hwome-core')
-        config["data_version"] = subprocess.getoutput(f"git -C {os.environ["HWOME_DATA_PATH"]} rev-parse HEAD")
+        config["data_version"] = subprocess.getoutput(f"git -C {os.environ['HWOME_DATA_PATH']} rev-parse HEAD")
 
         output = simplify_data(output)
 

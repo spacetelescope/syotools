@@ -481,7 +481,7 @@ class Instrument(PersistentModel):
         # tag the software version the dict was created with, too
         config["syotools_version"] = metadata.version('syotools')
         config["hwome_version"] = metadata.version('hwome-core')
-        config["data_version"] = subprocess.getoutput(f"git -C {os.environ["HWOME_DATA_PATH"]} rev-parse HEAD")
+        config["data_version"] = subprocess.getoutput(f"git -C {os.environ['HWOME_DATA_PATH']} rev-parse HEAD")
         config = simplify_data(config)
 
         return config

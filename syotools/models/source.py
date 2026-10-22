@@ -6,6 +6,7 @@ Created on Th Nov 21 2024 JT
 import numpy as np
 import astropy.units as u
 from astropy import coordinates as coord
+from synphot.models import Empirical1D
 
 from syotools.models.base import PersistentModel
 from syotools.spectra.spec_defaults import syn_spectra_library 
@@ -166,8 +167,8 @@ class Source(PersistentModel):
         new_sed = library[source_name]
 
         # now apply the other quantities via synphot 
-        new_sed.z = self.redshift
-        sp_ext = new_sed * syn.reddening.ReddeningLaw.from_extinction_model('mwavg').extinction_curve(self.extinction)
+        sp_redshift = syn.spectrum.SourceSpectrum(Empirical1D, points=new_sed.waveset * (1 + self.redshift), lookup_table=new_sed(new_sed.waveset))
+        sp_ext = sp_redshift * syn.reddening.ReddeningLaw.from_extinction_model('mwavg').extinction_curve(self.extinction)
 
         #print("Actual norm:", sp_ext.waveset)
 
