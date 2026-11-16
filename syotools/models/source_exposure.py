@@ -335,7 +335,7 @@ class SourceExposure(PersistentModel):
             if isinstance(R, list):
                 resolution = np.interp(wavepix, [band["bandpass"].waveset[0], band["bandpass"].waveset[-1]], R)
                 R = resolution
-            delta_lambda = wavepix/R
+            delta_lambda = wavepix/R/2 # for nyquist sampling, 2 pixels per resolution element.
             pixel = np.cumsum(1.0 / delta_lambda * np.gradient(wavepix))
             pixel_integer = np.arange(int(pixel[0]), int(pixel[-1]))
             wave = np.interp(pixel_integer, pixel, wavepix) << waveunit
@@ -386,6 +386,9 @@ class SourceExposure(PersistentModel):
         #flux_source_before = sc.integrate.simpson(flux_source(flux_source.waveset), flux_source.waveset)
 
         # apply internal effects within telescope & instrument
+        # I don't know why this is needed, but one of the inputs to the fsource line is not "strictly ascending or descending"
+        # and just calling one of them fixes it.
+        qe.waveset
         fsource = syn.observation.Observation(flux_source, band["bandpass"] * qe, binset=wave, force="taper")
         fsky = syn.observation.Observation(flux_sky, band["bandpass"] * qe, binset=wave, force="taper")
         self.thermal = syn.observation.Observation(thermal, band["bandpass"] * qe, binset=wave, force="taper")

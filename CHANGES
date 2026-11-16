@@ -1,3 +1,9 @@
+1.4.9
+    - Increase the spectroscopic sampling to nyquist
+    - Added a new way to filter the channels - "category", which 
+      can be imager, disperser, echelle, ifs
+    - Rewritten redshift support (though functionally identical)
+    - Bug: String formatting fixes for older versions of python
 1.4.8
     - Source.set_sed() can now accept Synphot keyword arguments.
     ! Note: the bandpass argument MUST now be a keyword argument.
