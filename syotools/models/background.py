@@ -230,7 +230,12 @@ def calc_zodi_flux(
     if target_sun_angle < 0:
         target_sun_angle = 360+target_sun_angle
 
+    if target_sun_angle > 360:
+        # not sure how this would happen...
+        target_sun_angle = target_sun_angle - 360
+
     # now correct for the fact that it's symmetric about 180 degrees:
+    # (and there is no data from 180-360)
     if target_sun_angle > 180:
         target_sun_angle = 360 - target_sun_angle
 
