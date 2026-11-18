@@ -3,6 +3,9 @@
 """
 Created on Th Nov 21 2024 JT 
 """
+import datetime
+import warnings
+
 import numpy as np
 import astropy.units as u
 from astropy import coordinates as coord
@@ -44,6 +47,7 @@ class Source(PersistentModel):
         self.renorm_band = 'johnson,v'
         self._ra = 135.0 * u.deg
         self._dec = 20.0 * u.deg
+        self._date = datetime.date(2027, 3, 20)
 
         #set default here
         self.sed = None # Will be set in set_sed, do this so sed is in __init__.
@@ -85,6 +89,23 @@ class Source(PersistentModel):
             raise ValueError(f"Unrecognized DEC angle {new_dec}")
 
     @property
+    def date(self):
+        return self._date
+
+    @date.setter
+    def date(self, new_date):
+        if isinstance(new_date, datetime.date):
+            self._date = new_date
+        elif isinstance(new_date, datetime.datetime):
+            self._date = new_date.date()
+        elif isinstance(new_date, str):
+            self._date = datetime.date.fromisoformat(new_date)
+        else:
+            raise ValueError(f"Could not parse date {new_date}")
+
+
+
+    @property
     def coords(self):
         return coord.SkyCoord(ra=self.ra, dec=self.dec, frame="icrs")
 
@@ -115,19 +136,35 @@ class Source(PersistentModel):
         if "ra" in kwargs:
             ra = kwargs["ra"]
             if "dec" not in kwargs:
-                warnings.warn("Set RA without Dec!")
+                warnings.warn("Set ra without dec")
+            if "date" not in kwargs:
+                warnings.warn("Set ra without date")
         else:
             ra=135.0
         if "dec" in kwargs:
             dec = kwargs["dec"]
             if "ra" not in kwargs:
-                warnings.warn("Set Dec without RA!")
+                warnings.warn("Set dec without ra")
+            if "date" not in kwargs:
+                warnings.warn("Set dec without date")
         else:
             dec=20.0
+
+        if "date" in kwargs:
+            date = kwargs["date"]
+            if "ra" not in kwargs:
+                warnings.warn("Set date without ra")
+            if "dec" not in kwargs:
+                warnings.warn("Set date without dec")
+        else:
+            date="2027-03-20"
+
         if "ra" in kwargs: # had to keep them around to check on each other
             del kwargs["ra"]
         if "dec" in kwargs:
             del kwargs["dec"]
+        if "date" in kwargs:
+            del kwargs["date"]
 
         if "geometry" in kwargs:
             geometry = kwargs["geometry"]
@@ -155,7 +192,7 @@ class Source(PersistentModel):
 
         self.ra = ra
         self.dec = dec
-
+        self.date = date
         # one of "point", "flat", "gaussian2d", "sersic", "sersic_scale", "power"
         self.geometry = geometry
         #{"shape": "point", "major": 0.2 * u.arcsec, "minor": 0.1 * u.arcsec,
@@ -170,10 +207,7 @@ class Source(PersistentModel):
         sp_redshift = syn.spectrum.SourceSpectrum(Empirical1D, points=new_sed.waveset * (1 + self.redshift), lookup_table=new_sed(new_sed.waveset))
         sp_ext = sp_redshift * syn.reddening.ReddeningLaw.from_extinction_model('mwavg').extinction_curve(self.extinction)
 
-        #print("Actual norm:", sp_ext.waveset)
-
         sp_norm = sp_ext.normalize(self.magnitude * u.ABmag, stsyn.spectrum.band(self.renorm_band), **kwargs)
-        
 
         self.sed = sp_norm
 

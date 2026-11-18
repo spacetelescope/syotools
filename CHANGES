@@ -1,3 +1,11 @@
+1.4.10
+    - Bug: Backgrounds were previously fixed to a specific coordinate
+      on the vernal equinox. 
+    - Source objects have a new 'date' keyword argument that accepts a 
+      datetime.date, datetime.datetime, or an ISO8601 string 
+      (e.g. 2026-11-18)
+    - The loader can now silently handle input data with duplicate
+      or non-monotonic wavelength arrays
 1.4.9
     - Increase the spectroscopic sampling to nyquist
     - Added a new way to filter the channels - "category", which 

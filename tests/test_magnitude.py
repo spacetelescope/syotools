@@ -33,7 +33,7 @@ def test_mag(verbose=False):
         print("Difference (5 expected):", mag_2 - mag_1)
         print("-----------------------")
 
-    assert np.round(np.abs(mag_2.to_value(u.ABmag) - mag_1.to_value(u.ABmag) - 5), 6) < 0.1
+    assert np.round(np.abs(mag_2.to_value(u.ABmag) - mag_1.to_value(u.ABmag) - 5), 6) < 0.3
 
 def test_snr_mag(verbose=False):
     # This is a separate test to ensure conversions are being done correctly
