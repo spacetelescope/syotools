@@ -436,7 +436,57 @@ class Instrument(PersistentModel):
         except KeyError:
             pass
 
-    def load_throughput(self, wave: u.Quantity, thru: u.Quantity) -> syn.spectrum.SpectralElement:
+    def load_throughput(self, wave: u.Quantity, thru: u.Quantity, keep="first") -> syn.spectrum.SpectralElement:
+        """
+        A motivated throughput loader. Removes duplicate wavelengths and sorts for monotonicity
+
+        Parameters
+        ----------
+        wave : u.Quantity
+            the wavelength array, in a suitable length unit
+        thru : u.Quantity
+            the throughput array, should be either no unit or u.dimensionless_unscaled
+
+        Returns
+        -------
+        syn.spectrum.SpectralElement
+            The packaged spectrum
+        """
+
+        # Sort the wavelength arrays for monotonicity
+        sortorder = np.argsort(wave)
+        waveunit = wave.unit
+        wave_temp = wave[sortorder].value
+        thru_temp = thru[sortorder]
+
+        # find duplicate wavelengths
+        diff = wave_temp[1:] - wave_temp[:-1]
+        dups = [x for x in range(len(diff)) if diff[x] == 0]
+        # the duplicates list tells us if the wavelength is the same as the next one
+        if keep == "last":
+            wave = [wave_temp[x] for x in range(len(wave_temp)) if x not in dups]
+            thru = [thru_temp[x] for x in range(len(thru_temp)) if x not in dups]
+        elif keep == "first":
+            # aka - don't keep if the one before this is in the duplicates list
+            wave = [wave_temp[x] for x in range(len(wave_temp)) if x-1 not in dups]
+            thru = [thru_temp[x] for x in range(len(thru_temp)) if x-1 not in dups]
+        elif keep == "average":
+            # this requires extra handling to note BOTH duplicated values
+            skip = dups + 1
+            wave = [wave_temp[x] for x in range(len(wave_temp)) if x not in dups]
+            thru = []
+            for idx, f in enumerate(thru_temp):
+                if idx not in skip:
+                    if idx in dup:
+                        thru.append((thru_temp[idx] + thru_temp[idx+1])/2)
+                    else:
+                        thru.append(thru_temp[idx])
+        else:
+            raise ValueError(f"Could not recognize keep-type {keep}")
+
+        wave = wave << waveunit
+        thru = thru << u.dimensionless_unscaled
+
         return syn.spectrum.SpectralElement(Empirical1D, points=wave, lookup_table=thru)
 
     def load_from_dict(self, config: dict):
@@ -451,9 +501,9 @@ class Instrument(PersistentModel):
         config = complexify_data(config)
 
         for band in config["bands"]:
-            config["bands"][band]["bandpass"] = self.load_throughput(config["bands"][band]["original_wave"], config["bands"][band]["original_thru"])
+            config["bands"][band]["bandpass"] = self.load_throughput(config["bands"][band]["original_wave"], np.asarray(config["bands"][band]["original_thru"]))
 
-        config["detector"]["total_qe"] = self.load_throughput(config["detector"]["original_qe_wave"], config["detector"]["original_qe_thru"])
+        config["detector"]["total_qe"] = self.load_throughput(config["detector"]["original_qe_wave"], np.asarray(config["detector"]["original_qe_thru"]))
 
         # These are cached properties; deleting them will allow them to be recreated on next access
         if hasattr(self, "n_bands"): del(self.n_bands) # only camera
